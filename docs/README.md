@@ -47,6 +47,8 @@ Out of scope:
 
 The initial product architecture is documented in `sdd_final_architecture.md`.
 
+A recorded critique of that architecture, with evaluation criteria, external comparison, recommendations (REC-001..REC-007), and alternative lightweight solution paths, lives in `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. Its recommendations are proposed planning inputs; only items already listed under Key Decisions are accepted.
+
 Important concepts from that document:
 
 - Canonical source: `team-specs` repository with `openspec/` artifacts.

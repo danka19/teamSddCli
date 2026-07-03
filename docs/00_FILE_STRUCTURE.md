@@ -25,6 +25,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/audits/` | Focused audit reports |
+| `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
 | `docs/phases/` | Detailed phase plans and templates |
 
 ## Expected Future Project Structure
