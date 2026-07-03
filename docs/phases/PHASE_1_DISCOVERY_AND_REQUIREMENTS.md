@@ -86,6 +86,19 @@ Verification impact: Requires worker/reviewer/architecture/verification evidence
 Status: Adopted into this plan; downstream work remains queued for Phase 1 execution.
 ```
 
+```text
+Idea: Apply reviewer and architecture-checker fixes for Phase 1 work item 1.2: explicit lifecycle transition table, limited no-spec-change rationale, waiver/scenario coverage consistency, archive-readiness traceability, completion evidence reporting, and MVP-boundary clarification.
+Source: Human instruction on 2026-07-03 for the clean fix worker after reviewer/architecture feedback.
+Type: bug_fix, scope_refinement, data_contract_change, verification_change, documentation_change
+Decision: adopt_now
+Reason: The feedback closes contradictions and loopholes in the active proposed deltas before human decision gate 1.3; ignoring it would leave the proposal set ambiguous and hard to validate.
+Affected specs: Proposed changes `define-change-lifecycle`, `define-change-artifact-contracts`, `define-traceability-contract`, `define-waiver-policy`, and `define-documentation-governance`.
+Affected architecture: Preserves OpenSpec/Markdown-first, deterministic-gates-first, human-owned approval/archive, and no-custom-CLI-upfront boundaries.
+Data contract impact: Clarifies allowed lifecycle transitions, archive approval, no-spec-change limits, waiver eligibility, traceability pending status, and completion evidence fields.
+Verification impact: Requires `openspec validate --all --strict`, `git diff --check`, and manual checks that accepted specs and prohibited paths were not changed.
+Status: Adopted for work item 1.2 reviewer fix pass; no accepted specs are created and no deterministic validator/template behavior changes are made.
+```
+
 ## Work Items
 
 Gate rule:
@@ -154,6 +167,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.2 Draft Core OpenSpec Proposal Set For Lifecycle, Artifacts, Traceability, Waivers, And Documentation Governance
 
+Status: drafted in this branch; reviewer, architecture-checker, and verification-checker gates passed after fix review; pending human decision gate 1.3.
+
 Objective:
 
 - Draft proposed OpenSpec changes for the core Phase 1 behavior contract before adding more deterministic enforcement.
@@ -207,6 +222,19 @@ OpenSpec and acceptance evidence:
 - Draft scenarios cover lifecycle transitions, artifact matrix behavior, traceability links, waiver approvals/evidence, and documentation governance checks.
 - Documentation-governance draft covers the rule that documentation governance and TDD-style verification rules belong in the accepted documentation-governance spec once approved.
 - Acceptance remains proposed until the final human archive gate.
+- Draft proposal folders created:
+  - `define-change-lifecycle`
+  - `define-change-artifact-contracts`
+  - `define-traceability-contract`
+  - `define-waiver-policy`
+  - `define-documentation-governance`
+- Work item 1.1 implementation evidence referenced where relevant: commit `6fbde43 Add phase 1 change template validation gate`.
+- Decision blockers carried into work item 1.3:
+  - final thin vs full artifact matrix;
+  - waiver approver model and minimum evidence;
+  - confirmation that Jira and Confluence remain outside the first MVP unless explicitly re-scoped;
+  - confirmation that QA/AT proposal generation and role inboxes remain outside the first MVP and are not 1.3 MVP alternatives because they depend on later scenario, traceability, and task-source contracts unless the human explicitly re-scopes.
+- Gate evidence: worker draft, reviewer, architecture-checker, verification-checker, fix worker, and re-review gates completed in the current Codex run before committing item 1.2.
 
 ### 1.3 Human Decision Gate: Artifact Matrix, Waivers, And MVP Boundary
 
@@ -224,7 +252,8 @@ Verification:
 
 - Manual check that the decision packet includes the final thin vs full artifact matrix.
 - Manual check that the decision packet includes waiver policy approvers and evidence.
-- Manual check that the decision packet asks the human to confirm Jira, Confluence, QA, AT, and role inbox remain outside MVP.
+- Manual check that the decision packet asks the human to confirm Jira and Confluence remain outside MVP.
+- Manual check that the decision packet explicitly states QA/AT proposal generation and role inboxes are not 1.3 MVP alternatives because they depend on later scenario, traceability, and task-source contracts unless the human explicitly re-scopes.
 - Manual check that every blocking question includes 2-3 options, a recommended default, tradeoffs, risks, and the consequence of leaving it unresolved.
 - `openspec validate --all --strict`
 - `git diff --check`

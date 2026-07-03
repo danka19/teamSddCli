@@ -45,6 +45,11 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/changes/add-change-template-validation/design.md` | Technical design and tradeoffs for the template, validator, and pre-commit hook |
 | `openspec/changes/add-change-template-validation/specs/change-package-foundation/spec.md` | Proposed requirements and scenarios for the deterministic gate |
 | `openspec/changes/add-change-template-validation/tasks.md` | Trackable implementation checklist for the OpenSpec change |
+| `openspec/changes/define-change-lifecycle/` | Draft Phase 1 proposal for change lifecycle states, transition gates, and human/AI/CI ownership boundaries |
+| `openspec/changes/define-change-artifact-contracts/` | Draft Phase 1 proposal for thin and full change artifact contracts, pending human approval of the final matrix |
+| `openspec/changes/define-traceability-contract/` | Draft Phase 1 proposal for requirement, scenario, task, test, automation, waiver, and archive-readiness traceability |
+| `openspec/changes/define-waiver-policy/` | Draft Phase 1 proposal for waiver shape, approval, evidence, audit trail, and negative cases |
+| `openspec/changes/define-documentation-governance/` | Draft Phase 1 proposal for documentation update discipline, AI verification evidence, and TDD-style verification rules |
 
 ## Deterministic Process Artifacts
 

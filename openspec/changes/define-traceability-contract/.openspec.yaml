@@ -1,0 +1,10 @@
+id: define-traceability-contract
+status: proposed
+phase: "Phase 1 Discovery And Requirements"
+work_item: "1.2"
+capabilities:
+  - traceability-contract
+evidence:
+  - "Work item 1.1 commit 6fbde43 Add phase 1 change template validation gate"
+notes:
+  - "Draft proposal only; do not archive or promote to accepted specs before explicit human approval."

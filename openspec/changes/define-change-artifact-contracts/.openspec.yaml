@@ -1,0 +1,13 @@
+id: define-change-artifact-contracts
+status: proposed
+phase: "Phase 1 Discovery And Requirements"
+work_item: "1.2"
+capabilities:
+  - change-artifact-contracts
+evidence:
+  - "Work item 1.1 commit 6fbde43 Add phase 1 change template validation gate"
+pending_human_approval:
+  - "Final thin vs full artifact matrix for work item 1.3"
+  - "MVP exclusion boundary for Jira, Confluence, QA/AT proposal generation, and role inboxes"
+notes:
+  - "Draft proposal only; do not archive or promote to accepted specs before explicit human approval."
