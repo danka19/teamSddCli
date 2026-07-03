@@ -21,6 +21,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/00_FILE_STRUCTURE.md` | Repository and documentation map |
 | `docs/ROADMAP.md` | Phase-level roadmap and gates |
 | `docs/CURRENT_PROJECT_AUDIT.md` | Current setup/repository audit and known risks |
+| `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, success metrics, and CLI-build triggers |
 | `docs/AI_STEP_VERIFICATION_CHECKLIST.md` | Mandatory self-check for AI agents |
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
 | `docs/planning/` | Cross-phase planning notes and decision drafts |

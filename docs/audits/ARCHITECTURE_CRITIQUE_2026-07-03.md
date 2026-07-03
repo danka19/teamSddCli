@@ -107,7 +107,7 @@ Start with A + B (conventions, skills, thin CI scripts, existing publisher, Jira
 ## 5. Open Human Decisions
 
 1. Adopt REC-002..REC-007 as accepted decisions, or defer specific ones to Phase 1 planning.
-2. Choose the implementation strategy: custom `sdd` CLI first (current architecture), the recommended A+B combination first, or a hybrid with an explicit trigger for starting CLI development.
+2. RESOLVED 2026-07-03: the human owner accepted the A+B combination (conventions + skills + thin scripts + standard tool features, no custom `sdd` CLI upfront) with explicit triggers for starting CLI development. Details, success criteria, and CLI triggers are recorded in `docs/IMPLEMENTATION_STRATEGY.md`.
 3. Approve aligning `sdd_final_architecture.md` section 28 with the narrowed MVP (REC-001) — the source document is otherwise preserved per project rules.
 
 ## 6. Sources

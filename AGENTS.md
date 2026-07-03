@@ -73,6 +73,8 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 - The central domain object is a `change package` under `team-specs/openspec/changes/<change-id>/`.
 - The CLI should automate state transitions between artifacts rather than act as one autonomous central agent.
 - AI tools are local assistants that generate drafts, checks, context packs, and skeletons; humans keep decisions, approvals, merges, and correctness ownership.
+- Accepted delivery strategy (2026-07-03): no custom `sdd` CLI upfront; the process is delivered via templates, validation scripts, pipelines, standard tool features, MCP-based Jira/Confluence access, and AI role skills. See `docs/IMPLEMENTATION_STRATEGY.md` for success metrics and the triggers that justify building CLI parts.
+- Environment constraint: development happens externally (Claude Code) and is later transferred to the corporate environment where only GigaCode CLI is available; process guarantees must never depend on the AI layer.
 
 ## Branching Guidance
 

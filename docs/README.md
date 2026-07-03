@@ -42,6 +42,10 @@ Out of scope:
 - 2026-07-03: Confluence feedback handling must be explicitly specified before implementation: owner, service expectation, unresolved-feedback handling, and how comments become accepted deltas or rejected notes.
 - 2026-07-03: Future mutating CLI/integration commands should be designed with dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
 - 2026-07-03: Gherkin is not mandatory for every QA artifact; every requirement needs at least a testable scenario, while Gherkin should be required only when a scenario is executable or exported to AT.
+- 2026-07-03: Deliver the SDD process without a custom `sdd` CLI first: deterministic base (templates + validation scripts + pre-commit + Jenkins in `team-specs`) + standard tool features (Bitbucket default reviewers, Jira Automation, markdown->Confluence publisher, OpenSpec CLI) + AI role skills as a convenience layer. A custom CLI is built only when the trigger criteria in `docs/IMPLEMENTATION_STRATEGY.md` fire.
+- 2026-07-03: OpenSpec means Fission-AI/OpenSpec; the team reference documentation is <https://lzw.me/docs/openspec> (community multilingual mirror; upstream docs win on discrepancy); the CLI version is pinned.
+- 2026-07-03: Jira and Confluence access from AI tooling goes through MCP servers, not hand-written REST integrations; MCP was tested by the human owner and works. Automating local MCP server provisioning for employees is a planned experiment.
+- 2026-07-03: Development happens in an external environment (Claude Code available) and is later transferred to the internal corporate environment where only GigaCode CLI is available; all process guarantees must live in the deterministic layer, skills must be tool-agnostic markdown, and an environment adaptation review is required before transfer.
 
 ## Source Architecture
 

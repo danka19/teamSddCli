@@ -51,6 +51,8 @@ Last updated: 2026-07-03.
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
 | AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is not initialized yet. | Phase 1 | open |
 | AUDIT-006 | Examples in the architecture document include placeholder corporate repos, owners, Jira projects, and Confluence spaces; these must not be treated as real configuration without verification. | Phase 1/2 | open |
+| AUDIT-007 | Corporate environment specifics are unverified: GigaCode CLI capability against skill flows, MCP policy inside the corporate network, Bitbucket/Jenkins/Jira/Confluence versions, and network/artifact restrictions. Must be checked in the pre-transfer adaptation review. | Transfer phase | open |
+| AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
 
 ## Accepted Human Decisions
 
@@ -62,6 +64,10 @@ Last updated: 2026-07-03.
 | 2026-07-03 | Specify the Confluence feedback loop before implementing publication automation. | Future Confluence work must define owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes. |
 | 2026-07-03 | Design mutating CLI/integration commands with dry-run, idempotency, JSON output, and audit logs. | Phase 2 architecture and later tests must cover these command contracts. |
 | 2026-07-03 | Do not require Gherkin for every QA artifact; require at least a testable scenario, with Gherkin only for executable/exported scenarios. | Phase 1/QA artifact contracts must avoid unnecessary Gherkin bureaucracy. |
+| 2026-07-03 | Deliver the SDD process without a custom `sdd` CLI first (deterministic scripts/templates in `team-specs` + standard tool features + AI role skills); build CLI parts only on the triggers in `docs/IMPLEMENTATION_STRATEGY.md`. | Phase plans must target templates, validation scripts, skills, and pipelines instead of CLI source code until a trigger fires. |
+| 2026-07-03 | OpenSpec = Fission-AI/OpenSpec with team reference docs at <https://lzw.me/docs/openspec>; pin the CLI version. | Phase 1 must record the pinned version; upstream docs win over the mirror on discrepancy. |
+| 2026-07-03 | Jira/Confluence access from AI tooling via MCP only (verified working by the human owner); no custom REST clients; automating local MCP server provisioning is a planned experiment. | Integration specs must define MCP usage boundaries, not API client contracts. |
+| 2026-07-03 | Develop in the external environment (Claude Code) first, then transfer to the corporate environment where only GigaCode CLI is available. | Gates must never depend on the AI layer; skills stay tool-agnostic; an environment adaptation review is required before transfer. |
 
 ## Audit Rules
 
