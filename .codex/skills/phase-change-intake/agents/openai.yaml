@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phase Change Intake"
+  short_description: "Triage phase feedback before changing active scope"
+  default_prompt: "Use $phase-change-intake to classify and route this new phase idea before changing the plan."

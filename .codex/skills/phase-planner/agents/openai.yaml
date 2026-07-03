@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phase Planner"
+  short_description: "Create detailed roadmap phase plans"
+  default_prompt: "Use $phase-planner to create the detailed plan for the next phase."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phase Step Runner"
+  short_description: "Execute one phase work item at a time"
+  default_prompt: "Use $phase-step-runner to complete the next phase work item."
