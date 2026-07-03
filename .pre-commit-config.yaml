@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: validate-sdd-change-packages
+        name: Validate SDD change packages
+        entry: python scripts/validate_change.py --staged
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

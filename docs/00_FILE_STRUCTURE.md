@@ -10,7 +10,13 @@ This document is the repository map for agents and humans. Keep it current whene
 | `sdd_final_architecture.md` | Initial Russian source architecture for local team SDD automation |
 | `.env.example` | Versioned environment template with placeholders only |
 | `.gitignore` | Excludes secrets, local config, generated artifacts, and private data |
+| `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |
+| `pytest.ini` | Pytest configuration; uses a repository-local temp folder for this Windows workspace |
 | `.codex/skills/` | Project-local skills for architecture planning and phase execution |
+| `openspec/` | Project OpenSpec changes and accepted specs for teamSddCli behavior |
+| `templates/` | Copyable SDD process templates |
+| `scripts/` | Deterministic local validation and process scripts |
+| `tests/` | Focused automated tests for deterministic scripts |
 | `docs/` | Product, architecture, operations, roadmap, audit, glossary, and phase documentation |
 
 ## Documentation
@@ -28,6 +34,25 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/` | Focused audit reports |
 | `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
 | `docs/phases/` | Detailed phase plans and templates |
+| `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
+
+## OpenSpec
+
+| Path | Purpose |
+|---|---|
+| `openspec/changes/add-change-template-validation/` | Active OpenSpec change for the first deterministic change-template and validation gate |
+| `openspec/changes/add-change-template-validation/proposal.md` | Motivation, scope, capabilities, and impact for the first deterministic gate |
+| `openspec/changes/add-change-template-validation/design.md` | Technical design and tradeoffs for the template, validator, and pre-commit hook |
+| `openspec/changes/add-change-template-validation/specs/change-package-foundation/spec.md` | Proposed requirements and scenarios for the deterministic gate |
+| `openspec/changes/add-change-template-validation/tasks.md` | Trackable implementation checklist for the OpenSpec change |
+
+## Deterministic Process Artifacts
+
+| Path | Purpose |
+|---|---|
+| `templates/change/` | Copyable SDD change package skeleton |
+| `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
+| `tests/test_validate_change.py` | Focused validator tests covering valid packages, missing artifacts, traceability gaps, staged discovery, and placeholder mode |
 
 ## Expected Future Project Structure
 
@@ -35,12 +60,8 @@ These paths are expected by the documented SDD workflow but do not exist yet in 
 
 | Path | Purpose |
 |---|---|
-| `openspec/` | CLI project's own accepted/proposed behavior specs and requirements |
 | `openspec/specs/` | Accepted living specs for teamSddCli behavior |
-| `openspec/changes/` | Proposed behavior changes before acceptance |
 | `src/` | Future CLI implementation source |
-| `tests/` | Future automated tests |
-| `templates/` | Future change/package templates used by `sdd CLI` |
 | `schemas/` | Future schemas for `change.yaml`, registries, traceability, and config |
 
 ## Project-Local Skills

@@ -1,0 +1,30 @@
+id: CHANGE-YYYY-001-short-name
+title: <short human-readable title>
+mode: thin
+type: new_feature
+status: draft
+capability: <capability-name>
+
+systems:
+  code_repos:
+    - <code-repo-name>
+  at_repos: []
+
+review:
+  analyst_owner_group: <analyst-owner-group>
+  dev_owner_groups:
+    - <dev-owner-group>
+  qa_owner_group: <qa-owner-group>
+  at_owner_groups: []
+
+quality:
+  scenarios: required
+  manual_cases: impacted
+  api_at: impacted
+  mobile_at: not_impacted
+  security_review: not_required
+
+publication:
+  confluence_space: <space-key-or-null>
+  page_id: null
+  mode: generated

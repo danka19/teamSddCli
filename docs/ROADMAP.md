@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current phase: Phase 0 Project Foundation.
+- Current phase: Phase 1 Discovery And Requirements.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -13,7 +13,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Phase 0. Project Foundation
 
-Status: in progress.
+Status: complete.
 
 Goal: prepare repository rules, documentation, environment notes, baseline product decisions, OpenSpec expectations, and verification habits from `sdd_final_architecture.md`.
 
@@ -26,7 +26,7 @@ Quality gate:
 
 ## Phase 1. Discovery And Requirements
 
-Status: not planned in detail yet.
+Status: in progress.
 
 Goal: turn the architecture into concrete product requirements, user/role workflows, CLI command acceptance criteria, integration constraints, and OpenSpec artifacts.
 
@@ -38,6 +38,14 @@ Likely scope:
 - Define `thin change` and `full change package` modes, including which artifacts are required for each mode.
 - Specify the Confluence feedback loop before implementing publication: responsible owner, service expectation, unresolved feedback, and accepted/rejected comment handling.
 - Define the first pilot as a thin flow and explicitly keep Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes out of MVP unless re-scoped by the human owner.
+
+Detailed plan:
+
+- `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md`
+
+Current work:
+
+- First deterministic artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
 
 ## Phase 2. Architecture And Data Model
 

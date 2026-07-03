@@ -1,0 +1,9 @@
+requirements:
+  - id: REQ-CHANGE-001
+    requirement: <requirement name>
+    scenario: <scenario name>
+    tasks:
+      - TASK-CHANGE-001
+    tests:
+      - TC-CHANGE-001
+    automated_tests: []

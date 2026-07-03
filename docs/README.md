@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Project foundation from `sdd_final_architecture.md` is being converted into durable repository documentation. No implementation source code or executable CLI is present yet.
+> Project foundation from `sdd_final_architecture.md` has moved into Phase 1. The first deterministic process artifact is being added: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. No custom `sdd` CLI exists yet.
 
 ## Scope
 
@@ -46,6 +46,7 @@ Out of scope:
 - 2026-07-03: OpenSpec means Fission-AI/OpenSpec; the team reference documentation is <https://lzw.me/docs/openspec> (community multilingual mirror; upstream docs win on discrepancy); the CLI version is pinned.
 - 2026-07-03: Jira and Confluence access from AI tooling goes through MCP servers, not hand-written REST integrations; MCP was tested by the human owner and works. Automating local MCP server provisioning for employees is a planned experiment.
 - 2026-07-03: Development happens in an external environment (Claude Code available) and is later transferred to the internal corporate environment where only GigaCode CLI is available; all process guarantees must live in the deterministic layer, skills must be tool-agnostic markdown, and an environment adaptation review is required before transfer.
+- 2026-07-03: Start Phase 1 with the deterministic base artifact `templates/change/` + `scripts/validate_change.py` + `.pre-commit-config.yaml`, tracked as project OpenSpec change `add-change-template-validation`.
 
 ## Source Architecture
 
