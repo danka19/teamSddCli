@@ -11,8 +11,9 @@ Last updated: 2026-07-03.
 | Repository root | `C:\Users\danoc\Documents\projects\teamSsdCli` |
 | Git repository | Initialized locally on 2026-07-03 |
 | Current branch | `main` |
-| Remote | `origin` -> `https://github.com/danka19/teamSsdCli.git` |
-| Latest known commit before this audit update | `b1d10a7` (`Initialize project documentation`) |
+| Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
+| Latest known commit before this audit update | `828d3f4` (`Record repository initialization`) |
+| GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
 | Source architecture document | `sdd_final_architecture.md` |
 | Implementation source code | Not present yet |
 | OpenSpec project artifacts | Not present yet; expected workflow is documented in project docs |
@@ -31,8 +32,8 @@ Last updated: 2026-07-03.
 |---|---|
 | Git installed | `git version 2.54.0.windows.1` |
 | Repository initialized | Yes; `git init -b main` completed |
-| Git remote configured | `origin https://github.com/danka19/teamSsdCli.git` |
-| First push | `git push -u origin main` published `main` to `danka19/teamSsdCli` |
+| Git remote configured | `origin https://github.com/danka19/teamSddCli.git` |
+| First push | `git push -u origin main` published `main` to `danka19/teamSddCli` |
 | Runtime installed | Python is available enough to run the project-starter-kit bootstrap script |
 | Tests available | No project tests found; implementation source code is not present |
 | Local app/server available | No local app/server found; implementation source code is not present |
@@ -47,7 +48,7 @@ Last updated: 2026-07-03.
 | AUDIT-001 | Product scope is described at architecture level, but accepted CLI requirements and acceptance criteria are not yet captured as OpenSpec specs. | Phase 1 | open |
 | AUDIT-002 | Environment and verification commands for the future CLI runtime are not recorded because the implementation stack is undecided. | Phase 1/2 | open |
 | AUDIT-003 | Architecture decisions exist in `sdd_final_architecture.md`, but they are not yet split into decision records, specs, schemas, or implementation contracts. | Phase 1/2 | open |
-| AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSsdCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
+| AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
 | AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is not initialized yet. | Phase 1 | open |
 | AUDIT-006 | Examples in the architecture document include placeholder corporate repos, owners, Jira projects, and Confluence spaces; these must not be treated as real configuration without verification. | Phase 1/2 | open |
 

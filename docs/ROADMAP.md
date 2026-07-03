@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap is the working development plan for teamSsdCli. It is phase-level; detailed implementation plans belong in `docs/phases/`.
+This roadmap is the working development plan for teamSddCli. It is phase-level; detailed implementation plans belong in `docs/phases/`.
 
 ## Current Roadmap Validation
 

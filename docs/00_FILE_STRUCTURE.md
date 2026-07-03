@@ -34,7 +34,7 @@ These paths are expected by the documented SDD workflow but do not exist yet in 
 | Path | Purpose |
 |---|---|
 | `openspec/` | CLI project's own accepted/proposed behavior specs and requirements |
-| `openspec/specs/` | Accepted living specs for teamSsdCli behavior |
+| `openspec/specs/` | Accepted living specs for teamSddCli behavior |
 | `openspec/changes/` | Proposed behavior changes before acceptance |
 | `src/` | Future CLI implementation source |
 | `tests/` | Future automated tests |

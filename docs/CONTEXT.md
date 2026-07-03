@@ -1,6 +1,6 @@
 # Context
 
-This is the active glossary and domain-boundary file for teamSsdCli.
+This is the active glossary and domain-boundary file for teamSddCli.
 
 ## Canonical Terms
 

@@ -1,8 +1,8 @@
-# teamSsdCli
+# teamSddCli
 
 ## Summary
 
-teamSsdCli is a local SDD automation project for a team workflow based on OpenSpec/Markdown, Git, Bitbucket, Jenkins, Confluence, Jira or another task tracker, local CLI commands, and local AI tools.
+teamSddCli is a local SDD automation project for a team workflow based on OpenSpec/Markdown, Git, Bitbucket, Jenkins, Confluence, Jira or another task tracker, local CLI commands, and local AI tools.
 
 The project goal is to automate the end-to-end transition from analysis to development tasks, QA test cases, automated-test skeletons, verification, and archived living specs without introducing one centralized autonomous agent.
 
