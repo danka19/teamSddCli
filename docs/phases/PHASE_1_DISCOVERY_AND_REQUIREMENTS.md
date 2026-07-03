@@ -99,13 +99,26 @@ Verification impact: Requires `openspec validate --all --strict`, `git diff --ch
 Status: Adopted for work item 1.2 reviewer fix pass; no accepted specs are created and no deterministic validator/template behavior changes are made.
 ```
 
+```text
+Idea: Human decision-gate questions must be rewritten in normal human-readable language with examples of impact and arguments, then recorded as a durable rule.
+Source: Human instruction on 2026-07-03 after the first item 1.3 question packet.
+Type: documentation_change, verification_change
+Decision: adopt_now
+Reason: The Phase 1 process requires human decisions; if questions are written as terse internal labels, the owner cannot safely approve tradeoffs or understand what each choice changes.
+Affected specs: Proposed documentation-governance behavior; active phase decision gates.
+Affected architecture: Preserves human-owned decisions by making decision packets understandable and reviewable.
+Data contract impact: None to artifact schemas; affects decision-record format and acceptance evidence.
+Verification impact: Future human gates must be checked for clear Russian question text, 2-3 options, recommended default, practical impact examples, tradeoffs/risks, and unresolved-decision consequences.
+Status: Adopted into `AGENTS.md`, `docs/AI_STEP_VERIFICATION_CHECKLIST.md`, and this phase plan.
+```
+
 ## Work Items
 
 Gate rule:
 
 - For every work item below, the listed worker/reviewer/architecture-checker/verification-checker roles are required decision gates when subagent tooling is available, even when the section label says "Recommended subagents".
 - A work item is not complete until gate findings are resolved or explicitly recorded as non-blocking with rationale.
-- Each human decision packet must include 2-3 practical options, a recommended default, tradeoffs, risks, and the consequence of leaving the decision unresolved.
+- Each human decision packet must be written in plain human-readable Russian, not as terse internal protocol labels, and must include 2-3 practical options, a recommended default, concrete examples of day-to-day impact, tradeoffs, risks, and the consequence of leaving the decision unresolved.
 
 ### 1.1 Change Package Template And Local Validation Gate
 

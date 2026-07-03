@@ -39,6 +39,7 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 13. User-facing reports must always include next steps. If there is no active required action, state the recommended next step and why it is next.
 14. When the human asks for advice, asks "how is it better", asks a conceptual question, or asks for an opinion/recommendation, answer with a detailed explanation first and do not silently convert the question into implementation. Make changes only when the human explicitly asks to record, implement, update, or continue work, or when the question is inseparable from a requested documentation update.
 15. When several open questions or decisions remain, ask them in one clear batch with recommended defaults and tradeoffs. Ask one-by-one only when a single answer is required to safely proceed.
+16. Human decision-gate questions must be written in plain, human-readable language, not as internal protocol labels. Each question must explain the practical choice, why it matters, 2-3 concrete options, the recommended default, examples of impact on real work, tradeoffs/risks, and what stays blocked if the decision is left unresolved.
 
 ## User-Facing Report Style
 

@@ -39,6 +39,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - If the human also explicitly asks to "record", "write", "update", "fix", "continue", or otherwise change project artifacts, make the requested documentation/code change after answering or while clearly separating the action from the advice.
 - When there is ambiguity between "answer" and "do", prefer answering and ask for confirmation before implementation unless project safety, durable documentation, or an explicit "record this" request makes the action clear.
 - When multiple open questions remain, ask them in one concise batch with recommended defaults and tradeoffs. Ask one-by-one only when one blocking answer is required before any useful next step can happen.
+- Human decision-gate questions must be plain and readable for a process owner, not written as terse internal labels. For each blocking decision, state what is being chosen, why it matters, 2-3 concrete options, the recommended default, examples of what changes in day-to-day work, risks/tradeoffs, and what remains blocked if the decision is not made.
 
 ## Domain And Architecture Check
 
@@ -63,6 +64,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - If a test or check cannot run, record the exact command and blocker.
 - If automated tests do not exist for the affected CLI/workflow behavior, record manual verification steps and remaining manual-verification risk.
 - When the next step requires a human decision, explicitly state that it is a required decision and explain the question, why it matters, relevant options or tradeoffs, and the consequence of leaving it unresolved.
+- Human decision sections must use clear Russian question text and practical examples instead of shorthand such as "approve matrix" or "confirm MVP boundary".
 - When the next step requires mandatory verification, explicitly state that it is required and describe exactly what must be checked, how to check it where known, expected evidence, and residual risk if it is not performed.
 
 ## Documentation Check
