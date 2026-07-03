@@ -11,6 +11,8 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | `team-specs` | Central repository expected to store requirements, OpenSpec changes, living specs, QA/AT plans, traceability, registry, templates, publishing config, and schemas. | It is described by the architecture document; this repository currently contains the CLI project foundation, not the real `team-specs` repo. |
 | `sdd CLI` | Team-owned command-line process interface over OpenSpec, Git, Bitbucket, Jenkins, Jira/tracker, Confluence, and local AI tools. | It should automate workflow transitions, not replace OpenSpec CLI entirely. |
 | Change package | Per-change folder under `team-specs/openspec/changes/<change-id>/` with metadata, proposal, design, tasks, spec deltas, QA artifacts, automation plan, and traceability. | Central process object. |
+| Thin change | Lightweight change path for small bugfixes, refactors, and small behavior patches. | Future requirements must define the minimum artifacts; the first MVP uses this mode. |
+| Full change package | Complete change path for new features, API/mobile impact, cross-repo work, or high-risk behavior changes. | Requires broader proposal/design/QA/AT/traceability artifacts. |
 | Living specs | Accepted current requirements after a change is archived. | Updated from approved changes, not manually edited in generated Confluence blocks. |
 | Traceability | Explicit links between requirement, scenario, dev task, QA task, test case, and automated test. | A change should not close while required links are missing without a waiver. |
 | Role inbox | CLI view of relevant work for a role such as analyst, developer, QA, API AT, or mobile AT. | Local AI sessions do not monitor background state; `sdd inbox` does. |
@@ -27,5 +29,9 @@ This is the active glossary and domain-boundary file for teamSddCli.
 - Jira or another tracker is workflow/status, not the source of product requirements.
 - Bitbucket PRs are review/audit surfaces; Jenkins owns deterministic validation/automation gates.
 - AI may draft proposals, checks, skeletons, and context packs; humans remain responsible for approve, merge, correctness, and final decisions.
+- The first CLI MVP must stay focused on the thin change flow before adding Jira task automation, QA/AT proposal generation, Confluence publication, or role inbox automation.
+- Mutating CLI/integration commands should support dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
+- Every accepted requirement needs at least a testable scenario; Gherkin is required only when a scenario is intended to be executable or exported to AT.
+- Confluence comment handling must be modeled as an explicit feedback loop with owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes before publication automation is implemented.
 - Avoid bidirectional synchronization between Confluence and Git unless a later accepted decision explicitly changes the architecture.
 - Do not infer real corporate repository URLs, owners, credentials, Confluence spaces, Jira projects, or Jenkins jobs from examples in the architecture document.

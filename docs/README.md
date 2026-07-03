@@ -36,6 +36,12 @@ Out of scope:
 - 2026-07-03: Automate artifact state transitions through CLI/CI rather than centralizing control in one autonomous agent.
 - 2026-07-03: Keep human ownership over approvals, merges, business decisions, correctness, and review outcomes.
 - 2026-07-03: Use this starter-kit documentation set as the durable operating system for future Codex work.
+- 2026-07-03: Narrow the first implemented MVP to a thin change flow: `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic `traceability.yaml`; Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes are later layers unless explicitly re-scoped.
+- 2026-07-03: Support two change modes in future requirements: a lightweight `thin change` path for small bugfix/refactor/small behavior patches and a `full change package` path for feature, API, mobile, cross-repo, or high-risk changes.
+- 2026-07-03: The first product OpenSpec specs should focus on change lifecycle, artifact contracts, traceability, and waiver behavior before broad CLI/integration coverage.
+- 2026-07-03: Confluence feedback handling must be explicitly specified before implementation: owner, service expectation, unresolved-feedback handling, and how comments become accepted deltas or rejected notes.
+- 2026-07-03: Future mutating CLI/integration commands should be designed with dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
+- 2026-07-03: Gherkin is not mandatory for every QA artifact; every requirement needs at least a testable scenario, while Gherkin should be required only when a scenario is executable or exported to AT.
 
 ## Source Architecture
 
@@ -54,15 +60,15 @@ Important concepts from that document:
 
 ## First Valuable Outcome
 
-The first useful delivery should prove one complete SDD change flow at pilot scale:
+The first useful delivery should prove the smallest thin SDD change flow at pilot scale:
 
 1. Create a change package from templates.
-2. Validate it locally and in CI.
+2. Validate structure, policy, and basic traceability locally.
 3. Create a Spec PR.
-4. Publish a Confluence preview.
-5. Create or plan linked dev/QA/AT tasks.
-6. Maintain traceability.
-7. Archive the completed change into living specs.
+4. Archive the completed change into living specs.
+5. Preserve enough traceability to show requirement -> scenario -> change evidence.
+
+Confluence publication, Jira task creation, QA/AT proposal generation, and role inboxes remain important, but they are not required for the first MVP unless the human owner explicitly re-scopes the pilot.
 
 ## Documentation Rules
 

@@ -35,7 +35,13 @@ Objective:
 - Decide the implementation stack/runtime for `sdd CLI`.
 - Decide whether this folder should become the CLI repository or whether starter docs should be moved into another git repository.
 - Decide the first pilot target: one real project/team flow or a local synthetic example.
-- Decide which OpenSpec requirements to capture first: documentation governance, change lifecycle, traceability, or CLI commands.
+- Record the accepted 2026-07-03 architecture critique decisions in the Phase 1 plan:
+  - first MVP is the thin change flow, not the full integration platform;
+  - future requirements must distinguish `thin change` and `full change package`;
+  - first OpenSpec specs should cover change lifecycle, artifact contracts, traceability, and waiver behavior;
+  - Confluence feedback handling must be specified before publication automation;
+  - mutating CLI/integration commands need dry-run, idempotency, JSON output, and audit logging contracts;
+  - Gherkin is only required for executable or AT-exported scenarios.
 
 Verification:
 

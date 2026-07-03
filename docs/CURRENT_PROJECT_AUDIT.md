@@ -45,12 +45,23 @@ Last updated: 2026-07-03.
 
 | ID | Risk | Owner | Status |
 |---|---|---|---|
-| AUDIT-001 | Product scope is described at architecture level, but accepted CLI requirements and acceptance criteria are not yet captured as OpenSpec specs. | Phase 1 | open |
+| AUDIT-001 | Product scope is described at architecture level, and the 2026-07-03 accepted critique narrowed the first MVP, but accepted CLI requirements and acceptance criteria are not yet captured as OpenSpec specs. | Phase 1 | open |
 | AUDIT-002 | Environment and verification commands for the future CLI runtime are not recorded because the implementation stack is undecided. | Phase 1/2 | open |
 | AUDIT-003 | Architecture decisions exist in `sdd_final_architecture.md`, but they are not yet split into decision records, specs, schemas, or implementation contracts. | Phase 1/2 | open |
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
 | AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is not initialized yet. | Phase 1 | open |
 | AUDIT-006 | Examples in the architecture document include placeholder corporate repos, owners, Jira projects, and Confluence spaces; these must not be treated as real configuration without verification. | Phase 1/2 | open |
+
+## Accepted Human Decisions
+
+| Date | Decision | Impact |
+|---|---|---|
+| 2026-07-03 | Narrow the first MVP to `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic `traceability.yaml`. | Phase 1/3 plans must not require Jira, QA/AT, Confluence publication, or role inboxes for the first usable workflow unless explicitly re-scoped. |
+| 2026-07-03 | Use two future change modes: `thin change` and `full change package`. | Phase 1 must define artifact requirements and validation behavior for both modes. |
+| 2026-07-03 | Formalize product OpenSpec specs first for change lifecycle, artifact contracts, traceability, and waiver behavior. | Phase 1 OpenSpec work should prioritize these specs before broad integration specs. |
+| 2026-07-03 | Specify the Confluence feedback loop before implementing publication automation. | Future Confluence work must define owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes. |
+| 2026-07-03 | Design mutating CLI/integration commands with dry-run, idempotency, JSON output, and audit logs. | Phase 2 architecture and later tests must cover these command contracts. |
+| 2026-07-03 | Do not require Gherkin for every QA artifact; require at least a testable scenario, with Gherkin only for executable/exported scenarios. | Phase 1/QA artifact contracts must avoid unnecessary Gherkin bureaucracy. |
 
 ## Audit Rules
 

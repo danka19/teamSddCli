@@ -46,6 +46,8 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Preserve boundaries between raw input, derived data, review-required proposals, and accepted decisions.
 - Do not treat heuristic or LLM output as source-of-truth data.
 - Record architecture decisions that affect module boundaries, persistence, integrations, security, deployment, or operations.
+- Preserve the accepted thin-MVP boundary unless the human owner explicitly re-scopes the work: first prove `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic traceability before adding Jira, QA/AT, Confluence publication, or role inbox automation.
+- Do not require Gherkin for every QA artifact; require a testable scenario first, and require Gherkin only when the scenario is executable or exported to AT.
 
 ## Test And Evidence Check
 
@@ -56,6 +58,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Run the narrowest meaningful tests first, then broader tests when shared behavior changes.
 - Run `git diff --check` before completion when files changed.
 - For SDD/OpenSpecs changes, run `openspec list`, `openspec list --specs`, and `openspec validate --all --strict`.
+- For mutating CLI or integration behavior, verify dry-run behavior, idempotency, machine-readable JSON output, and audit logging whenever those contracts are in scope.
 - For starter-kit documentation changes, run the project-starter-kit bootstrap script with `--check`.
 - If a test or check cannot run, record the exact command and blocker.
 - If automated tests do not exist for the affected CLI/workflow behavior, record manual verification steps and remaining manual-verification risk.

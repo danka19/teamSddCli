@@ -8,6 +8,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
+- Accepted architecture critique decisions from 2026-07-03 narrow the first MVP to a thin change flow before Jira, QA/AT, Confluence publication, and role inbox automation.
 - Update this file when phase status, gates, or scope changes.
 
 ## Phase 0. Project Foundation
@@ -33,8 +34,10 @@ Likely scope:
 
 - Define accepted CLI personas: analyst, developer, QA, API AT, mobile AT, tech lead, CI owner, and product/business stakeholder.
 - Decide the first supported repository topology and configuration format.
-- Create initial OpenSpec specs for documentation governance, change package lifecycle, traceability, and core CLI commands.
-- Define what the first pilot must prove and what remains explicitly out of scope.
+- Create initial OpenSpec specs for change lifecycle, artifact contracts, traceability, waiver behavior, and documentation governance.
+- Define `thin change` and `full change package` modes, including which artifacts are required for each mode.
+- Specify the Confluence feedback loop before implementing publication: responsible owner, service expectation, unresolved feedback, and accepted/rejected comment handling.
+- Define the first pilot as a thin flow and explicitly keep Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes out of MVP unless re-scoped by the human owner.
 
 ## Phase 2. Architecture And Data Model
 
@@ -46,8 +49,9 @@ Likely scope:
 
 - Model `change.yaml`, `traceability.yaml`, owners registry, projects registry, quality policy, and local `~/.sdd` state.
 - Decide implementation language/runtime for `sdd CLI`.
-- Define adapters for OpenSpec CLI, Git, Bitbucket, Jenkins, Confluence, Jira/tracker, and optional local AI context-pack generation.
-- Establish validation gates for Spec PR, Code PR, QA PR, and AT PR.
+- Define adapters for OpenSpec CLI, Git, and PR creation first; defer Bitbucket/Jenkins/Confluence/Jira write integrations until the thin flow is stable.
+- Define CLI mutation contracts: dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
+- Establish validation gates for thin Spec PR/archive first, then broaden to Code PR, QA PR, and AT PR gates in later work.
 
 ## Phase 3. First Usable Workflow
 
@@ -57,13 +61,19 @@ Goal: implement the smallest end-to-end pilot flow that proves SDD automation va
 
 Likely scope:
 
-- `sdd init`
-- `sdd doctor`
 - `sdd change new`
 - `sdd change validate`
 - `sdd change pr`
+- `sdd change archive`
+- Basic `traceability.yaml` validation.
+- Supporting setup or doctor behavior only where required to make the thin flow usable.
+
+Explicitly deferred from the first MVP:
+
 - `sdd publish confluence --preview`
-- `sdd tasks plan` or `sdd tasks create`
+- `sdd tasks plan` / `sdd tasks create`
+- `sdd qa propose`
+- `sdd at propose`
 - `sdd inbox`
 
 ## Phase 4. Hardening And Pilot Readiness
@@ -75,9 +85,11 @@ Goal: improve reliability, safety, command usability, process operations, and ac
 Likely scope:
 
 - Waiver policy and evidence requirements.
+- Confluence preview/final publication after the feedback loop contract is specified.
+- Jira task planning/creation after thin change archive works.
+- Role inbox hardening after task/status sources are stable.
+- QA/AT proposal and skeleton generation after scenario and traceability contracts are validated.
 - Drift detection for generated Confluence blocks.
-- Role inbox hardening.
-- QA/AT proposal and skeleton generation.
 - Bitbucket Code Insights or equivalent reporting.
 - Read-only MCP exploration only after CLI/API flow is working.
 
