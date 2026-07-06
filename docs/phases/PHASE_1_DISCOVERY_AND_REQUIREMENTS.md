@@ -150,6 +150,32 @@ Verification impact: Requires OpenSpec strict validation and docs diff checks no
 Status: Queued into current Phase 1 proposals and later work items; not implemented as first-MVP behavior.
 ```
 
+```text
+Idea: Adopt five orientation and scope improvements from the comparison with a similar product: project memory triad, existing-code onboarding, deterministic sync/upgrade maintenance, PDLC narrative, and explicit exclusion of deploy/Zephyr/Jira/Confluence from the first MVP.
+Source: Human instruction on 2026-07-06 after reviewing the comparison with the external presentation.
+Type: architecture_change, scope_refinement, documentation_change, workflow_behavior_rule
+Decision: adopt_now
+Reason: The five points clarify future project memory, legacy onboarding, maintenance, and stakeholder explanation without expanding the first thin MVP or requiring immediate validator/template behavior changes.
+Affected specs: Proposed changes `define-documentation-governance`, `define-change-artifact-contracts`, `define-traceability-contract`, planned `define-repo-topology-config`, planned `define-openspec-version-policy`, and future memory/onboarding contracts.
+Affected architecture: Adds the project memory triad as the future orientation model; defines existing-code onboarding as `scan -> baseline -> map -> validate`; treats `sync` and `upgrade` as deterministic maintenance; frames the process as PDLC-wide shared context; preserves the first-MVP boundary.
+Data contract impact: Future schemas may be needed for project map, legacy baseline, memory sync reports, and template/spec-package version metadata; no schema changes are made now.
+Verification impact: Requires docs diff checks and OpenSpec strict validation now; deterministic sync/upgrade and onboarding checks remain future implementation work after topology/config and version policies are approved.
+Status: Adopted into project docs, audit, roadmap, context, and this phase plan; no first-MVP implementation scope added.
+```
+
+```text
+Idea: Design project memory and documentation controls for weaker corporate AI models, including graph/navigation aids, concise useful docs, repeated-error memory, mandatory spec-questioning workflow, skill-use safeguards, and analyst/QA onboarding.
+Source: Human questions on 2026-07-06 about graphify-like skills, documentation sufficiency, weak Qwen/DeepSeek-class models, repeated mistakes, skill forgetting, spec grilling, and role usability.
+Type: architecture_change, verification_change, documentation_change, new_feature
+Decision: queue_current_phase
+Reason: These concerns are central to whether the process works with weaker local models and non-developer roles, but the exact solution needs a separate proposal/decision gate so it does not become unreviewed tool or documentation sprawl.
+Affected specs: Proposed documentation-governance behavior, future repo topology/config, future memory/onboarding capability, and possible future skill/process contracts.
+Affected architecture: Points toward deterministic navigation/indexing, concise evidence-backed memory, generated or validated project maps, reusable failure-pattern records, and a spec-questioning workflow before implementation planning.
+Data contract impact: Possible future contracts for memory index, known failure records, role guides, documentation lint rules, and spec-question prompts; no data contract is accepted yet.
+Verification impact: Future work should define checks for stale docs, orphaned docs, unreferenced memory entries, repeated failure recurrence, and role walkthrough evidence for QA/analyst usability.
+Status: Queued for Phase 1 exploration/proposal; not accepted as implementation scope yet.
+```
+
 ## Work Items
 
 Gate rule:
@@ -733,7 +759,13 @@ OpenSpec and acceptance evidence:
 - Completed 2026-07-06: final thin vs full artifact matrix, approved as Option A risk-oriented matrix.
 - Completed 2026-07-06: waiver policy approvers/evidence, approved as Option A role-appropriate approvers and evidence.
 - Completed 2026-07-06: Jira task automation, Confluence publication, QA/AT proposal generation, and role inbox remain outside the first MVP and are planned as later layers.
+- Completed 2026-07-06: project memory triad accepted as the future orientation model.
+- Completed 2026-07-06: existing-code onboarding accepted as `scan -> baseline -> map -> validate`.
+- Completed 2026-07-06: `sync` and `upgrade` accepted as future deterministic maintenance, not AI-only skills.
+- Completed 2026-07-06: PDLC narrative accepted for team-facing explanation of the process.
+- Completed 2026-07-06: deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inbox remain outside the first MVP.
 - Open: first supported repo topology/config format.
 - Open: Confluence feedback loop owner/SLA/unresolved comments.
 - Open: OpenSpec version pin/upgrade policy.
+- Open: project memory/documentation quality controls for weaker corporate AI models, repeated-error memory, spec-questioning workflow, and analyst/QA onboarding.
 - Open: before archiving OpenSpec changes into accepted specs.

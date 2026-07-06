@@ -11,6 +11,10 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | `team-specs` | Central repository expected to store requirements, OpenSpec changes, living specs, QA/AT plans, traceability, registry, templates, publishing config, and schemas. | It is described by current docs and OpenSpec proposals; this repository currently contains the CLI project foundation, not the real `team-specs` repo. |
 | `sdd CLI` | Team-owned command-line process interface over OpenSpec, Git, Bitbucket, Jenkins, Jira/tracker, Confluence, and local AI tools. | It should automate workflow transitions, not replace OpenSpec CLI entirely. |
 | Change package | Per-change folder under `team-specs/openspec/changes/<change-id>/` with metadata, proposal, design, tasks, spec deltas, QA artifacts, automation plan, and traceability. | Central process object. |
+| Project memory | Agent-readable project orientation material that helps local AI and humans understand rules, topology, current specs, risks, and proven workflows. | It supports work, but does not replace OpenSpec as behavior truth or PR/CI as approval and validation truth. |
+| Project memory triad | Planned orientation model: constitution/quality policy, project map, and OpenSpec changes/living specs. | Accepted as the future organizing idea on 2026-07-06; exact folder/schema remains future work. |
+| Constitution / quality policy | Stable project rules, boundaries, quality expectations, human ownership rules, and non-negotiable process constraints. | In this repository, the current equivalent is spread across `AGENTS.md`, `docs/CONTEXT.md`, `docs/IMPLEMENTATION_STRATEGY.md`, and future accepted specs. |
+| Project map | Maintained map of repository topology, configuration, relevant modules, integrations, owners, and reusable assets. | It should be generated or validated where practical so it does not become stale narrative documentation. |
 | Thin change | Lightweight change path for small bugfixes, refactors, and small behavior patches. | Future requirements must define the minimum artifacts; the first MVP uses this mode. |
 | Full change package | Complete change path for new features, API/mobile impact, cross-repo work, or high-risk behavior changes. | Requires broader proposal/design/QA/AT/traceability artifacts. |
 | Living specs | Accepted current requirements after a change is archived. | Updated from approved changes, not manually edited in generated Confluence blocks. |
@@ -28,6 +32,9 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | Screen asset | Versioned UI screenshot, Figma export, or prototype image stored near specs and referenced by stable screen ID. | Not a loose Confluence attachment. |
 | Screen catalog | Structured index such as `screens.yaml` linking screen assets to capability, journey, step, state, source, requirements, and scenarios. | Planned for UI-impacting full packages, not first thin MVP. |
 | Legacy baseline | Gradual documentation mode for already-written behavior. | Records observed behavior, gaps, risks, and regression scenarios without retroactively requiring full historical packages. |
+| Existing-code onboarding | Future onboarding flow for repositories that already have code: `scan -> baseline -> map -> validate`. | `scan` is read-only; `baseline` records observed behavior and gaps; `map` updates project memory; `validate` checks memory against code evidence. |
+| Memory sync | Future deterministic maintenance check that detects drift between project map, specs, traceability, and code or repository evidence. | It should be script/CI-backed where practical, not dependent on an AI model remembering to update docs. |
+| Template/spec upgrade | Future deterministic migration path for templates, specs, package versions, or OpenSpec compatibility updates. | It is blocked until the OpenSpec version pin and upgrade policy are approved. |
 | Approval gate | Human-owned decision point that may be displayed in generated views but is not approved by Confluence or AI. | Bitbucket/PR review and recorded human decisions are approval truth. |
 | Verification evidence | Link or recorded result proving a requirement/scenario was checked. | May be CI, test output, manual QA, PR, committed note, or approved waiver depending on contract. |
 | Feedback disposition | Recorded outcome for stakeholder feedback, such as accepted, rejected, deferred, or duplicate. | Required before Confluence feedback becomes implementation input. |
@@ -44,6 +51,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 - Bitbucket PRs are review/audit surfaces; Jenkins owns deterministic validation/automation gates.
 - AI may draft proposals, checks, skeletons, and context packs; humans remain responsible for approve, merge, correctness, and final decisions.
 - The first CLI MVP must stay focused on the thin change flow before adding Jira task automation, QA/AT proposal generation, Confluence publication, or role inbox automation.
+- Deploy automation, Zephyr or other test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes are not first-MVP requirements unless the human owner explicitly re-scopes the pilot.
 - Mutating CLI/integration commands should support dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
 - Every accepted requirement needs at least a testable scenario; Gherkin is required only when a scenario is intended to be executable or exported to AT.
 - Confluence comment handling must be modeled as an explicit feedback loop with owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes before publication automation is implemented.
@@ -53,4 +61,5 @@ This is the active glossary and domain-boundary file for teamSddCli.
 - Stable identifiers such as requirement, scenario, journey, and screen IDs are not translated.
 - Manual edits to generated Confluence content are not accepted as requirement changes; accepted feedback must become a Git/OpenSpec change or PR update.
 - If content describes product behavior, it belongs in OpenSpec; if it describes project organization, operations, contribution workflow, architecture rationale, or temporary phase planning, it belongs in `docs/`.
+- Project memory should stay evidence-backed, concise, and routed to the right source of truth: behavior contracts in OpenSpec, operating and architecture context in `docs/`, and generated/validated maps where possible.
 - Existing legacy behavior is documented gradually through legacy baseline notes or baseline changes; the process must not pretend unsupported legacy areas are fully specified.

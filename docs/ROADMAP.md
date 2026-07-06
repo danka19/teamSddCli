@@ -10,6 +10,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - New ideas during active phase work must go through change intake before they alter scope or plans.
 - Accepted architecture critique decisions from 2026-07-03 narrow the first MVP to a thin change flow before Jira, QA/AT, Confluence publication, and role inbox automation.
 - Human decisions from 2026-07-06 approve the risk-oriented thin/full artifact matrix, role-appropriate waiver ownership, and keeping Jira, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers.
+- Human decisions from 2026-07-06 also accept the project memory triad, existing-code onboarding flow, deterministic `sync`/`upgrade` maintenance direction, PDLC explanation narrative, and explicit exclusion of deploy/Zephyr/Jira/Confluence from the first MVP.
 - Update this file when phase status, gates, or scope changes.
 
 ## Phase 0. Project Foundation
@@ -41,6 +42,9 @@ Likely scope:
 - Plan the generated publication model for later Confluence work: generated change/capability/customer journey/release/technical appendix/screen gallery views, source metadata, source warnings, and links back to canonical Git/OpenSpec files.
 - Plan journey and screen traceability as future artifact contracts without making `journey.yaml`, `screens.yaml`, or screen assets mandatory for the first thin MVP.
 - Plan legacy baseline behavior for already-written code so future pilots can document observed behavior and gaps gradually.
+- Plan the project memory triad and documentation boundaries so agents and humans can orient through constitution/quality policy, project map, and OpenSpec changes/living specs without creating a second behavior source of truth.
+- Plan existing-code onboarding as `scan -> baseline -> map -> validate`, with read-only scan and deterministic validation where practical.
+- Plan deterministic `sync` and `upgrade` maintenance after the relevant repo topology/config and OpenSpec version policies are approved.
 - Define the first pilot as a thin flow and explicitly keep Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes out of MVP unless re-scoped by the human owner.
 
 Detailed plan:
@@ -102,6 +106,8 @@ Likely scope:
 - Generated publication model implementation after feedback-loop, source-warning, localization, and generated-view contracts are accepted.
 - Customer journey and screen/gallery generated views after journey/screen metadata contracts are proven.
 - Legacy baseline workflow for existing product areas when a pilot touches already-written behavior.
+- Project memory sync, project map drift checks, and template/spec-package upgrade migration after topology/config and OpenSpec version policies are accepted.
+- Analyst and QA onboarding materials after the role workflows and first thin flow are stable enough to explain without overpromising later integrations.
 - Jira task planning/creation after thin change archive works.
 - Role inbox hardening after task/status sources are stable.
 - QA/AT proposal and skeleton generation after scenario and traceability contracts are validated.

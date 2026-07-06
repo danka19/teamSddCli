@@ -54,6 +54,11 @@ Out of scope:
 - 2026-07-06: Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian and must route accepted feedback back into English Git/OpenSpec sources.
 - 2026-07-06: Add a future legacy baseline mode for already-written code so the team records observed behavior, gaps, risks, and regression scenarios gradually instead of retroactively creating full historical change packages.
 - 2026-07-06: Remove the stale historical architecture draft from the repository; current architecture decisions and product contracts live in `docs/`, `openspec/`, and accepted human decisions.
+- 2026-07-06: Plan a project memory triad for agent and team orientation: constitution/quality policy for rules and boundaries, project map for topology/config/repository map, and OpenSpec changes/living specs for behavior contracts.
+- 2026-07-06: Formalize existing-code onboarding as a future `scan -> baseline -> map -> validate` flow: scan is read-only, baseline records observed behavior/gaps/risks, map updates project memory, and validate checks memory against real code.
+- 2026-07-06: Plan `sync` and `upgrade` as deterministic maintenance, not agent magic: `sync` checks drift across project map, specs, traceability, and code evidence; `upgrade` migrates templates/spec-package versions only after the OpenSpec version policy is approved.
+- 2026-07-06: Use a PDLC narrative when explaining the process to the team: the goal is shared context from analysis through tasks, tests, verification, and publication, not merely faster code generation.
+- 2026-07-06: Keep deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP unless the human owner explicitly re-scopes the pilot.
 
 ## Architecture Sources
 
@@ -78,6 +83,9 @@ Important concepts preserved in current docs:
 - Workflow status: Jira or another task tracker.
 - Local process interface: `sdd CLI`.
 - Traceability path: requirement -> scenario -> dev task -> test case -> automated test.
+- Project memory triad: constitution/quality policy, project map, and OpenSpec changes/living specs.
+- Existing-code onboarding path: read-only scan -> legacy baseline -> project map update -> validation against real code.
+- Maintenance path: deterministic sync and upgrade checks after the related topology/config and OpenSpec version policies are approved.
 - Historical broad pilot picture: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
 
 The accepted MVP is narrower than the historical broad pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
