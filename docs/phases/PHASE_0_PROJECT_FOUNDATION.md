@@ -4,7 +4,7 @@ Status: in progress.
 
 ## Goal
 
-Prepare repository operating rules, documentation structure, initial roadmap, audit, verification checklist, and local Codex skills from the starter kit and `sdd_final_architecture.md`.
+Prepare repository operating rules, documentation structure, initial roadmap, audit, verification checklist, and workflow skill guidance from the starter kit and initial architecture bootstrap input.
 
 ## Work Items
 
@@ -13,7 +13,7 @@ Prepare repository operating rules, documentation structure, initial roadmap, au
 Objective:
 
 - Establish `AGENTS.md`, `docs/`, roadmap, audit, glossary, phase template, and project-local skills.
-- Preserve the source architecture document as the initial product reference.
+- Preserve the initial product decisions in durable docs and OpenSpec artifacts.
 - Record the OpenSpec/Markdown-first workflow, artifact boundaries, and AI/human responsibility split.
 
 Verification:

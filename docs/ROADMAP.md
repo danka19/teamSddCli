@@ -16,7 +16,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 Status: complete.
 
-Goal: prepare repository rules, documentation, environment notes, baseline product decisions, OpenSpec expectations, and verification habits from `sdd_final_architecture.md`.
+Goal: prepare repository rules, documentation, environment notes, baseline product decisions, OpenSpec expectations, and verification habits from the initial architecture bootstrap input.
 
 Quality gate:
 

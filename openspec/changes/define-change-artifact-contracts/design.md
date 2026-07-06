@@ -1,6 +1,6 @@
 ## Context
 
-The source architecture shows a complete package with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability. The accepted strategy narrows the first MVP to a thin change flow and requires deterministic guarantees without depending on AI.
+Current docs and OpenSpec proposals preserve the complete-package direction: proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability. The accepted strategy narrows the first MVP to a thin change flow and requires deterministic guarantees without depending on AI.
 
 ## Proposed Artifact Contract
 

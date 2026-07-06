@@ -8,7 +8,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 |---|---|---|
 | SDD | Spec-driven development workflow where requirements, design, tasks, tests, and traceability are driven from structured spec artifacts. | In this project the SDD workflow is OpenSpec/Markdown-first. |
 | OpenSpec/Markdown-first | Architecture choice where structured OpenSpec and Markdown files in Git are canonical. | Confluence is generated from this source, not edited as the source. |
-| `team-specs` | Central repository expected to store requirements, OpenSpec changes, living specs, QA/AT plans, traceability, registry, templates, publishing config, and schemas. | It is described by the architecture document; this repository currently contains the CLI project foundation, not the real `team-specs` repo. |
+| `team-specs` | Central repository expected to store requirements, OpenSpec changes, living specs, QA/AT plans, traceability, registry, templates, publishing config, and schemas. | It is described by current docs and OpenSpec proposals; this repository currently contains the CLI project foundation, not the real `team-specs` repo. |
 | `sdd CLI` | Team-owned command-line process interface over OpenSpec, Git, Bitbucket, Jenkins, Jira/tracker, Confluence, and local AI tools. | It should automate workflow transitions, not replace OpenSpec CLI entirely. |
 | Change package | Per-change folder under `team-specs/openspec/changes/<change-id>/` with metadata, proposal, design, tasks, spec deltas, QA artifacts, automation plan, and traceability. | Central process object. |
 | Thin change | Lightweight change path for small bugfixes, refactors, and small behavior patches. | Future requirements must define the minimum artifacts; the first MVP uses this mode. |
@@ -48,7 +48,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 - Every accepted requirement needs at least a testable scenario; Gherkin is required only when a scenario is intended to be executable or exported to AT.
 - Confluence comment handling must be modeled as an explicit feedback loop with owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes before publication automation is implemented.
 - Avoid bidirectional synchronization between Confluence and Git unless a later accepted decision explicitly changes the architecture.
-- Do not infer real corporate repository URLs, owners, credentials, Confluence spaces, Jira projects, or Jenkins jobs from examples in the architecture document.
+- Do not infer real corporate repository URLs, owners, credentials, Confluence spaces, Jira projects, or Jenkins jobs from examples in docs, OpenSpec proposals, or historical drafts.
 - Canonical OpenSpec sources and stable IDs should be written in English; generated Confluence pages may be localized for the team and must link back to Git/OpenSpec.
 - Stable identifiers such as requirement, scenario, journey, and screen IDs are not translated.
 - Manual edits to generated Confluence content are not accepted as requirement changes; accepted feedback must become a Git/OpenSpec change or PR update.

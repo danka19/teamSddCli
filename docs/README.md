@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Project foundation from `sdd_final_architecture.md` has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. No custom `sdd` CLI exists yet.
+> Project foundation has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. No custom `sdd` CLI exists yet.
 
 ## Scope
 
@@ -31,7 +31,7 @@ Out of scope:
 
 ## Key Decisions
 
-- 2026-07-03: Use the existing `sdd_final_architecture.md` as the initial project source document.
+- 2026-07-03: Use the historical architecture draft as the initial bootstrap input.
 - 2026-07-03: Use OpenSpec/Markdown in Git as the canonical source and Confluence as a generated publication layer.
 - 2026-07-03: Automate artifact state transitions through CLI/CI rather than centralizing control in one autonomous agent.
 - 2026-07-03: Keep human ownership over approvals, merges, business decisions, correctness, and review outcomes.
@@ -53,14 +53,23 @@ Out of scope:
 - 2026-07-06: Treat Confluence publication as generated audience views, not raw OpenSpec 1:1 and not a separate MasterSpec source; generated pages must carry source commit, change/PR ID, timestamp, source warning, and links back to canonical Git/OpenSpec files.
 - 2026-07-06: Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian and must route accepted feedback back into English Git/OpenSpec sources.
 - 2026-07-06: Add a future legacy baseline mode for already-written code so the team records observed behavior, gaps, risks, and regression scenarios gradually instead of retroactively creating full historical change packages.
+- 2026-07-06: Remove the stale historical architecture draft from the repository; current architecture decisions and product contracts live in `docs/`, `openspec/`, and accepted human decisions.
 
-## Source Architecture
+## Architecture Sources
 
-The initial product architecture is documented in `sdd_final_architecture.md`.
+The historical architecture draft was removed on 2026-07-06 after its useful decisions had been captured in durable project documentation and Phase 1 OpenSpec proposals.
 
-A recorded critique of that architecture, with evaluation criteria, external comparison, recommendations (REC-001..REC-007), and alternative lightweight solution paths, lives in `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. Its recommendations are proposed planning inputs; only items already listed under Key Decisions are accepted.
+A recorded critique of that now-removed draft, with evaluation criteria, external comparison, recommendations (REC-001..REC-007), and alternative lightweight solution paths, lives in `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. Its recommendations are historical planning inputs; only items already listed under Key Decisions or accepted OpenSpec specs/changes are accepted.
 
-Important concepts from that document:
+Current architecture sources:
+
+- `docs/README.md` for product summary, scope, key decisions, and first valuable outcome.
+- `docs/CONTEXT.md` for canonical terms and boundary rules.
+- `docs/IMPLEMENTATION_STRATEGY.md` for the accepted no-custom-CLI-upfront delivery strategy.
+- `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
+- `openspec/changes/` and later `openspec/specs/` for proposed and accepted SDD workflow, artifact, traceability, waiver, documentation, and publication contracts.
+
+Important concepts preserved in current docs:
 
 - Canonical source: `team-specs` repository with `openspec/` artifacts.
 - Publication: generated Confluence pages from Markdown/OpenSpec.
@@ -69,9 +78,9 @@ Important concepts from that document:
 - Workflow status: Jira or another task tracker.
 - Local process interface: `sdd CLI`.
 - Traceability path: requirement -> scenario -> dev task -> test case -> automated test.
-- Original architecture pilot picture: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
+- Historical broad pilot picture: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
 
-The accepted MVP is narrower than the original architecture pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
+The accepted MVP is narrower than the historical broad pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
 
 ## First Valuable Outcome
 

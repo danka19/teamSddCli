@@ -2,7 +2,7 @@
 
 Status: accepted by the human owner on 2026-07-03.
 
-This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The full architecture in `sdd_final_architecture.md` remains the long-term target picture; this strategy defines how the process is delivered first.
+This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The historical architecture draft that originally motivated the project was removed on 2026-07-06 after current decisions moved into `docs/` and `openspec/`; this strategy defines how the process is delivered first.
 
 ## 1. Decision Summary
 
@@ -85,7 +85,7 @@ A trigger fires when the condition persists for two consecutive sprints after at
 | T5 | MCP is restricted or unavailable in the corporate environment | A packaged integration layer as MCP fallback |
 | T6 | U1 onboarding repeatedly fails for new team members | Unified UX entry point |
 
-Scope rule: when a trigger fires, build only the commands that answer that trigger, reusing the existing scripts as the CLI's internals. Re-evaluate the remaining triggers afterwards; the full CLI from `sdd_final_architecture.md` section 11 is assembled incrementally at most.
+Scope rule: when a trigger fires, build only the commands that answer that trigger, reusing the existing scripts as the CLI's internals. Re-evaluate the remaining triggers afterwards; any broader CLI surface is assembled incrementally from accepted docs and OpenSpec requirements, not from a separate architecture draft.
 
 ## 7. Review Cadence
 

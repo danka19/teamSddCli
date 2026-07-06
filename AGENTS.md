@@ -14,7 +14,7 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 2. `docs/README.md`
 3. `docs/00_FILE_STRUCTURE.md`
 4. `docs/ROADMAP.md`
-5. `sdd_final_architecture.md` before changing product scope, SDD workflow, CLI behavior, integration boundaries, or roadmap phases.
+5. `docs/IMPLEMENTATION_STRATEGY.md`, `docs/CONTEXT.md`, and relevant `openspec/` artifacts before changing product scope, SDD workflow, CLI behavior, integration boundaries, data contracts, or roadmap phases.
 6. Relevant `docs/phases/PHASE_*.md` when working by roadmap phase.
 7. `openspec/` before SDD/OpenSpec workflow changes, CLI behavior changes, process contract changes, or acceptance planning.
 8. Relevant `openspec/changes/<change-id>/` folder when working on an active proposed change.
@@ -29,7 +29,7 @@ Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc correc
 1. Quality, thoughtful design, safety, and architecture are more important than rushing.
 2. Project documentation must be written in English unless the human explicitly changes the project language.
 3. User-facing replies must be written in Russian unless the user explicitly asks for another language.
-4. The source architecture document is currently Russian; preserve its meaning and do not translate or rewrite it unless explicitly asked.
+4. The historical source architecture draft was removed on 2026-07-06 because it became stale; current architecture truth lives in `docs/`, `openspec/`, and accepted human decisions. Do not recreate a parallel architecture source without explicit human approval.
 5. At the end of every work session, before replying to the user, create a git commit when the project repository has intentional changes and `.git/` exists.
 6. After completing work, update documentation if the change affects CLI behavior, SDD workflow behavior, architecture, setup, operations, security, roadmap status, process contracts, or user-visible command/help text.
 7. If work follows roadmap steps, verify before changes that the current branch matches the active roadmap phase when the project is a git repository.

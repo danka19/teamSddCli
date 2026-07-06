@@ -7,7 +7,6 @@ This document is the repository map for agents and humans. Keep it current whene
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | Canonical operating guide for Codex and future agents |
-| `sdd_final_architecture.md` | Initial Russian source architecture for local team SDD automation |
 | `.env.example` | Versioned environment template with placeholders only |
 | `.gitignore` | Excludes secrets, local config, generated artifacts, and private data |
 | `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |

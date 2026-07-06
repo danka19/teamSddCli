@@ -4,7 +4,7 @@ Status: recorded review output. Recommendations are proposed inputs for Phase 1/
 
 Date: 2026-07-03.
 
-Source under review: `sdd_final_architecture.md` (v1.0).
+Source under review: historical architecture draft `sdd_final_architecture.md` (v1.0), removed from the repository on 2026-07-06 after current decisions moved into `docs/` and `openspec/`.
 
 ## 1. Evaluation Criteria
 
@@ -60,7 +60,7 @@ Interpretation: the concept is stronger than any found analog (none solve the te
 
 | ID | Recommendation | Rationale | Status |
 |---|---|---|---|
-| REC-001 | Keep the MVP narrowed to the spec-change loop (`sdd change new/validate/pr/archive` + basic traceability); align section 28 of `sdd_final_architecture.md`, which still lists Jira/Confluence/Jenkins in the "minimal start set" | External evidence confirms the accepted 2026-07-03 narrowing; value must be proven before integration spend | Accepted in spirit (matches existing decision); architecture doc alignment pending |
+| REC-001 | Keep the MVP narrowed to the spec-change loop (`sdd change new/validate/pr/archive` + basic traceability); remove stale broad-start guidance from the current source-of-truth path | External evidence confirms the accepted 2026-07-03 narrowing; value must be proven before integration spend | Accepted; stale architecture draft removed on 2026-07-06 |
 | REC-002 | Make `thin change` the default path; require `full change package` only for feature/API/cross-repo/high-risk changes. Track median change-preparation time and waiver share as process health metrics | Spec Kit experience shows heavy-by-default processes die in the first sprint; rising waiver share signals perceived bureaucracy | Proposed |
 | REC-003 | Do not build a Confluence publisher from scratch; wrap an existing markdown->Confluence tool (e.g. kovetskiy/mark or markdown-confluence) and keep only drift detection and page mapping custom | Mature tools already run this exact one-way model in CI; removes a large slice of K4 risk | Proposed |
 | REC-004 | Derive traceability instead of hand-editing it: generate `traceability.yaml` from tags in `.feature` files, PR links, and task ids in branches; humans resolve conflicts only | Manually maintained traceability matrices reliably degrade; derived ones survive | Proposed |
@@ -108,7 +108,7 @@ Start with A + B (conventions, skills, thin CI scripts, existing publisher, Jira
 
 1. Adopt REC-002..REC-007 as accepted decisions, or defer specific ones to Phase 1 planning.
 2. RESOLVED 2026-07-03: the human owner accepted the A+B combination (conventions + skills + thin scripts + standard tool features, no custom `sdd` CLI upfront) with explicit triggers for starting CLI development. Details, success criteria, and CLI triggers are recorded in `docs/IMPLEMENTATION_STRATEGY.md`.
-3. Approve aligning `sdd_final_architecture.md` section 28 with the narrowed MVP (REC-001) — the source document is otherwise preserved per project rules.
+3. Historical item superseded on 2026-07-06: stale architecture draft removed instead of being aligned in place; narrowed MVP lives in current docs and OpenSpec proposals.
 
 ## 6. Sources
 

@@ -47,4 +47,4 @@ The human-facing MVP lifecycle may be presented as `draft -> spec_review -> appr
 - A single lifecycle for every change can become heavy for small fixes, so the proposal keeps thin changes lightweight.
 - Too many lifecycle states can create busywork, so task creation, publication, and role inbox states stay outside the first MVP.
 - Archive is intentionally gated by a later human decision because it writes accepted living specs.
-- The source architecture and some generated-view examples mention richer approval/testing gates; those are later layers unless a human explicitly re-scopes the first MVP.
+- Some docs and generated-view examples mention richer approval/testing gates; those are later layers unless a human explicitly re-scopes the first MVP.

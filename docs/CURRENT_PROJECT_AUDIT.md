@@ -14,7 +14,7 @@ Last updated: 2026-07-06.
 | Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
 | Latest known commit before this audit update | `cde51ef` (`Consolidate workflow: global skills, thin CLAUDE.md, session-report rule`) |
 | GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
-| Source architecture document | `sdd_final_architecture.md` |
+| Architecture source of truth | Current decisions live in `docs/` and `openspec/`; stale historical architecture draft removed on 2026-07-06 |
 | Implementation source code | No custom `sdd` CLI source exists; deterministic script `scripts/validate_change.py` is present |
 | OpenSpec project artifacts | Present; 7 active proposed changes cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, and Confluence feedback/publication contracts |
 
@@ -23,8 +23,8 @@ Last updated: 2026-07-06.
 - Documentation starts in `docs/`.
 - Roadmap exists at `docs/ROADMAP.md`.
 - Agent work rules are recorded in `AGENTS.md`.
-- Project-local skills exist under `.codex/skills/`.
-- Initial architecture and implementation plan are in `sdd_final_architecture.md`.
+- Workflow skills are global (`~/.codex/skills`); this repository intentionally has no `.codex/skills/` directory.
+- Current architecture and implementation planning are in `docs/`, `openspec/`, and accepted human decisions.
 
 ## Verified Environment Evidence
 
@@ -52,10 +52,10 @@ Last updated: 2026-07-06.
 |---|---|---|---|
 | AUDIT-001 | Product scope is described at architecture level, and the 2026-07-03 accepted critique narrowed the first MVP, but accepted CLI requirements and acceptance criteria are only beginning to be captured as OpenSpec changes; no accepted living specs exist yet. | Phase 1 | open |
 | AUDIT-002 | Environment and verification commands for the future CLI runtime are not recorded because the implementation stack is undecided. | Phase 1/2 | open |
-| AUDIT-003 | Architecture decisions exist in `sdd_final_architecture.md`, but they are not yet split into decision records, specs, schemas, or implementation contracts. | Phase 1/2 | open |
+| AUDIT-003 | Historical architecture draft was removed after current decisions were captured in `docs/` and active OpenSpec proposals; accepted living specs are still pending Phase 1 archive/acceptance. | Phase 1/2 | closed |
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
 | AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is initialized with active change `add-change-template-validation`. | Phase 1 | closed |
-| AUDIT-006 | Examples in the architecture document include placeholder corporate repos, owners, Jira projects, and Confluence spaces; these must not be treated as real configuration without verification. | Phase 1/2 | open |
+| AUDIT-006 | Placeholder corporate repo/owner/Jira/Confluence/Jenkins examples from the removed historical draft must not be treated as real configuration. Current docs still forbid inferring real corporate configuration from examples. | Phase 1/2 | closed |
 | AUDIT-007 | Corporate environment specifics are unverified: GigaCode CLI capability against skill flows, MCP policy inside the corporate network, Bitbucket/Jenkins/Jira/Confluence versions, and network/artifact restrictions. Must be checked in the pre-transfer adaptation review. | Transfer phase | open |
 | AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
 | AUDIT-009 | `pre-commit` is not installed on the current machine, so the hook config cannot yet be executed end-to-end locally. | Phase 1/local environment | open |
@@ -85,6 +85,7 @@ Last updated: 2026-07-06.
 | 2026-07-06 | Treat Confluence as generated publication/read model with audience-oriented pages, source metadata, warnings, and links back to Git/OpenSpec; do not create a separate canonical MasterSpec. | Confluence publication proposals must generate views from living specs/change packages and route accepted feedback back through Git/OpenSpec. |
 | 2026-07-06 | Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian. | Documentation governance must preserve stable IDs, route Russian feedback back into English source changes, and plan a bilingual glossary. |
 | 2026-07-06 | Plan legacy baseline mode for already-written code. | Old behavior is documented gradually; full retroactive change packages are not required for historical changes, but touched legacy behavior needs observed/current behavior, proposed change, regression scenario, known gaps, and UI screenshots when affected. |
+| 2026-07-06 | Remove stale historical architecture draft from the repository. | Current architecture truth is `docs/`, `openspec/`, and accepted human decisions; agents must not use a parallel architecture file as a source of truth. |
 
 ## Audit Rules
 

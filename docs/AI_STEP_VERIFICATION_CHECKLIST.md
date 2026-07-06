@@ -9,7 +9,7 @@ Status: mandatory for future implementation work. If this checklist conflicts wi
 Before changing code or product documentation, confirm:
 
 - Current branch matches the active phase branch or the user approved a different branch.
-- `AGENTS.md`, `docs/README.md`, `docs/00_FILE_STRUCTURE.md`, `docs/ROADMAP.md`, `sdd_final_architecture.md` when changing SDD workflow or CLI behavior, the relevant phase plan, `openspec/` when SDD applies, `docs/CURRENT_PROJECT_AUDIT.md`, and this checklist were read.
+- `AGENTS.md`, `docs/README.md`, `docs/00_FILE_STRUCTURE.md`, `docs/ROADMAP.md`, `docs/IMPLEMENTATION_STRATEGY.md`, `docs/CONTEXT.md`, the relevant phase plan, `openspec/` when SDD applies, `docs/CURRENT_PROJECT_AUDIT.md`, and this checklist were read when changing SDD workflow, CLI behavior, product scope, or architecture.
 - The active `openspec/changes/<change-id>/` folder was read when work implements or plans a proposed change.
 - Task-specific audit, acceptance-gap, handoff, or planning documents were read.
 - Existing code and tests were searched for the concepts being changed.

@@ -12,7 +12,6 @@ Turn the architecture and accepted delivery strategy into executable requirement
 - `docs/README.md`
 - `docs/00_FILE_STRUCTURE.md`
 - `docs/ROADMAP.md`
-- `sdd_final_architecture.md`
 - `docs/IMPLEMENTATION_STRATEGY.md`
 - `docs/CURRENT_PROJECT_AUDIT.md`
 - `docs/AI_STEP_VERIFICATION_CHECKLIST.md`
@@ -71,6 +70,19 @@ Affected architecture:
 Data contract impact:
 Verification impact:
 Status:
+```
+
+```text
+Idea: Delete the stale historical architecture draft and make `docs/` plus `openspec/` the only current architecture sources.
+Source: Human instruction on 2026-07-06.
+Type: architecture_change, documentation_change
+Decision: adopt_now
+Reason: The old draft is no longer current and keeping it as a required source creates conflicting guidance; the project already stores accepted decisions and proposed contracts in durable docs and OpenSpec artifacts.
+Affected specs: None directly; existing OpenSpec proposals remain the current proposed behavior contracts.
+Affected architecture: Replaces the parallel historical architecture file with `docs/`, `openspec/`, and accepted human decisions as source-of-truth surfaces.
+Data contract impact: None to current artifact schemas; future data contracts must be derived from accepted OpenSpec requirements.
+Verification impact: Requires link/reference cleanup, strict OpenSpec validation, and repository status checks.
+Status: Adopted; `sdd_final_architecture.md` removed and references updated.
 ```
 
 ```text
@@ -355,7 +367,7 @@ Documentation updates:
 
 - Update this phase plan with proposal status and decision gate status.
 - Update audit if OpenSpec version, config location, or topology assumptions change known risks.
-- Do not change the source architecture document unless the human explicitly asks for that rewrite.
+- Do not create or depend on a parallel architecture source outside `docs/` and `openspec/`.
 
 Recommended subagents:
 
@@ -650,7 +662,7 @@ Recommended subagents:
 
 - worker: assemble readiness evidence and resolve small documentation gaps.
 - reviewer: inspect proposed specs for contradictions, missing tests, and acceptance gaps.
-- architecture-checker: verify alignment with the accepted implementation strategy and source architecture.
+- architecture-checker: verify alignment with the accepted implementation strategy, current docs, and OpenSpec proposals.
 - verification-checker: run final evidence commands and verify report completeness.
 
 Exit criteria:
