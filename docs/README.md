@@ -59,6 +59,7 @@ Out of scope:
 - 2026-07-06: Plan `sync` and `upgrade` as deterministic maintenance, not agent magic: `sync` checks drift across project map, specs, traceability, and code evidence; `upgrade` migrates templates/spec-package versions only after the OpenSpec version policy is approved.
 - 2026-07-06: Use a PDLC narrative when explaining the process to the team: the goal is shared context from analysis through tasks, tests, verification, and publication, not merely faster code generation.
 - 2026-07-06: Keep deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP unless the human owner explicitly re-scopes the pilot.
+- 2026-07-06: Use source ownership and write-once/reference-many documentation rules: OpenSpec owns behavior and acceptance, while docs, memory, role guides, and generated views reference canonical source IDs or metadata instead of carrying divergent copies.
 
 ## Architecture Sources
 
@@ -112,3 +113,4 @@ Future publication layers should generate audience-oriented views from canonical
 - `docs/CURRENT_PROJECT_AUDIT.md` is an active planning input and must be updated when findings are fixed or invalidated by evidence.
 - Detailed phase plans live under `docs/phases/` and must use `docs/phases/PHASE_PLAN_TEMPLATE.md`.
 - New human feedback that affects `sdd CLI` behavior, safety, command usability, SDD workflow, acceptance, or verification must be persisted in the correct durable document.
+- Behavior and acceptance text should not be duplicated across specs, docs, project memory, generated views, or role guides; derived surfaces link to the canonical owner and are fixed or regenerated when they drift.

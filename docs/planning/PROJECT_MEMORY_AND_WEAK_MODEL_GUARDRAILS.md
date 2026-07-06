@@ -122,6 +122,55 @@ Potential deterministic checks:
 - project map versus repository reality check;
 - OpenSpec requirement/scenario reference checker.
 
+### Source Ownership And Deduplication
+
+The project should use a write-once, reference-many rule. Each type of knowledge has one canonical owner; every other surface links to that owner, summarizes it as orientation, or is generated from it.
+
+| Information | Canonical owner | Allowed derived surfaces |
+|---|---|---|
+| Requirements, scenarios, acceptance criteria, lifecycle behavior, traceability behavior, waiver behavior | OpenSpec changes or accepted living specs | Generated Confluence views, role guides, project memory links, reports |
+| SDD process lifecycle, artifact rules, quality gates, version and waiver policies | OpenSpec changes/specs after approval | `docs/` explanations, generated views, onboarding guides |
+| Architecture decisions, rationale, constraints, phase direction, audit findings | `docs/`, phase plans, audit notes, accepted human decisions | OpenSpec design sections when behavior contracts are affected |
+| Repository topology, modules, owners, integrations, reusable assets | Project map or future generated/validated memory artifact | Read packs, navigation index, role guides |
+| Agent operating instructions | `AGENTS.md` plus global skills | Task launchers, read packs, final-report checklists |
+| Analyst/QA/developer onboarding | Role guides that link to canonical sources | Generated team-facing views |
+| Task execution status | Jira/tracker or future workflow/status surface after task automation exists | Reports, dashboards, generated summaries |
+| Publication content | Generated view from Git/OpenSpec/docs sources | Confluence pages and other read-only publication surfaces |
+
+Boundary rule:
+
+- Behavior belongs in OpenSpec.
+- Docs explain why, how, where, and who is responsible.
+- Project memory helps find and compare sources; it must not restate a second normative version.
+- Generated views are read models; they must carry source links or metadata and should be regenerated instead of hand-edited as truth.
+
+Practical rules:
+
+- Do not copy full requirement, scenario, or acceptance text into docs, role guides, or memory notes.
+- Reference stable requirement/scenario/change IDs and source paths instead.
+- Role guides describe how a role uses canonical artifacts; they do not redefine process rules.
+- Project memory may summarize orientation, but normative statements must point back to the canonical owner.
+- Generated views should include source commit, source file or change ID, generated timestamp, and a source warning.
+
+Conflict resolution:
+
+- OpenSpec wins for behavior, artifact contracts, acceptance, traceability, waivers, and lifecycle rules.
+- `docs/CONTEXT.md` wins for canonical project terminology until a term is promoted into accepted OpenSpec behavior.
+- `AGENTS.md` wins for agent operating rules.
+- Phase plans win for temporary active-phase execution rules.
+- If a derived surface conflicts with its canonical owner, fix or regenerate the derived surface instead of editing multiple copies.
+
+Weak-model read packs should make this explicit. A read pack should say which file is canonical for each topic, which files are supporting context, and which summaries are generated or advisory.
+
+Future deterministic checks:
+
+- a normative-language linter that flags `SHALL`, `MUST`, `must`, `should`, `required`, `shall not`, and Russian equivalents outside allowed canonical files;
+- a source-link check for memory notes, role guides, and generated views;
+- a duplicate-requirement check that rejects the same stable requirement ID with different text in multiple places;
+- a generated-block check that prevents hand edits to generated publication sections;
+- a stale-memory check requiring `last_verified` or a review trigger for project map and memory entries;
+- an orphan-doc check requiring owner, purpose, and an index/map link for each maintained document.
+
 ## 3. Weak Model Guardrails
 
 Corporate AI may be Qwen/DeepSeek-class or GigaCode-class, so the system must assume weaker reasoning, weaker instruction following, and weaker long-context discipline than Claude or GPT.

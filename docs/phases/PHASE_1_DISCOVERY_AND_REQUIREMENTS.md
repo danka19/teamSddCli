@@ -176,6 +176,19 @@ Verification impact: Future work should define checks for stale docs, orphaned d
 Status: Queued for Phase 1 exploration/proposal; detailed planning input captured in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`; not accepted as implementation scope yet.
 ```
 
+```text
+Idea: Add source ownership and deduplication rules so OpenSpec, docs, role guides, generated views, read packs, and project memory do not carry divergent copies of the same behavior.
+Source: Human question on 2026-07-06 about preventing specs and documentation from duplicating or containing different versions of the same information.
+Type: documentation_change, verification_change, architecture_change, data_contract_change
+Decision: adopt_now
+Reason: The process relies on Git/OpenSpec as canonical behavior truth, but weak local models and human onboarding surfaces need summaries; without explicit source ownership, those summaries can become conflicting second sources of truth.
+Affected specs: Proposed change `define-documentation-governance`; future project-memory, generated-view, role-guide, and read-pack contracts.
+Affected architecture: Reinforces OpenSpec as behavior/acceptance owner, `docs/` as rationale/context owner, `AGENTS.md` as agent operating-rule owner, and memory/generated views as read models.
+Data contract impact: Future schemas should support source IDs, source paths, source commit or generated timestamp, canonical/supporting/advisory/evidence labels, and stale-review metadata; no deterministic schema is accepted now.
+Verification impact: Requires OpenSpec strict validation and docs diff checks now; future checks should cover normative-language linting, duplicate requirement IDs, source links, generated-block edits, stale memory, and orphan docs.
+Status: Adopted into documentation-governance proposal, context, planning docs, checklist, audit, and this phase plan; deterministic enforcement remains future work.
+```
+
 ## Work Items
 
 Gate rule:

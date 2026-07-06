@@ -5,6 +5,7 @@
 - [x] 1.3 Reference work item 1.1 commit evidence where relevant.
 - [x] 1.4 Expand completion evidence expectations for manual checks, documentation/no-doc rationale, residual risk, skills, and subagent role/token reporting.
 - [x] 1.5 Add canonical-language, localized generated-view, and docs-versus-OpenSpec responsibility scenarios from human feedback.
+- [x] 1.6 Add source ownership, deduplication, generated-view metadata, conflict-resolution, and weak-model read-pack scenarios from human feedback.
 
 ## 2. Later Decision And Implementation
 

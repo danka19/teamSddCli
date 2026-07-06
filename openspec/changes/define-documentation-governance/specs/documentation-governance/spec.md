@@ -77,3 +77,26 @@ The SDD process SHALL keep product behavior contracts separate from project oper
 #### Scenario: Project organization belongs in docs
 - **WHEN** documentation describes project overview, repository map, setup, runbook, contribution workflow, glossary, integration map, operations, release/rollback notes, legacy baseline notes, AI/agent guide, or decision rationale
 - **THEN** it is recorded in `docs/` or another explicitly mapped project documentation location
+
+### Requirement: Source ownership and deduplication
+The SDD process SHALL prevent OpenSpec, docs, role guides, generated views, and project memory from carrying divergent maintained copies of the same behavior or process rule.
+
+#### Scenario: Behavior text is referenced rather than duplicated
+- **WHEN** docs, role guides, generated views, project memory, or read packs describe accepted or proposed behavior, artifact contracts, lifecycle rules, traceability rules, waiver rules, scenarios, or acceptance criteria
+- **THEN** they reference the canonical OpenSpec requirement, scenario, change ID, or source path instead of maintaining a separate normative copy
+
+#### Scenario: Derived view includes source metadata
+- **WHEN** a generated view, role guide, memory note, or read pack summarizes canonical behavior or process rules
+- **THEN** it includes enough source metadata for review, such as source file, stable ID, change ID, source commit, generated timestamp, or source warning according to the artifact type
+
+#### Scenario: Conflict is resolved from the canonical owner
+- **WHEN** a derived surface conflicts with its canonical source
+- **THEN** the worker treats the canonical source as authoritative and fixes or regenerates the derived surface instead of editing multiple maintained copies by hand
+
+#### Scenario: Weak-model read pack identifies authority
+- **WHEN** a task read pack is generated for a local AI model
+- **THEN** it labels each referenced artifact as canonical, supporting context, generated/advisory, or evidence so weaker models know which source to trust
+
+#### Scenario: Documentation drift checks are planned
+- **WHEN** documentation governance checks are implemented
+- **THEN** they include checks for normative language outside canonical files, duplicate requirement IDs with divergent text, missing source links, hand-edited generated blocks, stale memory entries, and orphan maintained documents where practical

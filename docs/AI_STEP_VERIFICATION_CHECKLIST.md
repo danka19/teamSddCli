@@ -80,6 +80,10 @@ Before reporting completion, ask:
 - Does `docs/CONTEXT.md` need a glossary term?
 - Does this checklist need an update because the human introduced a new verification habit or rejected behavior?
 - Did any new phase idea need an intake record, OpenSpec change, audit note, or deferred backlog entry?
+- Does this change duplicate requirement, scenario, acceptance, lifecycle, traceability, waiver, or artifact-contract behavior outside OpenSpec instead of linking to canonical IDs or source paths?
+- If docs, specs, memory, role guides, or generated views disagree, was the canonical owner identified and the derived surface corrected?
+- Do generated or role-facing summaries include source links, source metadata, or a clear pointer back to the canonical artifact?
+- Does any weak-model read pack identify which files are canonical and which are supporting, generated, advisory, or evidence?
 
 ## Final Report Check
 
