@@ -10,7 +10,7 @@ Work item 1.1 commit `6fbde43` created the first deterministic validator but int
 - Define when a waiver can satisfy a missing artifact or verification expectation.
 - Define negative cases where waivers are insufficient.
 - Keep waiver approval human-owned and audit-ready.
-- Record decision notes for work item 1.3 before the policy becomes binding.
+- Record the 2026-07-06 human decision approving role-appropriate approvers and minimum evidence.
 
 ## Capabilities
 
@@ -26,4 +26,5 @@ Work item 1.1 commit `6fbde43` created the first deterministic validator but int
 
 - Adds proposed OpenSpec requirements only.
 - Does not modify validator behavior, templates, tests, or accepted specs.
-- Creates a decision packet for Phase 1 work item 1.3.
+- Records the approved Phase 1 work item 1.3 waiver decision.
+- Leaves deterministic waiver enforcement to later approved implementation work.

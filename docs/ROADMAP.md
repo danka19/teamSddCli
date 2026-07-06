@@ -9,6 +9,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
 - Accepted architecture critique decisions from 2026-07-03 narrow the first MVP to a thin change flow before Jira, QA/AT, Confluence publication, and role inbox automation.
+- Human decisions from 2026-07-06 approve the risk-oriented thin/full artifact matrix, role-appropriate waiver ownership, and keeping Jira, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers.
 - Update this file when phase status, gates, or scope changes.
 
 ## Phase 0. Project Foundation
@@ -37,6 +38,9 @@ Likely scope:
 - Create initial OpenSpec specs for change lifecycle, artifact contracts, traceability, waiver behavior, and documentation governance.
 - Define `thin change` and `full change package` modes, including which artifacts are required for each mode.
 - Specify the Confluence feedback loop before implementing publication: responsible owner, service expectation, unresolved feedback, and accepted/rejected comment handling.
+- Plan the generated publication model for later Confluence work: generated change/capability/customer journey/release/technical appendix/screen gallery views, source metadata, source warnings, and links back to canonical Git/OpenSpec files.
+- Plan journey and screen traceability as future artifact contracts without making `journey.yaml`, `screens.yaml`, or screen assets mandatory for the first thin MVP.
+- Plan legacy baseline behavior for already-written code so future pilots can document observed behavior and gaps gradually.
 - Define the first pilot as a thin flow and explicitly keep Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes out of MVP unless re-scoped by the human owner.
 
 Detailed plan:
@@ -45,7 +49,8 @@ Detailed plan:
 
 Current work:
 
-- First deterministic artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
+- Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
+- Current Phase 1 work: proposed OpenSpec contracts and decision gates for lifecycle, artifact matrix, traceability, waivers, documentation governance, Confluence feedback/publication model, repo topology/config, and OpenSpec version policy before template or validator expansion.
 
 ## Phase 2. Architecture And Data Model
 
@@ -94,6 +99,9 @@ Likely scope:
 
 - Waiver policy and evidence requirements.
 - Confluence preview/final publication after the feedback loop contract is specified.
+- Generated publication model implementation after feedback-loop, source-warning, localization, and generated-view contracts are accepted.
+- Customer journey and screen/gallery generated views after journey/screen metadata contracts are proven.
+- Legacy baseline workflow for existing product areas when a pilot touches already-written behavior.
 - Jira task planning/creation after thin change archive works.
 - Role inbox hardening after task/status sources are stable.
 - QA/AT proposal and skeleton generation after scenario and traceability contracts are validated.

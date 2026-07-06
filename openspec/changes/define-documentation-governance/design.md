@@ -16,6 +16,14 @@ Documentation governance applies when work changes any of the following:
 
 For each change, the worker records whether docs need updates, updates the narrowest relevant docs, and reports verification evidence. Proposed behavior stays in `openspec/changes/`; accepted behavior is written under `openspec/specs/` only after explicit human archive/acceptance approval.
 
+Canonical OpenSpec sources and stable IDs should be written in English by default. Generated Confluence pages may be localized in Russian for team readability, but localized generated views are not requirement sources. Russian feedback must be dispositioned and, when accepted, converted back into the English Git/OpenSpec source.
+
+Documentation responsibility is split by content type:
+
+- product behavior and accepted/proposed process behavior belongs in OpenSpec;
+- project organization, setup, operations, contribution workflow, integration maps, architecture overviews, legacy notes, AI/agent guidance, and decision rationale belongs in `docs/`;
+- temporary execution planning belongs in phase plans or OpenSpec change tasks until accepted.
+
 ## AI Verification Checklist Evidence
 
 Before claiming completion, the worker records the commands run, blockers, manual checks, documentation updates or a no-documentation-update rationale, residual manual-verification risks, skills used, and subagents used with role names and token counts when available. The AI checklist is evidence of process discipline, not a substitute for deterministic checks or human approval.
@@ -29,3 +37,4 @@ For deterministic behavior changes, OpenSpec scenarios or acceptance examples ar
 - Governance can become busywork if every minor note requires broad documentation updates, so this proposal requires the narrowest relevant durable document.
 - Documentation can drift if final reports mention decisions that never reach durable artifacts, so human feedback classification remains required.
 - The proposal must not create accepted specs until the final human archive gate.
+- Localization can introduce drift, so generated Russian pages must link back to canonical English sources and preserve stable IDs.

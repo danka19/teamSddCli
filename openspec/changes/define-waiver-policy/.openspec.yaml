@@ -6,8 +6,10 @@ capabilities:
   - waiver-policy
 evidence:
   - "Work item 1.1 commit 6fbde43 Add phase 1 change template validation gate"
+approved_human_decisions:
+  - "2026-07-06: Use Option A role-appropriate waiver approvers."
+  - "2026-07-06: Use Option A minimum waiver evidence: reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when risk remains."
 pending_human_approval:
-  - "Waiver approver roles for work item 1.3"
-  - "Minimum waiver evidence for missing tests, automation, documentation, and artifact requirements"
+  - "Final archive/accepted-spec approval before promotion"
 notes:
   - "Draft proposal only; do not archive or promote to accepted specs before explicit human approval."

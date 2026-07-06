@@ -45,9 +45,39 @@ The artifact contract SHALL distinguish required artifacts that may be waived fr
 - **WHEN** a full package does not need a new test case or automation artifact
 - **THEN** the missing artifact is acceptable only when an approved waiver records reason, evidence, and approver
 
-### Requirement: Artifact matrix approval gate
-The artifact matrix SHALL remain proposed until the Phase 1 human decision gate approves it.
+### Requirement: Artifact matrix acceptance status
+The artifact matrix approved in Phase 1 work item 1.3 SHALL remain proposed OpenSpec behavior until the final archive/accepted-spec gate promotes it.
 
-#### Scenario: Proposal does not change deterministic behavior immediately
+#### Scenario: Approved matrix does not change deterministic behavior immediately
 - **WHEN** this proposed change is drafted
 - **THEN** templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item
+
+#### Scenario: Accepted specs still require final archive approval
+- **WHEN** the Phase 1 artifact matrix has human decision approval
+- **THEN** it is still not written to accepted `openspec/specs/` until the final human archive or acceptance gate approves promotion
+
+#### Scenario: First MVP excludes later workflow artifacts
+- **WHEN** a thin first-MVP change has no Jira task, Confluence publication, QA/AT proposal, or role inbox evidence
+- **THEN** the artifact contract does not treat those missing later-layer artifacts as review or archive blockers
+
+### Requirement: Future journey and screen artifacts
+The artifact contract SHALL plan journey and screen artifacts as later contracts without making them mandatory for the first thin MVP.
+
+#### Scenario: UI full package may reference screen catalog
+- **WHEN** a future UI-impacting full package includes screen evidence
+- **THEN** the package may store versioned screen assets and a screen catalog linking screen IDs to capability, journey, journey step, state, source, requirements, and scenarios
+
+#### Scenario: Thin MVP does not require screen catalog
+- **WHEN** a first-MVP thin change has no journey or screen catalog
+- **THEN** the absence of `journey.yaml`, `screens.yaml`, or `assets/screens/` does not block the package
+
+### Requirement: Legacy baseline artifact mode
+The artifact contract SHALL allow gradual documentation of already-written behavior without requiring full retroactive packages for historical changes.
+
+#### Scenario: Legacy change records observed behavior
+- **WHEN** a change touches legacy behavior that is not fully covered by living specs
+- **THEN** the package records observed existing behavior, proposed changed behavior, regression scenario, known gaps, and screenshots when UI behavior is affected
+
+#### Scenario: Historical changes do not require retroactive full package
+- **WHEN** behavior already exists before SDD coverage
+- **THEN** the process does not require a full historical change package unless a later human decision explicitly scopes a baseline/discovery effort

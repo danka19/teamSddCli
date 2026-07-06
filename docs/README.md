@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Project foundation from `sdd_final_architecture.md` has moved into Phase 1. The first deterministic process artifact is being added: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. No custom `sdd` CLI exists yet.
+> Project foundation from `sdd_final_architecture.md` has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. No custom `sdd` CLI exists yet.
 
 ## Scope
 
@@ -47,6 +47,12 @@ Out of scope:
 - 2026-07-03: Jira and Confluence access from AI tooling goes through MCP servers, not hand-written REST integrations; MCP was tested by the human owner and works. Automating local MCP server provisioning for employees is a planned experiment.
 - 2026-07-03: Development happens in an external environment (Claude Code available) and is later transferred to the internal corporate environment where only GigaCode CLI is available; all process guarantees must live in the deterministic layer, skills must be tool-agnostic markdown, and an environment adaptation review is required before transfer.
 - 2026-07-03: Start Phase 1 with the deterministic base artifact `templates/change/` + `scripts/validate_change.py` + `.pre-commit-config.yaml`, tracked as project OpenSpec change `add-change-template-validation`.
+- 2026-07-06: Approve the risk-oriented thin/full artifact matrix as the Phase 1 default: thin behavior-changing SDD changes need intent, OpenSpec delta, scenario, traceability, and verification evidence; full packages are required for new feature, public API, mobile, cross-repo, data/security, high-risk, or broad behavior changes.
+- 2026-07-06: Approve role-appropriate waiver ownership: QA owners approve test evidence gaps, AT owners approve automation gaps, tech leads approve design/risk exceptions, and analyst/product owners approve scope or documentation exceptions, with reason, affected requirement/scenario, approver, substitute evidence, and follow-up/expiry when risk remains.
+- 2026-07-06: Reconfirm the first MVP boundary: Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes remain outside the first MVP and are planned as later layers.
+- 2026-07-06: Treat Confluence publication as generated audience views, not raw OpenSpec 1:1 and not a separate MasterSpec source; generated pages must carry source commit, change/PR ID, timestamp, source warning, and links back to canonical Git/OpenSpec files.
+- 2026-07-06: Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian and must route accepted feedback back into English Git/OpenSpec sources.
+- 2026-07-06: Add a future legacy baseline mode for already-written code so the team records observed behavior, gaps, risks, and regression scenarios gradually instead of retroactively creating full historical change packages.
 
 ## Source Architecture
 
@@ -63,7 +69,9 @@ Important concepts from that document:
 - Workflow status: Jira or another task tracker.
 - Local process interface: `sdd CLI`.
 - Traceability path: requirement -> scenario -> dev task -> test case -> automated test.
-- Minimal pilot: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
+- Original architecture pilot picture: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
+
+The accepted MVP is narrower than the original architecture pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
 
 ## First Valuable Outcome
 
@@ -76,6 +84,8 @@ The first useful delivery should prove the smallest thin SDD change flow at pilo
 5. Preserve enough traceability to show requirement -> scenario -> change evidence.
 
 Confluence publication, Jira task creation, QA/AT proposal generation, and role inboxes remain important, but they are not required for the first MVP unless the human owner explicitly re-scopes the pilot.
+
+Future publication layers should generate audience-oriented views from canonical OpenSpec sources, including change pages, capability pages, customer journey pages, release/change summaries, technical appendices, and screen galleries where useful. Those generated views must preserve traceability back to requirements, scenarios, source commits, and verification evidence.
 
 ## Documentation Rules
 

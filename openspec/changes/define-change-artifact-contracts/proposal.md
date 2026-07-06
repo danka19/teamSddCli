@@ -9,7 +9,8 @@ Work item 1.1 commit `6fbde43` proves a baseline template and validator can chec
 - Define proposed artifact groups for thin changes and full change packages.
 - Mark which artifacts are required, optional, deferred, or waiver-eligible.
 - Reserve full package defaults for feature, API, mobile, cross-repo, high-risk, or broad behavior changes.
-- Record decision notes for work item 1.3 before the matrix becomes binding.
+- Record the 2026-07-06 human decision approving the risk-oriented matrix and first-MVP boundary.
+- Plan later journey, screen, Jira, Confluence, QA/AT, and role-inbox layers without making them first-MVP requirements.
 - Keep AI assistance as drafting/review support only.
 
 ## Capabilities
@@ -26,4 +27,5 @@ Work item 1.1 commit `6fbde43` proves a baseline template and validator can chec
 
 - Adds proposed OpenSpec requirements only.
 - Does not change `templates/change/`, `scripts/validate_change.py`, tests, or pre-commit behavior.
-- Creates a decision packet for Phase 1 work item 1.3.
+- Records the approved Phase 1 work item 1.3 decisions.
+- Leaves deterministic template and validator expansion to later approved implementation work.

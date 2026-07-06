@@ -51,3 +51,29 @@ The SDD process SHALL preserve durable human feedback that changes product behav
 #### Scenario: Feedback affects accepted behavior
 - **WHEN** the human changes already accepted behavior
 - **THEN** the worker records the change through the accepted-spec workflow and does not silently edit accepted specs without the required approval gate
+
+### Requirement: Canonical language and localized generated views
+The SDD process SHALL distinguish canonical spec language from localized generated publication.
+
+#### Scenario: Canonical OpenSpec source uses English
+- **WHEN** a requirement, scenario, stable ID, or OpenSpec source artifact is created
+- **THEN** it is written in English by default and stable IDs are not translated
+
+#### Scenario: Generated Confluence view may be localized
+- **WHEN** a Confluence page is generated for Russian-speaking readers
+- **THEN** the page may be localized in Russian while clearly linking to the canonical Git/OpenSpec source
+
+#### Scenario: Localized feedback returns to canonical source
+- **WHEN** Russian feedback on a generated view is accepted
+- **THEN** the resulting requirement or process change is recorded in the canonical English OpenSpec source or a Git/OpenSpec PR
+
+### Requirement: Docs versus OpenSpec responsibility
+The SDD process SHALL keep product behavior contracts separate from project operating documentation.
+
+#### Scenario: Product behavior belongs in OpenSpec
+- **WHEN** documentation describes accepted or proposed product behavior, SDD workflow behavior, artifact contracts, traceability, waiver behavior, or acceptance criteria
+- **THEN** the behavior is recorded in accepted or proposed OpenSpec artifacts according to its approval state
+
+#### Scenario: Project organization belongs in docs
+- **WHEN** documentation describes project overview, repository map, setup, runbook, contribution workflow, glossary, integration map, operations, release/rollback notes, legacy baseline notes, AI/agent guide, or decision rationale
+- **THEN** it is recorded in `docs/` or another explicitly mapped project documentation location

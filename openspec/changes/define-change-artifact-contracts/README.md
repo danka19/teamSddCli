@@ -2,4 +2,4 @@
 
 Draft OpenSpec proposal for thin and full SDD change artifact contracts.
 
-This change defines proposed required, optional, and waiver-eligible artifacts. The final matrix is intentionally pending human approval in Phase 1 work item 1.3 before validator, template, or CI behavior treats it as binding.
+This change defines proposed required, optional, and waiver-eligible artifacts. The human owner approved the Phase 1 default matrix on 2026-07-06; validator, template, or CI behavior still changes only in later implementation work items.

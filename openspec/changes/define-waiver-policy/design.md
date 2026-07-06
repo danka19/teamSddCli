@@ -15,39 +15,39 @@ A waiver should record:
 - date and optional expiry/review point
 - replacement verification or follow-up action where applicable
 
-## Decision Notes For Work Item 1.3
+## Approved Human Decisions From Work Item 1.3
 
-Pending human approval: waiver approvers and minimum evidence must be approved before this policy becomes binding.
+Human approval recorded on 2026-07-06: use role-appropriate approvers and require reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when residual risk remains. Any validator, template, or CI behavior still changes only in later implementation work items after the related proposal updates are reviewed.
 
 ### Decision: Waiver Approver Model
 
-Option A, recommended: Require role-appropriate approval. QA lead or QA owner approves missing test evidence, AT owner approves missing automation evidence, tech lead approves technical risk/design exceptions, and analyst or product owner approves scope/documentation exceptions. This keeps decisions close to accountable owners.
+Approved Option A: Require role-appropriate approval. QA lead or QA owner approves missing test evidence, AT owner approves missing automation evidence, tech lead approves technical risk/design exceptions, and analyst or product owner approves scope/documentation exceptions. This keeps decisions close to accountable owners.
 
-Option B: Require a single process owner approval for all waivers. This is simpler to administer but can bottleneck work and may separate approval from domain expertise.
+Rejected for the default policy: Require a single process owner approval for all waivers. This is simpler to administer but can bottleneck work and may separate approval from domain expertise.
 
-Option C: Allow change author approval for low-risk thin changes. This is fastest but weakens audit value and risks self-approved quality gaps.
+Rejected for the default policy: Allow change author approval for low-risk thin changes. This is fastest but weakens audit value and risks self-approved quality gaps.
 
-Consequence if unresolved: validators cannot safely decide whether a waiver is approved or only a note.
+Implementation consequence: validators can later check approver-role fields and required evidence shape, but human review remains responsible for whether the evidence is actually adequate.
 
 ### Decision: Minimum Waiver Evidence
 
-Option A, recommended: Require reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when risk remains. This provides auditability without requiring a formal board for every exception.
+Approved Option A: Require reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when risk remains. This provides auditability without requiring a formal board for every exception.
 
-Option B: Require reason and approver only. This is lightweight but may not prove why the skipped artifact or check is safe.
+Rejected for the default policy: Require reason and approver only. This is lightweight but may not prove why the skipped artifact or check is safe.
 
-Option C: Require full risk acceptance records for every waiver. This is rigorous but too heavy for small changes and likely encourages avoidance.
+Rejected for the default policy: Require full risk acceptance records for every waiver. This is rigorous but too heavy for small changes and likely encourages avoidance.
 
-Consequence if unresolved: archive readiness cannot reliably distinguish justified exceptions from missing quality work.
+Implementation consequence: archive readiness can later distinguish justified exceptions from missing work by requiring the approved fields and follow-up/expiry when residual risk remains.
 
 ### Decision: Waiver Scope
 
-Option A, recommended: Allow waivers for missing tests, deferred automation, non-applicable QA/AT artifacts, documentation timing exceptions, or refactor no-behavior-change evidence. Never allow waivers to replace human approval, hide a behavior change, bypass security/compliance review, or make a behavior requirement archive-ready without scenario or acceptance-example coverage. If work is truly not behavior-changing, it must be reclassified or handled through the limited no-spec-change rationale instead of waiving behavior scenario coverage.
+Approved Option A: Allow waivers for missing tests, deferred automation, non-applicable QA/AT artifacts, documentation timing exceptions, or refactor no-behavior-change evidence. Never allow waivers to replace human approval, hide a behavior change, bypass security/compliance review, or make a behavior requirement archive-ready without scenario or acceptance-example coverage. If work is truly not behavior-changing, it must be reclassified or handled through the limited no-spec-change rationale instead of waiving behavior scenario coverage.
 
-Option B: Allow waivers for any deterministic gate with approver evidence. This is flexible but can undermine core SDD guarantees.
+Rejected for the default policy: Allow waivers for any deterministic gate with approver evidence. This is flexible but can undermine core SDD guarantees.
 
-Option C: Disallow waivers in the first MVP. This is simple but too rigid for real pilot work.
+Rejected for the default policy: Disallow waivers in the first MVP. This is simple but too rigid for real pilot work.
 
-Consequence if unresolved: Phase 1 cannot define negative validator cases for waiver misuse.
+Implementation consequence: Phase 1 can define negative validator cases for waiver misuse in later validator work.
 
 ## Deterministic Gates Versus AI Assistance
 

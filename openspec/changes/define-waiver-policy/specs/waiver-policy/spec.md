@@ -22,6 +22,14 @@ The SDD process SHALL keep waiver approval human-owned and role-appropriate.
 - **WHEN** a waiver covers missing test, automation, design, or documentation evidence
 - **THEN** the approver role matches the obligation being waived according to the approved policy
 
+#### Scenario: Role-appropriate approver is required
+- **WHEN** a waiver covers missing QA test evidence, missing AT automation evidence, technical design or risk evidence, or scope or documentation evidence
+- **THEN** the approver is respectively the QA owner, AT owner, tech lead, or analyst/product owner according to the approved Phase 1 policy
+
+#### Scenario: Residual risk requires follow-up
+- **WHEN** a waiver leaves residual risk after substitute evidence is recorded
+- **THEN** the waiver includes follow-up or expiry information before archive readiness
+
 ### Requirement: Waiver negative cases
 The SDD process SHALL define cases where a waiver is not sufficient.
 
@@ -41,9 +49,13 @@ The SDD process SHALL define cases where a waiver is not sufficient.
 - **WHEN** a change triggers security, compliance, data, public API, mobile release, or cross-repo risk review
 - **THEN** a waiver cannot bypass the review unless the approved policy explicitly names the permitted exception and approver
 
-### Requirement: Waiver policy approval gate
-The waiver policy SHALL remain proposed until the Phase 1 human decision gate approves approvers and minimum evidence.
+### Requirement: Waiver policy acceptance status
+The waiver approver and evidence policy approved in Phase 1 work item 1.3 SHALL remain proposed OpenSpec behavior until the final archive/accepted-spec gate promotes it.
 
-#### Scenario: Proposal does not change validator behavior immediately
+#### Scenario: Approved policy does not change validator behavior immediately
 - **WHEN** this proposed change is drafted
 - **THEN** existing templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item
+
+#### Scenario: Accepted specs still require final archive approval
+- **WHEN** the Phase 1 waiver policy has human decision approval
+- **THEN** it is still not written to accepted `openspec/specs/` until the final human archive or acceptance gate approves promotion

@@ -38,8 +38,13 @@ Deterministic gates validate structure, required artifacts, OpenSpec deltas, tra
 
 Humans own approval, merge, correctness, accepted scope, and final archive. CI or future scripts may block invalid transitions, but they must not approve requirements, decide business correctness, or silently resolve unresolved decisions.
 
+Generated Confluence views may display lifecycle, approval, and verification status in later publication flows, but Confluence is not the status owner. Displayed status must be derived from source artifacts such as the change package, PR/review surface, CI evidence, tracker state after tasks exist, or approved waiver records.
+
+The human-facing MVP lifecycle may be presented as `draft -> spec_review -> approved -> implemented -> archived`, while internal validation may use the more explicit `in_implementation` and `ready_to_archive` states to separate active work from archive readiness. The final naming should be reviewed during Phase 1 acceptance readiness before accepted specs are promoted.
+
 ## Risks / Trade-offs
 
 - A single lifecycle for every change can become heavy for small fixes, so the proposal keeps thin changes lightweight.
 - Too many lifecycle states can create busywork, so task creation, publication, and role inbox states stay outside the first MVP.
 - Archive is intentionally gated by a later human decision because it writes accepted living specs.
+- The source architecture and some generated-view examples mention richer approval/testing gates; those are later layers unless a human explicitly re-scopes the first MVP.

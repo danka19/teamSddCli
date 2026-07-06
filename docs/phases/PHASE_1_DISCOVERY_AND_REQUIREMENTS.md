@@ -112,6 +112,32 @@ Verification impact: Future human gates must be checked for clear Russian questi
 Status: Adopted into `AGENTS.md`, `docs/AI_STEP_VERIFICATION_CHECKLIST.md`, and this phase plan.
 ```
 
+```text
+Idea: Record the human's 2026-07-06 decisions approving Option A for the thin/full artifact matrix, Option A for waiver ownership/evidence, and Option A for keeping Jira, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers.
+Source: Human reply on 2026-07-06 to the Phase 1 work item 1.3 decision packet.
+Type: scope_refinement, data_contract_change, documentation_change, acceptance_criterion
+Decision: adopt_now
+Reason: These answers close the work item 1.3 human decision gate and unblock proposal synchronization while preserving the accepted thin-MVP boundary.
+Affected specs: Proposed changes `define-change-artifact-contracts`, `define-waiver-policy`, `define-change-lifecycle`, `define-traceability-contract`, `define-documentation-governance`, and planned `define-confluence-feedback-loop`.
+Affected architecture: Preserves Git/OpenSpec canonical source, no-custom-CLI-upfront delivery, deterministic-gates-first, and human-owned approval boundaries; confirms Confluence/Jira/QA/AT/role inbox remain planned later layers, not first-MVP dependencies.
+Data contract impact: Approves the risk-oriented thin/full artifact matrix and role-appropriate waiver fields/approvers; plans future journey/screen, publication, localization, and legacy-baseline contracts without making them first-MVP blockers.
+Verification impact: OpenSpec proposal scenarios and tasks must be updated; scripts/templates/validator tests are not changed until later implementation work items.
+Status: Adopted into project docs, active OpenSpec proposals, audit, and this phase plan; deterministic enforcement remains queued.
+```
+
+```text
+Idea: Add generated Confluence publication/read-model, feedback disposition, canonical-language/localized-view, journey/screen, legacy-baseline, and docs-vs-OpenSpec responsibility rules from the attached summary.
+Source: Human attachment on 2026-07-06.
+Type: architecture_change, data_contract_change, documentation_change, workflow_behavior_rule, acceptance_criterion
+Decision: queue_current_phase
+Reason: The ideas are important for Phase 1 proposals and future publication/traceability/artifact contracts, but they must not expand the first MVP or require immediate validator/template changes.
+Affected specs: Proposed changes `define-confluence-feedback-loop`, `define-documentation-governance`, `define-change-artifact-contracts`, `define-traceability-contract`, and `define-change-lifecycle`.
+Affected architecture: Reinforces Git/OpenSpec/Markdown as canonical source, Confluence as generated publication/read model, no bidirectional sync, and no custom Jira/Confluence REST clients from the AI layer.
+Data contract impact: Plans source metadata, feedback dispositions, generated view types, journey/screen metadata, legacy baseline evidence, canonical language, and docs-vs-specs routing; schemas remain future work.
+Verification impact: Requires OpenSpec strict validation and docs diff checks now; no Confluence/Jira/QA/AT/template/validator tests are required until implementation work changes deterministic artifacts.
+Status: Queued into current Phase 1 proposals and later work items; not implemented as first-MVP behavior.
+```
+
 ## Work Items
 
 Gate rule:
@@ -180,7 +206,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.2 Draft Core OpenSpec Proposal Set For Lifecycle, Artifacts, Traceability, Waivers, And Documentation Governance
 
-Status: drafted in this branch; reviewer, architecture-checker, and verification-checker gates passed after fix review; pending human decision gate 1.3.
+Status: drafted in this branch; reviewer, architecture-checker, and verification-checker gates passed after fix review; human decision gate 1.3 completed on 2026-07-06.
 
 Objective:
 
@@ -242,14 +268,15 @@ OpenSpec and acceptance evidence:
   - `define-waiver-policy`
   - `define-documentation-governance`
 - Work item 1.1 implementation evidence referenced where relevant: commit `6fbde43 Add phase 1 change template validation gate`.
-- Decision blockers carried into work item 1.3:
-  - final thin vs full artifact matrix;
-  - waiver approver model and minimum evidence;
-  - confirmation that Jira and Confluence remain outside the first MVP unless explicitly re-scoped;
-  - confirmation that QA/AT proposal generation and role inboxes remain outside the first MVP and are not 1.3 MVP alternatives because they depend on later scenario, traceability, and task-source contracts unless the human explicitly re-scopes.
+- Decision blockers carried into work item 1.3 and completed on 2026-07-06:
+  - final thin vs full artifact matrix: approved Option A risk-oriented matrix;
+  - waiver approver model and minimum evidence: approved Option A role-appropriate approvers and evidence;
+  - MVP boundary: approved Option A keeping Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers.
 - Gate evidence: worker draft, reviewer, architecture-checker, verification-checker, fix worker, and re-review gates completed in the current Codex run before committing item 1.2.
 
 ### 1.3 Human Decision Gate: Artifact Matrix, Waivers, And MVP Boundary
+
+Status: completed; human approved the recommended defaults on 2026-07-06.
 
 Objective:
 
@@ -290,6 +317,12 @@ Exit criteria:
   - waiver policy approvers/evidence;
   - confirming Jira/Confluence/QA/AT/role inbox remain outside MVP.
 - If the human does not approve, downstream implementation work waits or the plan is revised through change intake.
+
+Human decision record:
+
+- Artifact matrix: approved Option A, the risk-oriented matrix. Thin behavior-changing SDD changes require intent/proposal, OpenSpec delta, scenario coverage, basic traceability, and verification evidence. Full packages are required for new features, public API, mobile, cross-repo, data/security, high-risk, high-rollback-cost, or broad behavior changes. A limited no-spec-change rationale is allowed only for docs-only, refactor, or no-behavior-change maintenance with human reviewer approval and replacement evidence.
+- Waiver policy: approved Option A, role-appropriate approvers and evidence. QA owners approve test evidence gaps, AT owners approve automation gaps, tech leads approve design/risk exceptions, and analyst/product owners approve scope or documentation exceptions. Required evidence includes reason, affected requirement/scenario, approver, substitute evidence, and follow-up/expiry when residual risk remains.
+- MVP boundary: approved Option A. Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes remain outside the first MVP and are planned as later layers.
 
 OpenSpec and acceptance evidence:
 
@@ -389,6 +422,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.6 Draft Confluence Feedback Loop Proposal
 
+Status: drafted in this branch as part of the 2026-07-06 docs/proposal synchronization pass; pending focused review and the later human decision gate 1.7.
+
 Objective:
 
 - Draft the proposed Confluence feedback loop contract before any publication, preview, or comment-handling automation is implemented.
@@ -427,6 +462,12 @@ Exit criteria:
 - Draft proposal includes 2-3 feedback-owner/SLA/unresolved-comment options with a recommended default for the later human gate.
 - Draft explicitly keeps Confluence as generated view, not source of truth.
 - No publication automation is added in this work item.
+
+Current draft notes:
+
+- `define-confluence-feedback-loop` covers Confluence as generated read/publication model, generated page source metadata, source warnings, accepted/rejected/deferred/duplicate comment dispositions, unresolved blocker behavior, and evidence-backed approval/testing status display.
+- The proposal intentionally includes generated publication model basics rather than creating a separate accepted MasterSpec source.
+- Publication automation, preview publishing, comment synchronization, and generated gallery implementation remain outside the first MVP.
 
 OpenSpec and acceptance evidence:
 
@@ -673,14 +714,14 @@ OpenSpec and acceptance evidence:
 - Phase 1 is ready for human acceptance/archive review only when the proposed OpenSpec changes for lifecycle, artifact contracts, traceability, waivers, documentation governance, repo topology/config, Confluence feedback loop, and OpenSpec version policy have been drafted, validated, reviewed, and explicitly stopped at the final human archive gate.
 - Phase 1 is complete only after explicit human approval plus a separate verified archive/accepted-spec execution step.
 - No proposed OpenSpec change may be archived into accepted specs without explicit human approval.
-- No template or validator expansion may implement a final artifact matrix, waiver contract, topology/config assumption, or OpenSpec version policy before its human decision gate is approved.
+- No template or validator expansion may implement any final contract before the corresponding human decision gate is approved. The artifact matrix and waiver gates were approved on 2026-07-06; topology/config and OpenSpec version gates remain pending.
 
 ## Human Decisions
 
-- Final thin vs full artifact matrix.
-- First supported repo topology/config format.
-- Waiver policy approvers/evidence.
-- Confluence feedback loop owner/SLA/unresolved comments.
-- OpenSpec version pin/upgrade policy.
-- Confirming Jira/Confluence/QA/AT/role inbox remain outside MVP.
-- Before archiving OpenSpec changes into accepted specs.
+- Completed 2026-07-06: final thin vs full artifact matrix, approved as Option A risk-oriented matrix.
+- Completed 2026-07-06: waiver policy approvers/evidence, approved as Option A role-appropriate approvers and evidence.
+- Completed 2026-07-06: Jira task automation, Confluence publication, QA/AT proposal generation, and role inbox remain outside the first MVP and are planned as later layers.
+- Open: first supported repo topology/config format.
+- Open: Confluence feedback loop owner/SLA/unresolved comments.
+- Open: OpenSpec version pin/upgrade policy.
+- Open: before archiving OpenSpec changes into accepted specs.

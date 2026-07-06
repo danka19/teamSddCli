@@ -2,7 +2,7 @@
 
 Status: active.
 
-Last updated: 2026-07-03.
+Last updated: 2026-07-06.
 
 ## Repository Baseline
 
@@ -12,11 +12,11 @@ Last updated: 2026-07-03.
 | Git repository | Initialized locally on 2026-07-03 |
 | Current branch | `phase-1/change-template-validation` |
 | Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
-| Latest known commit before this audit update | `b11b61e` (`Accept no-custom-CLI delivery strategy with metrics, CLI triggers, MCP and dual-environment decisions`) |
+| Latest known commit before this audit update | `cde51ef` (`Consolidate workflow: global skills, thin CLAUDE.md, session-report rule`) |
 | GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
 | Source architecture document | `sdd_final_architecture.md` |
 | Implementation source code | No custom `sdd` CLI source exists; deterministic script `scripts/validate_change.py` is present |
-| OpenSpec project artifacts | Present; active change `add-change-template-validation` tracks the first deterministic artifact gate |
+| OpenSpec project artifacts | Present; 7 active proposed changes cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, and Confluence feedback/publication contracts |
 
 ## Useful Starting Points
 
@@ -39,7 +39,7 @@ Last updated: 2026-07-03.
 | Focused validator tests | `python -m pytest tests/test_validate_change.py -v` passed 5 tests; `pytest.ini` uses repository-local `.pytest-tmp` because the default Windows temp pytest directory is not accessible in this environment |
 | Template validation | `python scripts/validate_change.py --allow-placeholders templates/change` passed; `python scripts/validate_change.py templates/change` rejected placeholder values as expected |
 | OpenSpec CLI installed | `openspec --version` returned `1.4.1` |
-| OpenSpec validation | `openspec list` showed active change `add-change-template-validation`; `openspec list --specs` showed no accepted specs yet; `openspec validate --all --strict` passed 1 item and failed 0 |
+| OpenSpec validation | `openspec list` showed 7 active changes; `openspec list --specs` showed no accepted specs yet; `openspec validate --all --strict` passed 7 items and failed 0 |
 | Pre-commit installed | Not available on PATH during Phase 1 artifact work; config is present but end-to-end hook execution still needs tool installation |
 | Local app/server available | No local app/server found; this work item is script/template based |
 | Documentation bootstrap | `project-starter-kit` created `AGENTS.md`, `docs/`, `.codex/skills/`, `.gitignore`, and `.env.example` |
@@ -59,6 +59,10 @@ Last updated: 2026-07-03.
 | AUDIT-007 | Corporate environment specifics are unverified: GigaCode CLI capability against skill flows, MCP policy inside the corporate network, Bitbucket/Jenkins/Jira/Confluence versions, and network/artifact restrictions. Must be checked in the pre-transfer adaptation review. | Transfer phase | open |
 | AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
 | AUDIT-009 | `pre-commit` is not installed on the current machine, so the hook config cannot yet be executed end-to-end locally. | Phase 1/local environment | open |
+| AUDIT-010 | The generated Confluence publication model is planned, but feedback-loop ownership, SLA, unresolved-comment behavior, localization, and source-warning contracts are not accepted yet; publication automation must remain blocked until those contracts are approved. | Phase 1/4 | open |
+| AUDIT-011 | Journey and screen artifacts are now planned future contracts, but `journey.yaml`, `screens.yaml`, screen asset storage, and generated gallery views are not implemented or validated. | Phase 1/4 | open |
+| AUDIT-012 | Legacy baseline mode is planned for already-written code, but no accepted workflow or template exists yet for baseline changes, observed behavior, known gaps, or legacy coverage risk reporting. | Phase 1/4 | open |
+| AUDIT-013 | Canonical OpenSpec language is now English by default and generated Confluence may be localized to Russian, but no bilingual glossary or translation review process exists yet. | Phase 1/4 | open |
 
 ## Accepted Human Decisions
 
@@ -75,6 +79,12 @@ Last updated: 2026-07-03.
 | 2026-07-03 | Jira/Confluence access from AI tooling via MCP only (verified working by the human owner); no custom REST clients; automating local MCP server provisioning is a planned experiment. | Integration specs must define MCP usage boundaries, not API client contracts. |
 | 2026-07-03 | Develop in the external environment (Claude Code) first, then transfer to the corporate environment where only GigaCode CLI is available. | Gates must never depend on the AI layer; skills stay tool-agnostic; an environment adaptation review is required before transfer. |
 | 2026-07-03 | The first Phase 1 artifact is `templates/change/` + `scripts/validate_change.py` + `.pre-commit-config.yaml`, on branch `phase-1/change-template-validation`, tracked by OpenSpec change `add-change-template-validation`. | Phase 1 starts with deterministic templates and validation before broader specs, integrations, or custom CLI work. |
+| 2026-07-06 | Approve the Phase 1 risk-oriented thin/full artifact matrix default. | Thin behavior-changing SDD changes require intent, OpenSpec delta, scenarios, basic traceability, and verification evidence; full packages are required for new features, public API, mobile, cross-repo, data/security, high-risk, or broad behavior changes. |
+| 2026-07-06 | Approve role-appropriate waiver approvers and minimum evidence. | Waivers require the responsible role owner, affected requirement/scenario, reason, substitute evidence, and follow-up/expiry when residual risk remains. |
+| 2026-07-06 | Reconfirm Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP, with the rest planned as later layers. | Phase 1/3 must not implement those integrations in the thin MVP; Phase 1 may define proposals and future contracts for them. |
+| 2026-07-06 | Treat Confluence as generated publication/read model with audience-oriented pages, source metadata, warnings, and links back to Git/OpenSpec; do not create a separate canonical MasterSpec. | Confluence publication proposals must generate views from living specs/change packages and route accepted feedback back through Git/OpenSpec. |
+| 2026-07-06 | Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian. | Documentation governance must preserve stable IDs, route Russian feedback back into English source changes, and plan a bilingual glossary. |
+| 2026-07-06 | Plan legacy baseline mode for already-written code. | Old behavior is documented gradually; full retroactive change packages are not required for historical changes, but touched legacy behavior needs observed/current behavior, proposed change, regression scenario, known gaps, and UI screenshots when affected. |
 
 ## Audit Rules
 

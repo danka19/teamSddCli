@@ -55,3 +55,18 @@ The first lifecycle implementation SHALL stay focused on the thin change flow un
 #### Scenario: Deferred integrations are not lifecycle blockers
 - **WHEN** a thin MVP change has no Jira task automation, Confluence publication, QA/AT proposal generation, or role inbox evidence
 - **THEN** the lifecycle proposal does not treat those deferred integrations as required blockers for the first MVP
+
+### Requirement: Derived approval and verification display
+The SDD process SHALL distinguish lifecycle source-of-truth state from generated displays of that state.
+
+#### Scenario: Confluence displays but does not own approval state
+- **WHEN** a generated Confluence view displays lifecycle, approval, or verification status
+- **THEN** the displayed state is derived from source artifacts such as the change package, PR/review surface, CI evidence, tracker state after tasks exist, or approved waiver records
+
+#### Scenario: Generated view cannot approve transition
+- **WHEN** a generated Confluence page shows that all displayed status rows are green
+- **THEN** the page does not replace human approval, merge approval, final archive approval, or deterministic checks required by the lifecycle
+
+#### Scenario: Public lifecycle can be simpler than internal readiness
+- **WHEN** the process is explained to business or stakeholder readers
+- **THEN** it may use the simplified lifecycle `draft -> spec_review -> approved -> implemented -> archived` while internal validation may separately track implementation and archive-readiness evidence
