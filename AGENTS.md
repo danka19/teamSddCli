@@ -20,6 +20,8 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 8. Relevant `openspec/changes/<change-id>/` folder when working on an active proposed change.
 9. `docs/CURRENT_PROJECT_AUDIT.md` before trusting existing implementation or setup state.
 10. `docs/AI_STEP_VERIFICATION_CHECKLIST.md` before implementation, verification, or completion reporting.
+
+Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc corrections, quick questions) read only `AGENTS.md` plus the files the task actually touches. The full read order is mandatory for phase work, architecture, data contract, or product behavior changes.
 11. Only topic documents related to the current task.
 
 ## Project Rules
@@ -31,7 +33,7 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 5. At the end of every work session, before replying to the user, create a git commit when the project repository has intentional changes and `.git/` exists.
 6. After completing work, update documentation if the change affects CLI behavior, SDD workflow behavior, architecture, setup, operations, security, roadmap status, process contracts, or user-visible command/help text.
 7. If work follows roadmap steps, verify before changes that the current branch matches the active roadmap phase when the project is a git repository.
-8. User-facing reports must include: task, what was done, decisions and judgments, important details, project changes, end-user changes, checks, manual verification, manual-verification risks, skills used, and subagents used with role names and token counts when available.
+8. End-of-session reports follow the global `session-report` skill: short mode for bounded tasks, full mode for phase work items, multi-file features, or changes to architecture, data contracts, security, or product behavior.
 9. Reports must be self-contained enough that the human understands the result without opening changed files.
 10. Treat human feedback as durable project knowledge. Persist product rules, rejected behavior, acceptance criteria, verification habits, and open decisions in the correct docs.
 11. Before implementation, map affected OpenSpec requirements or change deltas to acceptance scenarios and verification evidence for the relevant CLI command, workflow transition, integration, or artifact schema. If automated tests do not exist, record manual verification steps and residual risk.
@@ -43,7 +45,7 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 
 ## User-Facing Report Style
 
-- Final reports must be more detailed than a terse status note when work involved decisions, tradeoffs, verification, documentation, architecture, or code changes.
+- Follow the global `session-report` skill for structure and mode selection (short vs full).
 - Use clear Markdown section headers in Russian so the answer does not read as one plain-text block.
 - Prefer Russian section headers equivalent to: Task, What was done, Decisions and judgments, Important details, Project changes, End-user changes, Checks, Manual verification, Risks and limitations, Documentation, Commit, Skills, Subagents, and Next step.
 - In the Decisions and judgments section, explain why the chosen path was taken, what alternatives were implicitly rejected, and what assumptions mattered.
@@ -52,14 +54,19 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 - Always include a `Next step` section in substantive final reports. For quick no-change answers, include at least a concise next-step sentence.
 - If the human asked for a recommendation or "what is better", the answer must compare the practical options, give the recommended path, explain tradeoffs and risks, and clearly separate advice from any actions taken.
 
-## Project-Local Skills
+## Global Skills
 
-- For architecture planning, use `.codex/skills/architecture-planner/`.
-- For new ideas, fixes, scope changes, architecture notes, artifact/process contract changes, integration changes, or verification requests that appear during an active phase, use `.codex/skills/phase-change-intake/` before changing the plan.
-- For phase planning, use `.codex/skills/phase-planner/`.
-- For one phase work item at a time, use `.codex/skills/phase-step-runner/`.
-- For full phase execution with worker/reviewer/checker roles, use `.codex/skills/phase-full-runner/`.
-- At the start of planning or phase execution work, state which project-local skill is being used and why.
+Workflow skills are global (`~/.codex/skills`); this repository has no `.codex/skills/`.
+
+- For architecture planning, use `architecture-planner`.
+- For new ideas, fixes, scope changes, architecture notes, artifact/process contract changes, integration changes, or verification requests that appear during an active phase, use `phase-change-intake` before changing the plan.
+- For phase planning, use `phase-planner`.
+- For one phase work item at a time, use `phase-step-runner`.
+- For full phase execution with worker/reviewer/checker roles, use `phase-full-runner`.
+- For SDD/OpenSpec workflow, use `openspec-propose`, `openspec-apply-change`, `openspec-sync-specs`, `openspec-archive-change`, `openspec-explore`.
+- For delegating a bounded task to Claude, use `handoff-to-claude`; handoff files live in `docs/handoffs/`.
+- For end-of-session reporting, use `session-report`; for doc/reality reconciliation, use `doc-sync-audit`.
+- At the start of planning or phase execution work, state which skill is being used and why.
 - When creating a phase implementation plan, follow `docs/phases/PHASE_PLAN_TEMPLATE.md`.
 - Planning from `docs/ROADMAP.md` alone is forbidden.
 - OpenSpec artifacts under `openspec/` are the source of truth for accepted/proposed `sdd CLI` behavior, SDD workflow requirements, artifact contracts, and acceptance criteria.

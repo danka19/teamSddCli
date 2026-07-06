@@ -12,7 +12,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `.gitignore` | Excludes secrets, local config, generated artifacts, and private data |
 | `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |
 | `pytest.ini` | Pytest configuration; uses a repository-local temp folder for this Windows workspace |
-| `.codex/skills/` | Project-local skills for architecture planning and phase execution |
+| `docs/handoffs/` | Bounded task handoffs to Claude (global `handoff-to-claude` skill) |
 | `openspec/` | Project OpenSpec changes and accepted specs for teamSddCli behavior |
 | `templates/` | Copyable SDD process templates |
 | `scripts/` | Deterministic local validation and process scripts |
@@ -69,12 +69,6 @@ These paths are expected by the documented SDD workflow but do not exist yet in 
 | `src/` | Future CLI implementation source |
 | `schemas/` | Future schemas for `change.yaml`, registries, traceability, and config |
 
-## Project-Local Skills
+## Skills
 
-| Path | Purpose |
-|---|---|
-| `.codex/skills/architecture-planner/SKILL.md` | Plan or revise architecture decisions from current docs and implementation evidence |
-| `.codex/skills/phase-change-intake/SKILL.md` | Triage new ideas, fixes, scope changes, and verification requests during active phase work |
-| `.codex/skills/phase-planner/SKILL.md` | Create detailed phase plans |
-| `.codex/skills/phase-step-runner/SKILL.md` | Execute one phase work item |
-| `.codex/skills/phase-full-runner/SKILL.md` | Coordinate full phase execution with worker/reviewer/checker roles |
+Workflow skills are global (`~/.codex/skills`): architecture-planner, phase-planner, phase-step-runner, phase-full-runner, phase-change-intake, openspec-*, handoff-to-claude, session-report, doc-sync-audit. This repository intentionally has no `.codex/skills/` directory.

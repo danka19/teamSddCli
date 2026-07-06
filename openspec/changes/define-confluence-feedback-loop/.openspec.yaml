@@ -1,0 +1,12 @@
+id: define-confluence-feedback-loop
+status: proposed
+phase: "Phase 1 Discovery And Requirements"
+work_item: "1.6"
+capabilities:
+  - confluence-feedback-loop
+evidence:
+  - "Human decisions on 2026-07-06: keep Confluence publication outside first MVP, but plan generated publication and feedback-loop contracts."
+pending_human_approval:
+  - "Confluence feedback loop owner, service expectation/SLA, and unresolved-comment behavior for work item 1.7"
+notes:
+  - "Draft proposal only; do not implement publication automation or promote to accepted specs before explicit human approval."

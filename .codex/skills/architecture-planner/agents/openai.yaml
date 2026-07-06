@@ -1,4 +1,0 @@
-interface:
-  display_name: "Architecture Planner"
-  short_description: "Plan architecture from docs, code, and audit evidence"
-  default_prompt: "Use $architecture-planner to plan the architecture for the next project phase."

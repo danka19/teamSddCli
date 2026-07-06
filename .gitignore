@@ -20,3 +20,6 @@ private-specs/
 tracker-exports/
 confluence-exports/
 context-packs/
+
+# Claude Code local settings
+.claude/settings.local.json

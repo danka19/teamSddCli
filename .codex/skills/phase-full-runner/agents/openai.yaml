@@ -1,4 +1,0 @@
-interface:
-  display_name: "Phase Full Runner"
-  short_description: "Run a full phase with reviewer/checker roles"
-  default_prompt: "Use $phase-full-runner to execute this phase end to end with verification."
