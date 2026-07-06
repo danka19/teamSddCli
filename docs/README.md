@@ -72,6 +72,7 @@ Current architecture sources:
 - `docs/CONTEXT.md` for canonical terms and boundary rules.
 - `docs/IMPLEMENTATION_STRATEGY.md` for the accepted no-custom-CLI-upfront delivery strategy.
 - `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
+- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued planning input on project memory, Graphify-like navigation, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability.
 - `openspec/changes/` and later `openspec/specs/` for proposed and accepted SDD workflow, artifact, traceability, waiver, documentation, and publication contracts.
 
 Important concepts preserved in current docs:

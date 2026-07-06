@@ -23,6 +23,7 @@ Last updated: 2026-07-06.
 - Documentation starts in `docs/`.
 - Roadmap exists at `docs/ROADMAP.md`.
 - Agent work rules are recorded in `AGENTS.md`.
+- Project memory and weak-model planning input is recorded in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`.
 - Workflow skills are global (`~/.codex/skills`); this repository intentionally has no `.codex/skills/` directory.
 - Current architecture and implementation planning are in `docs/`, `openspec/`, and accepted human decisions.
 
@@ -63,7 +64,7 @@ Last updated: 2026-07-06.
 | AUDIT-011 | Journey and screen artifacts are now planned future contracts, but `journey.yaml`, `screens.yaml`, screen asset storage, and generated gallery views are not implemented or validated. | Phase 1/4 | open |
 | AUDIT-012 | Legacy baseline mode is planned for already-written code, but no accepted workflow or template exists yet for baseline changes, observed behavior, known gaps, or legacy coverage risk reporting. | Phase 1/4 | open |
 | AUDIT-013 | Canonical OpenSpec language is now English by default and generated Confluence may be localized to Russian, but no bilingual glossary or translation review process exists yet. | Phase 1/4 | open |
-| AUDIT-014 | Project memory, documentation quality controls, weak-model guardrails, repeated-error memory, spec-questioning workflow, and analyst/QA onboarding are important but not yet specified as accepted contracts or deterministic checks. | Phase 1/4 | open |
+| AUDIT-014 | Project memory, documentation quality controls, weak-model guardrails, repeated-error memory, spec-questioning workflow, and analyst/QA onboarding are captured as planning input, but not yet specified as accepted OpenSpec contracts or deterministic checks. | Phase 1/4 | open |
 
 ## Accepted Human Decisions
 
@@ -92,6 +93,7 @@ Last updated: 2026-07-06.
 | 2026-07-06 | Plan `sync` and `upgrade` as deterministic maintenance, not AI-only skills. | Sync should detect drift across project map, specs, traceability, and code evidence; upgrade should migrate templates/spec-package versions only after the OpenSpec version policy is approved. |
 | 2026-07-06 | Use a PDLC narrative when presenting the process to the team. | The process should be explained as shared context from analysis through tasks, tests, verification, and publication, not merely faster code generation. |
 | 2026-07-06 | Keep deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP. | Phase 1/3 must not make those integrations first-MVP blockers unless the human owner explicitly re-scopes the pilot. |
+| 2026-07-06 | Record Graphify-like navigation, documentation boundary, weak-model support, repeated-error memory, spec-questioning, and QA/analyst usability as mandatory planning input. | Future project-memory or weak-model proposals must start from `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` before choosing schemas, tools, skills, or implementation scope. |
 
 ## Audit Rules
 

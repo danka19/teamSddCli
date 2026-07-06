@@ -173,7 +173,7 @@ Affected specs: Proposed documentation-governance behavior, future repo topology
 Affected architecture: Points toward deterministic navigation/indexing, concise evidence-backed memory, generated or validated project maps, reusable failure-pattern records, and a spec-questioning workflow before implementation planning.
 Data contract impact: Possible future contracts for memory index, known failure records, role guides, documentation lint rules, and spec-question prompts; no data contract is accepted yet.
 Verification impact: Future work should define checks for stale docs, orphaned docs, unreferenced memory entries, repeated failure recurrence, and role walkthrough evidence for QA/analyst usability.
-Status: Queued for Phase 1 exploration/proposal; not accepted as implementation scope yet.
+Status: Queued for Phase 1 exploration/proposal; detailed planning input captured in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`; not accepted as implementation scope yet.
 ```
 
 ## Work Items

@@ -50,6 +50,7 @@ Likely scope:
 Detailed plan:
 
 - `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md`
+- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued project-memory and weak-model planning input that may become a later OpenSpec proposal.
 
 Current work:
 
