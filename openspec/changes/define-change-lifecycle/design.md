@@ -40,7 +40,7 @@ Humans own approval, merge, correctness, accepted scope, and final archive. CI o
 
 Generated Confluence views may display lifecycle, approval, and verification status in later publication flows, but Confluence is not the status owner. Displayed status must be derived from source artifacts such as the change package, PR/review surface, CI evidence, tracker state after tasks exist, or approved waiver records.
 
-The human-facing MVP lifecycle may be presented as `draft -> spec_review -> approved -> implemented -> archived`, while internal validation may use the more explicit `in_implementation` and `ready_to_archive` states to separate active work from archive readiness. The final naming should be reviewed during Phase 1 acceptance readiness before accepted specs are promoted.
+The human-facing MVP lifecycle may be presented as `draft -> spec_review -> approved -> implemented -> archived`, while internal validation uses the more explicit `in_implementation` and `ready_to_archive` states to separate active work from archive readiness. Decision recorded 2026-07-06: the six internal states are canonical for accepted specs and deterministic validation; the simplified naming applies only to generated business-facing views.
 
 ## Risks / Trade-offs
 
@@ -48,3 +48,4 @@ The human-facing MVP lifecycle may be presented as `draft -> spec_review -> appr
 - Too many lifecycle states can create busywork, so task creation, publication, and role inbox states stay outside the first MVP.
 - Archive is intentionally gated by a later human decision because it writes accepted living specs.
 - Some docs and generated-view examples mention richer approval/testing gates; those are later layers unless a human explicitly re-scopes the first MVP.
+- Known drift (recorded 2026-07-06): the work-item-1.1 validator `scripts/validate_change.py` still accepts the historical status vocabulary (`tasks_created`, `in_dev`, `ready_for_qa`, `implemented`) inherited from the removed architecture draft, which diverges from the states proposed here. The vocabularies must be reconciled in work item 1.8 to the canonical six states per the 2026-07-06 naming decision (tasks item 2.2); until then the validator's status list is not evidence of accepted lifecycle behavior.

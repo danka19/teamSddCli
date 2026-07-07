@@ -55,17 +55,17 @@ The SDD process SHALL preserve durable human feedback that changes product behav
 ### Requirement: Canonical language and localized generated views
 The SDD process SHALL distinguish canonical spec language from localized generated publication.
 
-#### Scenario: Canonical OpenSpec source uses English
-- **WHEN** a requirement, scenario, stable ID, or OpenSpec source artifact is created
-- **THEN** it is written in English by default and stable IDs are not translated
+#### Scenario: Process specs use English and product analytics specs use Russian prose
+- **WHEN** a requirement, scenario, or OpenSpec source artifact is created
+- **THEN** this project's own process specs are written in English, team product analytics specs are written in Russian requirement/scenario prose with English structural keywords, and stable IDs are always English and are not translated
 
 #### Scenario: Generated Confluence view may be localized
 - **WHEN** a Confluence page is generated for Russian-speaking readers
-- **THEN** the page may be localized in Russian while clearly linking to the canonical Git/OpenSpec source
+- **THEN** the page may be localized or audience-adapted while clearly linking to the canonical Git/OpenSpec source
 
-#### Scenario: Localized feedback returns to canonical source
-- **WHEN** Russian feedback on a generated view is accepted
-- **THEN** the resulting requirement or process change is recorded in the canonical English OpenSpec source or a Git/OpenSpec PR
+#### Scenario: Feedback on generated views returns to canonical source
+- **WHEN** feedback on a generated view is accepted
+- **THEN** the resulting requirement or process change is recorded in the canonical Git/OpenSpec source in that source's canonical language rather than as a manual edit of the generated view
 
 ### Requirement: Docs versus OpenSpec responsibility
 The SDD process SHALL keep product behavior contracts separate from project operating documentation.

@@ -16,7 +16,7 @@ Documentation governance applies when work changes any of the following:
 
 For each change, the worker records whether docs need updates, updates the narrowest relevant docs, and reports verification evidence. Proposed behavior stays in `openspec/changes/`; accepted behavior is written under `openspec/specs/` only after explicit human archive/acceptance approval.
 
-Canonical OpenSpec sources and stable IDs should be written in English by default. Generated Confluence pages may be localized in Russian for team readability, but localized generated views are not requirement sources. Russian feedback must be dispositioned and, when accepted, converted back into the English Git/OpenSpec source.
+Language convention (revised by the human decision on 2026-07-06): this project's own process specs are written in English; team product analytics specs are written in Russian requirement/scenario prose with English structural keywords (`SHALL`, `WHEN`, `THEN`) so analysts and QA can read the canonical source directly without an AI translation layer; stable IDs are always English and are not translated. A strict-mode OpenSpec validation probe confirmed Russian prose validates. Generated Confluence pages remain read models, not requirement sources; feedback must be dispositioned and, when accepted, converted back into the canonical Git/OpenSpec source. A bilingual glossary is still required for stable IDs and shared terms.
 
 Documentation responsibility is split by content type:
 
@@ -53,4 +53,4 @@ For deterministic behavior changes, OpenSpec scenarios or acceptance examples ar
 - Governance can become busywork if every minor note requires broad documentation updates, so this proposal requires the narrowest relevant durable document.
 - Documentation can drift if final reports mention decisions that never reach durable artifacts, so human feedback classification remains required.
 - The proposal must not create accepted specs until the final human archive gate.
-- Localization can introduce drift, so generated Russian pages must link back to canonical English sources and preserve stable IDs.
+- Localization and audience adaptation can introduce drift, so generated pages must link back to canonical sources and preserve English stable IDs.

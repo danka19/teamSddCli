@@ -11,6 +11,9 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Accepted architecture critique decisions from 2026-07-03 narrow the first MVP to a thin change flow before Jira, QA/AT, Confluence publication, and role inbox automation.
 - Human decisions from 2026-07-06 approve the risk-oriented thin/full artifact matrix, role-appropriate waiver ownership, and keeping Jira, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers.
 - Human decisions from 2026-07-06 also accept the project memory triad, existing-code onboarding flow, deterministic `sync`/`upgrade` maintenance direction, PDLC explanation narrative, and explicit exclusion of deploy/Zephyr/Jira/Confluence from the first MVP.
+- Human decisions from 2026-07-06 (audit decision batch) adopt the six-state canonical lifecycle naming, error-level enforcement for work item 1.8, a canonical decision log (`docs/DECISIONS.md`) at Phase 1 acceptance readiness, and merging the OpenSpec version policy into the `define-repo-topology-config` proposal.
+- Human feedback from 2026-07-06 (adoption-readiness batch) adopts `Master Spec` / `Delta Spec` team-facing terminology and the other-team reusability constraint for the topology proposal, and opens the analytics language, existing-Confluence migration, and diagram/asset storage decisions (see the Phase 1 plan and AUDIT-018).
+- Management deadline recorded 2026-07-07: SDD/OpenSpec adoption is mandatory within 1.5 months (by ~2026-08-20) — remaining Phase 1 gates, validator reconciliation (1.8), a production `team-specs` setup, and a real-change pilot must land inside that window; Q3 2026 must show measurable pilot results and Q4 2026 must deliver the AI-automation layers. The deadline is met by the thin flow alone; later layers are not adoption preconditions.
 - Update this file when phase status, gates, or scope changes.
 
 ## Phase 0. Project Foundation
@@ -61,12 +64,12 @@ Current work:
 
 Status: not planned in detail yet.
 
-Goal: define the first stable CLI architecture, core entities, storage boundaries, local state, schemas, and integration contracts.
+Goal: define the stable data model, core entities, storage boundaries, schemas, and integration contracts for the deterministic process layer. Per the accepted `docs/IMPLEMENTATION_STRATEGY.md`, no custom `sdd` CLI is built in this phase; CLI architecture questions apply only if a strategy trigger fires.
 
 Likely scope:
 
-- Model `change.yaml`, `traceability.yaml`, owners registry, projects registry, quality policy, and local `~/.sdd` state.
-- Decide implementation language/runtime for `sdd CLI`.
+- Model `change.yaml`, `traceability.yaml`, owners registry, projects registry, quality policy, and local state.
+- Decide implementation language/runtime for `sdd CLI` only if a `docs/IMPLEMENTATION_STRATEGY.md` trigger has fired; otherwise the deterministic scripts remain the implementation surface.
 - Define adapters for OpenSpec CLI, Git, and PR creation first; defer Bitbucket/Jenkins/Confluence/Jira write integrations until the thin flow is stable.
 - Define CLI mutation contracts: dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
 - Establish validation gates for thin Spec PR/archive first, then broaden to Code PR, QA PR, and AT PR gates in later work.
@@ -77,12 +80,14 @@ Status: not planned in detail yet.
 
 Goal: implement the smallest end-to-end pilot flow that proves SDD automation value.
 
+Naming note: the `sdd change ...` names below denote the four thin-flow capabilities, not a shipped CLI binary. Per the accepted strategy they are delivered through templates, `scripts/validate_change.py`, pre-commit/CI, standard tool features, and AI role skills; a custom CLI wraps them only when a `docs/IMPLEMENTATION_STRATEGY.md` trigger fires.
+
 Likely scope:
 
-- `sdd change new`
-- `sdd change validate`
-- `sdd change pr`
-- `sdd change archive`
+- `sdd change new` (create a change package from templates)
+- `sdd change validate` (deterministic package validation)
+- `sdd change pr` (Spec PR creation support)
+- `sdd change archive` (archive into living specs after human approval)
 - Basic `traceability.yaml` validation.
 - Supporting setup or doctor behavior only where required to make the thin flow usable.
 

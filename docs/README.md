@@ -15,7 +15,7 @@ Current checkpoint:
 In scope:
 
 - OpenSpec/Markdown-first workflow where Git/OpenSpec is the canonical engineering source.
-- `sdd CLI` process commands for change creation, validation, PR support, publication, task planning, QA/AT proposals, role inboxes, AI context packs, and archiving.
+- `sdd CLI` process commands for change creation, validation, PR support, publication, task planning, QA/AT proposals, role inboxes, AI context packs, and archiving — as the long-term staged target; the first MVP covers only the thin change flow, and per the accepted strategy these capabilities are delivered without a custom CLI until a `docs/IMPLEMENTATION_STRATEGY.md` trigger fires.
 - Integration boundaries for Bitbucket, Jenkins, Confluence, Jira or an equivalent tracker, code repositories, QA repositories, and AT repositories.
 - Change packages with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability.
 - Local AI support for drafts, reviews, context packs, and test or automation skeletons.
@@ -60,6 +60,13 @@ Out of scope:
 - 2026-07-06: Use a PDLC narrative when explaining the process to the team: the goal is shared context from analysis through tasks, tests, verification, and publication, not merely faster code generation.
 - 2026-07-06: Keep deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP unless the human owner explicitly re-scopes the pilot.
 - 2026-07-06: Use source ownership and write-once/reference-many documentation rules: OpenSpec owns behavior and acceptance, while docs, memory, role guides, and generated views reference canonical source IDs or metadata instead of carrying divergent copies.
+- 2026-07-06: Adopt the six internal lifecycle states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`) as canonical for accepted specs and deterministic validation; simplified lifecycle names may appear only in generated business-facing views.
+- 2026-07-06: Enforce the approved artifact matrix and waiver checks as errors immediately when work item 1.8 expands the validator; no warnings-only staging period.
+- 2026-07-06: Create `docs/DECISIONS.md` as the single canonical human decision log with stable decision IDs at Phase 1 acceptance readiness (work item 1.10); README, audit, roadmap, and phase plans then reference decision IDs instead of maintaining full copies.
+- 2026-07-06: Merge the OpenSpec version pin/upgrade policy into the `define-repo-topology-config` proposal as one platform-assumptions contract with a single human decision gate.
+- 2026-07-06: Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas) so the company understands the concept; canonical folder names and OpenSpec CLI terms stay unchanged, and the generated-view term is renamed to `Master Spec views` to avoid collision.
+- 2026-07-06: Treat reusability by other teams — easy bootstrap of the deterministic base, templates, and skills in another team — as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
+- 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
 
 ## Architecture Sources
 

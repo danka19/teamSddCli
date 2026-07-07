@@ -21,5 +21,11 @@ tracker-exports/
 confluence-exports/
 context-packs/
 
+# Local-only working material with corporate content (photos, screenshots) - never commit
+analytic-template/
+
+# Locally generated presentation/report artifacts
+outputs/
+
 # Claude Code local settings
 .claude/settings.local.json

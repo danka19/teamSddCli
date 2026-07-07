@@ -12,7 +12,7 @@ Last updated: 2026-07-06.
 | Git repository | Initialized locally on 2026-07-03 |
 | Current branch | `phase-1/change-template-validation` |
 | Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
-| Latest known commit before this audit update | `cde51ef` (`Consolidate workflow: global skills, thin CLAUDE.md, session-report rule`) |
+| Latest known commit before this audit update | `41114fa` (`Record documentation source ownership rules`) |
 | GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
 | Architecture source of truth | Current decisions live in `docs/` and `openspec/`; stale historical architecture draft removed on 2026-07-06 |
 | Implementation source code | No custom `sdd` CLI source exists; deterministic script `scripts/validate_change.py` is present |
@@ -24,6 +24,7 @@ Last updated: 2026-07-06.
 - Roadmap exists at `docs/ROADMAP.md`.
 - Agent work rules are recorded in `AGENTS.md`.
 - Project memory and weak-model planning input is recorded in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`.
+- The 2026-07-06 documentation/architecture review with current findings and the open decision batch is `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md`; its staged-plan companion is `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md`.
 - Workflow skills are global (`~/.codex/skills`); this repository intentionally has no `.codex/skills/` directory.
 - Current architecture and implementation planning are in `docs/`, `openspec/`, and accepted human decisions.
 
@@ -66,6 +67,9 @@ Last updated: 2026-07-06.
 | AUDIT-013 | Canonical OpenSpec language is now English by default and generated Confluence may be localized to Russian, but no bilingual glossary or translation review process exists yet. | Phase 1/4 | open |
 | AUDIT-014 | Project memory, documentation quality controls, weak-model guardrails, repeated-error memory, spec-questioning workflow, and analyst/QA onboarding are captured as planning input, but not yet specified as accepted OpenSpec contracts or deterministic checks. | Phase 1/4 | open |
 | AUDIT-015 | Source ownership and write-once/reference-many documentation rules are captured as proposed governance, but deterministic linting for duplicate normative text, source links, generated blocks, stale memory, and orphan docs is not implemented yet. | Phase 1/4 | open |
+| AUDIT-016 | The deterministic layer lags behind approved/proposed contracts: `scripts/validate_change.py` accepts the historical status vocabulary (`tasks_created`, `in_dev`, `ready_for_qa`, `implemented`) that diverges from the proposed lifecycle states, requires `design.md` and QA/AT plans for every package contrary to the approved thin matrix, and `templates/change/change.yaml` defaults to the contradictory `mode: thin` + `type: new_feature` combination. Reconciliation is scoped to work item 1.8; the lifecycle-naming and enforcement-staging decisions were approved on 2026-07-06 (six canonical states, error-level enforcement), so 1.8 waits only on the merged topology/config/version gate 1.5. See `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` finding F1. | Phase 1 (work item 1.8) | open |
+| AUDIT-017 | The OpenSpec CLI version is decided to be pinned, and `openspec 1.4.1` is the verified installed version, but no pin is recorded in any durable file or contract; the pin location depends on the pending merged `define-repo-topology-config` proposal, which also carries the version pin/upgrade policy after the 2026-07-06 merge decision. | Phase 1 (work items 1.4/1.5) | open |
+| AUDIT-018 | Analytics-source readiness is partially resolved: the language decision is made (Russian prose, English keywords/IDs) and the corporate approval template is fully analyzed with a migration plan in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` (typed YAML records instead of nested tables; red mandatory callouts become validator/checklist rules). Still open: migration approach confirmation for the existing Confluence corpus (recommended on-touch), diagram/asset storage conventions, and the approval-readiness requirements the owner is gathering for gate 1.7. Local photos of the template live in git-ignored `analytic-template/` and must never be committed. | Phase 1 (work items 1.4/1.6/1.7) | open |
 
 ## Accepted Human Decisions
 
@@ -96,6 +100,13 @@ Last updated: 2026-07-06.
 | 2026-07-06 | Keep deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP. | Phase 1/3 must not make those integrations first-MVP blockers unless the human owner explicitly re-scopes the pilot. |
 | 2026-07-06 | Record Graphify-like navigation, documentation boundary, weak-model support, repeated-error memory, spec-questioning, and QA/analyst usability as mandatory planning input. | Future project-memory or weak-model proposals must start from `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` before choosing schemas, tools, skills, or implementation scope. |
 | 2026-07-06 | Use source ownership and write-once/reference-many rules to prevent OpenSpec/docs/memory drift. | OpenSpec owns behavior and acceptance; `docs/` owns context, rationale, phase planning, and audit; `AGENTS.md` owns agent operating rules; derived views, role guides, read packs, and project memory must reference canonical sources and be fixed or regenerated when they drift. |
+| 2026-07-06 | Adopt the six internal lifecycle states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`) as canonical for accepted specs and deterministic validation. | Work item 1.8 reconciles the validator status vocabulary to the canonical six states; simplified lifecycle names may appear only in generated business-facing views. |
+| 2026-07-06 | Enforce the approved artifact matrix and waiver checks as errors immediately in work item 1.8. | No warnings-only staging period; the expanded validator rejects non-compliant packages as soon as work item 1.8 lands. |
+| 2026-07-06 | Create `docs/DECISIONS.md` as the single canonical decision log with stable decision IDs at Phase 1 acceptance readiness. | Executed during work item 1.10 as one mechanical consolidation commit; until then the existing multi-file decision convention continues. |
+| 2026-07-06 | Merge the OpenSpec version pin/upgrade policy into the `define-repo-topology-config` proposal. | Work item 1.4 drafts one merged platform-assumptions proposal; decision gate 1.5 covers topology, config format, and version pin/upgrade policy together. |
+| 2026-07-06 | Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas). | Glossary updated; canonical folder names and OpenSpec CLI terms unchanged; generated-view term renamed to `Master Spec views` to avoid collision. |
+| 2026-07-06 | Treat reusability by other teams as an explicit design constraint for the repo topology/config proposal. | Work item 1.4 must show how another team bootstraps the deterministic base, templates, and skills without copying this project's history; first MVP scope is not expanded. |
+| 2026-07-06 | Team product analytics specs use Russian prose with English structural keywords and English stable IDs; this project's process specs stay English. | Revises part of the earlier English-canonical decision; documentation-governance canonical-language requirement updated; bilingual glossary (AUDIT-013) remains required; analyst style guide must encode the mixed-language convention. |
 
 ## Audit Rules
 

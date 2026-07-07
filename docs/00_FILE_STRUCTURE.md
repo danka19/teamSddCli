@@ -7,6 +7,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | Canonical operating guide for Codex and future agents |
+| `CLAUDE.md` | Claude entry point; pointer to `AGENTS.md` and the active handoff only |
 | `.env.example` | Versioned environment template with placeholders only |
 | `.gitignore` | Excludes secrets, local config, generated artifacts, and private data |
 | `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |
@@ -31,10 +32,16 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
+| `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
+| `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` | Abstracted structure analysis of the corporate analytics approval template and the plan for mapping it to SDD artifacts (typed YAML records instead of nested tables) |
+| `analytic-template/` | Local-only photos of the corporate template (git-ignored; contains corporate content; never commit) |
 | `docs/audits/` | Focused audit reports |
 | `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
+| `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` | Documentation/architecture audit: findings F1-F6, drift records, and the open human decision batch |
 | `docs/phases/` | Detailed phase plans and templates |
+| `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
+| `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 
 ## OpenSpec
 

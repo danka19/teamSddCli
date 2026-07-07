@@ -20,9 +20,9 @@ This file is the shared entry point for Codex and future agent tools. Keep it sh
 8. Relevant `openspec/changes/<change-id>/` folder when working on an active proposed change.
 9. `docs/CURRENT_PROJECT_AUDIT.md` before trusting existing implementation or setup state.
 10. `docs/AI_STEP_VERIFICATION_CHECKLIST.md` before implementation, verification, or completion reporting.
+11. Only topic documents related to the current task.
 
 Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc corrections, quick questions) read only `AGENTS.md` plus the files the task actually touches. The full read order is mandatory for phase work, architecture, data contract, or product behavior changes.
-11. Only topic documents related to the current task.
 
 ## Project Rules
 
