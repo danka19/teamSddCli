@@ -2,20 +2,20 @@
 
 ## Summary
 
-teamSddCli is a local SDD automation project for a team workflow based on OpenSpec/Markdown, Git, Bitbucket, Jenkins, Confluence, Jira or another task tracker, local CLI commands, and local AI tools.
+teamSddCli is a local SDD process-automation project for a team workflow based on OpenSpec/Markdown, Git, deterministic validation scripts, Bitbucket, Jenkins, Confluence, Jira or another task tracker, and local AI tools.
 
 The project goal is to automate the end-to-end transition from analysis to development tasks, QA test cases, automated-test skeletons, verification, and archived living specs without introducing one centralized autonomous agent.
 
 Current checkpoint:
 
-> Project foundation has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. No custom `sdd` CLI exists yet.
+> Project foundation has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. The main direction is the deterministic SDD process layer, not a custom command-line product.
 
 ## Scope
 
 In scope:
 
 - OpenSpec/Markdown-first workflow where Git/OpenSpec is the canonical engineering source.
-- `sdd CLI` process commands for change creation, validation, PR support, publication, task planning, QA/AT proposals, role inboxes, AI context packs, and archiving — as the long-term staged target; the first MVP covers only the thin change flow, and per the accepted strategy these capabilities are delivered without a custom CLI until a `docs/IMPLEMENTATION_STRATEGY.md` trigger fires.
+- Deterministic SDD process capabilities for change creation, validation, PR support, archiving, traceability, and later publication/task/QA/AT support, delivered first through templates, validation scripts, CI/pre-commit checks, standard tool features, and role skills.
 - Integration boundaries for Bitbucket, Jenkins, Confluence, Jira or an equivalent tracker, code repositories, QA repositories, and AT repositories.
 - Change packages with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability.
 - Local AI support for drafts, reviews, context packs, and test or automation skeletons.
@@ -33,16 +33,16 @@ Out of scope:
 
 - 2026-07-03: Use the historical architecture draft as the initial bootstrap input.
 - 2026-07-03: Use OpenSpec/Markdown in Git as the canonical source and Confluence as a generated publication layer.
-- 2026-07-03: Automate artifact state transitions through CLI/CI rather than centralizing control in one autonomous agent.
+- 2026-07-03: Automate artifact state transitions through deterministic checks, CI, templates, and standard tool features rather than centralizing control in one autonomous agent.
 - 2026-07-03: Keep human ownership over approvals, merges, business decisions, correctness, and review outcomes.
 - 2026-07-03: Use this starter-kit documentation set as the durable operating system for future Codex work.
-- 2026-07-03: Narrow the first implemented MVP to a thin change flow: `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic `traceability.yaml`; Jira task automation, QA/AT proposal commands, Confluence publication, and role inboxes are later layers unless explicitly re-scoped.
+- 2026-07-03: Narrow the first implemented MVP to a thin change flow: create a change package from templates, validate it deterministically, support Spec PR review, archive approved changes into living specs, and keep basic `traceability.yaml`; Jira task automation, QA/AT proposal generation, Confluence publication, and role inboxes are later layers unless explicitly re-scoped.
 - 2026-07-03: Support two change modes in future requirements: a lightweight `thin change` path for small bugfix/refactor/small behavior patches and a `full change package` path for feature, API, mobile, cross-repo, or high-risk changes.
-- 2026-07-03: The first product OpenSpec specs should focus on change lifecycle, artifact contracts, traceability, and waiver behavior before broad CLI/integration coverage.
+- 2026-07-03: The first product OpenSpec specs should focus on change lifecycle, artifact contracts, traceability, and waiver behavior before broad integration coverage.
 - 2026-07-03: Confluence feedback handling must be explicitly specified before implementation: owner, service expectation, unresolved-feedback handling, and how comments become accepted deltas or rejected notes.
-- 2026-07-03: Future mutating CLI/integration commands should be designed with dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
+- 2026-07-03: Future mutating automation or integration entry points should be designed with dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
 - 2026-07-03: Gherkin is not mandatory for every QA artifact; every requirement needs at least a testable scenario, while Gherkin should be required only when a scenario is executable or exported to AT.
-- 2026-07-03: Deliver the SDD process without a custom `sdd` CLI first: deterministic base (templates + validation scripts + pre-commit + Jenkins in `team-specs`) + standard tool features (Bitbucket default reviewers, Jira Automation, markdown->Confluence publisher, OpenSpec CLI) + AI role skills as a convenience layer. A custom CLI is built only when the trigger criteria in `docs/IMPLEMENTATION_STRATEGY.md` fire.
+- 2026-07-03: Deliver the SDD process through the deterministic base first: templates, validation scripts, pre-commit/Jenkins checks in `team-specs`, standard tool features (Bitbucket default reviewers, Jira Automation, markdown->Confluence publisher, OpenSpec CLI), and AI role skills as a convenience layer. A custom wrapper is optional future ergonomics only when the trigger criteria in `docs/IMPLEMENTATION_STRATEGY.md` fire.
 - 2026-07-03: OpenSpec means Fission-AI/OpenSpec; the team reference documentation is <https://lzw.me/docs/openspec> (community multilingual mirror; upstream docs win on discrepancy); the CLI version is pinned.
 - 2026-07-03: Jira and Confluence access from AI tooling goes through MCP servers, not hand-written REST integrations; MCP was tested by the human owner and works. Automating local MCP server provisioning for employees is a planned experiment.
 - 2026-07-03: Development happens in an external environment (Claude Code available) and is later transferred to the internal corporate environment where only GigaCode CLI is available; all process guarantees must live in the deterministic layer, skills must be tool-agnostic markdown, and an environment adaptation review is required before transfer.
@@ -78,7 +78,7 @@ Current architecture sources:
 
 - `docs/README.md` for product summary, scope, key decisions, and first valuable outcome.
 - `docs/CONTEXT.md` for canonical terms and boundary rules.
-- `docs/IMPLEMENTATION_STRATEGY.md` for the accepted no-custom-CLI-upfront delivery strategy.
+- `docs/IMPLEMENTATION_STRATEGY.md` for the accepted deterministic-process-first delivery strategy.
 - `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
 - `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued planning input on project memory, Graphify-like navigation, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability.
 - `openspec/changes/` and later `openspec/specs/` for proposed and accepted SDD workflow, artifact, traceability, waiver, documentation, and publication contracts.
@@ -90,12 +90,11 @@ Important concepts preserved in current docs:
 - Review and audit: Bitbucket PRs with reviewer assignment from owners registry.
 - Validation and automation: Jenkins pipelines.
 - Workflow status: Jira or another task tracker.
-- Local process interface: `sdd CLI`.
 - Traceability path: requirement -> scenario -> dev task -> test case -> automated test.
 - Project memory triad: constitution/quality policy, project map, and OpenSpec changes/living specs.
 - Existing-code onboarding path: read-only scan -> legacy baseline -> project map update -> validation against real code.
 - Maintenance path: deterministic sync and upgrade checks after the related topology/config and OpenSpec version policies are approved.
-- Historical broad pilot picture: `team-specs`, OpenSpec CLI, core `sdd` commands, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
+- Historical broad pilot picture: `team-specs`, OpenSpec CLI, deterministic validation, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
 
 The accepted MVP is narrower than the historical broad pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
 
@@ -119,5 +118,5 @@ Future publication layers should generate audience-oriented views from canonical
 - `docs/00_FILE_STRUCTURE.md` is the repository map and must be updated when files or folders are added.
 - `docs/CURRENT_PROJECT_AUDIT.md` is an active planning input and must be updated when findings are fixed or invalidated by evidence.
 - Detailed phase plans live under `docs/phases/` and must use `docs/phases/PHASE_PLAN_TEMPLATE.md`.
-- New human feedback that affects `sdd CLI` behavior, safety, command usability, SDD workflow, acceptance, or verification must be persisted in the correct durable document.
+- New human feedback that affects SDD workflow behavior, automation safety, integration usability, acceptance, or verification must be persisted in the correct durable document.
 - Behavior and acceptance text should not be duplicated across specs, docs, project memory, generated views, or role guides; derived surfaces link to the canonical owner and are fixed or regenerated when they drift.
