@@ -57,7 +57,7 @@ The first lifecycle implementation SHALL stay focused on the thin change flow un
 
 #### Scenario: Deferred integrations are not lifecycle blockers
 - **WHEN** a thin MVP change has no Jira task automation, Confluence publication, QA/AT proposal generation, or role inbox evidence
-- **THEN** the lifecycle proposal does not treat those deferred integrations as required blockers for the first MVP
+- **THEN** the lifecycle does not treat those deferred integrations as required blockers for the first MVP
 
 ### Requirement: Derived approval and verification display
 The SDD process SHALL distinguish lifecycle source-of-truth state from generated displays of that state.

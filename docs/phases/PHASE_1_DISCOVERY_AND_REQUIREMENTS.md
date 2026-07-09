@@ -197,7 +197,7 @@ Affected specs: `define-change-lifecycle` (naming decision closes its tasks item
 Affected architecture: No boundary changes; preserves deterministic-gates-first, human-owned approvals, and the thin-MVP boundary.
 Data contract impact: Validator status vocabulary must be reconciled to the six canonical states in work item 1.8; the OpenSpec version pin location is decided inside the merged topology/config proposal.
 Verification impact: Work item 1.8 negative tests must cover rejected historical statuses and error-level matrix enforcement; this documentation pass requires `openspec validate --all --strict` and `git diff --check`.
-Status: Adopted into README, audit, roadmap, the lifecycle proposal, and this phase plan; `docs/DECISIONS.md` is now created during work item 1.10 and records this batch as `D-006`.
+Status: Adopted into README, audit, roadmap, the change-lifecycle spec, and this phase plan; `docs/DECISIONS.md` is now created during work item 1.10 and records this batch as `D-006`.
 ```
 
 ```text
@@ -275,7 +275,7 @@ Affected specs: Proposed changes `define-confluence-feedback-loop`, `define-docu
 Affected architecture: Confluence stays generated/read-only for requirements; the existing analytics corpus is a read-only archive, not a bulk-migration source; diagrams/screens use Git-managed source or source+export with stable IDs; analyst/change owner triages Confluence feedback; blocker comments block later Confluence-enabled flows while non-blockers require explicit disposition; project memory lives with the future `team-specs` topology; first graph/navigation implementation is a deterministic lightweight index; mandatory weak-model guardrails are read packs, role skills, and evidence checklists; pilot role guides start with analyst, developer, and QA thin-change walkthroughs.
 Data contract impact: Future schemas/checks may be needed for asset metadata, publication model references, feedback dispositions, memory index, read packs, and role guides; no first-MVP validator behavior is expanded by this decision except where work item 1.8 already covers approved thin/full and waiver enforcement.
 Verification impact: Requires OpenSpec strict validation and documentation/audit updates now; future implementation must add validator or manual checks for generated asset source metadata, Confluence dispositions, memory index evidence, and role-guide walkthroughs when those features enter scope.
-Status: Adopted into the Phase 1 plan, Confluence proposal, planning docs, audit, and roadmap; final OpenSpec archive approval remains open.
+Status: Adopted into the Phase 1 plan, Confluence proposal, planning docs, audit, and roadmap; at this intake point, final OpenSpec archive approval remained open and was later resolved by human Option A on 2026-07-09.
 ```
 
 ```text
