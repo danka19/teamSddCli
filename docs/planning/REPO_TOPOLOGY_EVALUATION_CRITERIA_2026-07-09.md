@@ -5,8 +5,8 @@ Status: planning input for Phase 1 work item 1.4 (`define-repo-topology-config`)
 ## 1. Input Status And Blocker
 
 - The human owner moved the corporate analytics template photos from the earlier local `/analytic-template/` folder to `arch-screenshots/analytic-template/` (already recorded in `docs/00_FILE_STRUCTURE.md`, the Phase 1 plan, and `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`).
-- The screenshots of the internal OpenSpec customization / process approach were expected in `arch-screenshots/openspec-de/`, but **as of 2026-07-09 that folder exists and is empty (0 files)**. The screenshot evaluation is blocked until the photos are re-added. Per the phase-plan intake record, readability problems must be reported explicitly before any recommendation is treated as evidence.
-- The human owner reports that the internal solution recommends storing analytics separately while storing specs next to code; this claim must be confirmed against the actual screenshots before it is used as evidence.
+- The screenshots of the internal OpenSpec customization / process approach were expected in `arch-screenshots/openspec-de/`, but that folder was empty when this document was first written. **Resolved later on 2026-07-09: the owner re-added 25 photos, all key content was legible, and the full review is recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md`.**
+- The human owner reported that the internal solution recommends storing analytics separately while storing specs next to code; the screenshot review showed the real guidance is maturity-staged (three variants), and only the scaling variant moves specs next to code while still keeping a central business-requirements repo. See the analysis document, section 5.
 
 ## 2. Evaluation Criteria For The Internal Solution
 
