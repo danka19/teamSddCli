@@ -22,6 +22,7 @@ confluence-exports/
 context-packs/
 
 # Local-only working material with corporate content (photos, screenshots) - never commit
+arch-screenshots/
 analytic-template/
 
 # Locally generated presentation/report artifacts

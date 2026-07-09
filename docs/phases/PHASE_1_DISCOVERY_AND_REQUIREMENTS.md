@@ -216,7 +216,7 @@ Status: Terminology and reuse constraint adopted into context, README, audit, ro
 
 ```text
 Idea: Record the 2026-07-06 analytics-adoption batch: Russian-prose canonical language for team product analytics specs (English keywords and stable IDs; process specs stay English), and the full structural analysis of the corporate analytics approval template with a migration plan mapping its sections to SDD artifacts as typed YAML records instead of nested tables.
-Source: Human decision and template photos provided on 2026-07-06; photos reviewed in full from the git-ignored local folder `analytic-template/`.
+Source: Human decision and template photos provided on 2026-07-06; photos reviewed in full from the git-ignored local folder `arch-screenshots/analytic-template/` (moved from the earlier local `analytic-template/` location).
 Type: data_contract_change, documentation_change, scope_refinement, open_decision
 Decision: adopt_now for the language decision; queue_current_phase for the typed-artifact contracts (status model, channel support, platform services, data model), which land through work items 1.4/1.9 without expanding the thin MVP.
 Reason: Analysts must be able to read and approve canonical sources directly without an AI layer, and the corporate template's nested tables must become deterministic, weak-model-safe form artifacts before a pilot can convert real analytics.
@@ -224,7 +224,20 @@ Affected specs: `define-documentation-governance` (canonical-language requiremen
 Affected architecture: Git/OpenSpec stays canonical; generated Confluence renders typed records back into the approver-familiar nested layout; no MVP expansion.
 Data contract impact: Future YAML schemas for status-model, channel-support, platform-services, and data-model records; red mandatory-callout rules from the template become validator/checklist candidates.
 Verification impact: A strict-mode OpenSpec probe confirmed Russian prose validates; `openspec validate --all --strict` and `git diff --check` for this documentation pass; future schemas require their own validator tests in 1.8/1.9.
-Status: Language decision recorded across docs and the governance proposal; template analysis recorded in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`; `analytic-template/` and `outputs/` added to `.gitignore`.
+Status: Language decision recorded across docs and the governance proposal; template analysis recorded in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`; `arch-screenshots/` and `outputs/` are git-ignored so local corporate photos/screenshots are not committed.
+```
+
+```text
+Idea: Use local screenshots of an internal OpenSpec customization / repository-topology approach as input to work item 1.4, and record that corporate screenshot material now lives under `arch-screenshots/`.
+Source: Human instruction on 2026-07-09; local folders `arch-screenshots/analytic-template/` and `arch-screenshots/openspec-de/`.
+Type: architecture_change, documentation_change, scope_refinement
+Decision: queue_current_phase
+Reason: The screenshots can inform the merged repo-topology/config/OpenSpec-version proposal, but they must be evaluated before any structure is accepted or copied into the product design.
+Affected specs: Planned `define-repo-topology-config`; later impact possible for `define-change-artifact-contracts`, `define-traceability-contract`, and `define-confluence-feedback-loop`.
+Affected architecture: Must be compared against the current product goal: deterministic OpenSpec/Markdown-first SDD process, thin first MVP, analytics stored with OpenSpec sources, Confluence as generated publication, and no process guarantees depending on AI.
+Data contract impact: No schema change yet; possible future impact on repo split, config format, shared scripts/templates/skills distribution, owner registry, generated analytics views, and asset placement.
+Verification impact: Screenshot readability must be reported explicitly; if text or structure is unclear, the human owner must clarify or provide new photos before recommendations are treated as evidence.
+Status: Queued for work item 1.4 analysis; local screenshot folders documented and git-ignored.
 ```
 
 ## Work Items

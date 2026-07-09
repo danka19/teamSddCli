@@ -2,7 +2,7 @@
 
 Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Not an accepted contract. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
 
-Source: the human owner photographed the corporate Confluence template and two example pages into the local-only folder `analytic-template/` (36 photos, reviewed in full). That folder contains corporate URLs, internal system names, and employee names, so it is git-ignored and must never be committed; this document deliberately abstracts all corporate identifiers.
+Source: the human owner photographed the corporate Confluence template and two example pages into the local-only folder `arch-screenshots/analytic-template/` (moved from the earlier local `analytic-template/` location; photos reviewed in full). That folder contains corporate URLs, internal system names, and employee names, so it is git-ignored and must never be committed; this document deliberately abstracts all corporate identifiers.
 
 ## 1. What The Template Is
 
