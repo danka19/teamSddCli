@@ -1,9 +1,10 @@
-id: define-change-lifecycle
+schema: spec-driven
+id: define-traceability-contract
 status: proposed
 phase: "Phase 1 Discovery And Requirements"
 work_item: "1.2"
 capabilities:
-  - change-lifecycle
+  - traceability-contract
 evidence:
   - "Work item 1.1 commit 6fbde43 Add phase 1 change template validation gate"
 notes:

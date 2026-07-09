@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current phase: Phase 1 Discovery And Requirements.
+- Current roadmap focus: Phase 2 planning and production `team-specs` setup after the Phase 1 accepted-spec baseline.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -14,6 +14,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions from 2026-07-06 (audit decision batch) adopt the six-state canonical lifecycle naming, error-level enforcement for work item 1.8, the canonical decision log now consolidated in `docs/DECISIONS.md` (`D-006`), and merging the OpenSpec version policy into the `define-repo-topology-config` proposal.
 - Human feedback from 2026-07-06 (adoption-readiness batch) adopts `Master Spec` / `Delta Spec` team-facing terminology and the other-team reusability constraint for the topology proposal, and opens the analytics language, existing-Confluence migration, and diagram/asset storage decisions (see the Phase 1 plan and AUDIT-018).
 - Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, editable/disableable SLA, weak-model guardrail, and role-guide planning defaults. The first generated Confluence view set is deferred to the corporate environment.
+- Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Management deadline recorded 2026-07-07: SDD/OpenSpec adoption is mandatory within 1.5 months (by ~2026-08-20) — remaining Phase 1 gates, validator reconciliation (1.8), a production `team-specs` setup, and a real-change pilot must land inside that window; Q3 2026 must show measurable pilot results and Q4 2026 must deliver the AI-automation layers. The deadline is met by the thin flow alone; later layers are not adoption preconditions.
 - Update this file when phase status, gates, or scope changes.
 
@@ -32,7 +33,7 @@ Quality gate:
 
 ## Phase 1. Discovery And Requirements
 
-Status: in progress.
+Status: complete.
 
 Goal: turn the architecture into concrete product requirements, user/role workflows, CLI command acceptance criteria, integration constraints, and OpenSpec artifacts.
 
@@ -58,8 +59,9 @@ Detailed plan:
 
 Current work:
 
-- Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
-- Work items 1.8 template/validator reconciliation and 1.9 scenario/test hardening are complete. Current Phase 1 work is acceptance readiness: the proposed OpenSpec contract set has been validated and documented as ready for the final human gate in work item 1.11, and any later archive/promote step must run separately after explicit approval.
+- Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`.
+- Completed accepted-spec baseline on 2026-07-09: `openspec list` reports no active changes, and `openspec list --specs` reports eight accepted specs: `change-package-foundation`, `change-lifecycle`, `change-artifact-contracts`, `traceability-contract`, `waiver-policy`, `documentation-governance`, `repo-topology-config`, and `confluence-feedback-loop`.
+- Confluence feedback/source/publication-read-model contracts are accepted, but actual Confluence publication automation and first generated-view selection remain later-layer work after corporate-environment validation.
 
 ## Phase 2. Architecture And Data Model
 

@@ -10,4 +10,4 @@
 
 - [x] 2.1 Align traceability completion rules with the approved artifact matrix and waiver policy.
 - [x] 2.2 Expand validator tests after the human decision gate approves the required links.
-- [ ] 2.3 Do not archive this change until the final human OpenSpec archive gate.
+- [x] 2.3 Do not archive this change until the final human OpenSpec archive gate. Satisfied on 2026-07-09 by the human Option A decision to accept the whole current Phase 1 package and archive readiness-complete OpenSpec changes in one batch execution step.

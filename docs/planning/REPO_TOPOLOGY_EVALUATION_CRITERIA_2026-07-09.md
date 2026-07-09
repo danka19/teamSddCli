@@ -129,4 +129,4 @@ Do not borrow as first-MVP defaults:
 - non-blocking critical verification findings;
 - specs-next-to-code as the first canonical topology.
 
-Routed result: `openspec/changes/define-repo-topology-config/` is now the canonical proposed contract for work item 1.4. This criteria file remains supporting evidence and the practical comparison frame for gate 1.5.
+Routed result: `openspec/specs/repo-topology-config/spec.md` is now the accepted contract after the 2026-07-09 archive batch. This criteria file remains supporting evidence and the practical comparison frame for gate 1.5.

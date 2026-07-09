@@ -51,18 +51,15 @@ This document is the repository map for agents and humans. Keep it current whene
 
 | Path | Purpose |
 |---|---|
-| `openspec/changes/add-change-template-validation/` | Active OpenSpec change for the first deterministic change-template and validation gate |
-| `openspec/changes/add-change-template-validation/proposal.md` | Motivation, scope, capabilities, and impact for the first deterministic gate |
-| `openspec/changes/add-change-template-validation/design.md` | Technical design and tradeoffs for the template, validator, and pre-commit hook |
-| `openspec/changes/add-change-template-validation/specs/change-package-foundation/spec.md` | Proposed requirements and scenarios for the deterministic gate |
-| `openspec/changes/add-change-template-validation/tasks.md` | Trackable implementation checklist for the OpenSpec change |
-| `openspec/changes/define-change-lifecycle/` | Draft Phase 1 proposal for change lifecycle states, transition gates, and human/AI/CI ownership boundaries |
-| `openspec/changes/define-change-artifact-contracts/` | Draft Phase 1 proposal for thin and full change artifact contracts; Phase 1 default matrix approved, pending final archive/accepted-spec gate |
-| `openspec/changes/define-traceability-contract/` | Draft Phase 1 proposal for requirement, scenario, task, test, automation, waiver, and archive-readiness traceability |
-| `openspec/changes/define-waiver-policy/` | Draft Phase 1 proposal for waiver shape, approval, evidence, audit trail, and negative cases |
-| `openspec/changes/define-documentation-governance/` | Draft Phase 1 proposal for documentation update discipline, AI verification evidence, and TDD-style verification rules |
-| `openspec/changes/define-repo-topology-config/` | Draft Phase 1 merged proposal for repository topology, config format, OpenSpec version pin/upgrade policy, process package distribution, and owner/reviewer assignment |
-| `openspec/changes/define-confluence-feedback-loop/` | Draft Phase 1 proposal for generated Confluence publication, feedback dispositions, unresolved comments, source metadata, and evidence-backed status display |
+| `openspec/specs/change-package-foundation/spec.md` | Accepted spec for the deterministic change-package template, local validator, pre-commit entrypoint, and placeholder validation mode |
+| `openspec/specs/change-lifecycle/spec.md` | Accepted spec for SDD change lifecycle states, deterministic transition gates, human approval ownership, MVP lifecycle boundaries, derived status display, and archive history convention |
+| `openspec/specs/change-artifact-contracts/spec.md` | Accepted spec for thin/full artifact contracts, waiver eligibility, artifact matrix acceptance, future journey/screen artifacts, legacy baseline mode, Delta Spec operation vocabulary, and artifact-height rules |
+| `openspec/specs/traceability-contract/spec.md` | Accepted spec for review-minimum traceability, archive-readiness traceability, waived links, AI advisory suggestions, journey/screen traceability, and legacy baseline traceability |
+| `openspec/specs/waiver-policy/spec.md` | Accepted spec for waiver records, role-appropriate human waiver approval, negative cases, and waiver-policy acceptance status |
+| `openspec/specs/documentation-governance/spec.md` | Accepted spec for documentation source ownership, AI verification evidence, TDD-style checks, canonical language, localized generated views, write-once/reference-many rules, and weak-model read packs |
+| `openspec/specs/repo-topology-config/spec.md` | Accepted spec for the first supported repository topology, config files, process package distribution, OpenSpec version pin/upgrade policy, and owner/reviewer registry |
+| `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
+| `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts
 
@@ -79,7 +76,6 @@ These paths are expected by the documented SDD workflow but do not exist yet in 
 
 | Path | Purpose |
 |---|---|
-| `openspec/specs/` | Accepted living specs for teamSddCli behavior |
 | `src/` | Future CLI implementation source |
 | `schemas/` | Future schemas for `change.yaml`, registries, traceability, and config |
 

@@ -17,7 +17,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | Change package | Per-change folder under `team-specs/openspec/changes/<change-id>/` with metadata, proposal, design, tasks, spec deltas, QA artifacts, automation plan, and traceability. | Central process object. |
 | Project memory | Agent-readable project orientation material that helps local AI and humans understand rules, topology, current specs, risks, and proven workflows. | It supports work, but does not replace OpenSpec as behavior truth or PR/CI as approval and validation truth. |
 | Project memory triad | Planned orientation model: constitution/quality policy, project map, and OpenSpec changes/living specs. | Accepted as the future organizing idea on 2026-07-06; exact folder/schema remains future work. |
-| Constitution / quality policy | Stable project rules, boundaries, quality expectations, human ownership rules, and non-negotiable process constraints. | In this repository, the current equivalent is spread across `AGENTS.md`, `docs/CONTEXT.md`, `docs/IMPLEMENTATION_STRATEGY.md`, and future accepted specs. |
+| Constitution / quality policy | Stable project rules, boundaries, quality expectations, human ownership rules, and non-negotiable process constraints. | In this repository, the current equivalent is spread across `AGENTS.md`, `docs/CONTEXT.md`, `docs/IMPLEMENTATION_STRATEGY.md`, and accepted OpenSpec specs. |
 | Project map | Maintained map of repository topology, configuration, relevant modules, integrations, owners, and reusable assets. | It should be generated or validated where practical so it does not become stale narrative documentation. |
 | Navigation index | Future deterministic index over docs, OpenSpec artifacts, traceability, code references, owners, and evidence links. | A Graphify-like or Pangolin-backed tool may produce it later, but it is not a source of truth. |
 | Source ownership matrix | Map that declares which artifact owns each information type and which surfaces may only reference, summarize, or generate from it. | Prevents OpenSpec, docs, role guides, generated views, and project memory from carrying divergent copies of the same rule. |
@@ -57,7 +57,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 
 - Raw source artifacts such as specs, tracker exports, Confluence comments, repository metadata, and CI results must be preserved separately from derived values.
 - Review-required proposals are not accepted decisions.
-- The first supported topology, config format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment remain proposed until gate 1.5 approves or revises `openspec/changes/define-repo-topology-config/`.
+- The first supported topology, config format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment are accepted in `openspec/specs/repo-topology-config/spec.md` after gate 1.5 and the 2026-07-09 archive batch.
 - LLM or heuristic output is proposal evidence only unless the project explicitly defines a reviewed acceptance workflow.
 - Git/OpenSpec is the canonical engineering source; Confluence is a generated view.
 - Jira or another tracker is workflow/status, not the source of product requirements.

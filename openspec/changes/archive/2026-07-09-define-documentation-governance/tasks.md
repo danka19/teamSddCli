@@ -10,5 +10,5 @@
 ## 2. Later Decision And Implementation
 
 - [x] 2.1 Review governance requirements during Phase 1 acceptance readiness. Reviewed on 2026-07-09 against the updated phase plan, roadmap, audit, and AI verification checklist; the proposal remains readiness-complete and still stops before archive/promotion.
-- [ ] 2.2 Promote to accepted documentation-governance spec only after explicit human archive/acceptance approval.
-- [ ] 2.3 Do not archive this change until the final human OpenSpec archive gate.
+- [x] 2.2 Promote to accepted documentation-governance spec only after explicit human archive/acceptance approval. Satisfied on 2026-07-09 by the human Option A decision to accept the whole current Phase 1 package and archive readiness-complete OpenSpec changes in one batch execution step.
+- [x] 2.3 Do not archive this change until the final human OpenSpec archive gate. Satisfied on 2026-07-09 by the same human Option A decision.

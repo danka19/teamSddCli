@@ -14,4 +14,4 @@
 - [x] 2.2 Human confirms Jira, Confluence publication, QA/AT proposal generation, and role inbox remain outside MVP and should be planned as later layers.
 - [x] 2.3 Expand templates and validator only after approval.
 - [x] 2.4 Record future journey/screen and legacy baseline artifact planning without making them first-MVP requirements.
-- [ ] 2.5 Do not archive this change until the final human OpenSpec archive gate.
+- [x] 2.5 Do not archive this change until the final human OpenSpec archive gate. Satisfied on 2026-07-09 by the human Option A decision to accept the whole current Phase 1 package and archive readiness-complete OpenSpec changes in one batch execution step.

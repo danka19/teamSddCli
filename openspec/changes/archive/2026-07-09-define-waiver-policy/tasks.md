@@ -10,4 +10,4 @@
 - [x] 2.1 Human approves Option A role-appropriate waiver approver roles.
 - [x] 2.2 Human approves Option A minimum waiver evidence.
 - [x] 2.3 Expand templates, validator, and negative tests only after approval.
-- [ ] 2.4 Do not archive this change until the final human OpenSpec archive gate.
+- [x] 2.4 Do not archive this change until the final human OpenSpec archive gate. Satisfied on 2026-07-09 by the human Option A decision to accept the whole current Phase 1 package and archive readiness-complete OpenSpec changes in one batch execution step.

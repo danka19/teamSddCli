@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Project foundation has moved into Phase 1. The first deterministic process artifact exists: a copyable change package template, a local validation script, pre-commit configuration, and a project OpenSpec change. Current Phase 1 work is synchronizing proposed OpenSpec contracts and human decisions before expanding templates or validators. The main direction is the deterministic SDD process layer, not a custom command-line product.
+> Phase 1 has produced the first accepted OpenSpec baseline. The deterministic process artifact exists (`templates/change/`, `scripts/validate_change.py`, and pre-commit configuration), and the 2026-07-09 Option A archive promoted eight readiness-complete OpenSpec changes into accepted specs. The main direction remains the deterministic SDD process layer, not a custom command-line product; Confluence publication automation is still a later layer.
 
 ## Scope
 
@@ -69,6 +69,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-06: Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas) so the company understands the concept; canonical folder names and OpenSpec CLI terms stay unchanged, and the generated-view term is renamed to `Master Spec views` to avoid collision.
 - 2026-07-06: Treat reusability by other teams - easy bootstrap of the deterministic base, templates, and skills in another team - as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
 - 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
+- 2026-07-09: Accept the full Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes into accepted specs in one batch execution step; future corrections now use new OpenSpec changes against `openspec/specs/`.
 
 ## Architecture Sources
 
@@ -83,11 +84,11 @@ Current architecture sources:
 - `docs/IMPLEMENTATION_STRATEGY.md` for the accepted deterministic-process-first delivery strategy.
 - `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
 - `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued planning input on project memory, Graphify-like navigation, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability.
-- `openspec/changes/` and later `openspec/specs/` for proposed and accepted SDD workflow, artifact, traceability, waiver, documentation, and publication contracts.
+- `openspec/specs/` for accepted SDD workflow, artifact, traceability, waiver, documentation, topology/config, and Confluence feedback contracts; `openspec/changes/` for future proposed changes and archived source packages.
 
 Important concepts preserved in current docs:
 
-- Proposed first canonical source pattern: `team-specs` repository with `openspec/` artifacts, pending human gate 1.5 approval in `define-repo-topology-config`.
+- Accepted first canonical source pattern: central `team-specs` repository with `openspec/` artifacts, central config plus optional project adapters, OpenSpec `1.4.1` pin, one versioned process package, and `owners.yaml` as owner source.
 - Publication: generated Confluence pages from Markdown/OpenSpec.
 - Review and audit: Bitbucket PRs with reviewer assignment from owners registry.
 - Validation and automation: Jenkins pipelines.

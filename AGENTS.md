@@ -70,7 +70,7 @@ Workflow skills are global (`~/.codex/skills`); this repository has no `.codex/s
 - When creating a phase implementation plan, follow `docs/phases/PHASE_PLAN_TEMPLATE.md`.
 - Planning from `docs/ROADMAP.md` alone is forbidden.
 - OpenSpec artifacts under `openspec/` are the source of truth for accepted/proposed `sdd CLI` behavior, SDD workflow requirements, artifact contracts, and acceptance criteria.
-- Documentation governance and TDD-style verification rules should live in `openspec/specs/documentation-governance/spec.md` once that spec exists.
+- Documentation governance and TDD-style verification rules live in `openspec/specs/documentation-governance/spec.md`.
 - New feedback during a phase must be routed as adopt now, queue current phase, create OpenSpec change, defer, or reject before it changes active scope.
 - For SDD/OpenSpecs work, run `openspec list`, `openspec list --specs`, and `openspec validate --all --strict` before completion when relevant.
 

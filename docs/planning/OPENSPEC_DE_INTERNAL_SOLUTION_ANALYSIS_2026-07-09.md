@@ -82,6 +82,6 @@ The reported conflict ("they recommend analytics separate and specs next to code
 
 - Drafted: the merged `define-repo-topology-config` proposal (work item 1.4) now uses the maturity-staged topology options, the process-as-versioned-folder distribution model, and the proposed version-pin location/policy.
 - Routed: instruction patterns (context-study, STOP gates, self-review checklists, scout subagent, Bad/Good pairs, altitude rules) are recorded in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for future role skills and guardrail work.
-- Routed: Delta Spec operation vocabulary, including `REMOVED`/`RENAMED`, is recorded in `openspec/changes/define-change-artifact-contracts/`.
-- Routed: dated archive folders and archive commit-message grammar are recorded in `openspec/changes/define-change-lifecycle/`.
+- Routed: Delta Spec operation vocabulary, including `REMOVED`/`RENAMED`, is accepted in `openspec/specs/change-artifact-contracts/spec.md`.
+- Routed: dated archive folders and archive commit-message grammar are accepted in `openspec/specs/change-lifecycle/spec.md`.
 - Keep the open asset-placement decision informed by their unresolved "all CSV in one repo?" note — the pain is real in their practice too.

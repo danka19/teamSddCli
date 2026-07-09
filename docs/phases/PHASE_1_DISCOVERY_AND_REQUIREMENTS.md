@@ -1,6 +1,6 @@
 # Phase 1. Discovery And Requirements
 
-Status: in progress.
+Status: complete. Phase 1 moved from readiness-complete proposals to accepted specs on 2026-07-09 through the human Option A archive decision and verified OpenSpec batch archive.
 
 ## Goal
 
@@ -21,17 +21,16 @@ Turn the architecture and accepted delivery strategy into executable requirement
 ## OpenSpec And Acceptance Mapping
 
 - Affected accepted requirements:
-  - None yet; Phase 1 drafts the first proposed requirement set and must stop before promoting changes into accepted specs.
+  - `openspec/specs/change-package-foundation/spec.md`
+  - `openspec/specs/change-lifecycle/spec.md`
+  - `openspec/specs/change-artifact-contracts/spec.md`
+  - `openspec/specs/traceability-contract/spec.md`
+  - `openspec/specs/waiver-policy/spec.md`
+  - `openspec/specs/documentation-governance/spec.md`
+  - `openspec/specs/repo-topology-config/spec.md`
+  - `openspec/specs/confluence-feedback-loop/spec.md`
 - Active proposed changes:
-  - `add-change-template-validation` remains active and unarchived.
-  - Planned Phase 1 proposal set:
-    - `define-change-lifecycle`
-    - `define-change-artifact-contracts`
-    - `define-traceability-contract`
-    - `define-waiver-policy`
-    - `define-documentation-governance`
-    - `define-repo-topology-config` (also covers the OpenSpec version pin/upgrade policy per the 2026-07-06 merge decision)
-    - `define-confluence-feedback-loop`
+  - None after the 2026-07-09 batch archive. Source packages live under `openspec/changes/archive/2026-07-09-*`.
 - Acceptance scenarios:
   - A completed/current work item 1.1 has a copyable change package template, local validator, pre-commit entrypoint, focused tests, OpenSpec change evidence, and commit evidence.
   - Proposed change lifecycle requirements define status ownership, allowed transitions, Spec PR/archive gates, and the boundary between deterministic checks, human approval, and AI assistance.
@@ -42,7 +41,8 @@ Turn the architecture and accepted delivery strategy into executable requirement
   - Proposed repo topology/config requirements define the first supported topology, configuration format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment before scripts or templates assume concrete paths.
   - Proposed Confluence feedback requirements define owner, service expectation, unresolved comment handling, and accepted/rejected comment outcomes before publication automation exists.
   - Template and validator behavior is expanded only after the relevant human decision gate is approved.
-  - The final Phase 1 gate stops before archiving OpenSpec changes into accepted specs.
+  - The final Phase 1 gate was closed by the 2026-07-09 human Option A decision; all eight readiness-complete OpenSpec changes were archived into accepted specs.
+  - Confluence feedback/source/publication-read-model contracts are accepted, but actual Confluence publication automation and first generated-view selection remain later-layer work after corporate-environment validation.
 - Verification evidence expected before completion:
   - `git show --no-patch --oneline 6fbde43` for completed work item 1.1 evidence.
   - Focused `python -m pytest tests/test_validate_change.py -v` when validator behavior changes.
@@ -871,6 +871,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.11 Final Human Gate Before OpenSpec Archive/Accepted Specs
 
+Status: completed on 2026-07-09. The human owner selected Option A, and a separate batch execution step archived/promoted all eight readiness-complete changes into accepted specs.
+
 Objective:
 
 - Stop for human approval before any Phase 1 OpenSpec changes are archived into accepted specs.
@@ -912,7 +914,20 @@ Exit criteria:
 OpenSpec and acceptance evidence:
 
 - The final packet identifies every proposed requirement, acceptance scenario, verification command, manual-verification risk, and human decision that supports acceptance.
-- Remaining blocker before any archive/promote step: explicit human approval for whether the validated Phase 1 proposal set should stay proposed or move into a separate archive/accepted-spec execution step.
+- The blocker was resolved on 2026-07-09 by human Option A: accept the whole current Phase 1 package and archive all readiness-complete changes in one batch execution step.
+- Archive execution evidence:
+  - `openspec archive add-change-template-validation -y`
+  - `openspec archive define-change-lifecycle -y`
+  - `openspec archive define-change-artifact-contracts -y`
+  - `openspec archive define-traceability-contract -y`
+  - `openspec archive define-waiver-policy -y`
+  - `openspec archive define-documentation-governance -y`
+  - `openspec archive define-repo-topology-config -y`
+  - `openspec archive define-confluence-feedback-loop -y`
+  - `openspec list` reported no active changes after archive.
+  - `openspec list --specs` reported eight accepted specs after archive.
+  - `openspec validate --all --strict` passed after archive.
+- The Confluence feedback-loop archive accepts the contract only. It does not implement Confluence publication automation; generated-view selection remains deferred to the corporate environment per `D-010`.
 
 Final human decision question for the project owner (Russian):
 
@@ -935,11 +950,10 @@ Final human decision question for the project owner (Russian):
 
 ## Phase Gate
 
-- Phase 1 is ready for human acceptance/archive review only when the proposed OpenSpec changes for lifecycle, artifact contracts, traceability, waivers, documentation governance, merged repo topology/config/OpenSpec version policy, and Confluence feedback loop have been drafted, validated, reviewed, and explicitly stopped at the final human archive gate.
-- Phase 1 is complete only after explicit human approval plus a separate verified archive/accepted-spec execution step.
-- No proposed OpenSpec change may be archived into accepted specs without explicit human approval.
+- Phase 1 is complete as of 2026-07-09 after explicit human Option A approval plus a verified archive/accepted-spec execution step.
+- Future behavior or process changes must be proposed as new OpenSpec changes against the accepted baseline in `openspec/specs/`.
 - No template or validator expansion may implement any final contract before the corresponding human decision gate is approved. The artifact matrix and waiver gates were approved on 2026-07-06, as were the lifecycle naming and error-level enforcement decisions; the merged topology/config/OpenSpec-version gate (1.5) was approved on 2026-07-09.
-- Readiness status as of 2026-07-09: the worker readiness packet is assembled, all active changes still validate as proposed, and the gate remains intentionally blocked at work item 1.11 until the human chooses the archive/accepted-spec path.
+- Archive status as of 2026-07-09: `openspec list` reports no active changes and `openspec list --specs` reports accepted specs for change-package foundation, lifecycle, artifact contracts, traceability, waiver policy, documentation governance, repo topology/config, and Confluence feedback loop.
 
 ## Human Decisions
 
@@ -962,4 +976,4 @@ Final human decision question for the project owner (Russian):
 - Completed 2026-07-09: Confluence feedback loop owner/SLA/unresolved comments - analyst/change owner triages feedback; blocker comments block later Confluence-enabled publication/archive readiness; non-blocking comments may continue only with explicit disposition; the default SLA is triage within 1 working day for blockers and 3 working days for non-blockers, and this SLA must be editable and explicitly disableable.
 - Completed 2026-07-09: generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment because it depends on real corporate templates, approval practices, and tooling constraints.
 - Completed 2026-07-09: project memory/documentation quality controls for weaker corporate AI models - memory follows the future `team-specs` topology; the first graph/navigation implementation should be a lightweight deterministic index; mandatory pilot guardrails are read packs, role skills, and evidence checklists; first role guides are analyst, developer, and QA thin-change walkthroughs.
-- Open (work item 1.11): the final archive/accepted-spec decision remains human-owned; see the Russian decision packet above for the practical options, recommended default, and blocked follow-up work.
+- Completed 2026-07-09: Option A final archive/accepted-spec decision accepted the whole Phase 1 readiness-complete package and archived/promoted all eight changes in one batch execution step. See `docs/DECISIONS.md` (`D-011`).

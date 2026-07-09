@@ -12,11 +12,11 @@ Last updated: 2026-07-09.
 | Git repository | Initialized locally on 2026-07-03 |
 | Current branch | `phase-1/change-template-validation` |
 | Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
-| Latest known commit before this audit update | `4768648` (`Add openspec-de vs team SDD comparison presentation`) |
+| Latest known commit before this audit update | Pending commit for the 2026-07-09 Phase 1 OpenSpec archive batch |
 | GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
 | Architecture source of truth | Current decisions live in `docs/` and `openspec/`; stale historical architecture draft removed on 2026-07-06 |
 | Implementation source code | No custom `sdd` CLI source exists; deterministic script `scripts/validate_change.py` is present |
-| OpenSpec project artifacts | Present; 8 active proposed changes cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, repo-topology/config/version, and Confluence feedback/publication contracts |
+| OpenSpec project artifacts | Present; 8 accepted specs cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, repo-topology/config/version, and Confluence feedback/publication contracts; the source changes are archived under `openspec/changes/archive/2026-07-09-*` |
 
 ## Useful Starting Points
 
@@ -41,7 +41,7 @@ Last updated: 2026-07-09.
 | Focused validator tests | `python -m pytest tests/test_validate_change.py -v` passed 34 tests after the work items 1.8/1.9 reconciliation and hardening passes, covering thin/full artifact rules, canonical statuses, placeholder-mode enum enforcement, no-spec-change handling, missing requirement scenarios, missing traceability rows, pending downstream link handling before/archive readiness, practical thin archive evidence, waiver validation, waiver-to-traceability matching, risky thin-package trigger rejection, staged discovery, and placeholder mode; `pytest.ini` uses repository-local `.pytest-tmp` because the default Windows temp pytest directory is not accessible in this environment |
 | Template validation | After work item 1.8, `python scripts/validate_change.py --allow-placeholders templates/change` passed, and `python scripts/validate_change.py templates/change` rejected placeholder values as expected |
 | OpenSpec CLI installed | `openspec --version` returned `1.4.1` |
-| OpenSpec validation | During the Phase 1.10 readiness pass on 2026-07-09, `openspec list` still showed 8 active changes, `openspec list --specs` still showed no accepted specs, and `openspec validate --all --strict` passed all 8 changes with 0 failures. No active change was archived or promoted. |
+| OpenSpec validation | During the Phase 1 archive batch on 2026-07-09, `openspec archive <change> -y` promoted all 8 readiness-complete changes. After the archive, `openspec list` reported no active changes, `openspec list --specs` reported 8 accepted specs, and `openspec validate --all --strict` passed all 8 specs with 0 failures. |
 | Pre-commit installed | Not available on PATH during Phase 1 artifact work; config is present but end-to-end hook execution still needs tool installation |
 | Local app/server available | No local app/server found; this work item is script/template based |
 | Documentation bootstrap | `project-starter-kit` created `AGENTS.md`, `docs/`, `.codex/skills/`, `.gitignore`, and `.env.example` |
@@ -52,11 +52,11 @@ Last updated: 2026-07-09.
 
 | ID | Risk | Owner | Status |
 |---|---|---|---|
-| AUDIT-001 | Product scope and first-MVP boundaries are now captured by a validated Phase 1 proposal set, but no accepted living specs exist yet because work item 1.11 still requires explicit human archive/accepted-spec approval and a separate archive execution step. | Phase 1 | open |
+| AUDIT-001 | Product scope and first-MVP boundaries are captured by accepted Phase 1 living specs after the 2026-07-09 Option A archive batch. Future corrections must be made through new OpenSpec changes over the accepted baseline. | Phase 1 | closed |
 | AUDIT-002 | Environment and verification commands for the future CLI runtime are not recorded because the implementation stack is undecided. | Phase 1/2 | open |
-| AUDIT-003 | Historical architecture draft was removed after current decisions were captured in `docs/` and active OpenSpec proposals; accepted living specs are still pending Phase 1 archive/acceptance. | Phase 1/2 | closed |
+| AUDIT-003 | Historical architecture draft was removed after current decisions were captured in `docs/` and OpenSpec. Phase 1 accepted living specs now exist after the 2026-07-09 archive batch. | Phase 1/2 | closed |
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
-| AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is initialized with active change `add-change-template-validation`. | Phase 1 | closed |
+| AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is initialized and now includes accepted spec `openspec/specs/change-package-foundation/spec.md`; the original `add-change-template-validation` change is archived. | Phase 1 | closed |
 | AUDIT-006 | Placeholder corporate repo/owner/Jira/Confluence/Jenkins examples from the removed historical draft must not be treated as real configuration. Current docs still forbid inferring real corporate configuration from examples. | Phase 1/2 | closed |
 | AUDIT-007 | Corporate environment specifics are unverified: GigaCode CLI capability against skill flows, MCP policy inside the corporate network, Bitbucket/Jenkins/Jira/Confluence versions, and network/artifact restrictions. Must be checked in the pre-transfer adaptation review. | Transfer phase | open |
 | AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
@@ -116,6 +116,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 | 2026-07-09 | Confluence feedback uses analyst/change-owner triage, explicit dispositions, blocker/non-blocker behavior, and editable/disableable triage SLA. | Default triage SLA is 1 working day for blockers and 3 working days for non-blockers; later Confluence-enabled publication/archive is blocked by unresolved blocker comments; non-blockers may continue only with accepted/rejected/deferred/duplicate disposition. |
 | 2026-07-09 | Project memory/weak-model defaults: memory follows the future `team-specs` topology, first graph/navigation is a lightweight deterministic index, mandatory pilot guardrails are read packs/role skills/evidence checklists, and first role guides are analyst/developer/QA thin-change walkthroughs. | Future memory tooling remains outside the first thin MVP unless explicitly re-scoped; later proposals must turn these defaults into concrete schemas/checks before implementation. |
 | 2026-07-09 | Generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment. | See `docs/DECISIONS.md` (`D-010`). The external planning repo records source-of-truth and feedback contracts, but the actual view set depends on real corporate templates, approval practices, and tooling constraints. |
+| 2026-07-09 | Accept the whole Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes in one batch execution step. | See `docs/DECISIONS.md` (`D-011`). Future changes now build on accepted specs in `openspec/specs/`; publication automation remains a later layer, not implemented by this archive. |
 
 ## Audit Rules
 

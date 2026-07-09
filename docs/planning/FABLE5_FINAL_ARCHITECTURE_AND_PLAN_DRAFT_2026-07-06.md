@@ -37,7 +37,7 @@ Stage numbering below is execution order, not roadmap phase renumbering; roadmap
 3. Human gate 1.7 (Confluence feedback owner/SLA) using the recommended defaults already written in `define-confluence-feedback-loop/design.md`.
 4. Record the OpenSpec version pin in the location the topology/config decision chooses (closes AUDIT-017).
 
-Exit: all Phase 1 contracts approved as proposals; no accepted specs yet.
+Historical exit target: all Phase 1 contracts approved as proposals; no accepted specs yet. This target was superseded on 2026-07-09 when the Option A batch archive promoted the readiness-complete package into accepted specs.
 
 ### Stage B — Reconcile the deterministic layer (work items 1.8–1.9)
 
@@ -51,7 +51,7 @@ Exit: validator enforces exactly the approved matrix; template copies cleanly in
 
 1. Acceptance readiness review; resolve the `define-confluence-feedback-loop` naming/scope note at this gate.
 2. If decision 3 (decision log) is approved: create `docs/DECISIONS.md`, migrate decisions to stable IDs, reduce README/audit/roadmap copies to references — one mechanical commit, done at this boundary, not mid-phase.
-3. Final human archive gate; only then promote changes into `openspec/specs/`.
+3. Final human archive gate; only then promote changes into `openspec/specs/`. Completed on 2026-07-09 by the Option A batch archive.
 
 Exit: first accepted living specs exist; Phase 1 complete.
 
