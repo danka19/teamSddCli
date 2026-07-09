@@ -332,6 +332,47 @@ def test_missing_requirement_scenario_traceability_is_reported(tmp_path: Path) -
     )
 
 
+def test_requirement_without_scenario_is_reported(tmp_path: Path) -> None:
+    package = build_valid_package(tmp_path)
+    write_file(
+        package / "specs/auth-session/spec.md",
+        """
+        ## ADDED Requirements
+
+        ### Requirement: Remember Me session
+        The system SHALL support an optional Remember Me mode during login.
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any("Remember Me session" in error and "has no scenario" in error for error in errors)
+
+
+def test_missing_traceability_row_is_reported(tmp_path: Path) -> None:
+    package = build_valid_package(
+        tmp_path,
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-999
+            requirement: Another requirement
+            scenario: Another scenario
+            tasks:
+              - TASK-AUTH-999
+            tests:
+              - TC-AUTH-999
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any(
+        "traceability.yaml missing link for requirement 'Remember Me session'" in error
+        and "scenario 'Login with Remember Me enabled'" in error
+        for error in errors
+    )
+
+
 def test_historical_status_is_rejected(tmp_path: Path) -> None:
     package = build_valid_package(tmp_path, status="implemented")
 
@@ -519,6 +560,81 @@ def test_full_archive_requires_waiver_to_match_same_requirement_and_scenario(
     errors = validate_change.validate_change_package(package)
 
     assert any("WVR-AUTH-005" in error and "scenario" in error for error in errors)
+
+
+def test_pending_traceability_is_allowed_before_archive_readiness(tmp_path: Path) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="full",
+        change_type="new_feature",
+        status="in_implementation",
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Remember Me session
+            scenario: Login with Remember Me enabled
+            tasks:
+              - pending
+            tests:
+              - pending
+            automated_tests:
+              - pending
+            verification:
+              - pending
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert errors == []
+
+
+def test_archive_ready_thin_change_accepts_practical_verification_evidence(
+    tmp_path: Path,
+) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="thin",
+        change_type="behavior_change",
+        status="ready_to_archive",
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Remember Me session
+            scenario: Login with Remember Me enabled
+            tasks:
+              - TASK-AUTH-001
+            verification:
+              - docs/evidence/manual-auth-check.md
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert errors == []
+
+
+def test_archive_ready_rejects_pending_traceability_links(tmp_path: Path) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="thin",
+        change_type="behavior_change",
+        status="ready_to_archive",
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Remember Me session
+            scenario: Login with Remember Me enabled
+            tasks:
+              - TASK-AUTH-001
+            verification:
+              - pending
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any("pending verification" in error for error in errors)
 
 
 def test_behavior_change_rejects_no_spec_change_rationale(tmp_path: Path) -> None:

@@ -746,6 +746,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.9 Traceability And Artifact Contract Scenario/Test Hardening
 
+Status: completed on 2026-07-09; focused validator tests now harden the approved traceability and artifact-contract scenarios without changing validator behavior.
+
 Objective:
 
 - Add or refine traceability and artifact contract scenarios plus validator tests so Phase 1 evidence can support the later archive/acceptance decision.
@@ -790,6 +792,9 @@ OpenSpec and acceptance evidence:
 
 - Scenario IDs or requirement headings are traceable from proposal deltas to tests/manual commands.
 - Residual manual-verification risk is recorded if any acceptance scenario lacks automated coverage.
+- Implementation evidence recorded on 2026-07-09:
+  - `python -m pytest tests/test_validate_change.py -v` passed 34 tests, adding explicit coverage for missing requirement scenarios, missing traceability rows, pending downstream links before archive readiness, archive-ready rejection of pending links, and thin archive-ready practical verification evidence.
+  - No `scripts/validate_change.py` changes were required; the hardening work confirmed the existing validator behavior already matched the approved Phase 1 contracts.
 
 ### 1.10 Phase 1 Acceptance Readiness Review
 
