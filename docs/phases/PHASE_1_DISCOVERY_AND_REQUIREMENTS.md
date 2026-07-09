@@ -197,7 +197,7 @@ Affected specs: `define-change-lifecycle` (naming decision closes its tasks item
 Affected architecture: No boundary changes; preserves deterministic-gates-first, human-owned approvals, and the thin-MVP boundary.
 Data contract impact: Validator status vocabulary must be reconciled to the six canonical states in work item 1.8; the OpenSpec version pin location is decided inside the merged topology/config proposal.
 Verification impact: Work item 1.8 negative tests must cover rejected historical statuses and error-level matrix enforcement; this documentation pass requires `openspec validate --all --strict` and `git diff --check`.
-Status: Adopted into README, audit, roadmap, the lifecycle proposal, and this phase plan; `docs/DECISIONS.md` creation is deferred to work item 1.10.
+Status: Adopted into README, audit, roadmap, the lifecycle proposal, and this phase plan; `docs/DECISIONS.md` is now created during work item 1.10 and records this batch as `D-006`.
 ```
 
 ```text
@@ -953,7 +953,7 @@ Final human decision question for the project owner (Russian):
 - Completed 2026-07-06: deploy, Zephyr/test-management integration, Jira task automation, Confluence publication, QA/AT proposal generation, and role inbox remain outside the first MVP.
 - Completed 2026-07-06: lifecycle state naming вЂ” accepted specs and deterministic validation use the six internal states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`); simplified lifecycle names appear only in generated business-facing views.
 - Completed 2026-07-06: work item 1.8 enforcement вЂ” the approved artifact matrix and waiver checks are enforced as errors immediately, with no warnings-only staging period.
-- Completed 2026-07-06: canonical decision log вЂ” `docs/DECISIONS.md` with stable decision IDs is created at Phase 1 acceptance readiness (work item 1.10); until then the existing multi-file decision convention continues.
+- Completed 2026-07-09: canonical decision log - `docs/DECISIONS.md` with stable decision IDs was created during work item 1.10 readiness consolidation; use its decision IDs when later docs need canonical references.
 - Completed 2026-07-06: proposal merge decision - the OpenSpec version pin/upgrade policy is handled inside `define-repo-topology-config` as one platform-assumptions proposal with a single human gate (1.5); the work item 1.4 draft was created on 2026-07-09.
 - Completed 2026-07-09: first supported repo topology/config format and OpenSpec version pin/upgrade policy, approved as the gate 1.5 recommended defaults: central `team-specs`, central team config plus optional project adapter, central OpenSpec `1.4.1` pin with reviewed upgrade change package, one versioned process package, and `owners.yaml` as source for generated or validated `CODEOWNERS`.
 - Completed 2026-07-06: canonical language for team product analytics specs вЂ” Russian requirement/scenario prose with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's process specs stay English; the documentation-governance proposal's canonical-language requirement was updated accordingly.

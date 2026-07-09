@@ -74,6 +74,8 @@ Last updated: 2026-07-09.
 
 ## Accepted Human Decisions
 
+Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains an audit-oriented summary for local context; when another durable doc needs to point at a specific accepted decision, reference the stable ID from `docs/DECISIONS.md`.
+
 | Date | Decision | Impact |
 |---|---|---|
 | 2026-07-03 | Narrow the first MVP to `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic `traceability.yaml`. | Phase 1/3 plans must not require Jira, QA/AT, Confluence publication, or role inboxes for the first usable workflow unless explicitly re-scoped. |
@@ -103,7 +105,7 @@ Last updated: 2026-07-09.
 | 2026-07-06 | Use source ownership and write-once/reference-many rules to prevent OpenSpec/docs/memory drift. | OpenSpec owns behavior and acceptance; `docs/` owns context, rationale, phase planning, and audit; `AGENTS.md` owns agent operating rules; derived views, role guides, read packs, and project memory must reference canonical sources and be fixed or regenerated when they drift. |
 | 2026-07-06 | Adopt the six internal lifecycle states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`) as canonical for accepted specs and deterministic validation. | Work item 1.8 reconciles the validator status vocabulary to the canonical six states; simplified lifecycle names may appear only in generated business-facing views. |
 | 2026-07-06 | Enforce the approved artifact matrix and waiver checks as errors immediately in work item 1.8. | No warnings-only staging period; the expanded validator rejects non-compliant packages as soon as work item 1.8 lands. |
-| 2026-07-06 | Create `docs/DECISIONS.md` as the single canonical decision log with stable decision IDs at Phase 1 acceptance readiness. | Executed during work item 1.10 as one mechanical consolidation commit; until then the existing multi-file decision convention continues. |
+| 2026-07-06 | Create `docs/DECISIONS.md` as the single canonical decision log with stable decision IDs at Phase 1 acceptance readiness. | Executed in work item 1.10; see `docs/DECISIONS.md` (`D-006`). |
 | 2026-07-06 | Merge the OpenSpec version pin/upgrade policy into the `define-repo-topology-config` proposal. | Work item 1.4 drafts one merged platform-assumptions proposal; decision gate 1.5 covers topology, config format, and version pin/upgrade policy together. |
 | 2026-07-06 | Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas). | Glossary updated; canonical folder names and OpenSpec CLI terms unchanged; generated-view term renamed to `Master Spec views` to avoid collision. |
 | 2026-07-06 | Treat reusability by other teams as an explicit design constraint for the repo topology/config proposal. | Work item 1.4 must show how another team bootstraps the deterministic base, templates, and skills without copying this project's history; first MVP scope is not expanded. |
@@ -113,7 +115,7 @@ Last updated: 2026-07-09.
 | 2026-07-09 | Accepted diagrams, journey schemes, and screen assets use Git-managed source or source+export with stable IDs; Confluence drawings are drafts until exported or recreated into that flow. | Visio is allowed as one source format when practical, but not required; diagram-as-code, diagrams.net/draw.io source, Figma exports, or another agreed source+export pair can satisfy the rule if versioned and traceable. |
 | 2026-07-09 | Confluence feedback uses analyst/change-owner triage, explicit dispositions, blocker/non-blocker behavior, and editable/disableable triage SLA. | Default triage SLA is 1 working day for blockers and 3 working days for non-blockers; later Confluence-enabled publication/archive is blocked by unresolved blocker comments; non-blockers may continue only with accepted/rejected/deferred/duplicate disposition. |
 | 2026-07-09 | Project memory/weak-model defaults: memory follows the future `team-specs` topology, first graph/navigation is a lightweight deterministic index, mandatory pilot guardrails are read packs/role skills/evidence checklists, and first role guides are analyst/developer/QA thin-change walkthroughs. | Future memory tooling remains outside the first thin MVP unless explicitly re-scoped; later proposals must turn these defaults into concrete schemas/checks before implementation. |
-| 2026-07-09 | Generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment. | The external planning repo records source-of-truth and feedback contracts, but the actual view set depends on real corporate templates, approval practices, and tooling constraints. |
+| 2026-07-09 | Generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment. | See `docs/DECISIONS.md` (`D-010`). The external planning repo records source-of-truth and feedback contracts, but the actual view set depends on real corporate templates, approval practices, and tooling constraints. |
 
 ## Audit Rules
 

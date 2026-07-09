@@ -25,6 +25,7 @@ This document is the repository map for agents and humans. Keep it current whene
 |---|---|
 | `docs/README.md` | Documentation home and product overview |
 | `docs/00_FILE_STRUCTURE.md` | Repository and documentation map |
+| `docs/DECISIONS.md` | Canonical human decision log with stable decision IDs and evidence pointers |
 | `docs/ROADMAP.md` | Phase-level roadmap and gates |
 | `docs/CURRENT_PROJECT_AUDIT.md` | Current setup/repository audit and known risks |
 | `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, success metrics, and CLI-build triggers |

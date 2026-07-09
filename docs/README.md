@@ -31,6 +31,8 @@ Out of scope:
 
 ## Key Decisions
 
+Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain an orientation summary and should not be treated as the canonical log.
+
 - 2026-07-03: Use the historical architecture draft as the initial bootstrap input.
 - 2026-07-03: Use OpenSpec/Markdown in Git as the canonical source and Confluence as a generated publication layer.
 - 2026-07-03: Automate artifact state transitions through deterministic checks, CI, templates, and standard tool features rather than centralizing control in one autonomous agent.
@@ -62,7 +64,7 @@ Out of scope:
 - 2026-07-06: Use source ownership and write-once/reference-many documentation rules: OpenSpec owns behavior and acceptance, while docs, memory, role guides, and generated views reference canonical source IDs or metadata instead of carrying divergent copies.
 - 2026-07-06: Adopt the six internal lifecycle states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`) as canonical for accepted specs and deterministic validation; simplified lifecycle names may appear only in generated business-facing views.
 - 2026-07-06: Enforce the approved artifact matrix and waiver checks as errors immediately when work item 1.8 expands the validator; no warnings-only staging period.
-- 2026-07-06: Create `docs/DECISIONS.md` as the single canonical human decision log with stable decision IDs at Phase 1 acceptance readiness (work item 1.10); README, audit, roadmap, and phase plans then reference decision IDs instead of maintaining full copies.
+- 2026-07-06 / 2026-07-09: The canonical human decision log now exists as `docs/DECISIONS.md`; see `D-006` for the consolidation decision and use decision IDs from that file when updating derived docs.
 - 2026-07-06: Merge the OpenSpec version pin/upgrade policy into the `define-repo-topology-config` proposal as one platform-assumptions contract with a single human decision gate.
 - 2026-07-06: Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas) so the company understands the concept; canonical folder names and OpenSpec CLI terms stay unchanged, and the generated-view term is renamed to `Master Spec views` to avoid collision.
 - 2026-07-06: Treat reusability by other teams - easy bootstrap of the deterministic base, templates, and skills in another team - as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
