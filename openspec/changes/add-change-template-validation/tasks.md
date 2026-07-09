@@ -17,4 +17,4 @@
 
 - [x] 4.1 Update repository file map, roadmap, and audit.
 - [x] 4.2 Run focused tests, template validation, OpenSpec validation, and whitespace checks.
-- [ ] 4.3 Commit the completed work item.
+- [x] 4.3 Commit the completed work item.

@@ -54,7 +54,7 @@ The waiver approver and evidence policy approved in Phase 1 work item 1.3 SHALL 
 
 #### Scenario: Approved policy does not change validator behavior immediately
 - **WHEN** this proposed change is drafted
-- **THEN** existing templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item
+- **THEN** existing templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item; work item 1.8 is the recorded implementation of that follow-up
 
 #### Scenario: Accepted specs still require final archive approval
 - **WHEN** the Phase 1 waiver policy has human decision approval

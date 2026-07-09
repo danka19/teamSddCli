@@ -18,5 +18,5 @@
 ## 3. Later Decision And Implementation
 
 - [x] 3.1 Human approves the recommended first supported topology/config/OpenSpec version policy at gate 1.5 on 2026-07-09: central `team-specs`, central config plus optional project adapter, central OpenSpec `1.4.1` pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source.
-- [ ] 3.2 After gate approval, work item 1.8 may expand templates and validators using the approved topology/config/version assumptions.
+- [x] 3.2 After gate approval, work item 1.8 may expand templates and validators using the approved topology/config/version assumptions.
 - [ ] 3.3 Do not archive this change until the final human OpenSpec archive gate.

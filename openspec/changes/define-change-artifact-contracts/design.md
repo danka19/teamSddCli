@@ -33,11 +33,11 @@ Artifact height rules:
 - `design.md`, when required, bridges requirements to implementation choices, affected modules, risks, and alternatives.
 - `tasks.md` is an executable checklist. It references design/spec IDs or paths and avoids restating long design text.
 
-`tasks.md` must use machine-readable Markdown checkboxes (`- [ ]` / `- [x]`) for actionable work. Future templates may group tasks by implementation, unit tests, verification, and commit evidence, but group names are not a first-MVP blocker until work item 1.8 expands templates and validators.
+`tasks.md` must use machine-readable Markdown checkboxes (`- [ ]` / `- [x]`) for actionable work. Future templates may group tasks by implementation, unit tests, verification, and commit evidence; work item 1.8 expanded the validator/template baseline without making those group names a first-MVP blocker.
 
 ## Approved Human Decisions From Work Item 1.3
 
-Human approval recorded on 2026-07-06: use the risk-oriented Option A matrix, and keep Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers. Any validator, template, or CI behavior still changes only in later implementation work items after the related proposal updates are reviewed.
+Human approval recorded on 2026-07-06: use the risk-oriented Option A matrix, and keep Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers. Work item 1.8 later updated validator/template behavior against this approved proposal, while accepted-spec promotion remains gated by final archive approval.
 
 ### Decision: Thin Change Minimum
 
@@ -47,7 +47,7 @@ Rejected for the default matrix: Require `design.md` for every thin change. This
 
 Allowed as a limited exception, not the default for behavior-changing SDD work: a no-spec-change rationale for docs-only, refactor, or no-behavior-change maintenance with human reviewer approval and replacement evidence.
 
-Implementation consequence: validator and template expansion may now enforce this matrix in a later work item, but must preserve the limited no-spec-change exception and still reject behavior-changing work without an OpenSpec delta.
+Implementation consequence: work item 1.8 enforced this matrix in the validator/template baseline, preserving the limited no-spec-change exception and rejecting behavior-changing work without an OpenSpec delta.
 
 ### Decision: Full Package Triggers
 

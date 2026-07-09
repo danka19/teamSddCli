@@ -39,4 +39,4 @@ The internal OpenSpec-DE screenshot review confirmed useful maturity-staged topo
 - Does not create accepted specs.
 - Does not change `templates/change/`, `scripts/validate_change.py`, tests, pre-commit behavior, or CI behavior.
 - Records the human-approved gate 1.5 defaults for topology/config/OpenSpec-version policy, while keeping the change unarchived until the final Phase 1 acceptance gate.
-- Feeds later work item 1.8 validator/template expansion and future production `team-specs` setup.
+- Fed work item 1.8 validator/template expansion and still feeds the future production `team-specs` setup.

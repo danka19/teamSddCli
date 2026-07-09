@@ -8,6 +8,6 @@
 
 ## 2. Later Decision And Implementation
 
-- [ ] 2.1 Align traceability completion rules with the approved artifact matrix and waiver policy.
-- [ ] 2.2 Expand validator tests after the human decision gate approves the required links.
+- [x] 2.1 Align traceability completion rules with the approved artifact matrix and waiver policy.
+- [x] 2.2 Expand validator tests after the human decision gate approves the required links.
 - [ ] 2.3 Do not archive this change until the final human OpenSpec archive gate.

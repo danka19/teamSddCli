@@ -50,7 +50,7 @@ The artifact matrix approved in Phase 1 work item 1.3 SHALL remain proposed Open
 
 #### Scenario: Approved matrix does not change deterministic behavior immediately
 - **WHEN** this proposed change is drafted
-- **THEN** templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item
+- **THEN** templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item; work item 1.8 is the recorded implementation of that follow-up
 
 #### Scenario: Accepted specs still require final archive approval
 - **WHEN** the Phase 1 artifact matrix has human decision approval

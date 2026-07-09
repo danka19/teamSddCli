@@ -9,5 +9,5 @@
 
 - [x] 2.1 Human approves Option A role-appropriate waiver approver roles.
 - [x] 2.2 Human approves Option A minimum waiver evidence.
-- [ ] 2.3 Expand templates, validator, and negative tests only after approval.
+- [x] 2.3 Expand templates, validator, and negative tests only after approval.
 - [ ] 2.4 Do not archive this change until the final human OpenSpec archive gate.

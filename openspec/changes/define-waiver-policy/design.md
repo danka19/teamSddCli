@@ -17,7 +17,7 @@ A waiver should record:
 
 ## Approved Human Decisions From Work Item 1.3
 
-Human approval recorded on 2026-07-06: use role-appropriate approvers and require reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when residual risk remains. Any validator, template, or CI behavior still changes only in later implementation work items after the related proposal updates are reviewed.
+Human approval recorded on 2026-07-06: use role-appropriate approvers and require reason, affected requirements/scenarios, approver, substitute evidence, and follow-up/expiry when residual risk remains. Work item 1.8 later updated validator and test behavior against those approved rules, while accepted-spec promotion remains gated by final archive approval.
 
 ### Decision: Waiver Approver Model
 

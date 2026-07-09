@@ -12,6 +12,6 @@
 
 - [x] 2.1 Human approves the Option A risk-oriented thin vs full artifact matrix in work item 1.3.
 - [x] 2.2 Human confirms Jira, Confluence publication, QA/AT proposal generation, and role inbox remain outside MVP and should be planned as later layers.
-- [ ] 2.3 Expand templates and validator only after approval.
+- [x] 2.3 Expand templates and validator only after approval.
 - [x] 2.4 Record future journey/screen and legacy baseline artifact planning without making them first-MVP requirements.
 - [ ] 2.5 Do not archive this change until the final human OpenSpec archive gate.
