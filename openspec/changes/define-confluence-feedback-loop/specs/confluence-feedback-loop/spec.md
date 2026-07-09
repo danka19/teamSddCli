@@ -37,6 +37,14 @@ The SDD process SHALL require explicit disposition for Confluence comments befor
 ### Requirement: Unresolved feedback and publication blockers
 The SDD process SHALL define how unresolved Confluence comments affect future publication and archive gates.
 
+#### Scenario: Feedback SLA is configurable
+- **WHEN** a Confluence-enabled workflow defines feedback triage rules
+- **THEN** blocker and non-blocker triage SLA values are read from editable team/process configuration and may be disabled explicitly when corporate workflow tooling owns timing control
+
+#### Scenario: Default triage SLA is used when enabled
+- **WHEN** feedback SLA is enabled and no stricter team override exists
+- **THEN** blocker comments are triaged within 1 working day and non-blocker comments are triaged within 3 working days
+
 #### Scenario: Blocker comment prevents final publication
 - **WHEN** a Confluence-enabled flow has an unresolved blocker comment
 - **THEN** final publication or archive readiness is blocked until the comment has an accepted, rejected, deferred, duplicate, or approved-waiver disposition
@@ -52,6 +60,10 @@ The SDD process SHALL define how unresolved Confluence comments affect future pu
 #### Scenario: Existing Confluence corpus is read-only archive
 - **WHEN** an existing Confluence analytics page is used as input for new SDD work
 - **THEN** the page is treated as read-only reference material and any accepted requirement or analytics content is rewritten or linked through a Git/OpenSpec change instead of editing the legacy page as canonical source
+
+#### Scenario: Generated views are selected in corporate environment
+- **WHEN** the first Confluence-enabled workflow is planned
+- **THEN** the required generated view set is decided inside the corporate environment using real corporate templates, approval practices, and tool constraints rather than being finalized in the external planning repository
 
 ### Requirement: Generated publication assets
 The SDD process SHALL keep accepted diagrams, journey schemes, and screen assets in a versioned source or source+export flow that generated Confluence pages can embed with stable traceability.

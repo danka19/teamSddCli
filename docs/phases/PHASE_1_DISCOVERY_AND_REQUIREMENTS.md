@@ -278,6 +278,19 @@ Verification impact: Requires OpenSpec strict validation and documentation/audit
 Status: Adopted into the Phase 1 plan, Confluence proposal, planning docs, audit, and roadmap; final OpenSpec archive approval remains open.
 ```
 
+```text
+Idea: Confirm the Confluence feedback SLA default and make the SLA editable and disableable; confirm read-only Confluence corpus handling and defer generated-view selection to the corporate environment.
+Source: Human replies on 2026-07-09 after the SLA explanation.
+Type: data_contract_change, documentation_change, scope_refinement
+Decision: adopt_now
+Reason: The feedback SLA affects later Confluence-enabled publication/archive readiness and must be configurable because real corporate workflow tooling may already own timing control; generated-view selection depends on corporate templates and approval practice that are not available in the external planning repository.
+Affected specs: Proposed change `define-confluence-feedback-loop`.
+Affected architecture: Preserves Confluence as generated/read-only view and keeps corporate-environment-specific publication shape out of the first thin MVP.
+Data contract impact: Future team/process config needs an editable feedback SLA section with an explicit disabled state; proposed defaults are 1 working day for blocker triage and 3 working days for non-blocker triage.
+Verification impact: Requires OpenSpec strict validation and documentation updates now; future implementation must test enabled, overridden, and disabled SLA behavior when Confluence tooling enters scope.
+Status: Adopted into the Confluence feedback proposal, Phase 1 plan, and audit; no first-MVP implementation scope is added.
+```
+
 ## Work Items
 
 Gate rule:
@@ -611,13 +624,13 @@ Recommended subagents:
 Exit criteria:
 
 - Draft proposal defines generated-page ownership, feedback intake, accepted/rejected comment outcomes, unresolved comment behavior, and publication blockers.
-- Draft proposal includes 2-3 feedback-owner/SLA/unresolved-comment options with a recommended default for the later human gate.
+- Draft proposal includes the approved feedback-owner/SLA/unresolved-comment defaults, including editable/disableable triage SLA values.
 - Draft explicitly keeps Confluence as generated view, not source of truth.
 - No publication automation is added in this work item.
 
 Current draft notes:
 
-- `define-confluence-feedback-loop` covers Confluence as generated read/publication model, generated page source metadata, source warnings, accepted/rejected/deferred/duplicate comment dispositions, unresolved blocker behavior, and evidence-backed approval/testing status display.
+- `define-confluence-feedback-loop` covers Confluence as generated read/publication model, generated page source metadata, source warnings, accepted/rejected/deferred/duplicate comment dispositions, editable/disableable triage SLA defaults, unresolved blocker behavior, and evidence-backed approval/testing status display.
 - The proposal intentionally includes generated publication model basics rather than creating a separate accepted MasterSpec source.
 - The existing Confluence analytics corpus is a read-only archive for the first pilot; accepted diagrams, journey schemes, and screen assets use Git-managed source or source+export with stable IDs, while Confluence drawings are draft/feedback artifacts until exported or recreated into that flow.
 - Publication automation, preview publishing, comment synchronization, and generated gallery implementation remain outside the first MVP.
@@ -889,8 +902,9 @@ OpenSpec and acceptance evidence:
 - Completed 2026-07-06: proposal merge decision - the OpenSpec version pin/upgrade policy is handled inside `define-repo-topology-config` as one platform-assumptions proposal with a single human gate (1.5); the work item 1.4 draft was created on 2026-07-09.
 - Completed 2026-07-09: first supported repo topology/config format and OpenSpec version pin/upgrade policy, approved as the gate 1.5 recommended defaults: central `team-specs`, central team config plus optional project adapter, central OpenSpec `1.4.1` pin with reviewed upgrade change package, one versioned process package, and `owners.yaml` as source for generated or validated `CODEOWNERS`.
 - Completed 2026-07-06: canonical language for team product analytics specs вЂ” Russian requirement/scenario prose with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's process specs stay English; the documentation-governance proposal's canonical-language requirement was updated accordingly.
-- Completed 2026-07-09: migration approach for the existing Confluence analytics corpus - old Confluence analytics content is kept as a read-only archive; no bulk migration is required for the first pilot, and any reused material becomes new Git/OpenSpec source through a reviewed change instead of being edited in place.
+- Completed 2026-07-09: migration approach for the existing Confluence analytics corpus - old Confluence analytics content is kept as a read-only archive; no bulk migration is required for the first pilot, and any reused material becomes new Git/OpenSpec source through a reviewed change instead of being edited in place. This interpretation was confirmed by the human owner after the decision summary.
 - Completed 2026-07-09: storage conventions for large analytics diagrams, journey schemes, and screen assets - accepted artifacts use Git-managed source or source+export with stable IDs and generated Confluence embeds; diagrams drawn directly in Confluence may be treated as discussion drafts, but accepted/published diagrams must be exported or recreated into the Git-managed asset flow.
-- Completed 2026-07-09: Confluence feedback loop owner/SLA/unresolved comments - analyst/change owner triages feedback; blocker comments block later Confluence-enabled publication/archive readiness; non-blocking comments may continue only with explicit disposition.
+- Completed 2026-07-09: Confluence feedback loop owner/SLA/unresolved comments - analyst/change owner triages feedback; blocker comments block later Confluence-enabled publication/archive readiness; non-blocking comments may continue only with explicit disposition; the default SLA is triage within 1 working day for blockers and 3 working days for non-blockers, and this SLA must be editable and explicitly disableable.
+- Completed 2026-07-09: generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment because it depends on real corporate templates, approval practices, and tooling constraints.
 - Completed 2026-07-09: project memory/documentation quality controls for weaker corporate AI models - memory follows the future `team-specs` topology; the first graph/navigation implementation should be a lightweight deterministic index; mandatory pilot guardrails are read packs, role skills, and evidence checklists; first role guides are analyst, developer, and QA thin-change walkthroughs.
 - Open: before archiving OpenSpec changes into accepted specs.

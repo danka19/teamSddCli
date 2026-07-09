@@ -31,6 +31,9 @@ Every generated page must show source commit, source PR or change ID, generated 
 Approved gate 1.7 default on 2026-07-09:
 
 - owner: analyst/change owner;
+- feedback SLA is a triage SLA, not an implementation SLA;
+- default SLA: blocker comments are triaged within 1 working day; non-blocker comments are triaged within 3 working days;
+- SLA settings must be editable and may be disabled by explicit team/process config for environments where timing is handled by corporate workflow tools;
 - blocker comments block final approval/publication for Confluence-enabled flows;
 - non-blocking comments may continue only when every comment has an explicit disposition;
 - rejected comments require a reason;
@@ -75,6 +78,8 @@ Human decision on 2026-07-09:
 - accepted diagrams, journey schemes, and screen assets use Git-managed source or source+export with stable IDs and generated Confluence embeds.
 
 If an analyst draws a diagram directly in Confluence, treat it as a discussion draft or feedback artifact. Before it becomes accepted/published source, export or recreate it into the Git-managed asset flow. Visio is acceptable when it is the team's practical source format, but it is not mandatory; diagram-as-code, draw.io/diagrams.net source, Figma exports, or another agreed source+export pair are also acceptable if they preserve version history, stable IDs, and generated-view traceability.
+
+Generated-view selection for the first corporate Confluence-enabled workflow is intentionally deferred to the corporate environment. The external planning repository records the contract boundaries, but the actual view set must be chosen against real corporate templates, approval practices, and tool constraints.
 
 ## Risks / Trade-offs
 
