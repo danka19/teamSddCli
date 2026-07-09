@@ -1,0 +1,15 @@
+waivers:
+  - id: WVR-CHANGE-001
+    type: documentation_deferred
+    artifact: qa/automation-plan.md
+    requirements:
+      - <requirement name>
+    scenarios:
+      - <scenario name>
+    reason: <why the missing artifact or evidence is acceptable for now>
+    evidence:
+      - <replacement evidence path or note>
+    approver: <qa_owner_group|at_owner_group|tech_lead|analyst_owner_group|product_owner>
+    date: YYYY-MM-DD
+    residual_risk: false
+    follow_up: <optional follow-up or expiry when residual risk remains>

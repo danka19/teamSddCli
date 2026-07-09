@@ -1,9 +1,10 @@
 id: CHANGE-YYYY-001-short-name
 title: <short human-readable title>
 mode: thin
-type: new_feature
+type: behavior_change
 status: draft
 capability: <capability-name>
+spec_change: required
 
 systems:
   code_repos:
@@ -20,7 +21,7 @@ review:
 quality:
   scenarios: required
   manual_cases: impacted
-  api_at: impacted
+  api_at: not_impacted
   mobile_at: not_impacted
   security_review: not_required
 

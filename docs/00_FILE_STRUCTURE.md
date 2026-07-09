@@ -68,8 +68,9 @@ This document is the repository map for agents and humans. Keep it current whene
 | Path | Purpose |
 |---|---|
 | `templates/change/` | Copyable SDD change package skeleton |
+| `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
-| `tests/test_validate_change.py` | Focused validator tests covering valid packages, missing artifacts, traceability gaps, staged discovery, and placeholder mode |
+| `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
 
 ## Expected Future Project Structure
 

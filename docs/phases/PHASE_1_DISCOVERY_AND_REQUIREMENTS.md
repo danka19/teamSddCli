@@ -685,7 +685,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.8 Expand Templates And Validator After Approved Decision Gates
 
-Status: unblocked by human decision gates as of 2026-07-09; ready to start in a separate implementation step.
+Status: completed on 2026-07-09 in a separate implementation step; validator, tests, and template were reconciled to the approved Phase 1 contracts while all OpenSpec changes remained proposed.
 
 Objective:
 
@@ -738,6 +738,11 @@ OpenSpec and acceptance evidence:
 
 - Tests and scenarios map back to the approved proposed requirements for artifact contracts, traceability, waivers, topology/config, and version policy.
 - Any behavior not implemented yet has a recorded reason, follow-up item, or waiver.
+- Implementation evidence recorded on 2026-07-09:
+  - `python -m pytest tests/test_validate_change.py -v` passed 13 tests, including thin/full artifact rules, canonical statuses, no-spec-change handling, waiver validation, traceability gaps, staged discovery, and placeholder mode.
+  - `python scripts/validate_change.py --allow-placeholders templates/change` passed.
+  - `python scripts/validate_change.py templates/change` failed as expected on placeholder production values.
+  - `openspec list`, `openspec list --specs`, and `openspec validate --all --strict` remained green, so the proposals stayed proposed and valid.
 
 ### 1.9 Traceability And Artifact Contract Scenario/Test Hardening
 
