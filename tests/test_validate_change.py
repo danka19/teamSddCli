@@ -2,6 +2,8 @@ from pathlib import Path
 import sys
 from textwrap import dedent
 
+import pytest
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
@@ -21,20 +23,50 @@ def build_change_yaml(
     status: str = "draft",
     spec_change: str = "required",
     quality_overrides: dict[str, str] | None = None,
+    review_overrides: dict[str, str | list[str]] | None = None,
+    systems_overrides: dict[str, str | list[str]] | None = None,
 ) -> str:
     quality = {
         "scenarios": "required",
         "manual_cases": "impacted",
-        "api_at": "not_impacted",
+        "behavior_scope": "focused",
+        "public_api": "not_impacted",
         "mobile_at": "not_impacted",
+        "data_risk": "not_impacted",
         "security_review": "not_required",
+        "rollback_cost": "low",
     }
     if quality_overrides:
         quality.update(quality_overrides)
 
-    quality_lines = "\n".join(
-        f"  {key}: {value}" for key, value in quality.items()
-    )
+    review = {
+        "analyst_owner_group": "auth-ba",
+        "dev_owner_groups": ["auth-dev"],
+        "qa_owner_group": "qa-auth",
+        "at_owner_groups": ["at-auth"],
+    }
+    if review_overrides:
+        review.update(review_overrides)
+
+    systems = {
+        "code_repos": ["backend-auth"],
+        "at_repos": [],
+    }
+    if systems_overrides:
+        systems.update(systems_overrides)
+
+    def render_section(name: str, values: dict[str, str | list[str]]) -> list[str]:
+        lines = [f"{name}:"]
+        for key, value in values.items():
+            if isinstance(value, list):
+                lines.append(f"  {key}:")
+                if value:
+                    lines.extend(f"    - {item}" for item in value)
+                else:
+                    lines[-1] += " []"
+            else:
+                lines.append(f"  {key}: {value}")
+        return lines
 
     return "\n".join(
         [
@@ -45,19 +77,9 @@ def build_change_yaml(
             f"status: {status}",
             "capability: auth-session",
             f"spec_change: {spec_change}",
-            "systems:",
-            "  code_repos:",
-            "    - backend-auth",
-            "  at_repos: []",
-            "review:",
-            "  analyst_owner_group: auth-ba",
-            "  dev_owner_groups:",
-            "    - auth-dev",
-            "  qa_owner_group: qa-auth",
-            "  at_owner_groups:",
-            "    - at-auth",
-            "quality:",
-            *quality_lines.splitlines(),
+            *render_section("systems", systems),
+            *render_section("review", review),
+            *render_section("quality", quality),
             "publication:",
             "  confluence_space: generated",
             "  page_id: null",
@@ -79,6 +101,8 @@ def build_valid_package(
     include_test_case: bool | None = None,
     include_automation_plan: bool | None = None,
     quality_overrides: dict[str, str] | None = None,
+    review_overrides: dict[str, str | list[str]] | None = None,
+    systems_overrides: dict[str, str | list[str]] | None = None,
     traceability_content: str | None = None,
     waivers_content: str | None = None,
 ) -> Path:
@@ -91,6 +115,8 @@ def build_valid_package(
             status=status,
             spec_change=spec_change,
             quality_overrides=quality_overrides,
+            review_overrides=review_overrides,
+            systems_overrides=systems_overrides,
         ),
     )
     write_file(
@@ -322,6 +348,29 @@ def test_unsupported_mode_is_rejected(tmp_path: Path) -> None:
     assert any("mode 'expedited'" in error for error in errors)
 
 
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("mode", "expedited", "mode 'expedited'"),
+        ("type", "experimental", "type 'experimental'"),
+        ("status", "implemented", "status 'implemented'"),
+        ("spec_change", "later", "spec_change 'later'"),
+    ],
+)
+def test_placeholder_mode_still_rejects_invalid_metadata_enums(
+    tmp_path: Path,
+    field: str,
+    value: str,
+    message: str,
+) -> None:
+    kwargs = {"change_type": value} if field == "type" else {field: value}
+    package = build_valid_package(tmp_path, **kwargs)
+
+    errors = validate_change.validate_change_package(package, allow_placeholders=True)
+
+    assert any(message in error for error in errors)
+
+
 def test_placeholder_values_are_rejected_in_production_mode(tmp_path: Path) -> None:
     package = build_valid_package(tmp_path)
     write_file(
@@ -382,6 +431,94 @@ def test_invalid_waiver_shape_is_reported(tmp_path: Path) -> None:
     assert any("waiver" in error and "scenarios" in error for error in errors)
     assert any("waiver" in error and "approver" in error for error in errors)
     assert any("waiver" in error and ("follow_up" in error or "expiry" in error) for error in errors)
+
+
+def test_full_archive_rejects_non_automation_waiver_for_missing_automation_evidence(
+    tmp_path: Path,
+) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="full",
+        change_type="new_feature",
+        status="ready_to_archive",
+        include_automation_plan=False,
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Remember Me session
+            scenario: Login with Remember Me enabled
+            tasks:
+              - TASK-AUTH-001
+            tests:
+              - TC-AUTH-001
+            waivers:
+              - WVR-AUTH-004
+        """,
+        waivers_content="""
+        waivers:
+          - id: WVR-AUTH-004
+            type: documentation_deferred
+            artifact: proposal.md
+            requirements:
+              - Remember Me session
+            scenarios:
+              - Login with Remember Me enabled
+            reason: Proposal wording cleanup is tracked separately.
+            evidence:
+              - docs/evidence/proposal-review.md
+            approver: analyst_owner_group
+            date: 2026-07-09
+            residual_risk: false
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any("automation evidence" in error and "WVR-AUTH-004" in error for error in errors)
+
+
+def test_full_archive_requires_waiver_to_match_same_requirement_and_scenario(
+    tmp_path: Path,
+) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="full",
+        change_type="new_feature",
+        status="ready_to_archive",
+        include_automation_plan=False,
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Remember Me session
+            scenario: Login with Remember Me enabled
+            tasks:
+              - TASK-AUTH-001
+            tests:
+              - TC-AUTH-001
+            waivers:
+              - WVR-AUTH-005
+        """,
+        waivers_content="""
+        waivers:
+          - id: WVR-AUTH-005
+            type: automation_deferred
+            artifact: qa/automation-plan.md
+            requirements:
+              - Remember Me session
+            scenarios:
+              - Login with Remember Me disabled
+            reason: Automation is waiting on environment parity.
+            evidence:
+              - docs/evidence/manual-auth-check.md
+            approver: at_owner_group
+            date: 2026-07-09
+            residual_risk: false
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any("WVR-AUTH-005" in error and "scenario" in error for error in errors)
 
 
 def test_behavior_change_rejects_no_spec_change_rationale(tmp_path: Path) -> None:
@@ -456,6 +593,133 @@ def test_thin_package_rejects_full_only_type_combination(tmp_path: Path) -> None
     errors = validate_change.validate_change_package(package)
 
     assert any("new_feature" in error and "full" in error for error in errors)
+
+
+@pytest.mark.parametrize(
+    ("quality_overrides", "message"),
+    [
+        ({"behavior_scope": "broad"}, "quality.behavior_scope 'broad'"),
+        ({"public_api": "impacted"}, "quality.public_api 'impacted'"),
+        ({"mobile_at": "impacted"}, "quality.mobile_at 'impacted'"),
+        ({"data_risk": "impacted"}, "quality.data_risk 'impacted'"),
+        ({"security_review": "required"}, "quality.security_review 'required'"),
+        ({"rollback_cost": "high"}, "quality.rollback_cost 'high'"),
+    ],
+)
+def test_thin_package_rejects_risky_quality_triggers(
+    tmp_path: Path,
+    quality_overrides: dict[str, str],
+    message: str,
+) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="thin",
+        change_type="behavior_change",
+        quality_overrides=quality_overrides,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any(message in error and "full package" in error for error in errors)
+
+
+def test_thin_package_rejects_cross_repo_scope(tmp_path: Path) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="thin",
+        change_type="behavior_change",
+        systems_overrides={
+            "code_repos": ["backend-auth", "web-portal"],
+            "at_repos": ["qa-automation"],
+        },
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any("cross-repo scope requires a full package" in error for error in errors)
+
+
+def test_waiver_approver_accepts_owner_group_reference_from_metadata(tmp_path: Path) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="full",
+        change_type="new_feature",
+        include_test_plan=False,
+        review_overrides={"qa_owner_group": "quality-council"},
+        waivers_content="""
+        waivers:
+          - id: WVR-AUTH-006
+            type: test_plan_deferred
+            artifact: qa/test-plan.md
+            requirements:
+              - Remember Me session
+            scenarios:
+              - Login with Remember Me enabled
+            reason: Shared QA strategy review is scheduled for tomorrow.
+            evidence:
+              - docs/evidence/manual-auth-check.md
+            approver: quality-council
+            date: 2026-07-09
+            residual_risk: false
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert not any("approver" in error for error in errors)
+
+
+@pytest.mark.parametrize(
+    ("artifact", "waiver_type", "approver"),
+    [
+        ("qa/test-plan.md", "test_plan_deferred", "qa-assistant"),
+        ("specs", "no_spec_change", "ai-review-bot"),
+    ],
+)
+def test_waiver_approver_rejects_bot_or_unknown_labels(
+    tmp_path: Path,
+    artifact: str,
+    waiver_type: str,
+    approver: str,
+) -> None:
+    package = build_valid_package(
+        tmp_path,
+        mode="full" if artifact.startswith("qa/") else "thin",
+        change_type="new_feature" if artifact.startswith("qa/") else "refactor",
+        include_specs=artifact != "specs",
+        spec_change="required" if artifact != "specs" else "none",
+        include_test_plan=artifact != "qa/test-plan.md",
+        traceability_content="""
+        requirements:
+          - id: REQ-AUTH-001
+            requirement: Existing session behavior remains unchanged
+            scenario: Existing login session still works
+            tasks:
+              - TASK-AUTH-001
+            tests:
+              - TC-AUTH-001
+        """,
+        waivers_content=f"""
+        waivers:
+          - id: WVR-AUTH-007
+            type: {waiver_type}
+            artifact: {artifact}
+            requirements:
+              - Existing session behavior remains unchanged
+            scenarios:
+              - Existing login session still works
+            reason: Approval label must be human-owned.
+            evidence:
+              - docs/evidence/existing-tests.md
+            approver: {approver}
+            date: 2026-07-09
+            residual_risk: false
+        """,
+    )
+
+    errors = validate_change.validate_change_package(package)
+
+    assert any(f"approver '{approver}'" in error for error in errors)
 
 
 def test_staged_discovery_ignores_plain_project_openspec_changes(tmp_path: Path) -> None:

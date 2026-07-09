@@ -40,6 +40,14 @@ REQUIRED_CHANGE_FIELDS = (
 )
 
 REQUIRED_CHANGE_SECTIONS = ("systems", "quality")
+REQUIRED_QUALITY_FIELDS = (
+    "behavior_scope",
+    "public_api",
+    "mobile_at",
+    "data_risk",
+    "security_review",
+    "rollback_cost",
+)
 
 ALLOWED_MODES = {"thin", "full"}
 ALLOWED_TYPES = {
@@ -60,6 +68,10 @@ ALLOWED_STATUSES = {
     "archived",
 }
 ALLOWED_SPEC_CHANGE = {"required", "none"}
+ALLOWED_BEHAVIOR_SCOPES = {"focused", "broad"}
+ALLOWED_IMPACT_VALUES = {"impacted", "not_impacted"}
+ALLOWED_SECURITY_REVIEW = {"required", "not_required"}
+ALLOWED_ROLLBACK_COSTS = {"low", "high"}
 ALLOWED_WAIVER_TYPES = {
     "no_spec_change",
     "test_plan_deferred",
@@ -79,6 +91,7 @@ PLACEHOLDER_PATTERN = re.compile(
     r"(<[^>\n]+>|TODO|TBD|REPLACE|CHANGE[-_]ID|AUTH-YYYY|YOUR[-_ ])",
     re.IGNORECASE,
 )
+FORBIDDEN_APPROVER_PATTERN = re.compile(r"(^|[-_ ])(?:ai|bot|assistant)(?:[-_ ]|$)", re.IGNORECASE)
 
 
 def validate_change_package(
@@ -109,7 +122,12 @@ def validate_change_package(
     spec_change = scalar_value(metadata.get("spec_change")) or "required"
 
     waivers = parse_named_records(package_path / "waivers.yaml", "waivers")
-    waiver_errors = validate_waivers(package_path / "waivers.yaml", waivers)
+    waiver_errors = validate_waivers(
+        package_path / "waivers.yaml",
+        waivers,
+        metadata,
+        allow_placeholders=allow_placeholders,
+    )
     errors.extend(f"{package_path}: {error}" for error in waiver_errors)
     waivers_by_artifact = index_waivers_by_artifact(waivers)
     waivers_by_id = {scalar_value(waiver.get("id")): waiver for waiver in waivers if scalar_value(waiver.get("id"))}
@@ -223,27 +241,48 @@ def validate_change_metadata(
         if section not in metadata or not isinstance(metadata.get(section), dict):
             errors.append(f"{path}: missing required section '{section}'")
 
+    quality = metadata.get("quality")
+    quality_map = quality if isinstance(quality, dict) else {}
+    for field in REQUIRED_QUALITY_FIELDS:
+        value = scalar_value(quality_map.get(field))
+        if value is None or value == "":
+            errors.append(f"{path}: quality.{field} is required")
+
     change_id = scalar_value(metadata.get("id"))
     if change_id and not allow_placeholders and not CHANGE_ID_PATTERN.match(change_id):
         errors.append(f"{path}: id '{change_id}' must match PROJECT-YYYY-NNN-short-name")
 
     mode = scalar_value(metadata.get("mode"))
-    if mode and not allow_placeholders and mode not in ALLOWED_MODES:
+    if mode and mode not in ALLOWED_MODES:
         errors.append(f"{path}: mode '{mode}' must be one of {sorted(ALLOWED_MODES)}")
 
     change_type = scalar_value(metadata.get("type"))
-    if change_type and not allow_placeholders and change_type not in ALLOWED_TYPES:
+    if change_type and change_type not in ALLOWED_TYPES:
         errors.append(f"{path}: type '{change_type}' must be one of {sorted(ALLOWED_TYPES)}")
 
     status = scalar_value(metadata.get("status"))
-    if status and not allow_placeholders and status not in ALLOWED_STATUSES:
+    if status and status not in ALLOWED_STATUSES:
         errors.append(f"{path}: status '{status}' must be one of {sorted(ALLOWED_STATUSES)}")
 
     spec_change = scalar_value(metadata.get("spec_change")) or "required"
-    if not allow_placeholders and spec_change not in ALLOWED_SPEC_CHANGE:
+    if spec_change not in ALLOWED_SPEC_CHANGE:
         errors.append(
             f"{path}: spec_change '{spec_change}' must be one of {sorted(ALLOWED_SPEC_CHANGE)}"
         )
+
+    for field, allowed_values in (
+        ("behavior_scope", ALLOWED_BEHAVIOR_SCOPES),
+        ("public_api", ALLOWED_IMPACT_VALUES),
+        ("mobile_at", ALLOWED_IMPACT_VALUES),
+        ("data_risk", ALLOWED_IMPACT_VALUES),
+        ("security_review", ALLOWED_SECURITY_REVIEW),
+        ("rollback_cost", ALLOWED_ROLLBACK_COSTS),
+    ):
+        value = scalar_value(quality_map.get(field))
+        if value and value not in allowed_values:
+            errors.append(
+                f"{path}: quality.{field} '{value}' must be one of {sorted(allowed_values)}"
+            )
 
     return errors
 
@@ -459,8 +498,20 @@ def validate_traceability(
         if not tasks:
             errors.append(f"{row_prefix} missing tasks evidence")
 
+        waiver_records = [waivers_by_id[waiver_id] for waiver_id in waivers if waiver_id in waivers_by_id]
+
         if not (tests or automated_tests or verification or waivers):
             errors.append(f"{row_prefix} missing verification evidence")
+        elif not (tests or automated_tests or verification):
+            errors.extend(
+                validate_traceability_waivers(
+                    row_prefix,
+                    waiver_records,
+                    requirement,
+                    scenario,
+                    evidence_kind="verification",
+                )
+            )
 
         for waiver_id in waivers:
             if waiver_id not in waivers_by_id:
@@ -476,18 +527,105 @@ def validate_traceability(
                 if any(value.lower() == "pending" for value in values):
                     errors.append(f"{row_prefix} has pending {label} in archive-ready status")
 
-            if mode == "full" and not (automated_tests or waivers):
-                errors.append(f"{row_prefix} missing automation evidence or waiver for full package")
+            if mode == "full" and not automated_tests:
+                automation_errors = validate_traceability_waivers(
+                    row_prefix,
+                    waiver_records,
+                    requirement,
+                    scenario,
+                    evidence_kind="automation",
+                )
+                if not waiver_records:
+                    errors.append(f"{row_prefix} missing automation evidence or waiver for full package")
+                elif automation_errors:
+                    errors.extend(automation_errors)
 
     return errors
 
 
-def validate_waivers(path: Path, waivers: list[dict[str, Any]]) -> list[str]:
+def validate_traceability_waivers(
+    row_prefix: str,
+    waivers: list[dict[str, Any]],
+    requirement: str | None,
+    scenario: str | None,
+    *,
+    evidence_kind: str,
+) -> list[str]:
+    if not waivers:
+        return []
+
+    mismatch_errors: list[str] = []
+    for waiver in waivers:
+        waiver_id = scalar_value(waiver.get("id")) or "<missing-id>"
+        matches, reason = waiver_matches_traceability_requirement(
+            waiver,
+            requirement,
+            scenario,
+            evidence_kind=evidence_kind,
+        )
+        if matches:
+            return []
+        mismatch_errors.append(f"{row_prefix} waiver '{waiver_id}' {reason}")
+
+    return mismatch_errors
+
+
+def waiver_matches_traceability_requirement(
+    waiver: dict[str, Any],
+    requirement: str | None,
+    scenario: str | None,
+    *,
+    evidence_kind: str,
+) -> tuple[bool, str]:
+    waiver_type = scalar_value(waiver.get("type")) or ""
+    artifact = scalar_value(waiver.get("artifact")) or ""
+    requirements = list_value(waiver.get("requirements"))
+    scenarios = list_value(waiver.get("scenarios"))
+
+    if requirement and requirement not in requirements:
+        return False, f"does not cover requirement '{requirement}'"
+    if scenario and scenario not in scenarios:
+        return False, f"does not cover scenario '{scenario}'"
+
+    allowed_artifacts = {
+        "verification": {"qa/test-plan.md", "qa/test-cases", "qa/automation-plan.md"},
+        "automation": {"qa/automation-plan.md"},
+    }
+    allowed_types = {
+        "verification": {
+            "test_plan_deferred",
+            "test_case_deferred",
+            "automation_deferred",
+            "artifact_not_applicable",
+        },
+        "automation": {"automation_deferred", "artifact_not_applicable"},
+    }
+
+    if artifact not in allowed_artifacts[evidence_kind] or waiver_type not in allowed_types[evidence_kind]:
+        return (
+            False,
+            "does not cover missing "
+            f"{evidence_kind} evidence with a matching artifact/type "
+            f"(artifact '{artifact}', type '{waiver_type}')",
+        )
+
+    return True, ""
+
+
+def validate_waivers(
+    path: Path,
+    waivers: list[dict[str, Any]],
+    metadata: dict[str, Any],
+    *,
+    allow_placeholders: bool,
+) -> list[str]:
     if not path.is_file():
         return []
 
     errors: list[str] = []
     seen_ids: set[str] = set()
+    review = metadata.get("review")
+    review_map = review if isinstance(review, dict) else {}
 
     for index, waiver in enumerate(waivers, start=1):
         prefix = f"waiver row {index}"
@@ -536,7 +674,17 @@ def validate_waivers(path: Path, waivers: list[dict[str, Any]]) -> list[str]:
         if residual_risk in {"true", "yes", "1"} and not (follow_up or expiry):
             errors.append(f"{prefix} must include follow_up or expiry when residual_risk is true")
 
-        if artifact and approver and not approver_matches_artifact(artifact, approver, waiver_type):
+        if (
+            artifact
+            and approver
+            and not (allow_placeholders and PLACEHOLDER_PATTERN.search(approver))
+            and not approver_matches_artifact(
+            artifact,
+            approver,
+            waiver_type,
+            review_map,
+            )
+        ):
             errors.append(
                 f"{prefix} approver '{approver}' is not valid for artifact '{artifact}'"
             )
@@ -544,21 +692,78 @@ def validate_waivers(path: Path, waivers: list[dict[str, Any]]) -> list[str]:
     return [f"{path}: {error}" for error in errors]
 
 
-def approver_matches_artifact(artifact: str, approver: str, waiver_type: str | None) -> bool:
+def approver_matches_artifact(
+    artifact: str,
+    approver: str,
+    waiver_type: str | None,
+    review_map: dict[str, Any],
+) -> bool:
+    if FORBIDDEN_APPROVER_PATTERN.search(approver):
+        return False
+
+    category = waiver_approval_category(artifact, waiver_type)
+    allowed = allowed_approvers_for_category(category, review_map)
+    return approver in allowed
+
+
+def waiver_approval_category(artifact: str, waiver_type: str | None) -> str:
     artifact = artifact.lower()
-    approver = approver.lower()
 
     if waiver_type == "no_spec_change" or artifact == "specs":
-        return any(token in approver for token in ("analyst", "product", "review"))
-    if artifact.startswith("qa/test") or artifact == "qa/test-cases":
-        return "qa" in approver
-    if artifact.startswith("qa/automation") or "automation" in artifact:
-        return "at" in approver
-    if artifact == "design.md":
-        return "tech" in approver
-    if "doc" in artifact:
-        return any(token in approver for token in ("analyst", "product"))
-    return True
+        return "documentation"
+    if waiver_type == "design_exception" or artifact == "design.md":
+        return "design"
+    if artifact.startswith("qa/automation") or "automation" in artifact or waiver_type == "automation_deferred":
+        return "automation"
+    if artifact.startswith("qa/test") or artifact == "qa/test-cases" or waiver_type in {
+        "test_plan_deferred",
+        "test_case_deferred",
+    }:
+        return "qa"
+    if waiver_type == "documentation_deferred" or artifact in {
+        "change.yaml",
+        "proposal.md",
+        "tasks.md",
+        "traceability.yaml",
+    } or "doc" in artifact:
+        return "documentation"
+    return "unknown"
+
+
+def allowed_approvers_for_category(category: str, review_map: dict[str, Any]) -> set[str]:
+    allowed: set[str] = set()
+
+    if category == "qa":
+        allowed.add("qa_owner_group")
+        qa_owner = scalar_value(review_map.get("qa_owner_group"))
+        if qa_owner:
+            allowed.add(qa_owner)
+        return allowed
+
+    if category == "automation":
+        allowed.add("at_owner_group")
+        allowed.update(list_value(review_map.get("at_owner_group")))
+        allowed.update(list_value(review_map.get("at_owner_groups")))
+        return allowed
+
+    if category == "design":
+        allowed.add("tech_lead")
+        tech_lead = scalar_value(review_map.get("tech_lead"))
+        if tech_lead:
+            allowed.add(tech_lead)
+        return allowed
+
+    if category == "documentation":
+        allowed.update({"analyst_owner_group", "product_owner"})
+        analyst_owner = scalar_value(review_map.get("analyst_owner_group"))
+        product_owner = scalar_value(review_map.get("product_owner"))
+        if analyst_owner:
+            allowed.add(analyst_owner)
+        if product_owner:
+            allowed.add(product_owner)
+        return allowed
+
+    return allowed
 
 
 def index_waivers_by_artifact(waivers: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -615,12 +820,18 @@ def validate_mode_contracts(
     reasons: list[str] = []
     if change_type in FULL_MODE_TYPES:
         reasons.append(f"type '{change_type}' requires a full package")
-    if scalar_value(quality_map.get("api_at")) == "impacted":
-        reasons.append("quality.api_at 'impacted' requires a full package")
+    if scalar_value(quality_map.get("behavior_scope")) == "broad":
+        reasons.append("quality.behavior_scope 'broad' requires a full package")
+    if scalar_value(quality_map.get("public_api")) == "impacted":
+        reasons.append("quality.public_api 'impacted' requires a full package")
     if scalar_value(quality_map.get("mobile_at")) == "impacted":
         reasons.append("quality.mobile_at 'impacted' requires a full package")
+    if scalar_value(quality_map.get("data_risk")) == "impacted":
+        reasons.append("quality.data_risk 'impacted' requires a full package")
     if scalar_value(quality_map.get("security_review")) == "required":
         reasons.append("quality.security_review 'required' requires a full package")
+    if scalar_value(quality_map.get("rollback_cost")) == "high":
+        reasons.append("quality.rollback_cost 'high' requires a full package")
 
     code_repos = list_value(systems_map.get("code_repos"))
     at_repos = list_value(systems_map.get("at_repos"))

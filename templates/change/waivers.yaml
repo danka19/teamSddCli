@@ -1,6 +1,6 @@
 waivers:
   - id: WVR-CHANGE-001
-    type: documentation_deferred
+    type: automation_deferred
     artifact: qa/automation-plan.md
     requirements:
       - <requirement name>

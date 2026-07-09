@@ -739,7 +739,7 @@ OpenSpec and acceptance evidence:
 - Tests and scenarios map back to the approved proposed requirements for artifact contracts, traceability, waivers, topology/config, and version policy.
 - Any behavior not implemented yet has a recorded reason, follow-up item, or waiver.
 - Implementation evidence recorded on 2026-07-09:
-  - `python -m pytest tests/test_validate_change.py -v` passed 13 tests, including thin/full artifact rules, canonical statuses, no-spec-change handling, waiver validation, traceability gaps, staged discovery, and placeholder mode.
+  - `python -m pytest tests/test_validate_change.py -v` passed 29 tests after the work item 1.8 review-finding fixes, including thin/full artifact rules, canonical statuses, placeholder-mode enum enforcement, no-spec-change handling, waiver validation, waiver-to-traceability matching, risky thin-package trigger rejection, staged discovery, and placeholder mode.
   - `python scripts/validate_change.py --allow-placeholders templates/change` passed.
   - `python scripts/validate_change.py templates/change` failed as expected on placeholder production values.
   - `openspec list`, `openspec list --specs`, and `openspec validate --all --strict` remained green, so the proposals stayed proposed and valid.

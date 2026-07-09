@@ -21,9 +21,13 @@ review:
 quality:
   scenarios: required
   manual_cases: impacted
+  behavior_scope: focused
+  public_api: not_impacted
   api_at: not_impacted
   mobile_at: not_impacted
+  data_risk: not_impacted
   security_review: not_required
+  rollback_cost: low
 
 publication:
   confluence_space: <space-key-or-null>
