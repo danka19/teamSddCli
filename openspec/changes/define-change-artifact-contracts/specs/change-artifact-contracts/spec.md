@@ -81,3 +81,29 @@ The artifact contract SHALL allow gradual documentation of already-written behav
 #### Scenario: Historical changes do not require retroactive full package
 - **WHEN** behavior already exists before SDD coverage
 - **THEN** the process does not require a full historical change package unless a later human decision explicitly scopes a baseline/discovery effort
+
+### Requirement: Delta Spec operation vocabulary
+The artifact contract SHALL define a reviewable Delta Spec operation vocabulary before templates or validators enforce delta shape.
+
+#### Scenario: Added delta introduces new behavior
+- **WHEN** a Delta Spec introduces a new requirement, scenario, artifact section, or typed record
+- **THEN** it uses `ADDED` and includes enough requirement/scenario text for a reviewer to understand the proposed final behavior
+
+#### Scenario: Removed delta includes reason and migration
+- **WHEN** a Delta Spec removes an existing requirement, scenario, artifact section, or typed record
+- **THEN** it uses `REMOVED` and records the removal reason plus the migration, replacement, or explicit no-replacement path
+
+#### Scenario: Rename does not hide content change
+- **WHEN** a Delta Spec renames a requirement, scenario, file, section, or typed record and also changes behavior or content
+- **THEN** it does not present the change as a pure `RENAMED` operation; the delta uses `MODIFIED` or an explicit remove/add pattern so the content change remains reviewable
+
+### Requirement: Artifact height rules
+The artifact contract SHALL define which level of detail belongs in proposal, spec, design, and task artifacts.
+
+#### Scenario: Proposal stays business and scope focused
+- **WHEN** an author drafts `proposal.md`
+- **THEN** it explains purpose, scope, impact, and acceptance direction without carrying implementation classes, database fields, API contracts, or low-level design
+
+#### Scenario: Tasks stay executable and parseable
+- **WHEN** an author drafts `tasks.md`
+- **THEN** actionable items use machine-readable Markdown checkboxes and reference the relevant requirement, scenario, design section, or evidence path instead of duplicating long design text

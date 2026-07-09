@@ -51,7 +51,7 @@ Out of scope:
 - 2026-07-06: Approve role-appropriate waiver ownership: QA owners approve test evidence gaps, AT owners approve automation gaps, tech leads approve design/risk exceptions, and analyst/product owners approve scope or documentation exceptions, with reason, affected requirement/scenario, approver, substitute evidence, and follow-up/expiry when risk remains.
 - 2026-07-06: Reconfirm the first MVP boundary: Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes remain outside the first MVP and are planned as later layers.
 - 2026-07-06: Treat Confluence publication as generated audience views, not raw OpenSpec 1:1 and not a separate MasterSpec source; generated pages must carry source commit, change/PR ID, timestamp, source warning, and links back to canonical Git/OpenSpec files.
-- 2026-07-06: Use English for canonical OpenSpec sources and stable IDs by default; generated Confluence views may be localized in Russian and must route accepted feedback back into English Git/OpenSpec sources.
+- 2026-07-06: Earlier English-by-default source-language guidance was revised by the later canonical-language decision below; this project's process specs stay English, while team product analytics specs use Russian prose with English structural keywords and stable IDs.
 - 2026-07-06: Add a future legacy baseline mode for already-written code so the team records observed behavior, gaps, risks, and regression scenarios gradually instead of retroactively creating full historical change packages.
 - 2026-07-06: Remove the stale historical architecture draft from the repository; current architecture decisions and product contracts live in `docs/`, `openspec/`, and accepted human decisions.
 - 2026-07-06: Plan a project memory triad for agent and team orientation: constitution/quality policy for rules and boundaries, project map for topology/config/repository map, and OpenSpec changes/living specs for behavior contracts.
@@ -65,7 +65,7 @@ Out of scope:
 - 2026-07-06: Create `docs/DECISIONS.md` as the single canonical human decision log with stable decision IDs at Phase 1 acceptance readiness (work item 1.10); README, audit, roadmap, and phase plans then reference decision IDs instead of maintaining full copies.
 - 2026-07-06: Merge the OpenSpec version pin/upgrade policy into the `define-repo-topology-config` proposal as one platform-assumptions contract with a single human decision gate.
 - 2026-07-06: Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas) so the company understands the concept; canonical folder names and OpenSpec CLI terms stay unchanged, and the generated-view term is renamed to `Master Spec views` to avoid collision.
-- 2026-07-06: Treat reusability by other teams — easy bootstrap of the deterministic base, templates, and skills in another team — as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
+- 2026-07-06: Treat reusability by other teams - easy bootstrap of the deterministic base, templates, and skills in another team - as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
 - 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
 
 ## Architecture Sources
@@ -85,7 +85,7 @@ Current architecture sources:
 
 Important concepts preserved in current docs:
 
-- Canonical source: `team-specs` repository with `openspec/` artifacts.
+- Proposed first canonical source pattern: `team-specs` repository with `openspec/` artifacts, pending human gate 1.5 approval in `define-repo-topology-config`.
 - Publication: generated Confluence pages from Markdown/OpenSpec.
 - Review and audit: Bitbucket PRs with reviewer assignment from owners registry.
 - Validation and automation: Jenkins pipelines.

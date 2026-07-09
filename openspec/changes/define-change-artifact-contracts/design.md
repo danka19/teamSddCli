@@ -17,6 +17,24 @@ Behavior-changing SDD changes should require an OpenSpec delta by default. A no-
 
 Full change packages add `design.md`, risk/impact analysis, QA test plan, test case artifacts, automation plan, API/mobile/cross-repo coordination notes, and explicit owner review evidence when their triggers apply.
 
+## Delta Spec Vocabulary And Artifact Height
+
+Delta Specs use operation markers to make the proposed change reviewable and archivable:
+
+- `ADDED`: new requirement, scenario, artifact section, or typed record.
+- `MODIFIED`: existing requirement, scenario, artifact section, or typed record changes; the resulting text must make the intended final state clear.
+- `REMOVED`: existing requirement, scenario, artifact section, or typed record is removed; the delta must include the reason and migration or replacement path.
+- `RENAMED`: stable name/path/title changes without behavior/content change; if behavior/content changes too, the delta must use `MODIFIED` or an explicit remove/add pattern instead of hiding the change as a pure rename.
+
+Artifact height rules:
+
+- `proposal.md` explains why, what changes, scope, and acceptance impact. It must not carry implementation classes, database fields, API contracts, or low-level design.
+- `spec.md` carries requirements and testable scenarios. It must not duplicate implementation steps.
+- `design.md`, when required, bridges requirements to implementation choices, affected modules, risks, and alternatives.
+- `tasks.md` is an executable checklist. It references design/spec IDs or paths and avoids restating long design text.
+
+`tasks.md` must use machine-readable Markdown checkboxes (`- [ ]` / `- [x]`) for actionable work. Future templates may group tasks by implementation, unit tests, verification, and commit evidence, but group names are not a first-MVP blocker until work item 1.8 expands templates and validators.
+
 ## Approved Human Decisions From Work Item 1.3
 
 Human approval recorded on 2026-07-06: use the risk-oriented Option A matrix, and keep Jira task automation, Confluence publication, QA/AT proposal generation, and role inboxes outside the first MVP while planning them as later layers. Any validator, template, or CI behavior still changes only in later implementation work items after the related proposal updates are reviewed.

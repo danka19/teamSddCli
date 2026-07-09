@@ -39,9 +39,8 @@ Turn the architecture and accepted delivery strategy into executable requirement
   - Proposed traceability requirements define requirement -> scenario -> task/test/change evidence links, validator expectations, and waiver behavior.
   - Proposed waiver requirements define approvers, evidence, audit trail, and negative cases where waivers are not enough.
   - Proposed documentation governance requirements define source-of-truth rules, phase-plan update rules, and acceptance evidence before docs/specs are promoted.
-  - Proposed repo topology/config requirements define the first supported topology and configuration format before scripts or templates assume concrete paths.
+  - Proposed repo topology/config requirements define the first supported topology, configuration format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment before scripts or templates assume concrete paths.
   - Proposed Confluence feedback requirements define owner, service expectation, unresolved comment handling, and accepted/rejected comment outcomes before publication automation exists.
-  - Proposed OpenSpec version requirements define the pinned version, upgrade review, and compatibility evidence before relying on accepted specs.
   - Template and validator behavior is expanded only after the relevant human decision gate is approved.
   - The final Phase 1 gate stops before archiving OpenSpec changes into accepted specs.
 - Verification evidence expected before completion:
@@ -90,7 +89,7 @@ Source: Human instruction on 2026-07-03 for the clean Phase 1 planning worker.
 Type: scope_refinement, verification_change, documentation_change
 Decision: adopt_now
 Reason: The instruction changes the active Phase 1 execution model and must be built into this plan before the main agent can safely continue; the resulting gated work items are queued in the current phase below.
-Affected specs: Active change `add-change-template-validation`; planned changes `define-change-lifecycle`, `define-change-artifact-contracts`, `define-traceability-contract`, `define-waiver-policy`, `define-documentation-governance`, `define-repo-topology-config`, `define-confluence-feedback-loop`, and `define-openspec-version-policy`.
+Affected specs: Active change `add-change-template-validation`; planned changes `define-change-lifecycle`, `define-change-artifact-contracts`, `define-traceability-contract`, `define-waiver-policy`, `define-documentation-governance`, merged `define-repo-topology-config`, and `define-confluence-feedback-loop`.
 Affected architecture: Preserves OpenSpec/Markdown-first, deterministic-gates-first, no-custom-CLI-upfront, and human-owned approval boundaries.
 Data contract impact: Requires explicit human gates before finalizing artifact matrix, repo topology/config, waiver contract, Confluence feedback handling, OpenSpec version policy, and accepted specs.
 Verification impact: Requires worker/reviewer/architecture/verification evidence per work item and OpenSpec validation before completion; final archive/acceptance requires a human stop.
@@ -155,10 +154,10 @@ Source: Human instruction on 2026-07-06 after reviewing the comparison with the 
 Type: architecture_change, scope_refinement, documentation_change, workflow_behavior_rule
 Decision: adopt_now
 Reason: The five points clarify future project memory, legacy onboarding, maintenance, and stakeholder explanation without expanding the first thin MVP or requiring immediate validator/template behavior changes.
-Affected specs: Proposed changes `define-documentation-governance`, `define-change-artifact-contracts`, `define-traceability-contract`, planned `define-repo-topology-config`, planned `define-openspec-version-policy`, and future memory/onboarding contracts.
+Affected specs: Proposed changes `define-documentation-governance`, `define-change-artifact-contracts`, `define-traceability-contract`, merged `define-repo-topology-config`, and future memory/onboarding contracts.
 Affected architecture: Adds the project memory triad as the future orientation model; defines existing-code onboarding as `scan -> baseline -> map -> validate`; treats `sync` and `upgrade` as deterministic maintenance; frames the process as PDLC-wide shared context; preserves the first-MVP boundary.
 Data contract impact: Future schemas may be needed for project map, legacy baseline, memory sync reports, and template/spec-package version metadata; no schema changes are made now.
-Verification impact: Requires docs diff checks and OpenSpec strict validation now; deterministic sync/upgrade and onboarding checks remain future implementation work after topology/config and version policies are approved.
+Verification impact: Requires docs diff checks and OpenSpec strict validation now; deterministic sync/upgrade and onboarding checks remain future implementation work after the merged topology/config/version policy is approved.
 Status: Adopted into project docs, audit, roadmap, context, and this phase plan; no first-MVP implementation scope added.
 ```
 
@@ -237,7 +236,20 @@ Affected specs: Planned `define-repo-topology-config`; later impact possible for
 Affected architecture: Must be compared against the current product goal: deterministic OpenSpec/Markdown-first SDD process, thin first MVP, analytics stored with OpenSpec sources, Confluence as generated publication, and no process guarantees depending on AI.
 Data contract impact: No schema change yet; possible future impact on repo split, config format, shared scripts/templates/skills distribution, owner registry, generated analytics views, and asset placement.
 Verification impact: Screenshot readability must be reported explicitly; if text or structure is unclear, the human owner must clarify or provide new photos before recommendations are treated as evidence.
-Status: Screenshot analysis completed on 2026-07-09 (25 photos; key process, template, topology, and master-spec content legible; some tail sections not fully visible). Findings, criteria assessment, and borrow/differ recommendations are recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` and `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`; reviewer and architecture-checker gates agree that central `team-specs` remains the recommended first topology and specs-next-to-code is a later/federated option. Proposal drafting for work item 1.4 remains queued.
+Status: Screenshot analysis completed on 2026-07-09 (25 photos; key process, template, topology, and master-spec content legible; some tail sections not fully visible). Findings, criteria assessment, and borrow/differ recommendations are recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` and `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`; reviewer and architecture-checker gates agree that central `team-specs` remains the recommended first topology and specs-next-to-code is a later/federated option. Proposal drafting is now routed to `openspec/changes/define-repo-topology-config/`.
+```
+
+```text
+Idea: Apply the OpenSpec-DE analysis recommendations and produce a consistent work item 1.4 documentation state without duplicate normative rules.
+Source: Human instruction on 2026-07-09 after reviewing the recommendation list.
+Type: data_contract_change, documentation_change, scope_refinement, verification_change
+Decision: adopt_now
+Reason: Work item 1.4 must now turn the analysis into a proposed OpenSpec contract and route borrowed patterns to their canonical owners before later validators/templates assume topology, config, version, or owner behavior.
+Affected specs: `define-repo-topology-config`, `define-change-artifact-contracts`, `define-change-lifecycle`; planning impact for weak-model guardrails and future role skills.
+Affected architecture: Preserves central `team-specs` as the recommended first topology, specs-next-to-code as a later/federated option, deterministic guarantees over AI self-review, and no first-MVP expansion.
+Data contract impact: Adds proposed contracts for topology/config/version/process package/owners, Delta Spec operation vocabulary, artifact-height/task checkbox expectations, and archive history convention.
+Verification impact: Requires read-only reviewer/architecture/verification gates, strict OpenSpec validation, docs diff checks, and explicit gate 1.5 human approval before enforcement.
+Status: Adopted into the work item 1.4 proposal and related docs; gate 1.5 remains open.
 ```
 
 ## Work Items
@@ -433,6 +445,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.4 Draft Repo Topology, Config Format, And OpenSpec Version Policy Proposals
 
+Status: drafted in this branch as `openspec/changes/define-repo-topology-config/`; docs synchronized; reviewer gate completed; architecture and verification gates remain part of final work-item evidence.
+
 Objective:
 
 - Draft requirements for the first supported repository topology/config format and the OpenSpec version pin/upgrade policy as one merged platform-assumptions proposal (2026-07-06 merge decision).
@@ -469,26 +483,22 @@ Recommended subagents:
 
 Exit criteria:
 
-- Draft proposal defines the first supported topology and config format options.
-- Draft version policy defines pinned OpenSpec version location, upgrade trigger, compatibility check, and rollback/hold behavior.
-- Draft proposal defines the content split between `team-specs` (Master Specs, Delta Specs/change packages, QA/AT plans, traceability, templates, validation scripts, publishing config, analytics diagram sources, journey/screen assets) and project repositories next to code (code, tests, AT code, technical/code-local docs, references to change IDs instead of requirement copies).
-- Draft proposal defines how project repositories consume shared scripts, templates, and skills from `team-specs` (copy with version pin, submodule/subtree, or CI fetch) so process changes are made once, not per repository.
-- Draft proposal treats other-team reusability as a design constraint: a documented bootstrap path for another team without copying this project's history.
-- Draft proposal defines the reviewer-assignment contract: `owners.yaml` in `team-specs` as the single ownership registry (zones keyed by path prefix, owner groups not individuals), per-repo `CODEOWNERS` generated from the registry with a CI drift check, multi-zone PRs requiring approval from every touched zone, unowned-path fallback to repo default reviewers plus a validator warning, and role-based approvals from `change.yaml` (QA owner, security review) checked against the registry for full packages.
-- Draft proposals include 2-3 topology/config and version-policy options with a recommended default for the later human gate.
+- `define-repo-topology-config` contains proposal, design, tasks, and spec delta for first supported topology, config format, OpenSpec version pin/upgrade, process package reuse, project-repo split, and owners/reviewer assignment.
+- The gate 1.5 decision packet includes 2-3 practical options with a recommended default, impact examples, tradeoffs, risks, and unresolved-decision consequences.
 - Placeholder corporate examples remain clearly non-authoritative.
-- Screenshot-analysis input is used as evidence only, not as an accepted decision; proposal text must distinguish observed screenshot facts, architecture inference, and recommendations for this product.
+- Screenshot-analysis input is used as evidence only, not as an accepted decision; proposal text distinguishes observed screenshot facts, architecture inference, recommendations for this product, and the pending human gate.
 
-Current analysis input:
+Current analysis input and routing:
 
 - The internal solution shows staged topology variants: one repo for a small pilot, separate requirements/code/tests repos for a team pilot, and a later scaling model with central business/solution requirements plus per-system specs near code.
-- Recommended draft default remains central `team-specs` for the first supported topology, with project repos keeping code/tests and references to change/spec IDs.
-- Borrow artifact-height rules, staged workflow, self-review/checklist patterns, delta operation vocabulary, and tasks checkbox discipline.
+- Recommended draft default remains central `team-specs` for the first supported topology, with project repos keeping code/tests and references to change/spec IDs; the canonical proposed contract is `define-repo-topology-config`.
+- Borrowed artifact-height, Delta Spec vocabulary, task checkbox, and archive-history patterns are routed to `define-change-artifact-contracts` and `define-change-lifecycle`.
+- Weak-model instruction patterns are routed to `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` and future role skills.
 - Do not borrow AI-only gates, copied tooling in every repo, non-blocking critical verification, a mandatory rich master-spec tree for thin changes, or specs-next-to-code as the first canonical topology.
 
 OpenSpec and acceptance evidence:
 
-- Proposed scenarios cover supported topology discovery, unsupported topology rejection, config validation expectations, version pin discovery, and upgrade review evidence.
+- Proposed scenarios cover supported topology discovery, unsupported topology rejection, project-repo developer/agent workflow, config discovery, version pin discovery, upgrade review evidence, process package reuse, and owners/CODEOWNERS drift.
 
 ### 1.5 Human Decision Gate: Topology, Config, And OpenSpec Version
 
@@ -825,7 +835,7 @@ OpenSpec and acceptance evidence:
 
 ## Phase Gate
 
-- Phase 1 is ready for human acceptance/archive review only when the proposed OpenSpec changes for lifecycle, artifact contracts, traceability, waivers, documentation governance, repo topology/config, Confluence feedback loop, and OpenSpec version policy have been drafted, validated, reviewed, and explicitly stopped at the final human archive gate.
+- Phase 1 is ready for human acceptance/archive review only when the proposed OpenSpec changes for lifecycle, artifact contracts, traceability, waivers, documentation governance, merged repo topology/config/OpenSpec version policy, and Confluence feedback loop have been drafted, validated, reviewed, and explicitly stopped at the final human archive gate.
 - Phase 1 is complete only after explicit human approval plus a separate verified archive/accepted-spec execution step.
 - No proposed OpenSpec change may be archived into accepted specs without explicit human approval.
 - No template or validator expansion may implement any final contract before the corresponding human decision gate is approved. The artifact matrix and waiver gates were approved on 2026-07-06, as were the lifecycle naming and error-level enforcement decisions; the merged topology/config/OpenSpec-version gate (1.5) remains pending.
@@ -843,7 +853,7 @@ OpenSpec and acceptance evidence:
 - Completed 2026-07-06: lifecycle state naming — accepted specs and deterministic validation use the six internal states (`draft`, `spec_review`, `approved`, `in_implementation`, `ready_to_archive`, `archived`); simplified lifecycle names appear only in generated business-facing views.
 - Completed 2026-07-06: work item 1.8 enforcement — the approved artifact matrix and waiver checks are enforced as errors immediately, with no warnings-only staging period.
 - Completed 2026-07-06: canonical decision log — `docs/DECISIONS.md` with stable decision IDs is created at Phase 1 acceptance readiness (work item 1.10); until then the existing multi-file decision convention continues.
-- Completed 2026-07-06: proposal merge — the OpenSpec version pin/upgrade policy is drafted inside `define-repo-topology-config` as one platform-assumptions proposal with a single human gate (1.5).
+- Completed 2026-07-06: proposal merge decision - the OpenSpec version pin/upgrade policy is handled inside `define-repo-topology-config` as one platform-assumptions proposal with a single human gate (1.5); the work item 1.4 draft was created on 2026-07-09.
 - Open: first supported repo topology/config format and OpenSpec version pin/upgrade policy (merged proposal `define-repo-topology-config`, decision gate 1.5), now including the project-repo versus `team-specs` content split, shared script/skill distribution, and other-team bootstrap constraint.
 - Completed 2026-07-06: canonical language for team product analytics specs — Russian requirement/scenario prose with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's process specs stay English; the documentation-governance proposal's canonical-language requirement was updated accordingly.
 - Open: migration approach for the existing Confluence analytics corpus — recommended default is gradual on-touch conversion (no bulk migration) with the old space kept as a linked read-only archive; pending human confirmation and the analytics approval-readiness requirements the owner is gathering.

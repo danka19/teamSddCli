@@ -70,3 +70,18 @@ The SDD process SHALL distinguish lifecycle source-of-truth state from generated
 #### Scenario: Public lifecycle can be simpler than internal readiness
 - **WHEN** the process is explained to business or stakeholder readers
 - **THEN** it may use the simplified lifecycle `draft -> spec_review -> approved -> implemented -> archived` while internal validation may separately track implementation and archive-readiness evidence
+
+### Requirement: Archive history convention
+The SDD process SHALL define a proposed archive history convention before changes are archived into accepted specs.
+
+#### Scenario: Archive uses dated history path
+- **WHEN** a change package is archived after explicit human approval
+- **THEN** the proposed convention moves it under a dated archive path such as `openspec/changes/archive/YYYY-MM-DD-<change-id>` or the closest OpenSpec CLI-compatible equivalent
+
+#### Scenario: Archive commit is greppable
+- **WHEN** archive movement is committed
+- **THEN** the proposed commit message follows a stable grammar such as `spec: archive <change-id>` so archive history can be searched and audited
+
+#### Scenario: Archive convention does not replace approval
+- **WHEN** the archive path and commit grammar are satisfied
+- **THEN** they still do not replace final deterministic checks or explicit human archive approval

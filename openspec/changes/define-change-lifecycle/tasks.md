@@ -5,6 +5,7 @@
 - [x] 1.3 Keep the proposal as proposed behavior only.
 - [x] 1.4 Add explicit allowed-transition table and negative skipped-state/archive-approval scenarios from reviewer feedback.
 - [x] 1.5 Clarify that generated Confluence views may display lifecycle/approval/testing state but do not own approval or transition truth.
+- [x] 1.6 Add proposed dated archive path and archive commit-message grammar routed from the OpenSpec-DE analysis.
 
 ## 2. Later Decision And Implementation
 

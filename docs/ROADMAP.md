@@ -58,7 +58,7 @@ Detailed plan:
 Current work:
 
 - Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
-- Current Phase 1 work: proposed OpenSpec contracts and decision gates for lifecycle, artifact matrix, traceability, waivers, documentation governance, Confluence feedback/publication model, repo topology/config, and OpenSpec version policy before template or validator expansion.
+- Current Phase 1 work: proposed OpenSpec contracts and decision gates for lifecycle, artifact matrix, traceability, waivers, documentation governance, Confluence feedback/publication model, repo topology/config, and OpenSpec version policy before template or validator expansion. The merged `define-repo-topology-config` draft now carries the topology/config/version/process-package/owners recommendation; human gate 1.5 remains pending.
 
 ## Phase 2. Architecture And Data Model
 

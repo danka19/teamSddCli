@@ -193,6 +193,19 @@ Recommended guardrails:
 - long planning tasks are split into worker/reviewer/architecture/verification roles where tooling allows;
 - every final report must include what was not verified.
 
+### Routed OpenSpec-DE Instruction Patterns
+
+The 2026-07-09 OpenSpec-DE screenshot analysis adds concrete weak-model patterns to preserve for future role skills and guardrail proposals:
+
+- mandatory context-study steps that require the model to say when no baseline exists instead of silently inventing one;
+- explicit STOP points between artifact stages so a human can approve before the next artifact is generated;
+- self-review subagent checklists for completeness, ambiguity, verifiability, consistency, artifact height, and scope hygiene;
+- scout/recon subagent patterns for codebase discovery before design, especially when the main model has weak search discipline;
+- Bad/Good examples inside prompts for proposal/spec/design/tasks so weak models see concrete altitude boundaries;
+- machine-readable `tasks.md` checkboxes and task groups that deterministic tools can parse later.
+
+These patterns are not accepted gates by themselves. They are AI-layer and onboarding guardrails; deterministic validators, PR review, CI, and recorded human decisions remain the process guarantee.
+
 Useful future checks:
 
 - skill-use declaration in task output;

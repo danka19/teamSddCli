@@ -5,6 +5,8 @@
 - [x] 1.3 Reference work item 1.1 commit evidence where relevant.
 - [x] 1.4 Limit no-spec-change rationale to docs-only/refactor/no-behavior-change work with reviewer approval and replacement evidence.
 - [x] 1.5 Record why QA/AT proposal generation and role inboxes are not MVP alternatives unless explicitly re-scoped.
+- [x] 1.6 Add Delta Spec operation vocabulary, including `REMOVED` reason/migration and `RENAMED` limits.
+- [x] 1.7 Add artifact-height and machine-readable `tasks.md` checkbox expectations routed from the OpenSpec-DE analysis.
 
 ## 2. Later Decision And Implementation
 

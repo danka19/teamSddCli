@@ -9,6 +9,10 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | SDD | Spec-driven development workflow where requirements, design, tasks, tests, and traceability are driven from structured spec artifacts. | In this project the SDD workflow is OpenSpec/Markdown-first. |
 | OpenSpec/Markdown-first | Architecture choice where structured OpenSpec and Markdown files in Git are canonical. | Confluence is generated from this source, not edited as the source. |
 | `team-specs` | Central repository expected to store requirements, OpenSpec changes, living specs, QA/AT plans, traceability, registry, templates, publishing config, and schemas. | It is described by current docs and OpenSpec proposals; this repository currently contains the CLI project foundation, not the real `team-specs` repo. |
+| Project repository | Repository that owns implementation truth for one product/system/component, such as code, tests, AT code, implementation-local docs, and PR evidence. | Under the proposed first topology it references canonical change/spec IDs from `team-specs` rather than copying requirement text. |
+| Process package | Versioned folder of reusable SDD process assets, such as workflow schema, templates, validator entry points, role skill instructions, examples, and package metadata. | Proposed by `define-repo-topology-config`; exact path and bootstrap/update method remain gate 1.5 decisions. |
+| Project adapter config | Small optional config in a project repository that points to central `team-specs`, project ID, consumed process package version, and local path mappings. | Proposed by `define-repo-topology-config`; exact filename remains gate 1.5 decision. |
+| Federated specs-next-to-code topology | Future topology where central business/solution requirements stay central while per-system Master Specs and Delta Specs live near code. | Not the proposed first supported topology; requires generated views, cross-repo traceability, process-package distribution, and drift checks. |
 | `sdd CLI` | Team-owned command-line process interface over OpenSpec, Git, Bitbucket, Jenkins, Jira/tracker, Confluence, and local AI tools. | It does not exist yet and is built only when a `docs/IMPLEMENTATION_STRATEGY.md` trigger fires; until then `sdd change ...` names denote thin-flow capabilities delivered by templates, scripts, and skills. It should automate workflow transitions, not replace OpenSpec CLI entirely. |
 | Change package | Per-change folder under `team-specs/openspec/changes/<change-id>/` with metadata, proposal, design, tasks, spec deltas, QA artifacts, automation plan, and traceability. | Central process object. |
 | Project memory | Agent-readable project orientation material that helps local AI and humans understand rules, topology, current specs, risks, and proven workflows. | It supports work, but does not replace OpenSpec as behavior truth or PR/CI as approval and validation truth. |
@@ -53,6 +57,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 
 - Raw source artifacts such as specs, tracker exports, Confluence comments, repository metadata, and CI results must be preserved separately from derived values.
 - Review-required proposals are not accepted decisions.
+- The first supported topology, config format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment remain proposed until gate 1.5 approves or revises `openspec/changes/define-repo-topology-config/`.
 - LLM or heuristic output is proposal evidence only unless the project explicitly defines a reviewed acceptance workflow.
 - Git/OpenSpec is the canonical engineering source; Confluence is a generated view.
 - Jira or another tracker is workflow/status, not the source of product requirements.

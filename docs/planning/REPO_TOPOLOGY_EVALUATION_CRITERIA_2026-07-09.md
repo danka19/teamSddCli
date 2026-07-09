@@ -66,6 +66,14 @@ Costs:
 - Code PRs need explicit change/spec references.
 - Cross-repo CI and traceability checks matter for full packages.
 
+Daily developer/agent workflow:
+
+1. The analyst works in `team-specs/openspec/changes/<change-id>/` and keeps analytics, Delta Specs, traceability, and approval notes together.
+2. The developer opens the code repository and receives a bounded read pack: change ID, affected REQ/SCEN IDs, spec delta paths, design/tasks if present, and expected evidence.
+3. The agent reads `team-specs` through a sibling checkout such as `../team-specs/...` or through a configured project adapter path. It does not copy requirement text into the code repo.
+4. The code PR references the change ID and stable requirement/scenario IDs; implementation evidence, tests, manual checks, and waivers link back to the central package.
+5. Archive readiness is checked in `team-specs`, where solution-level evidence can be reviewed across several project repositories.
+
 ### Model B - specs next to code with separate analytics
 
 Each project repository carries its own `openspec/` state near code. Analytics or business/solution docs live centrally or elsewhere.
@@ -83,6 +91,14 @@ Why it is risky as our first default:
 - Unified approval views require aggregation from many repositories.
 - Shared validators/templates/skills need distribution and upgrade discipline from day one.
 - If analytics and specs are both editable sources, dual truth returns.
+
+Daily developer/agent workflow:
+
+1. The developer opens one project repository and sees requirements/spec deltas next to code.
+2. The agent can update spec, code, and tests in one PR with minimal cross-repo context setup.
+3. For a cross-system change, the analyst or tech lead must coordinate several repo-local spec deltas and a central analytics/approval view.
+4. Generated corporate approval views need an aggregation layer that proves all per-repo specs match the central business change.
+5. Drift checks become mandatory early, because analytics and per-repo specs can otherwise disagree.
 
 ### Recommended hybrid for the first supported topology
 
@@ -113,4 +129,4 @@ Do not borrow as first-MVP defaults:
 - non-blocking critical verification findings;
 - specs-next-to-code as the first canonical topology.
 
-Next step: draft `openspec/changes/define-repo-topology-config/` using this criteria frame and the full screenshot analysis, then prepare the human-readable gate 1.5 questions for topology/config/OpenSpec version approval.
+Routed result: `openspec/changes/define-repo-topology-config/` is now the canonical proposed contract for work item 1.4. This criteria file remains supporting evidence and the practical comparison frame for gate 1.5.

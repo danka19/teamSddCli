@@ -60,6 +60,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/changes/define-traceability-contract/` | Draft Phase 1 proposal for requirement, scenario, task, test, automation, waiver, and archive-readiness traceability |
 | `openspec/changes/define-waiver-policy/` | Draft Phase 1 proposal for waiver shape, approval, evidence, audit trail, and negative cases |
 | `openspec/changes/define-documentation-governance/` | Draft Phase 1 proposal for documentation update discipline, AI verification evidence, and TDD-style verification rules |
+| `openspec/changes/define-repo-topology-config/` | Draft Phase 1 merged proposal for repository topology, config format, OpenSpec version pin/upgrade policy, process package distribution, and owner/reviewer assignment |
 | `openspec/changes/define-confluence-feedback-loop/` | Draft Phase 1 proposal for generated Confluence publication, feedback dispositions, unresolved comments, source metadata, and evidence-backed status display |
 
 ## Deterministic Process Artifacts

@@ -30,6 +30,16 @@ Skipped states are not valid transitions. In particular, `draft` cannot move dir
 
 Thin changes may skip heavy artifacts, but they do not skip proposal/spec/scenario/traceability evidence. Full packages add design, QA, AT, and risk evidence when feature/API/mobile/cross-repo/high-risk conditions apply.
 
+## Archive History Convention
+
+Recommended archive convention for gate review:
+
+- archive completed changes under a dated archive path such as `openspec/changes/archive/YYYY-MM-DD-<change-id>`;
+- use a dedicated archive commit with message grammar `spec: archive <change-id>`;
+- keep archive movement separate from unrelated implementation commits where practical.
+
+This convention is proposed for deterministic history and searchability. It does not replace explicit human archive approval, and it must be reconciled with the exact behavior of the OpenSpec CLI before any archive operation is performed.
+
 ## Deterministic Gates Versus AI Assistance
 
 Deterministic gates validate structure, required artifacts, OpenSpec deltas, traceability links, waiver shape, and later CI evidence. AI may draft proposals, reviews, context packs, or skeletons, but AI output is advisory until a human accepts it in Git, PR review, or a documented decision.

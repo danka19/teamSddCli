@@ -80,7 +80,8 @@ The reported conflict ("they recommend analytics separate and specs next to code
 
 ## 6. Follow-Ups Routed To Existing Work Items
 
-- Draft the merged `define-repo-topology-config` proposal (work item 1.4) using the maturity-staged topology options, the process-as-versioned-folder distribution model, and the version-pin candidate (workflow/package schema version field + pinned OpenSpec CLI version).
-- Route instruction patterns (context-study, STOP gates, self-review checklists, scout subagent, Bad/Good pairs, altitude rules) into `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` follow-up work and future role skills.
-- Check our Delta Spec contract for [REMOVED]/[RENAMED] coverage and archive commit-message grammar (lifecycle proposal).
+- Drafted: the merged `define-repo-topology-config` proposal (work item 1.4) now uses the maturity-staged topology options, the process-as-versioned-folder distribution model, and the proposed version-pin location/policy.
+- Routed: instruction patterns (context-study, STOP gates, self-review checklists, scout subagent, Bad/Good pairs, altitude rules) are recorded in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for future role skills and guardrail work.
+- Routed: Delta Spec operation vocabulary, including `REMOVED`/`RENAMED`, is recorded in `openspec/changes/define-change-artifact-contracts/`.
+- Routed: dated archive folders and archive commit-message grammar are recorded in `openspec/changes/define-change-lifecycle/`.
 - Keep the open asset-placement decision informed by their unresolved "all CSV in one repo?" note — the pain is real in their practice too.
