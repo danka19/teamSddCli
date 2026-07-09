@@ -27,6 +27,10 @@ analytic-template/
 
 # Locally generated presentation/report artifacts
 outputs/
+*.ppt
+*.pptx
+*.key
+*.odp
 
 # Claude Code local settings
 .claude/settings.local.json
