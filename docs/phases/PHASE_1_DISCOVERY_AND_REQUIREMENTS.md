@@ -237,7 +237,7 @@ Affected specs: Planned `define-repo-topology-config`; later impact possible for
 Affected architecture: Must be compared against the current product goal: deterministic OpenSpec/Markdown-first SDD process, thin first MVP, analytics stored with OpenSpec sources, Confluence as generated publication, and no process guarantees depending on AI.
 Data contract impact: No schema change yet; possible future impact on repo split, config format, shared scripts/templates/skills distribution, owner registry, generated analytics views, and asset placement.
 Verification impact: Screenshot readability must be reported explicitly; if text or structure is unclear, the human owner must clarify or provide new photos before recommendations are treated as evidence.
-Status: Screenshot analysis completed on 2026-07-09 (25 photos, all key content legible); findings, criteria assessment, and borrow/differ recommendations recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md`; proposal drafting for work item 1.4 remains queued.
+Status: Screenshot analysis completed on 2026-07-09 (25 photos; key process, template, topology, and master-spec content legible; some tail sections not fully visible). Findings, criteria assessment, and borrow/differ recommendations are recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` and `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`; reviewer and architecture-checker gates agree that central `team-specs` remains the recommended first topology and specs-next-to-code is a later/federated option. Proposal drafting for work item 1.4 remains queued.
 ```
 
 ## Work Items
@@ -440,6 +440,8 @@ Objective:
 Expected files/modules:
 
 - `openspec/changes/define-repo-topology-config/` (single merged proposal; a separate `define-openspec-version-policy` change is no longer planned)
+- `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` as screenshot-review input
+- `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md` as topology-comparison criteria
 - `docs/IMPLEMENTATION_STRATEGY.md` only if the accepted strategy needs clarification
 - `docs/CURRENT_PROJECT_AUDIT.md` if a new environment or compatibility risk is found
 - `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md`
@@ -475,6 +477,14 @@ Exit criteria:
 - Draft proposal defines the reviewer-assignment contract: `owners.yaml` in `team-specs` as the single ownership registry (zones keyed by path prefix, owner groups not individuals), per-repo `CODEOWNERS` generated from the registry with a CI drift check, multi-zone PRs requiring approval from every touched zone, unowned-path fallback to repo default reviewers plus a validator warning, and role-based approvals from `change.yaml` (QA owner, security review) checked against the registry for full packages.
 - Draft proposals include 2-3 topology/config and version-policy options with a recommended default for the later human gate.
 - Placeholder corporate examples remain clearly non-authoritative.
+- Screenshot-analysis input is used as evidence only, not as an accepted decision; proposal text must distinguish observed screenshot facts, architecture inference, and recommendations for this product.
+
+Current analysis input:
+
+- The internal solution shows staged topology variants: one repo for a small pilot, separate requirements/code/tests repos for a team pilot, and a later scaling model with central business/solution requirements plus per-system specs near code.
+- Recommended draft default remains central `team-specs` for the first supported topology, with project repos keeping code/tests and references to change/spec IDs.
+- Borrow artifact-height rules, staged workflow, self-review/checklist patterns, delta operation vocabulary, and tasks checkbox discipline.
+- Do not borrow AI-only gates, copied tooling in every repo, non-blocking critical verification, a mandatory rich master-spec tree for thin changes, or specs-next-to-code as the first canonical topology.
 
 OpenSpec and acceptance evidence:
 

@@ -2,7 +2,7 @@
 
 Status: active.
 
-Last updated: 2026-07-06.
+Last updated: 2026-07-09.
 
 ## Repository Baseline
 
@@ -70,7 +70,7 @@ Last updated: 2026-07-06.
 | AUDIT-016 | The deterministic layer lags behind approved/proposed contracts: `scripts/validate_change.py` accepts the historical status vocabulary (`tasks_created`, `in_dev`, `ready_for_qa`, `implemented`) that diverges from the proposed lifecycle states, requires `design.md` and QA/AT plans for every package contrary to the approved thin matrix, and `templates/change/change.yaml` defaults to the contradictory `mode: thin` + `type: new_feature` combination. Reconciliation is scoped to work item 1.8; the lifecycle-naming and enforcement-staging decisions were approved on 2026-07-06 (six canonical states, error-level enforcement), so 1.8 waits only on the merged topology/config/version gate 1.5. See `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` finding F1. | Phase 1 (work item 1.8) | open |
 | AUDIT-017 | The OpenSpec CLI version is decided to be pinned, and `openspec 1.4.1` is the verified installed version, but no pin is recorded in any durable file or contract; the pin location depends on the pending merged `define-repo-topology-config` proposal, which also carries the version pin/upgrade policy after the 2026-07-06 merge decision. | Phase 1 (work items 1.4/1.5) | open |
 | AUDIT-018 | Analytics-source readiness is partially resolved: the language decision is made (Russian prose, English keywords/IDs) and the corporate approval template is fully analyzed with a migration plan in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` (typed YAML records instead of nested tables; red mandatory callouts become validator/checklist rules). Still open: migration approach confirmation for the existing Confluence corpus (recommended on-touch), diagram/asset storage conventions, and the approval-readiness requirements the owner is gathering for gate 1.7. Local photos of the template live in git-ignored `arch-screenshots/analytic-template/` and must never be committed. | Phase 1 (work items 1.4/1.6/1.7) | open |
-| AUDIT-019 | Screenshots of an internal OpenSpec customization / repository-topology approach are available locally in git-ignored `arch-screenshots/openspec-de/`; they still need to be reviewed against the current product goal, accepted thin-MVP boundary, analytics-template mapping, and work item 1.4 topology/config criteria before any recommendation is accepted. | Phase 1 (work item 1.4) | open |
+| AUDIT-019 | Screenshots of an internal OpenSpec customization / repository-topology approach are available locally in git-ignored `arch-screenshots/openspec-de/`; they were reviewed on 2026-07-09 against the product goal, thin-MVP boundary, analytics-template mapping, and work item 1.4 criteria. The review is captured in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` with the criteria frame in `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`. The recommended draft default is central `team-specs` as the first supported topology with lightweight project-repo references; specs-next-to-code remains a later/federated option. Binding topology/config/OpenSpec-version decisions remain open until gate 1.5. | Phase 1 (work items 1.4/1.5) | open |
 
 ## Accepted Human Decisions
 

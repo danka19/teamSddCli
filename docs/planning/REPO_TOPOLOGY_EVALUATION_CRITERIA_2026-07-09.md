@@ -1,56 +1,116 @@
 # Internal OpenSpec Customization Screenshots: Evaluation Criteria And Topology Comparison Frame
 
-Status: planning input for Phase 1 work item 1.4 (`define-repo-topology-config`). Prepared 2026-07-09 before the screenshot review. Not an accepted contract.
+Status: planning input for Phase 1 work item 1.4 (`define-repo-topology-config`). Prepared 2026-07-09; updated after the screenshot review. Not an accepted contract.
 
-## 1. Input Status And Blocker
+Full review: `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md`.
 
-- The human owner moved the corporate analytics template photos from the earlier local `/analytic-template/` folder to `arch-screenshots/analytic-template/` (already recorded in `docs/00_FILE_STRUCTURE.md`, the Phase 1 plan, and `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`).
-- The screenshots of the internal OpenSpec customization / process approach were expected in `arch-screenshots/openspec-de/`, but that folder was empty when this document was first written. **Resolved later on 2026-07-09: the owner re-added 25 photos, all key content was legible, and the full review is recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md`.**
-- The human owner reported that the internal solution recommends storing analytics separately while storing specs next to code; the screenshot review showed the real guidance is maturity-staged (three variants), and only the scaling variant moves specs next to code while still keeping a central business-requirements repo. See the analysis document, section 5.
+## 1. Input Status
 
-## 2. Evaluation Criteria For The Internal Solution
+- The human owner moved the corporate analytics template photos from the earlier local `/analytic-template/` folder to `arch-screenshots/analytic-template/`.
+- The internal OpenSpec customization screenshots were re-added to the git-ignored local folder `arch-screenshots/openspec-de/` and reviewed on 2026-07-09.
+- The full review covered 25 photos. The key process, templates, topology options, and master-spec structure were readable enough for work item 1.4 planning.
+- Readability limits remain: the tail of the workflow schema, the unexpanded practical repository examples, and the beginning of the frame-selection section were not fully visible. Any future transfer of exact template text requires original files or exported docs, not photos.
 
-Each criterion references the accepted product goal (deterministic OpenSpec/Markdown-first SDD process; see `AGENTS.md` Product Direction and `docs/IMPLEMENTATION_STRATEGY.md`) so the comparison stays grounded in what this product must guarantee, not in general taste.
+Evidence levels for later proposal work:
 
-1. **AI-independence of process guarantees.** Do the structure and gates work when only a weak corporate model (GigaCode CLI) or no AI at all is available? Our strategy forbids process guarantees that depend on the AI layer.
-2. **Single source of truth.** Where does canonical behavior truth live (Git vs Confluence vs tracker), and does the approach create dual-truth surfaces? Our architecture: Git/OpenSpec canonical, Confluence generated, Jira status-only.
-3. **Repository topology and content split.** Which artifacts live in a central specs repo versus next to code, and how do cross-repo changes work? Must be comparable with our planned `team-specs` vs project-repo split (work item 1.4 exit criteria).
-4. **Authoring ergonomics for analysts and weak models.** Are artifacts forms/typed records with one naming grammar, or free prose and nested tables? Our design rule: typed YAML + generated tables, IDs never translated.
-5. **Deterministic validatability.** Can a dependency-free script or CI gate check the structure (required files, IDs, links, matrices), or does correctness rely on humans reading guidance text?
-6. **Human readability without tooling.** Can an analyst or reviewer understand the raw repository in Bitbucket without generators or plugins? This backed the Russian-prose-canon decision.
-7. **Reusability by another team.** Is there a documented bootstrap path without copying history? Shared scripts/templates/skills distributed once (copy with version pin, submodule/subtree, or CI fetch), not maintained per repo?
-8. **Ownership and review contract.** How are owners/reviewers assigned (registry, CODEOWNERS, role approvals), and does it map to our planned `owners.yaml` -> generated CODEOWNERS model?
-9. **Traceability support.** Do stable IDs link requirement -> scenario -> task/test/evidence, and can a validator check the links?
-10. **Corporate approval compatibility.** Can the structure produce the approval views corporate reviewers require (the unified-document layout), preferably as generated rendering rather than manual duplication?
-11. **Thin-MVP compatibility.** Does the approach let small changes stay small, or does it force full-package burden on every change? Our matrix is risk-oriented.
-12. **Migration path.** Does it support gradual on-touch migration of existing Confluence analytics instead of a bulk rewrite?
-13. **Version/upgrade policy.** Does it pin the OpenSpec (or equivalent tooling) version and define upgrade/compatibility review, which the merged 1.4 proposal must cover?
-14. **Maintenance and drift cost.** What keeps spec and code (and generated views) from drifting: process discipline only, or deterministic checks?
+- **Observed on screenshots:** staged topology variants, workflow schema shape, artifact chain, PR review points, AI verify output classes, and developer-shaped master-spec tree.
+- **Architecture inference:** implications for our deterministic-gates-first process, analyst authoring, and cross-repo traceability.
+- **Recommendation:** central `team-specs` as first supported topology with project-repo references; specs-next-to-code as later/federated option.
 
-## 3. Two Storage Models To Explain At Gate 1.5
+## 2. Evaluation Criteria
 
-Work item 1.4 must present options; the screenshots reportedly use Model B, our current plan is Model A. Both must be described with tradeoffs in the proposal.
+Each criterion references the accepted product goal: deterministic OpenSpec/Markdown-first SDD process, Git as canonical source, Confluence as generated publication/read model, standard tool features plus validators for gates, and AI as draft/review convenience only.
 
-### Model A — central `team-specs` repo (current plan)
+1. **AI-independence of process guarantees.** Do gates work when AI is disabled or weaker than the external development assistant?
+2. **Approval unit and authoring role.** Is the source model designed for analyst-owned, solution-level changes or for developer-owned, repo-local changes?
+3. **Single source of truth.** Does the model avoid splitting behavior truth across analytics docs, per-repo specs, Confluence, and code comments?
+4. **Repository topology and content split.** Which artifacts live in `team-specs`, and which live next to code?
+5. **Config ownership.** Where do team-wide process config, per-project pointers, version pins, path mappings, and owners live?
+6. **Human readability without tooling.** Can analysts, reviewers, and developers understand the raw Git/Bitbucket source?
+7. **Deterministic validatability.** Can required files, IDs, links, states, versions, owners, and evidence be checked by scripts/CI?
+8. **Thin-MVP compatibility.** Does the model preserve small thin changes, or does it force full-package burden on every change?
+9. **Traceability.** Can requirement -> scenario -> design/task -> test/evidence -> waiver links be checked or reported?
+10. **Other-team reuse.** Can another team consume templates, validators, and role skills through a versioned bootstrap path instead of copying history?
+11. **Owners and reviewer assignment.** Are reviewers derived from an explicit registry or generated rules rather than tribal memory?
+12. **Corporate approval compatibility.** Can the source model later generate the familiar approval view without manual dual truth?
+13. **OpenSpec version and upgrade policy.** Is the OpenSpec CLI/process package pinned, and is upgrade compatibility reviewed?
+14. **Maintenance and drift cost.** What prevents copied skills, generated views, repo-local specs, and code references from drifting?
 
-Analytics sources, Master Specs, Delta Specs/change packages, QA/AT plans, traceability, templates, validation scripts, and publishing config live in one central analyst-facing repository; project repositories keep code, tests, AT code, code-local docs, and reference change IDs instead of copying requirements.
+## 3. Screenshot Findings Relevant To Topology
 
-- Strengths in our context: analysts author in one place without needing rights or Git fluency across N code repos; the corporate approval unit is solution-level and often spans several systems, matching one change package; publication and validators are implemented once; another team bootstraps by cloning one repo skeleton; process evolution happens in one PR.
-- Costs: spec PR and code PR are separate (two-step review); spec-code drift is possible and must be countered with change-ID references from code PRs plus traceability checks; cross-repo CI coordination is needed for full packages.
+The screenshots do not show a single universal recommendation. They show a maturity-staged model:
 
-### Model B — specs next to code, analytics elsewhere (reported internal recommendation; default OpenSpec usage)
+- **Variant 1:** small/single-capability pilot in one repository with docs, AI tooling, code, and tests together.
+- **Variant 2:** team pilot with separate requirements, code, and tests/autotests repositories.
+- **Variant 3:** scaling/pilot model with a central requirements repository for business requirements, solution architecture, and e2e scenarios, plus per-system repositories that carry master specs and delta specs next to code.
 
-Each project repository carries its own `openspec/` (specs change atomically with code in one PR); analytics lives in a separate space (Confluence or a docs repo).
+This matters for our comparison: "specs next to code" appears as a later scaling option, not as the only recommended topology. The screenshots also do not confirm an owners registry, generated `CODEOWNERS`, deterministic validator/CI contract, or OpenSpec upgrade policy; those must be designed in our proposal.
 
-- Strengths: atomic spec+code review, spec versioned with the release, minimal drift, obvious code ownership, no cross-repo choreography for single-repo changes; matches how OpenSpec tooling is designed to run.
-- Costs in our context: analysts must work inside developer repos (permissions, unfamiliar tooling, weak-model hazards in large code trees); cross-system features fragment into per-repo spec slices with no single approval artifact; unified business/approval views must be assembled from many repos; templates/validators/skills must be synchronized across repos; separating analytics from specs re-creates the dual-truth gap between analysis and requirements that SDD is meant to close.
+## 4. Storage Models To Explain At Gate 1.5
 
-### Frame for the recommendation
+### Model A - central `team-specs` repo
 
-The choice is driven by who authors specs and what the approval unit is. Developer-authored, repo-scoped specs favor Model B; analyst-authored, solution-scoped, multi-repo corporate approval favors Model A. The 1.4 proposal should present Model A as the recommended default with Model B (and a hybrid: central analytics/Master Specs plus thin per-repo references and generated CODEOWNERS) as alternatives, and record which screenshot-verified facts support or contradict each claim once the photos are available.
+Analytics sources, Master Specs, Delta Specs/change packages, QA/AT plans, traceability, templates, validation scripts, publishing config, owner registry, and future typed analytics records live in one central analyst-facing repository. Project repositories keep code, tests, AT code, code-local technical docs, and references to change IDs or requirement/scenario IDs instead of copying requirements.
 
-## 4. Next Steps
+Why this fits our first pilot:
 
-1. Human owner re-adds the internal-solution screenshots to `arch-screenshots/openspec-de/` (currently empty).
-2. Run the full screenshot review against section 2 criteria; report any unreadable fragments explicitly.
-3. Fold verified findings plus this comparison frame into the merged `define-repo-topology-config` proposal (work item 1.4) and the gate 1.5 decision packet.
+- Analysts author in one place.
+- The approval unit is solution-level and can span multiple systems.
+- Generated Confluence publication later has one canonical source.
+- Shared process assets evolve once.
+- Another team can bootstrap from one process repository.
+
+Costs:
+
+- Spec PRs and code PRs are separate.
+- Code PRs need explicit change/spec references.
+- Cross-repo CI and traceability checks matter for full packages.
+
+### Model B - specs next to code with separate analytics
+
+Each project repository carries its own `openspec/` state near code. Analytics or business/solution docs live centrally or elsewhere.
+
+Why this works for some teams:
+
+- Spec, code, and tests can be reviewed atomically in one repo.
+- Code owners review the requirements nearest to implementation.
+- The model matches default developer-local OpenSpec usage.
+
+Why it is risky as our first default:
+
+- Cross-system business changes fragment into per-repo spec slices.
+- Analysts must understand and work across developer repositories.
+- Unified approval views require aggregation from many repositories.
+- Shared validators/templates/skills need distribution and upgrade discipline from day one.
+- If analytics and specs are both editable sources, dual truth returns.
+
+### Recommended hybrid for the first supported topology
+
+Use Model A first, with lightweight project-repo references:
+
+- `team-specs` is canonical for analytics, change packages, Master Specs, Delta Specs, traceability, shared process assets, owners, config, and publication config.
+- Project repos own implementation artifacts and reference change/spec IDs.
+- A small project config file can point back to the central process config and supported OpenSpec/process version.
+- Specs-next-to-code is documented as a future/federated topology only after cross-repo traceability, generated views, and shared asset distribution are proven.
+
+## 5. Recommendation Frame
+
+Borrow from the internal solution:
+
+- artifact height rules: proposal = why/what, specs = requirement deltas, design = code bridge, tasks = executable checklist;
+- staged workflow: explore/propose/spec/design/task/apply/verify/archive;
+- STOP-and-confirm and self-review checklists as AI-layer guardrails;
+- `ADDED` / `MODIFIED` / `REMOVED` / `RENAMED` delta vocabulary to review against our Delta Spec contract;
+- `tasks.md` checkbox contract with implementation, unit-test, verify, and commit grouping;
+- topology maturity narrative for the human decision packet.
+
+Do not borrow as first-MVP defaults:
+
+- AI-only gates;
+- rich developer-shaped master-spec tree as mandatory thin-change structure;
+- copied AI tooling in every project repo without versioned distribution;
+- `develop` as the only branch model;
+- non-blocking critical verification findings;
+- specs-next-to-code as the first canonical topology.
+
+Next step: draft `openspec/changes/define-repo-topology-config/` using this criteria frame and the full screenshot analysis, then prepare the human-readable gate 1.5 questions for topology/config/OpenSpec version approval.

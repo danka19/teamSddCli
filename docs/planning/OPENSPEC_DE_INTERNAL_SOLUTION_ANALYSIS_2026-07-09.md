@@ -6,7 +6,7 @@ Source: 25 photos in the git-ignored local folder `arch-screenshots/openspec-de/
 
 ## 1. What The Internal Solution Is
 
-A developer-workflow customization of OpenSpec, maintained in one engineer's repository (develop branch), consisting of:
+A developer-workflow customization of OpenSpec, shown in an engineer/user-scoped repository (develop branch), consisting of:
 
 1. **A declarative workflow schema** (`openspec/schemas/de-workflow/schema.yaml`, ~30 KB, `version: 1`): defines the artifact chain `proposal -> specs -> design -> tasks` as data. Per artifact: `id`, `generates` (file pattern), `template`, `requires` (dependency list), and a long Russian `instruction` prompt. A separate `apply:` section declares `requires: tasks` and `tracks: tasks.md`.
 2. **Templates** next to the schema: `proposal.md` (fixed Russian sections: Почему / Что меняется / Границы (в scope, вне scope) / Сценарии / Критерии приёмки / Влияние), `spec.md` (delta operations), `tasks.md` (checkbox groups), `spec-structure.md` (master-spec folder contract), `spec-guide.md` (authoring rules).
@@ -34,13 +34,13 @@ Criteria from `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`:
 
 | # | Criterion | Internal solution | Our position |
 |---|---|---|---|
-| 1 | AI-independence of guarantees | Weak: guarantees live in prompts + human PR review; verify is AI and non-blocking; only tasks checkbox parsing is deterministic | Keep deterministic validators/CI as the guarantee layer; borrow their prompt discipline as AI-layer content only |
+| 1 | AI-independence of guarantees | The screenshots show prompts + human PR review + AI verify; deterministic gates are not visible in the captured material; only tasks checkbox parsing is explicitly machine-shaped | Keep deterministic validators/CI as the guarantee layer; borrow their prompt discipline as AI-layer content only |
 | 2 | Single source of truth | Aligned: Git master spec + dated archive; Confluence used only for process docs | Same philosophy; no conflict |
 | 3 | Topology / content split | Staged variants 1→2→3; variant 3 = central business-requirements repo + specs next to code per system | Our central `team-specs` matches their variant 2; variant 3 is a plausible later stage, not the first supported topology |
 | 4 | Authoring ergonomics | Excellent weak-model prompt engineering; but master-spec tree is deep, developer-shaped (OpenAPI/JSON/DTO), loose file-naming in action folders | Borrow instruction patterns; keep our strict ID grammar and typed YAML records |
-| 5 | Deterministic validatability | Almost none (no validator/CI observed) | Keep ours; encode their `requires:` dependencies as validator rules |
+| 5 | Deterministic validatability | Not confirmed from screenshots; no validator/CI contract is visible in the captured material | Keep ours; encode their `requires:` dependencies as validator rules |
 | 6 | Readability without tooling | Good: all Markdown in Bitbucket, Russian prose, committed flow PNG, short fixed templates | Confirms our Russian-canon and template decisions |
-| 7 | Reusability by other teams | Workflow definition is one self-contained folder (schema + templates) — copyable; but personal repo, no version/upgrade policy, no bootstrap guide in-repo | Borrow "process as one versioned folder"; ours must be team-owned with pin/upgrade |
+| 7 | Reusability by other teams | Workflow definition is one self-contained folder (schema + templates) - copyable; but team-owned distribution, version/upgrade policy, and bootstrap guide are not confirmed by the screenshots | Borrow "process as one versioned folder"; ours must be team-owned with pin/upgrade |
 | 8 | Ownership/review contract | Only optional PRs into develop; no owners registry/CODEOWNERS/role approvals | Keep our `owners.yaml` -> generated CODEOWNERS contract |
 | 9 | Traceability | Line-number refs (`design.md:34`) + AI verify; no stable IDs, no requirement→test links | Keep stable REQ-/SCEN- ID grammar; line refs acceptable only inside a package as convenience |
 | 10 | Corporate approval compatibility | Not addressed: no generated approval views, no unified-document rendering | Our generated-Confluence layer remains necessary for analyst approval |
@@ -67,7 +67,7 @@ Criteria from `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`:
 3. **Stable ID grammar over line-number references.** `design.md:34` breaks silently on edit; REQ-/SCEN- IDs survive and can anchor tests, traceability, and generated views. Line refs remain allowed inside a change package as a convenience.
 4. **Typed YAML records for tabular content** (status models, channel matrices, platform services) stay: their status models are prose Markdown because they never need to render corporate nested-table approval views; we do.
 5. **Strict naming/ID grammar everywhere**: their action folders explicitly have no naming requirements, which blocks linting; we keep one grammar validators can check.
-6. **Team-owned distribution with version pin/upgrade policy**: a personal repo with `version: 1` and no upgrade path is a bus-factor and compatibility risk; the merged 1.4 proposal defines pin location, upgrade trigger, compatibility evidence, and rollback.
+6. **Team-owned distribution with version pin/upgrade policy**: the screenshots show `version: 1`, but not a team-owned release, upgrade, compatibility, or rollback policy. The merged 1.4 proposal must define pin location, upgrade trigger, compatibility evidence, and rollback.
 7. **QA/AT and approval-view layers remain in scope** (later phases): absent in their solution, mandatory for our process goals.
 
 ## 5. Two Storage Models, Reconciled
