@@ -1,9 +1,9 @@
 # documentation-governance Specification
 
 ## Purpose
-TBD - created by archiving change define-documentation-governance. Update Purpose after archive.
+Define the accepted documentation governance rules for durable updates, AI verification evidence, scenario-first verification, human feedback memory, canonical language, docs/OpenSpec responsibility, and source ownership.
 ## Requirements
-### Requirement: Proposed documentation update discipline
+### Requirement: Documentation update discipline
 The SDD process SHALL define when project documentation must be updated for workflow, contract, setup, security, roadmap, or user-visible behavior changes.
 
 #### Scenario: Behavior change updates durable docs

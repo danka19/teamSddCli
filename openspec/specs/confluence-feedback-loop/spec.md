@@ -1,7 +1,7 @@
 # confluence-feedback-loop Specification
 
 ## Purpose
-TBD - created by archiving change define-confluence-feedback-loop. Update Purpose after archive.
+Define the accepted Confluence generated-publication/read-model contract, feedback disposition rules, unresolved feedback handling, generated asset source rules, and evidence-backed status display boundaries.
 ## Requirements
 ### Requirement: Confluence is generated publication
 The SDD process SHALL treat Confluence as a generated read/publication model, not the canonical requirement source.

@@ -1,9 +1,9 @@
 # waiver-policy Specification
 
 ## Purpose
-TBD - created by archiving change define-waiver-policy. Update Purpose after archive.
+Define the accepted waiver record, human approval ownership, negative cases, and baseline status for SDD artifact and verification exceptions.
 ## Requirements
-### Requirement: Proposed waiver record
+### Requirement: Waiver record
 The SDD process SHALL define a structured waiver record before missing required evidence can be accepted.
 
 #### Scenario: Waiver has required audit fields
@@ -14,7 +14,7 @@ The SDD process SHALL define a structured waiver record before missing required 
 - **WHEN** a required artifact or verification step is missing and the change only contains an unapproved free-text note
 - **THEN** deterministic validation or review treats the requirement as unmet
 
-### Requirement: Proposed waiver approval ownership
+### Requirement: Waiver approval ownership
 The SDD process SHALL keep waiver approval human-owned and role-appropriate.
 
 #### Scenario: AI cannot approve a waiver
@@ -52,13 +52,13 @@ The SDD process SHALL define cases where a waiver is not sufficient.
 - **WHEN** a change triggers security, compliance, data, public API, mobile release, or cross-repo risk review
 - **THEN** a waiver cannot bypass the review unless the approved policy explicitly names the permitted exception and approver
 
-### Requirement: Waiver policy acceptance status
-The waiver approver and evidence policy approved in Phase 1 work item 1.3 SHALL remain proposed OpenSpec behavior until the final archive/accepted-spec gate promotes it.
+### Requirement: Waiver policy baseline status
+The waiver approver and evidence policy approved in Phase 1 work item 1.3 SHALL be treated as accepted baseline behavior for future change packages.
 
-#### Scenario: Approved policy does not change validator behavior immediately
-- **WHEN** this proposed change is drafted
-- **THEN** existing templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item; work item 1.8 is the recorded implementation of that follow-up
+#### Scenario: Validator implementation evidence is recorded
+- **WHEN** deterministic template or validator behavior is checked against the waiver policy
+- **THEN** work item 1.8 provides implementation and test evidence for the currently enforced subset
 
-#### Scenario: Accepted specs still require final archive approval
-- **WHEN** the Phase 1 waiver policy has human decision approval
-- **THEN** it is still not written to accepted `openspec/specs/` until the final human archive or acceptance gate approves promotion
+#### Scenario: Future corrections use accepted-spec workflow
+- **WHEN** the waiver policy is corrected or expanded after the 2026-07-09 archive
+- **THEN** the correction is proposed as a new OpenSpec change against the accepted baseline

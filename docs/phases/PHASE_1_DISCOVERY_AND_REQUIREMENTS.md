@@ -4,7 +4,7 @@ Status: complete. Phase 1 moved from readiness-complete proposals to accepted sp
 
 ## Goal
 
-Turn the architecture and accepted delivery strategy into executable requirements for the first thin SDD flow: proposed OpenSpec specs, decision gates, artifact contracts, validation scenarios, and deterministic template/script updates that do not depend on the AI layer.
+Turn the architecture and accepted delivery strategy into executable requirements for the first thin SDD flow: OpenSpec specs, decision gates, artifact contracts, validation scenarios, and deterministic template/script updates that do not depend on the AI layer.
 
 ## Inputs To Read
 
@@ -33,13 +33,13 @@ Turn the architecture and accepted delivery strategy into executable requirement
   - None after the 2026-07-09 batch archive. Source packages live under `openspec/changes/archive/2026-07-09-*`.
 - Acceptance scenarios:
   - A completed/current work item 1.1 has a copyable change package template, local validator, pre-commit entrypoint, focused tests, OpenSpec change evidence, and commit evidence.
-  - Proposed change lifecycle requirements define status ownership, allowed transitions, Spec PR/archive gates, and the boundary between deterministic checks, human approval, and AI assistance.
-  - Proposed artifact contract requirements define thin and full change package artifacts, required/optional/waived fields, and the exact point where the final artifact matrix becomes binding.
-  - Proposed traceability requirements define requirement -> scenario -> task/test/change evidence links, validator expectations, and waiver behavior.
-  - Proposed waiver requirements define approvers, evidence, audit trail, and negative cases where waivers are not enough.
-  - Proposed documentation governance requirements define source-of-truth rules, phase-plan update rules, and acceptance evidence before docs/specs are promoted.
-  - Proposed repo topology/config requirements define the first supported topology, configuration format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment before scripts or templates assume concrete paths.
-  - Proposed Confluence feedback requirements define owner, service expectation, unresolved comment handling, and accepted/rejected comment outcomes before publication automation exists.
+  - Accepted change lifecycle requirements define status ownership, allowed transitions, Spec PR/archive gates, and the boundary between deterministic checks, human approval, and AI assistance.
+  - Accepted artifact contract requirements define thin and full change package artifacts, required/optional/waived fields, and accepted artifact matrix behavior.
+  - Accepted traceability requirements define requirement -> scenario -> task/test/change evidence links, validator expectations, and waiver behavior.
+  - Accepted waiver requirements define approvers, evidence, audit trail, and negative cases where waivers are not enough.
+  - Accepted documentation governance requirements define source-of-truth rules, phase-plan update rules, and acceptance evidence before future docs/specs are promoted.
+  - Accepted repo topology/config requirements define the first supported topology, configuration format, OpenSpec version pin/upgrade policy, process package reuse, and owner/reviewer assignment before scripts or templates assume concrete paths.
+  - Accepted Confluence feedback requirements define owner, service expectation, unresolved comment handling, and accepted/rejected comment outcomes before publication automation exists.
   - Template and validator behavior is expanded only after the relevant human decision gate is approved.
   - The final Phase 1 gate was closed by the 2026-07-09 human Option A decision; all eight readiness-complete OpenSpec changes were archived into accepted specs.
   - Confluence feedback/source/publication-read-model contracts are accepted, but actual Confluence publication automation and first generated-view selection remain later-layer work after corporate-environment validation.
@@ -301,7 +301,7 @@ Gate rule:
 
 ### 1.1 Change Package Template And Local Validation Gate
 
-Status: completed/current evidence; do not archive or accept the active OpenSpec change yet.
+Status: completed/current evidence. The original OpenSpec change was archived into the accepted `change-package-foundation` spec on 2026-07-09.
 
 Objective:
 
@@ -350,7 +350,7 @@ Exit criteria:
 - The pre-commit hook points to the same validator without validating plain project OpenSpec changes as SDD packages.
 - The OpenSpec change validates strictly.
 - Commit `6fbde43` is available as work item 1.1 evidence.
-- The OpenSpec change remains active until a later human archive gate.
+- The OpenSpec change remained active until the later human archive gate; it was archived into accepted specs on 2026-07-09.
 
 OpenSpec and acceptance evidence:
 
@@ -736,7 +736,7 @@ Exit criteria:
 
 OpenSpec and acceptance evidence:
 
-- Tests and scenarios map back to the approved proposed requirements for artifact contracts, traceability, waivers, topology/config, and version policy.
+- Tests and scenarios map back to the approved Phase 1 requirements for artifact contracts, traceability, waivers, topology/config, and version policy.
 - Any behavior not implemented yet has a recorded reason, follow-up item, or waiver.
 - Implementation evidence recorded on 2026-07-09:
   - `python -m pytest tests/test_validate_change.py -v` passed 29 tests after the work item 1.8 review-finding fixes, including thin/full artifact rules, canonical statuses, placeholder-mode enum enforcement, no-spec-change handling, waiver validation, waiver-to-traceability matching, risky thin-package trigger rejection, staged discovery, and placeholder mode.
@@ -798,7 +798,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.10 Phase 1 Acceptance Readiness Review
 
-Status: completed for the worker readiness packet on 2026-07-09. The proposal set remains active/proposed; no OpenSpec change was archived and no accepted spec was created.
+Status: completed for the pre-archive worker readiness packet on 2026-07-09. At the end of this work item the proposal set was still active/proposed; the later work item 1.11 Option A archive promoted all eight changes into accepted specs.
 
 Objective:
 
@@ -841,12 +841,12 @@ Exit criteria:
 - All known blockers are recorded.
 - Human acceptance questions are ready and include options/tradeoffs.
 - Human acceptance questions include 2-3 options, a recommended default, risks, and unresolved-decision consequences.
-- No active OpenSpec change has been archived or promoted into accepted specs.
+- At this readiness-review step, no active OpenSpec change had yet been archived or promoted into accepted specs.
 
 OpenSpec and acceptance evidence:
 
-- Readiness packet maps proposed requirements to scenarios, tests/manual checks, documentation updates, and remaining risks.
-- Readiness review confirmed that the only intentionally open phase gate is work item 1.11 final human archive/accepted-spec approval; reviewer, architecture-checker, and verification-checker passes should inspect this packet next but do not replace the human archive decision.
+- Readiness packet mapped proposed requirements to scenarios, tests/manual checks, documentation updates, and remaining risks.
+- Readiness review confirmed that the only intentionally open phase gate at that time was work item 1.11 final human archive/accepted-spec approval; that gate was later resolved by Option A on 2026-07-09.
 - Phase 1 proposal readiness evidence assembled on 2026-07-09:
   - `add-change-template-validation` remains complete and provides the deterministic baseline implemented in commits `f1f00d0`, `b2095e3`, `3f50d6e`, and `a82e3a0`.
   - `define-change-lifecycle` readiness review confirmed the six-state model and the proposed gate split: deterministic validation protects `draft` -> `spec_review` and `in_implementation` -> `ready_to_archive`, while human approval still owns `spec_review` -> `approved` and the final `ready_to_archive` -> `archived` decision.
@@ -864,10 +864,10 @@ OpenSpec and acceptance evidence:
   - `git status --short --branch`
 - Manual readiness checklist result on 2026-07-09:
   - each active change has proposal/design/spec/tasks artifacts;
-  - review-readiness/gate-defer task boxes were reconciled where evidence now exists;
-  - final archive/promote task boxes remain intentionally open;
-  - `openspec/specs/` still has no accepted specs;
-  - no archive command was run in this work item.
+  - review-readiness/gate-defer task boxes were reconciled where evidence existed;
+  - final archive/promote task boxes remained intentionally open at that step;
+  - `openspec/specs/` still had no accepted specs at that step;
+  - no archive command was run in work item 1.10.
 
 ### 1.11 Final Human Gate Before OpenSpec Archive/Accepted Specs
 
@@ -929,7 +929,7 @@ OpenSpec and acceptance evidence:
   - `openspec validate --all --strict` passed after archive.
 - The Confluence feedback-loop archive accepts the contract only. It does not implement Confluence publication automation; generated-view selection remains deferred to the corporate environment per `D-010`.
 
-Final human decision question for the project owner (Russian):
+Historical pre-archive human decision question for the project owner (resolved by Option A on 2026-07-09):
 
 > Мы уже собрали и проверили readiness-пакет по всем активным изменениям Phase 1. Как поступаем дальше с архивированием этих OpenSpec changes и созданием accepted specs в отдельном следующем шаге?
 >

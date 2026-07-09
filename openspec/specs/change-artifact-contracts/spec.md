@@ -1,29 +1,29 @@
 # change-artifact-contracts Specification
 
 ## Purpose
-TBD - created by archiving change define-change-artifact-contracts. Update Purpose after archive.
+Define the accepted thin/full change artifact contracts, waiver eligibility, artifact matrix baseline, future journey/screen artifact boundaries, legacy baseline mode, Delta Spec operation vocabulary, and artifact-height rules.
 ## Requirements
-### Requirement: Proposed thin change artifact contract
-The SDD process SHALL define a proposed thin change artifact contract before deterministic tools enforce missing-artifact failures.
+### Requirement: Thin change artifact contract
+The SDD process SHALL define a thin change artifact contract for deterministic tools and review gates.
 
 #### Scenario: Thin change has minimum reviewable evidence
 - **WHEN** a change is classified as a thin change
-- **THEN** the proposed contract requires proposal intent, at least one OpenSpec delta for behavior-changing SDD work, at least one testable scenario per requirement, basic traceability, and verification evidence
+- **THEN** the contract requires proposal intent, at least one OpenSpec delta for behavior-changing SDD work, at least one testable scenario per requirement, basic traceability, and verification evidence
 
 #### Scenario: Thin change avoids full package burden by default
 - **WHEN** a thin change has no feature, public API, mobile, cross-repo, data/security, or high-risk impact
-- **THEN** the proposed contract does not require QA/AT plans, Confluence publication evidence, Jira task creation, or role inbox evidence by default
+- **THEN** the contract does not require QA/AT plans, Confluence publication evidence, Jira task creation, or role inbox evidence by default
 
 #### Scenario: Behavior-changing work requires OpenSpec delta by default
 - **WHEN** a change modifies SDD workflow behavior, artifact/process contracts, user-visible behavior, validation behavior, or future CLI behavior
-- **THEN** the proposed contract requires an OpenSpec delta and does not accept a no-spec-change rationale as the default path
+- **THEN** the contract requires an OpenSpec delta and does not accept a no-spec-change rationale as the default path
 
-### Requirement: Proposed full package artifact contract
-The SDD process SHALL define a proposed full change package contract for broader or riskier changes.
+### Requirement: Full package artifact contract
+The SDD process SHALL define a full change package contract for broader or riskier changes.
 
 #### Scenario: Full package trigger expands required evidence
 - **WHEN** a change is feature, public API, mobile, cross-repo, data/security, or high-risk
-- **THEN** the proposed contract requires expanded design, impact analysis, QA strategy, test case or waiver evidence, automation plan or waiver evidence, and complete traceability before archive readiness
+- **THEN** the contract requires expanded design, impact analysis, QA strategy, test case or waiver evidence, automation plan or waiver evidence, and complete traceability before archive readiness
 
 #### Scenario: Empty artifacts are not accepted as evidence
 - **WHEN** a required artifact exists but contains only placeholders or non-substantive text
@@ -48,16 +48,16 @@ The artifact contract SHALL distinguish required artifacts that may be waived fr
 - **WHEN** a full package does not need a new test case or automation artifact
 - **THEN** the missing artifact is acceptable only when an approved waiver records reason, evidence, and approver
 
-### Requirement: Artifact matrix acceptance status
-The artifact matrix approved in Phase 1 work item 1.3 SHALL remain proposed OpenSpec behavior until the final archive/accepted-spec gate promotes it.
+### Requirement: Artifact matrix baseline status
+The artifact matrix approved in Phase 1 work item 1.3 SHALL be treated as accepted baseline behavior for future change packages.
 
-#### Scenario: Approved matrix does not change deterministic behavior immediately
-- **WHEN** this proposed change is drafted
-- **THEN** templates, validators, tests, and pre-commit behavior remain unchanged until a later approved implementation work item; work item 1.8 is the recorded implementation of that follow-up
+#### Scenario: Validator implementation evidence is recorded
+- **WHEN** deterministic template or validator behavior is checked against the artifact matrix
+- **THEN** work items 1.8 and 1.9 provide implementation and test evidence for the currently enforced subset
 
-#### Scenario: Accepted specs still require final archive approval
-- **WHEN** the Phase 1 artifact matrix has human decision approval
-- **THEN** it is still not written to accepted `openspec/specs/` until the final human archive or acceptance gate approves promotion
+#### Scenario: Future corrections use accepted-spec workflow
+- **WHEN** the artifact matrix is corrected or expanded after the 2026-07-09 archive
+- **THEN** the correction is proposed as a new OpenSpec change against the accepted baseline
 
 #### Scenario: First MVP excludes later workflow artifacts
 - **WHEN** a thin first-MVP change has no Jira task, Confluence publication, QA/AT proposal, or role inbox evidence

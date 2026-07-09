@@ -1,9 +1,9 @@
 # traceability-contract Specification
 
 ## Purpose
-TBD - created by archiving change define-traceability-contract. Update Purpose after archive.
+Define the accepted traceability contract for review readiness, archive readiness, waived links, AI advisory suggestions, future journey/screen traceability, and legacy baseline gaps.
 ## Requirements
-### Requirement: Proposed review-minimum traceability
+### Requirement: Review-minimum traceability
 The SDD process SHALL define minimum traceability required before a change is reviewable.
 
 #### Scenario: Requirement links to scenario
@@ -14,7 +14,7 @@ The SDD process SHALL define minimum traceability required before a change is re
 - **WHEN** a requirement has no testable scenario
 - **THEN** deterministic validation or review reports the missing scenario before the change is considered ready for review
 
-### Requirement: Proposed archive-readiness traceability
+### Requirement: Archive-readiness traceability
 The SDD process SHALL define completion traceability required before a change can be archived.
 
 #### Scenario: Full package archive checks downstream evidence

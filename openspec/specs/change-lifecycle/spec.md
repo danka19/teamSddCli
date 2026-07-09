@@ -1,25 +1,25 @@
 # change-lifecycle Specification
 
 ## Purpose
-TBD - created by archiving change define-change-lifecycle. Update Purpose after archive.
+Define the accepted SDD change lifecycle states, transition gates, human approval boundaries, MVP automation boundary, generated status display rules, and archive history convention.
 ## Requirements
-### Requirement: Proposed lifecycle states
-The SDD process SHALL define proposed lifecycle states for change packages before deterministic tools enforce state transitions.
+### Requirement: Lifecycle states
+The SDD process SHALL define lifecycle states for change packages before deterministic tools enforce state transitions.
 
 #### Scenario: Thin change remains lightweight
 - **WHEN** a change is classified as a thin change
-- **THEN** the proposed lifecycle requires draft, review, approval, implementation evidence, and archive readiness without requiring full QA/AT/package artifacts by default
+- **THEN** the lifecycle requires draft, review, approval, implementation evidence, and archive readiness without requiring full QA/AT/package artifacts by default
 
 #### Scenario: Full package uses expanded evidence
 - **WHEN** a change is feature, API, mobile, cross-repo, high-risk, or otherwise classified as a full change package
-- **THEN** the proposed lifecycle requires expanded design, QA, AT, risk, and traceability evidence before archive readiness
+- **THEN** the lifecycle requires expanded design, QA, AT, risk, and traceability evidence before archive readiness
 
 ### Requirement: Deterministic transition gates
 The SDD process SHALL define deterministic checks for lifecycle transitions where the transition can be validated without human judgment.
 
 #### Scenario: Allowed transitions are explicit
 - **WHEN** deterministic tooling or review evaluates a lifecycle status change
-- **THEN** only these transitions are proposed as valid: `draft` -> `spec_review`, `spec_review` -> `draft`, `spec_review` -> `approved`, `approved` -> `in_implementation`, `in_implementation` -> `ready_to_archive`, `ready_to_archive` -> `in_implementation`, and `ready_to_archive` -> `archived`
+- **THEN** only these transitions are valid: `draft` -> `spec_review`, `spec_review` -> `draft`, `spec_review` -> `approved`, `approved` -> `in_implementation`, `in_implementation` -> `ready_to_archive`, `ready_to_archive` -> `in_implementation`, and `ready_to_archive` -> `archived`
 
 #### Scenario: Spec PR transition checks structure
 - **WHEN** a change moves from `draft` to `spec_review`
@@ -75,15 +75,15 @@ The SDD process SHALL distinguish lifecycle source-of-truth state from generated
 - **THEN** it may use the simplified lifecycle `draft -> spec_review -> approved -> implemented -> archived` while internal validation may separately track implementation and archive-readiness evidence
 
 ### Requirement: Archive history convention
-The SDD process SHALL define a proposed archive history convention before changes are archived into accepted specs.
+The SDD process SHALL define an archive history convention for changes archived into accepted specs.
 
 #### Scenario: Archive uses dated history path
 - **WHEN** a change package is archived after explicit human approval
-- **THEN** the proposed convention moves it under a dated archive path such as `openspec/changes/archive/YYYY-MM-DD-<change-id>` or the closest OpenSpec CLI-compatible equivalent
+- **THEN** the convention moves it under a dated archive path such as `openspec/changes/archive/YYYY-MM-DD-<change-id>` or the closest OpenSpec CLI-compatible equivalent
 
 #### Scenario: Archive commit is greppable
 - **WHEN** archive movement is committed
-- **THEN** the proposed commit message follows a stable grammar such as `spec: archive <change-id>` so archive history can be searched and audited
+- **THEN** the commit message follows a stable grammar such as `spec: archive <change-id>` so archive history can be searched and audited
 
 #### Scenario: Archive convention does not replace approval
 - **WHEN** the archive path and commit grammar are satisfied

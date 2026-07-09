@@ -1,7 +1,7 @@
 # change-package-foundation Specification
 
 ## Purpose
-TBD - created by archiving change add-change-template-validation. Update Purpose after archive.
+Define the accepted deterministic change-package template, local validation behavior, pre-commit entrypoint, and placeholder-validation mode for the first SDD workflow.
 ## Requirements
 ### Requirement: Change package template
 The project SHALL provide a copyable `templates/change/` skeleton for SDD change packages.

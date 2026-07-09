@@ -1,14 +1,14 @@
 # repo-topology-config Specification
 
 ## Purpose
-TBD - created by archiving change define-repo-topology-config. Update Purpose after archive.
+Define the accepted first supported repository topology, content split, developer/agent workflow, process configuration, package distribution, OpenSpec version pin/upgrade policy, and owner registry contract.
 ## Requirements
-### Requirement: Proposed first supported topology
+### Requirement: First supported topology
 The SDD process SHALL define a first supported repository topology before deterministic tools assume package paths, config paths, OpenSpec version pins, or reviewer assignment sources.
 
 #### Scenario: Central team-specs is the recommended first topology
-- **WHEN** the first supported topology is presented for human approval
-- **THEN** the proposed default is a central `team-specs` repository for canonical analytics, change packages, Master Specs, Delta Specs, traceability, shared process assets, owner registry, and publication config, with project repositories referencing change/spec IDs instead of copying requirement text
+- **WHEN** the first supported topology is used
+- **THEN** the default is a central `team-specs` repository for canonical analytics, change packages, Master Specs, Delta Specs, traceability, shared process assets, owner registry, and publication config, with project repositories referencing change/spec IDs instead of copying requirement text
 
 #### Scenario: Specs-next-to-code remains a future topology
 - **WHEN** a team wants project repositories to own local Master Specs and Delta Specs next to code
@@ -49,7 +49,7 @@ The SDD process SHALL explain how developers and AI agents use canonical specs w
 - **THEN** traceability records link from canonical requirements and scenarios to project-repo PRs, CI/manual verification evidence, and approved waivers where needed
 
 ### Requirement: Process configuration files
-The SDD process SHALL define a proposed configuration format that deterministic tools and role skills can discover.
+The SDD process SHALL define a configuration format that deterministic tools and role skills can discover.
 
 #### Scenario: Central config declares supported process assumptions
 - **WHEN** the central topology is used
@@ -59,9 +59,9 @@ The SDD process SHALL define a proposed configuration format that deterministic 
 - **WHEN** a project repository participates in the central topology
 - **THEN** it may contain a small adapter config with project ID, central `team-specs` location or registry reference, consumed process package version, and local path mappings
 
-#### Scenario: Config names remain gate decisions
-- **WHEN** this proposal is drafted
-- **THEN** names such as `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, and `.sdd-project.yaml` are recommended defaults and do not become binding until gate 1.5 approves them
+#### Scenario: Config names are approved defaults
+- **WHEN** first-topology config names are documented
+- **THEN** names such as `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, and `.sdd-project.yaml` are recommended defaults that became approved first-topology assumptions at gate 1.5
 
 ### Requirement: Process package distribution
 The SDD process SHALL define shared scripts, templates, schemas, and role skill instructions as a versioned process package instead of independent per-repo forks.
@@ -83,7 +83,7 @@ The SDD process SHALL define where the OpenSpec CLI version is pinned and how up
 
 #### Scenario: OpenSpec version is pinned centrally
 - **WHEN** the central topology is used
-- **THEN** the proposed default pins the verified OpenSpec CLI version `1.4.1` in the central process config until gate 1.5 approves or revises the pin location
+- **THEN** the default pins the verified OpenSpec CLI version `1.4.1` in the central process config
 
 #### Scenario: Version mismatch is reported before gated validation
 - **WHEN** deterministic Spec PR or archive validation runs
@@ -96,8 +96,8 @@ The SDD process SHALL define where the OpenSpec CLI version is pinned and how up
 ### Requirement: Owner registry and reviewer assignment
 The SDD process SHALL define a source owner registry and reviewer-assignment contract before generated or validated reviewer rules become binding.
 
-#### Scenario: owners.yaml is the proposed owner source
-- **WHEN** gate 1.5 approves the recommended default
+#### Scenario: owners.yaml is the owner source
+- **WHEN** the central topology uses reviewer assignment
 - **THEN** `owners.yaml` in `team-specs` is the source registry for owner groups, zones, roles, and reviewer assignment rules
 
 #### Scenario: CODEOWNERS is generated or validated from owners registry
@@ -121,8 +121,8 @@ The SDD process SHALL stop for human approval before topology, config, OpenSpec 
 
 #### Scenario: Gate 1.5 approved recommended defaults
 - **WHEN** work item 1.8 starts after the 2026-07-09 human decision
-- **THEN** templates, validators, setup docs, and role skills may use central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin, one versioned process package, and `owners.yaml` reviewer source as approved proposed assumptions
+- **THEN** templates, validators, setup docs, and role skills may use central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin, one versioned process package, and `owners.yaml` reviewer source as approved assumptions
 
-#### Scenario: No downstream validator enforcement before gate approval
-- **WHEN** gate 1.5 is unresolved
-- **THEN** work item 1.8 does not enforce topology/config/OpenSpec version assumptions in templates or validators
+#### Scenario: Validator enforcement follows approved implementation scope
+- **WHEN** topology, config, OpenSpec version, process distribution, or owner assignment checks are added to deterministic tooling
+- **THEN** they are implemented through a reviewed change against the accepted baseline and use the approved gate 1.5 assumptions unless a later accepted decision changes them
