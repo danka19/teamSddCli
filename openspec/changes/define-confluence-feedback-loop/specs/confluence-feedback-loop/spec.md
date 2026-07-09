@@ -49,6 +49,21 @@ The SDD process SHALL define how unresolved Confluence comments affect future pu
 - **WHEN** a first-MVP thin change has no Confluence publication, preview, or feedback evidence
 - **THEN** the absence of Confluence evidence does not block review or archive readiness because Confluence publication is outside the first MVP
 
+#### Scenario: Existing Confluence corpus is read-only archive
+- **WHEN** an existing Confluence analytics page is used as input for new SDD work
+- **THEN** the page is treated as read-only reference material and any accepted requirement or analytics content is rewritten or linked through a Git/OpenSpec change instead of editing the legacy page as canonical source
+
+### Requirement: Generated publication assets
+The SDD process SHALL keep accepted diagrams, journey schemes, and screen assets in a versioned source or source+export flow that generated Confluence pages can embed with stable traceability.
+
+#### Scenario: Accepted diagram has versioned source
+- **WHEN** a diagram, journey scheme, or screen asset becomes accepted source for a generated view
+- **THEN** it has a stable ID and Git-managed source or source+export artifact that can be linked from OpenSpec, traceability, or generated Confluence output
+
+#### Scenario: Confluence drawing is draft-only
+- **WHEN** an analyst draws a diagram directly in Confluence during discussion
+- **THEN** the drawing may be used as feedback or draft input, but it must be exported or recreated into the Git-managed asset flow before it becomes accepted/published source
+
 ### Requirement: Evidence-backed status display
 The SDD process SHALL display approval and testing state in generated Confluence pages only when backed by source evidence.
 

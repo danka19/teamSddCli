@@ -116,6 +116,10 @@ The SDD process SHALL stop for human approval before topology, config, OpenSpec 
 - **WHEN** the topology/config/OpenSpec version decision packet is prepared
 - **THEN** it presents 2-3 practical options for topology, config format, OpenSpec version upgrade policy, process package distribution, and owner/reviewer assignment, with a recommended default, examples of daily impact, tradeoffs, risks, and unresolved-decision consequences
 
+#### Scenario: Gate 1.5 approved recommended defaults
+- **WHEN** work item 1.8 starts after the 2026-07-09 human decision
+- **THEN** templates, validators, setup docs, and role skills may use central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin, one versioned process package, and `owners.yaml` reviewer source as approved proposed assumptions
+
 #### Scenario: No downstream validator enforcement before gate approval
 - **WHEN** gate 1.5 is unresolved
 - **THEN** work item 1.8 does not enforce topology/config/OpenSpec version assumptions in templates or validators

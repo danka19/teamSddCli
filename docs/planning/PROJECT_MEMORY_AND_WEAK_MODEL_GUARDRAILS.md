@@ -37,7 +37,20 @@ Not yet accepted:
 - whether to implement a Pangolin-backed graph tool, a simple script first, or both;
 - whether any of these checks belong in the first MVP.
 
-The current default is: these ideas are Phase 1/Phase 4 planning input and should not expand the first thin MVP unless the human owner explicitly re-scopes it.
+Human planning defaults accepted on 2026-07-09:
+
+- project memory follows the future `team-specs` topology rather than being manually forked into every project repository;
+- the first graph/navigation implementation should be a lightweight deterministic index or script, not a graph database from day one;
+- mandatory pilot guardrails are read packs, role skills, and evidence checklists;
+- first role guides are analyst, developer, and QA thin-change walkthroughs;
+- these ideas remain Phase 1/Phase 4 planning input and should not expand the first thin MVP unless the human owner explicitly re-scopes it.
+
+Still not accepted:
+
+- exact memory folder names and schemas;
+- which memory artifacts are generated versus manually maintained;
+- concrete stale-review thresholds;
+- concrete implementation of the project-map, known-failure, question-bank, and role-guide checks.
 
 ## Core Rule
 

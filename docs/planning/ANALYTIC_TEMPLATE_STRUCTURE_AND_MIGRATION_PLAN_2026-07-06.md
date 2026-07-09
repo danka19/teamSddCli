@@ -1,6 +1,6 @@
 # Corporate Analytics Template: Structure Analysis And SDD Migration Plan
 
-Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Not an accepted contract. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
+Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Updated with 2026-07-09 human decisions: the existing Confluence analytics corpus is a read-only archive for the first pilot, accepted diagrams/assets use Git-managed source or source+export with stable IDs, and approval readiness stays minimal/validator-backed until a later full-package contract. Not an accepted OpenSpec contract yet. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
 
 Source: the human owner photographed the corporate Confluence template and two example pages into the local-only folder `arch-screenshots/analytic-template/` (moved from the earlier local `analytic-template/` location; photos reviewed in full). That folder contains corporate URLs, internal system names, and employee names, so it is git-ignored and must never be committed; this document deliberately abstracts all corporate identifiers.
 
@@ -53,6 +53,15 @@ The corporate template prescribes how the approval document must look, not how o
 - **Transition period (before publication automation exists):** the corporate Confluence template keeps being filled manually for official approval as today, and the pilot change package in Git is the engineering source. To avoid dual-truth drift, the package records the link to the approved corporate document as approval evidence, and the on-touch migration rule applies: content is normalized into Git when a pilot change touches it, not wholesale.
 - **If manual dual-entry proves unacceptable during the pilot,** the fallback is a minimal one-way renderer for only the nested-table sections (status model, channel matrix, platform services). That would pull a slice of Confluence publication into an earlier phase, which is an explicit human re-scope decision (gate 1.7 territory), not a default.
 
+### Existing Confluence pages and analyst-drawn diagrams
+
+Human decision on 2026-07-09:
+
+- old Confluence analytics pages are read-only archive/reference material for the first pilot, not a bulk-migration target;
+- if old content is reused for a new change, the accepted source is created in Git/OpenSpec through the reviewed change, while the legacy page remains evidence/reference;
+- diagrams drawn directly in Confluence are allowed as discussion drafts, but accepted/published diagrams must be exported or recreated into the Git-managed asset flow;
+- Visio can be used when it is the team's convenient diagram source format, but it is not mandatory. Mermaid/PlantUML for generated diagrams, diagrams.net/draw.io source files, Figma source+export, or another versioned source+export pair are also valid when they keep stable IDs and generated-view traceability.
+
 ## 4. Mapping Template Sections To SDD Artifacts
 
 | Template section | SDD change-package artifact | Notes |
@@ -76,7 +85,7 @@ Thin changes never touch most of this: the matrix stays risk-oriented, and the t
 
 ## 5. Staged Plan
 
-1. **Now (Phase 1, no new scope):** this analysis feeds `define-repo-topology-config` (where analytics sources and assets live — decision gate 1.5) and the open diagram/asset-storage decision. No template/validator changes yet.
+1. **Now (Phase 1, no new scope):** this analysis feeds `define-repo-topology-config` and the Confluence feedback/publication proposal. Gate 1.5 approved central `team-specs`; the diagram/asset-storage decision is Git-managed source or source+export with stable IDs. No template/validator changes yet.
 2. **Phase 1 proposal work (after gate 1.5):** extend `define-change-artifact-contracts` (or a dedicated follow-up proposal) with the conditional typed artifacts — status model, channel support, platform services, data model — as full-package sections with YAML schemas and validator expectations. Russian-prose examples per the language decision.
 3. **Analyst pilot preparation (Phase 3/4):** author the analyst style guide + one worked example converting a real (sanitized) unified document into a change package; the approval-requirements input the owner is gathering decides which sections corporate approvers must still see, i.e. which generated views the publication layer must produce first.
 4. **Publication layer (Phase 4, after gate 1.7):** generated Confluence views render the YAML records back into the approver-familiar nested-table layout with source metadata.

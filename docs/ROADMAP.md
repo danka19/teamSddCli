@@ -13,6 +13,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions from 2026-07-06 also accept the project memory triad, existing-code onboarding flow, deterministic `sync`/`upgrade` maintenance direction, PDLC explanation narrative, and explicit exclusion of deploy/Zephyr/Jira/Confluence from the first MVP.
 - Human decisions from 2026-07-06 (audit decision batch) adopt the six-state canonical lifecycle naming, error-level enforcement for work item 1.8, a canonical decision log (`docs/DECISIONS.md`) at Phase 1 acceptance readiness, and merging the OpenSpec version policy into the `define-repo-topology-config` proposal.
 - Human feedback from 2026-07-06 (adoption-readiness batch) adopts `Master Spec` / `Delta Spec` team-facing terminology and the other-team reusability constraint for the topology proposal, and opens the analytics language, existing-Confluence migration, and diagram/asset storage decisions (see the Phase 1 plan and AUDIT-018).
+- Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, weak-model guardrail, and role-guide planning defaults.
 - Management deadline recorded 2026-07-07: SDD/OpenSpec adoption is mandatory within 1.5 months (by ~2026-08-20) — remaining Phase 1 gates, validator reconciliation (1.8), a production `team-specs` setup, and a real-change pilot must land inside that window; Q3 2026 must show measurable pilot results and Q4 2026 must deliver the AI-automation layers. The deadline is met by the thin flow alone; later layers are not adoption preconditions.
 - Update this file when phase status, gates, or scope changes.
 
@@ -58,7 +59,7 @@ Detailed plan:
 Current work:
 
 - Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`, tracked by OpenSpec change `add-change-template-validation`.
-- Current Phase 1 work: proposed OpenSpec contracts and decision gates for lifecycle, artifact matrix, traceability, waivers, documentation governance, Confluence feedback/publication model, repo topology/config, and OpenSpec version policy before template or validator expansion. The merged `define-repo-topology-config` draft now carries the topology/config/version/process-package/owners recommendation; human gate 1.5 remains pending.
+- Current Phase 1 work: proposed OpenSpec contracts and decision gates for lifecycle, artifact matrix, traceability, waivers, documentation governance, Confluence feedback/publication model, repo topology/config, and OpenSpec version policy before template or validator expansion. The merged `define-repo-topology-config` gate 1.5 was approved on 2026-07-09, so the next implementation step is work item 1.8 template/validator reconciliation.
 
 ## Phase 2. Architecture And Data Model
 

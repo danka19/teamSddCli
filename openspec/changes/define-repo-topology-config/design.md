@@ -29,11 +29,28 @@ Supporting inputs:
 - Do not require every thin change to use full-package design/tasks artifacts.
 - Do not archive accepted specs before the final human gate.
 
+## Human-Approved Gate 1.5 Decisions
+
+Approved by the human owner on 2026-07-09:
+
+- First supported topology: central `team-specs` with project repositories referencing change/spec IDs.
+- Config shape: central `team-specs/sdd.config.yaml`, `projects.yaml`, `owners.yaml`, plus optional project-repo `.sdd-project.yaml`.
+- OpenSpec version policy: pin the verified OpenSpec CLI version `1.4.1` centrally and upgrade only through a reviewed change package.
+- Process reuse: one versioned process package consumed at a pinned version.
+- Reviewer assignment: `owners.yaml` is the source registry and generates or validates `CODEOWNERS`.
+
+Practical meaning of the OpenSpec pin:
+
+- deterministic Spec PR and archive checks must compare the running `openspec --version` with the configured pin before trusting validation output;
+- a developer with another OpenSpec version must either switch to the pinned version or explicitly run inside the approved tool environment;
+- upgrading OpenSpec is a normal SDD change, not an ad-hoc local update: it needs compatibility evidence, strict OpenSpec validation, focused validator/template tests when available, and rollback or hold instructions;
+- the OpenSpec CLI version pin and the process package version are separate pins, so process templates can evolve without pretending the OpenSpec binary changed.
+
 ## Decisions
 
 ### Decision 1: First Supported Topology
 
-Recommended default for gate 1.5: central `team-specs` plus project repositories with references.
+Approved gate 1.5 default: central `team-specs` plus project repositories with references.
 
 ```text
 team-specs/
@@ -85,14 +102,14 @@ Our first supported topology is step 2. Step 3 is future scope and requires:
 
 ### Decision 3: Config Shape
 
-Recommended default:
+Approved gate 1.5 default:
 
 - `team-specs/sdd.config.yaml`: team-wide process config, including process package version, OpenSpec CLI version pin, paths, validation policy, and supported topology.
 - `team-specs/projects.yaml`: registered project repositories and their roles in the topology.
 - `team-specs/owners.yaml`: source owner registry.
 - `project-repo/.sdd-project.yaml`: optional adapter pointer to `team-specs`, project ID, consumed process package version, and local path mapping.
 
-The exact names remain gate 1.5 decisions. The proposal recommends simple YAML files because they are readable, diffable, and validator-friendly.
+The names are approved gate 1.5 defaults. They remain proposed OpenSpec behavior until the final Phase 1 archive/accepted-spec gate.
 
 ### Decision 4: Process Distribution As One Versioned Folder
 
@@ -113,7 +130,7 @@ Validator design implication: the same `requires` dependencies used by role skil
 
 ### Decision 5: OpenSpec Version Pin And Upgrade
 
-Recommended default:
+Approved gate 1.5 default:
 
 - Pin the verified OpenSpec CLI version `1.4.1` in `team-specs/sdd.config.yaml`.
 - Validate the running OpenSpec CLI version before Spec PR/archive checks.
@@ -131,7 +148,7 @@ Upgrade evidence should include:
 
 ### Decision 6: Owner And Reviewer Assignment
 
-Recommended default:
+Approved gate 1.5 default:
 
 - `owners.yaml` in `team-specs` is the source owner registry.
 - Ownership zones are keyed by stable path prefixes, capability IDs, project IDs, or artifact types.

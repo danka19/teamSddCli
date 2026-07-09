@@ -9,7 +9,7 @@ The internal OpenSpec-DE screenshot review confirmed useful maturity-staged topo
 - Observed from screenshots: maturity-staged topology options, workflow-as-data shape, artifact dependencies, prompt/skill patterns, delta operation vocabulary, task checkbox discipline, dated archive folders, and archive commit grammar.
 - Architecture inference: these patterns can support deterministic templates, validators, read packs, and role skills, but the screenshots do not prove an owners registry, generated `CODEOWNERS`, validator/CI contract, or OpenSpec upgrade policy.
 - Recommended product decision: use central `team-specs` as the first supported topology and treat specs-next-to-code as a later/federated topology with prerequisites.
-- Human gate: all topology/config/version/owner defaults in this proposal remain non-binding until gate 1.5 is explicitly approved or revised.
+- Human gate: topology/config/version/owner defaults were approved by the human owner at gate 1.5 on 2026-07-09; they remain proposed OpenSpec behavior until the final archive/accepted-spec gate.
 
 ## What Changes
 
@@ -38,5 +38,5 @@ The internal OpenSpec-DE screenshot review confirmed useful maturity-staged topo
 - Adds proposed OpenSpec requirements only.
 - Does not create accepted specs.
 - Does not change `templates/change/`, `scripts/validate_change.py`, tests, pre-commit behavior, or CI behavior.
-- Records a recommended default for gate 1.5, but the topology/config/OpenSpec-version policy remains non-binding until the human owner approves it.
+- Records the human-approved gate 1.5 defaults for topology/config/OpenSpec-version policy, while keeping the change unarchived until the final Phase 1 acceptance gate.
 - Feeds later work item 1.8 validator/template expansion and future production `team-specs` setup.
