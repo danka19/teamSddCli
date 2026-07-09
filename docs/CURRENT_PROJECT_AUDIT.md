@@ -41,7 +41,7 @@ Last updated: 2026-07-09.
 | Focused validator tests | `python -m pytest tests/test_validate_change.py -v` passed 34 tests after the work items 1.8/1.9 reconciliation and hardening passes, covering thin/full artifact rules, canonical statuses, placeholder-mode enum enforcement, no-spec-change handling, missing requirement scenarios, missing traceability rows, pending downstream link handling before/archive readiness, practical thin archive evidence, waiver validation, waiver-to-traceability matching, risky thin-package trigger rejection, staged discovery, and placeholder mode; `pytest.ini` uses repository-local `.pytest-tmp` because the default Windows temp pytest directory is not accessible in this environment |
 | Template validation | After work item 1.8, `python scripts/validate_change.py --allow-placeholders templates/change` passed, and `python scripts/validate_change.py templates/change` rejected placeholder values as expected |
 | OpenSpec CLI installed | `openspec --version` returned `1.4.1` |
-| OpenSpec validation | `openspec list` showed 8 active changes; `openspec list --specs` showed no accepted specs yet; `openspec status --change define-repo-topology-config` showed all artifacts complete; `openspec validate --all --strict` passed 8 items and failed 0 on 2026-07-09. |
+| OpenSpec validation | During the Phase 1.10 readiness pass on 2026-07-09, `openspec list` still showed 8 active changes, `openspec list --specs` still showed no accepted specs, and `openspec validate --all --strict` passed all 8 changes with 0 failures. No active change was archived or promoted. |
 | Pre-commit installed | Not available on PATH during Phase 1 artifact work; config is present but end-to-end hook execution still needs tool installation |
 | Local app/server available | No local app/server found; this work item is script/template based |
 | Documentation bootstrap | `project-starter-kit` created `AGENTS.md`, `docs/`, `.codex/skills/`, `.gitignore`, and `.env.example` |
@@ -52,7 +52,7 @@ Last updated: 2026-07-09.
 
 | ID | Risk | Owner | Status |
 |---|---|---|---|
-| AUDIT-001 | Product scope is described at architecture level, and the 2026-07-03 accepted critique narrowed the first MVP, but accepted CLI requirements and acceptance criteria are only beginning to be captured as OpenSpec changes; no accepted living specs exist yet. | Phase 1 | open |
+| AUDIT-001 | Product scope and first-MVP boundaries are now captured by a validated Phase 1 proposal set, but no accepted living specs exist yet because work item 1.11 still requires explicit human archive/accepted-spec approval and a separate archive execution step. | Phase 1 | open |
 | AUDIT-002 | Environment and verification commands for the future CLI runtime are not recorded because the implementation stack is undecided. | Phase 1/2 | open |
 | AUDIT-003 | Historical architecture draft was removed after current decisions were captured in `docs/` and active OpenSpec proposals; accepted living specs are still pending Phase 1 archive/acceptance. | Phase 1/2 | closed |
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |

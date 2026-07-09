@@ -9,6 +9,6 @@
 
 ## 2. Later Decision And Implementation
 
-- [ ] 2.1 Review governance requirements during Phase 1 acceptance readiness.
+- [x] 2.1 Review governance requirements during Phase 1 acceptance readiness. Reviewed on 2026-07-09 against the updated phase plan, roadmap, audit, and AI verification checklist; the proposal remains readiness-complete and still stops before archive/promotion.
 - [ ] 2.2 Promote to accepted documentation-governance spec only after explicit human archive/acceptance approval.
 - [ ] 2.3 Do not archive this change until the final human OpenSpec archive gate.

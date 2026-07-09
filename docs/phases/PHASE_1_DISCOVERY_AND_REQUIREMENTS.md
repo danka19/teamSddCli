@@ -798,6 +798,8 @@ OpenSpec and acceptance evidence:
 
 ### 1.10 Phase 1 Acceptance Readiness Review
 
+Status: completed for the worker readiness packet on 2026-07-09. The proposal set remains active/proposed; no OpenSpec change was archived and no accepted spec was created.
+
 Objective:
 
 - Prepare the full Phase 1 OpenSpec proposal set for human acceptance review without archiving or creating accepted specs.
@@ -844,6 +846,28 @@ Exit criteria:
 OpenSpec and acceptance evidence:
 
 - Readiness packet maps proposed requirements to scenarios, tests/manual checks, documentation updates, and remaining risks.
+- Readiness review confirmed that the only intentionally open phase gate is work item 1.11 final human archive/accepted-spec approval; reviewer, architecture-checker, and verification-checker passes should inspect this packet next but do not replace the human archive decision.
+- Phase 1 proposal readiness evidence assembled on 2026-07-09:
+  - `add-change-template-validation` remains complete and provides the deterministic baseline implemented in commits `f1f00d0`, `b2095e3`, `3f50d6e`, and `a82e3a0`.
+  - `define-change-lifecycle` readiness review confirmed the six-state model and the proposed gate split: deterministic validation protects `draft` -> `spec_review` and `in_implementation` -> `ready_to_archive`, while human approval still owns `spec_review` -> `approved` and the final `ready_to_archive` -> `archived` decision.
+  - `define-change-artifact-contracts`, `define-traceability-contract`, and `define-waiver-policy` remain aligned with the work item 1.8/1.9 validator and test evidence, including thin/full trigger rules, archive-readiness traceability, waiver ownership, and negative cases.
+  - `define-documentation-governance` readiness review confirmed that roadmap, phase-plan, audit, and verification evidence remain routed through proposed OpenSpec ownership rules and still stop before accepted-spec promotion.
+  - `define-repo-topology-config` remains decision-complete for gate 1.5, so readiness no longer depends on a topology/config/version blocker.
+  - `define-confluence-feedback-loop` records the approved owner/SLA/blocker defaults and the explicit defer of generated-view selection to the corporate environment; this defer is recorded as a decision, not as a missing readiness input.
+- Verification evidence for the readiness packet:
+  - `openspec list`
+  - `openspec list --specs`
+  - `openspec validate --all --strict`
+  - `python -m pytest tests/test_validate_change.py -v`
+  - `python scripts/validate_change.py --allow-placeholders templates/change`
+  - `git diff --check`
+  - `git status --short --branch`
+- Manual readiness checklist result on 2026-07-09:
+  - each active change has proposal/design/spec/tasks artifacts;
+  - review-readiness/gate-defer task boxes were reconciled where evidence now exists;
+  - final archive/promote task boxes remain intentionally open;
+  - `openspec/specs/` still has no accepted specs;
+  - no archive command was run in this work item.
 
 ### 1.11 Final Human Gate Before OpenSpec Archive/Accepted Specs
 
@@ -888,6 +912,26 @@ Exit criteria:
 OpenSpec and acceptance evidence:
 
 - The final packet identifies every proposed requirement, acceptance scenario, verification command, manual-verification risk, and human decision that supports acceptance.
+- Remaining blocker before any archive/promote step: explicit human approval for whether the validated Phase 1 proposal set should stay proposed or move into a separate archive/accepted-spec execution step.
+
+Final human decision question for the project owner (Russian):
+
+> Мы уже собрали и проверили readiness-пакет по всем активным изменениям Phase 1. Как поступаем дальше с архивированием этих OpenSpec changes и созданием accepted specs в отдельном следующем шаге?
+>
+> Вариант A (рекомендуется): принять весь текущий Phase 1 пакет и в отдельном execution step архивировать все readiness-complete changes одним батчем.
+> Почему это мой дефолт: proposal set уже согласован по ключевым Phase 1 решениям, строгая OpenSpec-проверка зелёная, тесты зелёные, а отложенные вещи вроде выбора первого generated view уже зафиксированы как defer, а не как дыра.
+> Практический эффект: следующим шагом можно делать только archive/promote-работу, обновить `openspec/specs/`, roadmap/audit phase status и получить единый accepted baseline для дальнейшего `team-specs`/pilot потока.
+> Риски и tradeoffs: если вы ожидаете ещё одну волну смысловых правок по контрактам до корпоративного пилота, их уже придётся вносить как новые change-пакеты поверх accepted specs, а не тихо править текущие proposals.
+>
+> Вариант B: принять только детерминированное ядро сейчас (`change-lifecycle`, `change-artifact-contracts`, `traceability-contract`, `waiver-policy`, `documentation-governance`, `repo-topology-config`), а `define-confluence-feedback-loop` оставить proposed до корпоративной среды.
+> Практический эффект: базовый SDD-контракт станет accepted уже сейчас, но Confluence-related часть останется гибкой до реальных корпоративных шаблонов и практик.
+> Риски и tradeoffs: появится смешанное состояние Phase 1, где часть contracts уже accepted, а часть всё ещё proposed; это усложнит объяснение phase completion и дальнейшую документацию.
+>
+> Вариант C: пока ничего не архивировать и оставить весь пакет proposed до первого корпоративного dry-run или `team-specs` setup.
+> Практический эффект: можно ещё свободно переписывать формулировки и контракты до реального пилота.
+> Риски и tradeoffs: у проекта не появится accepted baseline, roadmap не сможет честно считать Phase 1 закрытой, а все следующие шаги будут продолжать ссылаться на proposed changes вместо living specs.
+>
+> Что остаётся заблокированным без ответа: нельзя запускать archive/promote execution step, нельзя создавать/обновлять `openspec/specs/`, нельзя считать Phase 1 завершённой, и audit/roadmap не смогут перейти от readiness к accepted-spec status.
 
 ## Phase Gate
 
@@ -895,6 +939,7 @@ OpenSpec and acceptance evidence:
 - Phase 1 is complete only after explicit human approval plus a separate verified archive/accepted-spec execution step.
 - No proposed OpenSpec change may be archived into accepted specs without explicit human approval.
 - No template or validator expansion may implement any final contract before the corresponding human decision gate is approved. The artifact matrix and waiver gates were approved on 2026-07-06, as were the lifecycle naming and error-level enforcement decisions; the merged topology/config/OpenSpec-version gate (1.5) was approved on 2026-07-09.
+- Readiness status as of 2026-07-09: the worker readiness packet is assembled, all active changes still validate as proposed, and the gate remains intentionally blocked at work item 1.11 until the human chooses the archive/accepted-spec path.
 
 ## Human Decisions
 
@@ -917,4 +962,4 @@ OpenSpec and acceptance evidence:
 - Completed 2026-07-09: Confluence feedback loop owner/SLA/unresolved comments - analyst/change owner triages feedback; blocker comments block later Confluence-enabled publication/archive readiness; non-blocking comments may continue only with explicit disposition; the default SLA is triage within 1 working day for blockers and 3 working days for non-blockers, and this SLA must be editable and explicitly disableable.
 - Completed 2026-07-09: generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment because it depends on real corporate templates, approval practices, and tooling constraints.
 - Completed 2026-07-09: project memory/documentation quality controls for weaker corporate AI models - memory follows the future `team-specs` topology; the first graph/navigation implementation should be a lightweight deterministic index; mandatory pilot guardrails are read packs, role skills, and evidence checklists; first role guides are analyst, developer, and QA thin-change walkthroughs.
-- Open: before archiving OpenSpec changes into accepted specs.
+- Open (work item 1.11): the final archive/accepted-spec decision remains human-owned; see the Russian decision packet above for the practical options, recommended default, and blocked follow-up work.

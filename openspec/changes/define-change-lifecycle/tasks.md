@@ -9,7 +9,7 @@
 
 ## 2. Later Decision And Implementation
 
-- [ ] 2.1 Review lifecycle states during the Phase 1 acceptance readiness review.
+- [x] 2.1 Review lifecycle states during the Phase 1 acceptance readiness review. Reviewed on 2026-07-09 against the proposed spec delta, work item 1.8/1.9 validator evidence, and the thin-MVP boundary; the six-state model remains readiness-complete and no archive/promotion was performed.
 - [x] 2.2 Decide whether accepted specs use the simpler public lifecycle names or the more explicit internal `in_implementation` / `ready_to_archive` split. Decided 2026-07-06: the internal six-state split is canonical for accepted specs and deterministic validation; simplified names appear only in generated business-facing views.
-- [ ] 2.3 Decide which lifecycle transitions become deterministic validator or CI gates.
+- [x] 2.3 Decide which lifecycle transitions become deterministic validator or CI gates. Readiness review on 2026-07-09 confirms the proposed split: deterministic validation/CI protects the review-minimum `draft` -> `spec_review` and evidence-complete `in_implementation` -> `ready_to_archive` transitions, while `spec_review` -> `approved` and `ready_to_archive` -> `archived` remain human approval gates with deterministic checks as blockers rather than approvers.
 - [ ] 2.4 Do not archive this change until the final human OpenSpec archive gate.
