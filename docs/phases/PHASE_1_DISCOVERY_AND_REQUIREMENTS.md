@@ -80,7 +80,7 @@ Affected specs: None directly; existing OpenSpec proposals remain the current pr
 Affected architecture: Replaces the parallel historical architecture file with `docs/`, `openspec/`, and accepted human decisions as source-of-truth surfaces.
 Data contract impact: None to current artifact schemas; future data contracts must be derived from accepted OpenSpec requirements.
 Verification impact: Requires link/reference cleanup, strict OpenSpec validation, and repository status checks.
-Status: Adopted; `sdd_final_architecture.md` removed and references updated.
+Status: accepted. `sdd_final_architecture.md` was removed and references were updated.
 ```
 
 ```text
@@ -93,7 +93,7 @@ Affected specs: Active change `add-change-template-validation`; planned changes 
 Affected architecture: Preserves OpenSpec/Markdown-first, deterministic-gates-first, no-custom-CLI-upfront, and human-owned approval boundaries.
 Data contract impact: Requires explicit human gates before finalizing artifact matrix, repo topology/config, waiver contract, Confluence feedback handling, OpenSpec version policy, and accepted specs.
 Verification impact: Requires worker/reviewer/architecture/verification evidence per work item and OpenSpec validation before completion; final archive/acceptance requires a human stop.
-Status: Adopted into this plan; downstream work remains queued for Phase 1 execution.
+Status: accepted. The execution model was adopted into this plan; downstream work was completed by the closed Phase 1 items.
 ```
 
 ```text
@@ -106,7 +106,7 @@ Affected specs: Proposed changes `define-change-lifecycle`, `define-change-artif
 Affected architecture: Preserves OpenSpec/Markdown-first, deterministic-gates-first, human-owned approval/archive, and no-custom-CLI-upfront boundaries.
 Data contract impact: Clarifies allowed lifecycle transitions, archive approval, no-spec-change limits, waiver eligibility, traceability pending status, and completion evidence fields.
 Verification impact: Requires `openspec validate --all --strict`, `git diff --check`, and manual checks that accepted specs and prohibited paths were not changed.
-Status: Adopted for work item 1.2 reviewer fix pass; no accepted specs are created and no deterministic validator/template behavior changes are made.
+Status: accepted. Adopted for the work item 1.2 reviewer fix pass without prematurely changing accepted specs or validator/template behavior.
 ```
 
 ```text
@@ -119,7 +119,7 @@ Affected specs: Proposed documentation-governance behavior; active phase decisio
 Affected architecture: Preserves human-owned decisions by making decision packets understandable and reviewable.
 Data contract impact: None to artifact schemas; affects decision-record format and acceptance evidence.
 Verification impact: Future human gates must be checked for clear Russian question text, 2-3 options, recommended default, practical impact examples, tradeoffs/risks, and unresolved-decision consequences.
-Status: Adopted into `AGENTS.md`, `docs/AI_STEP_VERIFICATION_CHECKLIST.md`, and this phase plan.
+Status: accepted. Adopted into `AGENTS.md`, `docs/AI_STEP_VERIFICATION_CHECKLIST.md`, and this phase plan.
 ```
 
 ```text
@@ -132,7 +132,7 @@ Affected specs: Proposed changes `define-change-artifact-contracts`, `define-wai
 Affected architecture: Preserves Git/OpenSpec canonical source, no-custom-CLI-upfront delivery, deterministic-gates-first, and human-owned approval boundaries; confirms Confluence/Jira/QA/AT/role inbox remain planned later layers, not first-MVP dependencies.
 Data contract impact: Approves the risk-oriented thin/full artifact matrix and role-appropriate waiver fields/approvers; plans future journey/screen, publication, localization, and legacy-baseline contracts without making them first-MVP blockers.
 Verification impact: OpenSpec proposal scenarios and tasks must be updated; scripts/templates/validator tests are not changed until later implementation work items.
-Status: Adopted into project docs, active OpenSpec proposals, audit, and this phase plan; deterministic enforcement remains queued.
+Status: accepted. Adopted into project docs, OpenSpec proposals, audit, and this phase plan; deterministic enforcement was handled by later closed items.
 ```
 
 ```text
@@ -145,7 +145,7 @@ Affected specs: Proposed changes `define-confluence-feedback-loop`, `define-docu
 Affected architecture: Reinforces Git/OpenSpec/Markdown as canonical source, Confluence as generated publication/read model, no bidirectional sync, and no custom Jira/Confluence REST clients from the AI layer.
 Data contract impact: Plans source metadata, feedback dispositions, generated view types, journey/screen metadata, legacy baseline evidence, canonical language, and docs-vs-specs routing; schemas remain future work.
 Verification impact: Requires OpenSpec strict validation and docs diff checks now; no Confluence/Jira/QA/AT/template/validator tests are required until implementation work changes deterministic artifacts.
-Status: Queued into current Phase 1 proposals and later work items; not implemented as first-MVP behavior.
+Status: deferred. Recorded in Phase 1 proposals and later work because it is outside first-MVP behavior.
 ```
 
 ```text
@@ -158,7 +158,7 @@ Affected specs: Proposed changes `define-documentation-governance`, `define-chan
 Affected architecture: Adds the project memory triad as the future orientation model; defines existing-code onboarding as `scan -> baseline -> map -> validate`; treats `sync` and `upgrade` as deterministic maintenance; frames the process as PDLC-wide shared context; preserves the first-MVP boundary.
 Data contract impact: Future schemas may be needed for project map, legacy baseline, memory sync reports, and template/spec-package version metadata; no schema changes are made now.
 Verification impact: Requires docs diff checks and OpenSpec strict validation now; deterministic sync/upgrade and onboarding checks remain future implementation work after the merged topology/config/version policy is approved.
-Status: Adopted into project docs, audit, roadmap, context, and this phase plan; no first-MVP implementation scope added.
+Status: accepted. Adopted into project docs, audit, roadmap, context, and this phase plan without adding first-MVP implementation scope.
 ```
 
 ```text
@@ -171,7 +171,7 @@ Affected specs: Proposed documentation-governance behavior, future repo topology
 Affected architecture: Points toward deterministic navigation/indexing, concise evidence-backed memory, generated or validated project maps, reusable failure-pattern records, and a spec-questioning workflow before implementation planning.
 Data contract impact: Possible future contracts for memory index, known failure records, role guides, documentation lint rules, and spec-question prompts; no data contract is accepted yet.
 Verification impact: Future work should define checks for stale docs, orphaned docs, unreferenced memory entries, repeated failure recurrence, and role walkthrough evidence for QA/analyst usability.
-Status: Queued for Phase 1 exploration/proposal; detailed planning input captured in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`; not accepted as implementation scope yet.
+Status: deferred. Detailed planning input is captured in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`; it is not accepted implementation scope.
 ```
 
 ```text
@@ -184,7 +184,7 @@ Affected specs: Proposed change `define-documentation-governance`; future projec
 Affected architecture: Reinforces OpenSpec as behavior/acceptance owner, `docs/` as rationale/context owner, `AGENTS.md` as agent operating-rule owner, and memory/generated views as read models.
 Data contract impact: Future schemas should support source IDs, source paths, source commit or generated timestamp, canonical/supporting/advisory/evidence labels, and stale-review metadata; no deterministic schema is accepted now.
 Verification impact: Requires OpenSpec strict validation and docs diff checks now; future checks should cover normative-language linting, duplicate requirement IDs, source links, generated-block edits, stale memory, and orphan docs.
-Status: Adopted into documentation-governance proposal, context, planning docs, checklist, audit, and this phase plan; deterministic enforcement remains future work.
+Status: accepted. Adopted into documentation-governance, context, planning docs, checklist, audit, and this phase plan; later deterministic work remains separately scoped.
 ```
 
 ```text
@@ -197,7 +197,7 @@ Affected specs: `define-change-lifecycle` (naming decision closes its tasks item
 Affected architecture: No boundary changes; preserves deterministic-gates-first, human-owned approvals, and the thin-MVP boundary.
 Data contract impact: Validator status vocabulary must be reconciled to the six canonical states in work item 1.8; the OpenSpec version pin location is decided inside the merged topology/config proposal.
 Verification impact: Work item 1.8 negative tests must cover rejected historical statuses and error-level matrix enforcement; this documentation pass requires `openspec validate --all --strict` and `git diff --check`.
-Status: Adopted into README, audit, roadmap, the change-lifecycle spec, and this phase plan; `docs/DECISIONS.md` is now created during work item 1.10 and records this batch as `D-006`.
+Status: accepted. Adopted into README, audit, roadmap, the change-lifecycle spec, and this phase plan; `docs/DECISIONS.md` records the batch as `D-006`.
 ```
 
 ```text
@@ -210,7 +210,7 @@ Affected specs: planned merged `define-repo-topology-config`; `define-documentat
 Affected architecture: No boundary changes; Git/OpenSpec stays canonical; Confluence stays generated; the first MVP is not expanded.
 Data contract impact: Future topology/config contract must cover repo content split, shared script/skill consumption, and other-team bootstrap; glossary gains Master Spec / Delta Spec terms; a strict-mode probe confirmed OpenSpec accepts Russian prose with English keywords.
 Verification impact: `openspec validate --all --strict` and `git diff --check` for this documentation pass; future work items keep their existing verification lists.
-Status: Terminology and reuse constraint adopted into context, README, audit, roadmap, and this plan; language/migration/diagram/split questions recorded as open decisions below and AUDIT-018.
+Status: accepted. Terminology and the reuse constraint were adopted; the then-open questions were routed to later decision records.
 ```
 
 ```text
@@ -223,7 +223,7 @@ Affected specs: `define-documentation-governance` (canonical-language requiremen
 Affected architecture: Git/OpenSpec stays canonical; generated Confluence renders typed records back into the approver-familiar nested layout; no MVP expansion.
 Data contract impact: Future YAML schemas for status-model, channel-support, platform-services, and data-model records; red mandatory-callout rules from the template become validator/checklist candidates.
 Verification impact: A strict-mode OpenSpec probe confirmed Russian prose validates; `openspec validate --all --strict` and `git diff --check` for this documentation pass; future schemas require their own validator tests in 1.8/1.9.
-Status: Language decision recorded across docs and the governance proposal; template analysis recorded in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`; `arch-screenshots/` and `outputs/` are git-ignored so local corporate photos/screenshots are not committed.
+Status: accepted. The language decision and template analysis were recorded; private screenshot/output paths remain ignored.
 ```
 
 ```text
@@ -236,7 +236,7 @@ Affected specs: Planned `define-repo-topology-config`; later impact possible for
 Affected architecture: Must be compared against the current product goal: deterministic OpenSpec/Markdown-first SDD process, thin first MVP, analytics stored with OpenSpec sources, Confluence as generated publication, and no process guarantees depending on AI.
 Data contract impact: No schema change yet; possible future impact on repo split, config format, shared scripts/templates/skills distribution, owner registry, generated analytics views, and asset placement.
 Verification impact: Screenshot readability must be reported explicitly; if text or structure is unclear, the human owner must clarify or provide new photos before recommendations are treated as evidence.
-Status: Screenshot analysis completed on 2026-07-09 (25 photos; key process, template, topology, and master-spec content legible; some tail sections not fully visible). Findings, criteria assessment, and borrow/differ recommendations are recorded in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` and `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`; reviewer and architecture-checker gates agree that central `team-specs` remains the recommended first topology and specs-next-to-code is a later/federated option. Proposal drafting is now routed to `openspec/changes/define-repo-topology-config/`.
+Status: closed. Screenshot analysis completed on 2026-07-09; findings and topology recommendations are recorded in the linked planning documents and were routed into the accepted topology work.
 ```
 
 ```text
@@ -249,7 +249,7 @@ Affected specs: `define-repo-topology-config`, `define-change-artifact-contracts
 Affected architecture: Preserves central `team-specs` as the recommended first topology, specs-next-to-code as a later/federated option, deterministic guarantees over AI self-review, and no first-MVP expansion.
 Data contract impact: Adds proposed contracts for topology/config/version/process package/owners, Delta Spec operation vocabulary, artifact-height/task checkbox expectations, and archive history convention.
 Verification impact: Requires read-only reviewer/architecture/verification gates, strict OpenSpec validation, docs diff checks, and explicit gate 1.5 human approval before enforcement.
-Status: Adopted into the work item 1.4 proposal and related docs; gate 1.5 was approved on 2026-07-09.
+Status: accepted. Adopted into work item 1.4 and related docs; gate 1.5 was approved on 2026-07-09.
 ```
 
 ```text
@@ -262,7 +262,7 @@ Affected specs: Proposed change `define-repo-topology-config`.
 Affected architecture: Approves central `team-specs` as the first supported topology; central team config plus optional project adapter; central OpenSpec `1.4.1` pin upgraded only through a reviewed change package; one versioned process package; and `owners.yaml` as the source for generated or validated `CODEOWNERS`.
 Data contract impact: Future templates, validators, setup docs, CI checks, and role skills may assume the approved topology/config/version/owner defaults after they are encoded in the proposed contracts; no accepted specs are created in this intake step.
 Verification impact: Requires OpenSpec strict validation, task checklist update for `define-repo-topology-config`, and documentation updates before work item 1.8 starts.
-Status: Adopted into the Phase 1 plan, repo topology/config proposal, roadmap, audit, and task checklist; work item 1.8 is no longer blocked by gate 1.5.
+Status: accepted. Adopted into the Phase 1 plan, topology/config proposal, roadmap, audit, and task checklist; gate 1.5 was resolved.
 ```
 
 ```text
@@ -275,7 +275,7 @@ Affected specs: Proposed changes `define-confluence-feedback-loop`, `define-docu
 Affected architecture: Confluence stays generated/read-only for requirements; the existing analytics corpus is a read-only archive, not a bulk-migration source; diagrams/screens use Git-managed source or source+export with stable IDs; analyst/change owner triages Confluence feedback; blocker comments block later Confluence-enabled flows while non-blockers require explicit disposition; project memory lives with the future `team-specs` topology; first graph/navigation implementation is a deterministic lightweight index; mandatory weak-model guardrails are read packs, role skills, and evidence checklists; pilot role guides start with analyst, developer, and QA thin-change walkthroughs.
 Data contract impact: Future schemas/checks may be needed for asset metadata, publication model references, feedback dispositions, memory index, read packs, and role guides; no first-MVP validator behavior is expanded by this decision except where work item 1.8 already covers approved thin/full and waiver enforcement.
 Verification impact: Requires OpenSpec strict validation and documentation/audit updates now; future implementation must add validator or manual checks for generated asset source metadata, Confluence dispositions, memory index evidence, and role-guide walkthroughs when those features enter scope.
-Status: Adopted into the Phase 1 plan, Confluence proposal, planning docs, audit, and roadmap; at this intake point, final OpenSpec archive approval remained open and was later resolved by human Option A on 2026-07-09.
+Status: accepted. Adopted into the Phase 1 and Confluence artifacts; final archive approval was later resolved by human Option A on 2026-07-09.
 ```
 
 ```text
@@ -288,7 +288,7 @@ Affected specs: Proposed change `define-confluence-feedback-loop`.
 Affected architecture: Preserves Confluence as generated/read-only view and keeps corporate-environment-specific publication shape out of the first thin MVP.
 Data contract impact: Future team/process config needs an editable feedback SLA section with an explicit disabled state; proposed defaults are 1 working day for blocker triage and 3 working days for non-blocker triage.
 Verification impact: Requires OpenSpec strict validation and documentation updates now; future implementation must test enabled, overridden, and disabled SLA behavior when Confluence tooling enters scope.
-Status: Adopted into the Confluence feedback proposal, Phase 1 plan, and audit; no first-MVP implementation scope is added.
+Status: accepted. Adopted into the Confluence feedback proposal, Phase 1 plan, and audit without adding first-MVP implementation scope.
 ```
 
 ## Work Items
