@@ -1,6 +1,6 @@
 # Phase 0. Project Foundation
 
-Status: in progress.
+Status: closed. The foundation was reconciled by the completed and human-accepted Phase 1 baseline.
 
 ## Goal
 
@@ -9,6 +9,8 @@ Prepare repository operating rules, documentation structure, initial roadmap, au
 ## Work Items
 
 ### 0.1 Documentation Foundation
+
+Status: closed. The required entry points, roadmap, audit, glossary, phase template, and verification rules are present in the repository.
 
 Objective:
 
@@ -30,6 +32,8 @@ Exit criteria:
 
 ### 0.2 Open Decisions For Phase 1
 
+Status: closed. The Phase 1 decisions were resolved or explicitly deferred through the accepted Phase 1 specs and decision log.
+
 Objective:
 
 - Decide the implementation stack/runtime for `sdd CLI`.
@@ -48,6 +52,8 @@ Verification:
 - Open decisions are either answered by the human owner or recorded in the Phase 1 plan.
 
 ## Phase Gate
+
+Status: accepted. Gate evidence is the usable repository entry-point set plus the completed and accepted Phase 1 package.
 
 - Project rules are clear.
 - Secret and private-data handling is documented.

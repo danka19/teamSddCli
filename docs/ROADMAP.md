@@ -20,7 +20,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Phase 0. Project Foundation
 
-Status: complete.
+Status: closed.
 
 Goal: prepare repository rules, documentation, environment notes, baseline product decisions, OpenSpec expectations, and verification habits from the initial architecture bootstrap input.
 
@@ -33,7 +33,7 @@ Quality gate:
 
 ## Phase 1. Discovery And Requirements
 
-Status: complete.
+Status: closed.
 
 Goal: turn the architecture into concrete product requirements, user/role workflows, CLI command acceptance criteria, integration constraints, and OpenSpec artifacts.
 
@@ -65,7 +65,7 @@ Current work:
 
 ## Phase 2. Architecture And Data Model
 
-Status: not planned in detail yet.
+Status: planned. A detailed phase plan has not been accepted yet.
 
 Goal: define the stable data model, core entities, storage boundaries, schemas, and integration contracts for the deterministic process layer. Per the accepted `docs/IMPLEMENTATION_STRATEGY.md`, no custom `sdd` CLI is built in this phase; CLI architecture questions apply only if a strategy trigger fires.
 
@@ -79,7 +79,7 @@ Likely scope:
 
 ## Phase 3. First Usable Workflow
 
-Status: not planned in detail yet.
+Status: planned. A detailed phase plan has not been accepted yet.
 
 Goal: implement the smallest end-to-end pilot flow that proves SDD automation value.
 
@@ -104,7 +104,7 @@ Explicitly deferred from the first MVP:
 
 ## Phase 4. Hardening And Pilot Readiness
 
-Status: not planned in detail yet.
+Status: planned. A detailed phase plan has not been accepted yet.
 
 Goal: improve reliability, safety, command usability, process operations, and acceptance evidence for pilot usage.
 

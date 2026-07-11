@@ -1,6 +1,6 @@
 # Phase 1. Discovery And Requirements
 
-Status: complete. Phase 1 moved from readiness-complete proposals to accepted specs on 2026-07-09 through the human Option A archive decision and verified OpenSpec batch archive.
+Status: closed. Phase 1 moved from readiness-complete proposals to accepted specs on 2026-07-09 through the human Option A archive decision and verified OpenSpec batch archive.
 
 ## Goal
 
@@ -301,7 +301,7 @@ Gate rule:
 
 ### 1.1 Change Package Template And Local Validation Gate
 
-Status: completed/current evidence. The original OpenSpec change was archived into the accepted `change-package-foundation` spec on 2026-07-09.
+Status: closed. The original OpenSpec change was archived into the accepted `change-package-foundation` spec on 2026-07-09.
 
 Objective:
 
@@ -359,7 +359,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.2 Draft Core OpenSpec Proposal Set For Lifecycle, Artifacts, Traceability, Waivers, And Documentation Governance
 
-Status: drafted in this branch; reviewer, architecture-checker, and verification-checker gates passed after fix review; human decision gate 1.3 completed on 2026-07-06.
+Status: closed. Reviewer, architecture-checker, and verification-checker gates passed after fix review; human decision gate 1.3 was accepted on 2026-07-06, and the proposals were archived on 2026-07-09.
 
 Objective:
 
@@ -429,7 +429,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.3 Human Decision Gate: Artifact Matrix, Waivers, And MVP Boundary
 
-Status: completed; human approved the recommended defaults on 2026-07-06.
+Status: closed. The human approved the recommended defaults on 2026-07-06.
 
 Objective:
 
@@ -484,7 +484,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.4 Draft Repo Topology, Config Format, And OpenSpec Version Policy Proposals
 
-Status: drafted in this branch as `openspec/changes/define-repo-topology-config/`; docs synchronized; reviewer gate completed; architecture and verification gates remain part of final work-item evidence.
+Status: closed. The proposal was reviewed, accepted through the final Phase 1 gate, and archived into `openspec/specs/repo-topology-config/` on 2026-07-09.
 
 Objective:
 
@@ -541,7 +541,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.5 Human Decision Gate: Topology, Config, And OpenSpec Version
 
-Status: completed on 2026-07-09; the human owner approved the recommended defaults.
+Status: closed. The human owner approved the recommended defaults on 2026-07-09.
 
 Objective:
 
@@ -587,7 +587,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.6 Draft Confluence Feedback Loop Proposal
 
-Status: drafted in this branch as part of the 2026-07-06 docs/proposal synchronization pass; human decision gate 1.7 completed on 2026-07-09 for owner/disposition/unresolved-comment behavior.
+Status: closed. Human decision gate 1.7 was accepted on 2026-07-09, and the proposal was archived into `openspec/specs/confluence-feedback-loop/`.
 
 Objective:
 
@@ -641,7 +641,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.7 Human Decision Gate: Confluence Feedback Owner, SLA, And Unresolved Comments
 
-Status: completed on 2026-07-09; the human owner approved the recommended defaults.
+Status: closed. The human owner approved the recommended defaults on 2026-07-09.
 
 Objective:
 
@@ -685,7 +685,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.8 Expand Templates And Validator After Approved Decision Gates
 
-Status: completed on 2026-07-09 in a separate implementation step; validator, tests, and template were reconciled to the approved Phase 1 contracts while all OpenSpec changes remained proposed.
+Status: closed. Validator, tests, and template were reconciled to the approved Phase 1 contracts on 2026-07-09; the related OpenSpec changes were accepted and archived later that day.
 
 Objective:
 
@@ -746,7 +746,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.9 Traceability And Artifact Contract Scenario/Test Hardening
 
-Status: completed on 2026-07-09; focused validator tests now harden the approved traceability and artifact-contract scenarios without changing validator behavior.
+Status: closed. Focused validator tests hardened the approved traceability and artifact-contract scenarios on 2026-07-09 without changing validator behavior.
 
 Objective:
 
@@ -798,7 +798,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.10 Phase 1 Acceptance Readiness Review
 
-Status: completed for the pre-archive worker readiness packet on 2026-07-09. At the end of this work item the proposal set was still active/proposed; the later work item 1.11 Option A archive promoted all eight changes into accepted specs.
+Status: closed. The pre-archive readiness packet was completed on 2026-07-09, and work item 1.11 subsequently promoted all eight changes into accepted specs.
 
 Objective:
 
@@ -871,7 +871,7 @@ OpenSpec and acceptance evidence:
 
 ### 1.11 Final Human Gate Before OpenSpec Archive/Accepted Specs
 
-Status: completed on 2026-07-09. The human owner selected Option A, and a separate batch execution step archived/promoted all eight readiness-complete changes into accepted specs.
+Status: closed. The human owner selected Option A on 2026-07-09, and the batch execution step archived/promoted all eight readiness-complete changes into accepted specs.
 
 Objective:
 
@@ -949,6 +949,8 @@ Historical pre-archive human decision question for the project owner (resolved b
 > Что остаётся заблокированным без ответа: нельзя запускать archive/promote execution step, нельзя создавать/обновлять `openspec/specs/`, нельзя считать Phase 1 завершённой, и audit/roadmap не смогут перейти от readiness к accepted-spec status.
 
 ## Phase Gate
+
+Status: accepted. Human Option A acceptance and the 2026-07-09 batch archive promoted all eight Phase 1 changes into accepted specs.
 
 - Phase 1 is complete as of 2026-07-09 after explicit human Option A approval plus a verified archive/accepted-spec execution step.
 - Future behavior or process changes must be proposed as new OpenSpec changes against the accepted baseline in `openspec/specs/`.
