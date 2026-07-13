@@ -16,6 +16,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, editable/disableable SLA, weak-model guardrail, and role-guide planning defaults. The first generated Confluence view set is deferred to the corporate environment.
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
+- Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, and outcome-based pilot evidence, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -68,7 +69,7 @@ Current work:
 
 Status: ready. The transfer boundary is accepted, the detailed phase plan exists, and work item 2.1 is unblocked.
 
-Goal: build and externally certify a reusable release candidate for the deterministic thin-change process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
+Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
 Detailed plan:
 
@@ -77,13 +78,15 @@ Detailed plan:
 Active OpenSpec change:
 
 - `openspec/changes/define-transfer-ready-process-package/`
+- `openspec/changes/adopt-nis-corporate-process-governance/`
 
 Scope:
 
 - Create the versioned `process/` package, synthetic central `team-specs` bootstrap, central/project config schemas, owner/project registries, OpenSpec pin checks, and compatibility validation.
-- Package the accepted thin flow: create, validate, Spec PR support, archive support, traceability, update, and rollback without AI-owned gates.
-- Add deterministic task launch, authority-labelled bounded read packs, evidence output, role instructions, and thin Qwen/DeepSeek/GigaCode adapter templates.
-- Certify analyst, developer, and QA thin-change workflows using actual Qwen-class and DeepSeek-class runtimes plus an AI-disabled walkthrough.
+- Replace the target legacy thin/full route with schema-versioned minor, major, and hotfix classification plus deterministic migration and class-aware artifacts.
+- Package create, validate, Spec PR, DoR, implementation, DoD, release/transfer readiness, archive, traceability, update, rollback, stop/escalation, and hotfix reconciliation without AI-owned gates.
+- Add deterministic task launch, authority-labelled bounded read packs, evidence output, analyst/developer/QA/Tech Lead role instructions, and thin Qwen/DeepSeek/GigaCode adapter templates.
+- Certify minor, major, hotfix, Tech Lead, and negative authority workflows using actual Qwen-class and DeepSeek-class runtimes plus an AI-disabled walkthrough.
 - Add release manifest, clean-bootstrap rehearsal, update/rollback evidence, private-data checks, transfer runbook, corporate inventory, and pilot templates.
 - Keep custom Jira/Confluence clients and all later-layer automation outside the phase.
 
@@ -91,11 +94,11 @@ Phase gate:
 
 - Human accepts the reproducible external release candidate after all deterministic, AI-disabled, Qwen-class, DeepSeek-class, rollback, privacy, and documentation checks pass.
 
-## Phase 3. Corporate Adaptation And Real Thin-Change Pilot
+## Phase 3. Corporate Adaptation And Real Governed-Change Pilot
 
 Status: planned. A detailed phase plan has not been accepted yet.
 
-Goal: install the accepted Phase 2 release candidate in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real thin-change pilot.
+Goal: install the accepted Phase 2 release candidate in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real minor, major, or hotfix pilot selected through the approved pilot criteria.
 
 Dependency gate:
 
@@ -107,10 +110,16 @@ Likely scope:
 - Verify corporate runtime, OpenSpec/Git/package compatibility, network and artifact restrictions, MCP policy, and available Bitbucket/Jenkins/Jira/Confluence capabilities.
 - Populate real project paths, `projects.yaml`, `owners.yaml`, optional project adapters, policy overrides, and approved secret references.
 - Configure supported standard-tool integrations and the available Qwen/DeepSeek/GigaCode adapter without moving gates into AI.
-- Re-run package/config/release checks and the AI-disabled thin flow in the real environment.
-- Execute one bounded real change through creation, validation, Spec PR review, human approval, implementation evidence, traceability, and archive readiness.
-- Record compatibility, usability, intervention, deviation, rollback/hold, and follow-up evidence.
+- Re-run package/config/release checks and the AI-disabled class-aware flow in the real environment.
+- Select one representative bounded real change with explicit class, comparator, risk, rollback, privacy, and evidence-source justification; a minor change is the default recommendation unless representativeness requires another class.
+- Execute it through triage, classification, Spec Review, DoR and human approval, implementation controls, DoD, applicable release/transfer readiness, traceability, and archive readiness.
+- Record compatibility, usability, cycle/effort/quality evidence, intervention, deviation, external waiting, rollback/hold, hotfix reconciliation where applicable, and follow-up evidence.
 - Complete OpenSpec task 7.5 and stop for human pilot/contract acceptance before archive promotion.
+
+Evidence boundary:
+
+- One monitored Phase 3 change is an operability/transfer pilot only. It cannot establish NIS productivity, quality-effectiveness, statistical viability, or organization-scale rollout readiness.
+- Any scale/effectiveness conclusion requires a separately accepted Phase 4 protocol with a predefined eligible population, comparator, sample and decision gates, contamination handling, production-stability evidence, and accountable decision owner.
 
 Explicitly deferred from the first MVP:
 
@@ -129,13 +138,14 @@ Goal: harden the accepted real workflow, act on measured pilot evidence, and add
 Likely scope:
 
 - Pilot-driven reliability, usability, compatibility, and support-burden improvements.
+- A separate NIS effectiveness/scale evidence gate when the human chooses to evaluate broader rollout: approved population, historical/control method, sample sufficiency, metric thresholds, contamination rules, production observation, and scale/continue/revise/hold/stop authority.
 - Broader project memory, project map drift checks, repeated-error memory, and deterministic sync/upgrade maintenance beyond the minimum Phase 2 operating kit.
 - Legacy baseline workflow for existing product areas when the pilot expands beyond the first bounded change.
 - Confluence preview/final publication after the feedback loop contract is specified.
 - Generated publication model implementation after feedback-loop, source-warning, localization, and generated-view contracts are accepted.
 - Customer journey and screen/gallery generated views after journey/screen metadata contracts are proven.
 - Expanded analyst/developer/QA onboarding after the pilot validates the first role instructions.
-- Jira task planning/creation after thin change archive works.
+- Jira task planning/creation after the class-aware archive and external-delivery mapping works.
 - Role inbox hardening after task/status sources are stable.
 - QA/AT proposal and skeleton generation after scenario and traceability contracts are validated.
 - Drift detection for generated Confluence blocks.

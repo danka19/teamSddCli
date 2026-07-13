@@ -5,8 +5,8 @@ The accepted Phase 1 baseline proves the core change-package contracts and local
 ## What Changes
 
 - Define an external transfer-ready release-candidate gate for the deterministic SDD process package.
-- Require a production-oriented `team-specs` bootstrap, versioned process package, configuration schemas, validation entry points, reference thin-flow, installation, update, and rollback evidence before transfer.
-- Define the allowed corporate adaptation boundary: real paths, project and owner registries, approved secrets, standard-tool integration wiring, model adapter configuration, environment verification, and a monitored real thin-change pilot.
+- Require a production-oriented `team-specs` bootstrap, versioned process package, configuration schemas, validation entry points, reference minor/major/hotfix flow, legacy migration, installation, update, and rollback evidence before transfer.
+- Define the allowed corporate adaptation boundary: real paths, project and owner registries, approved secrets, standard-tool integration wiring, model adapter configuration, environment verification, and one monitored real governed-change pilot selected through approved criteria.
 - Require reusable capability gaps found during corporate adaptation to return to the external canonical source through a controlled change instead of becoming an internal fork.
 - Define the minimum weak-model operating kit for Qwen/DeepSeek-class assistants: deterministic task launchers, bounded authority-labelled read packs, role instructions, explicit stop points, evidence blocks, negative cases, and deterministic fallbacks.
 - Require certification evidence from actual weak-model runs and from an AI-disabled walkthrough before release-candidate acceptance.
@@ -22,7 +22,7 @@ The accepted Phase 1 baseline proves the core change-package contracts and local
 
 ### Modified Capabilities
 
-None. The change implements and composes the accepted `repo-topology-config`, `documentation-governance`, lifecycle, artifact, traceability, and waiver contracts without changing their existing requirements.
+None directly. The change implements and composes the accepted baseline plus the outcome of active change `adopt-nis-corporate-process-governance`. Class-dependent release content cannot be accepted against the historical thin/full model after `D-013`.
 
 ## Impact
 

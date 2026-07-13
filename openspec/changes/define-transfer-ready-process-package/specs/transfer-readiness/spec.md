@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Transfer-ready release candidate contents
-The SDD process SHALL define a versioned external release candidate that contains every reusable artifact needed to install, configure, validate, operate, update, and roll back the first thin-change workflow.
+The SDD process SHALL define a versioned external release candidate that contains every reusable artifact needed to install, configure, migrate, validate, operate, update, and roll back the first minor/major/hotfix workflow.
 
 #### Scenario: Release candidate contains the reusable core
 - **WHEN** a release candidate is prepared for transfer
@@ -29,13 +29,13 @@ The SDD process SHALL provide deterministic bootstrap, compatibility validation,
 ### Requirement: External release acceptance gate
 The SDD process SHALL require reproducible external evidence before a release candidate is accepted for corporate transfer.
 
-#### Scenario: External gate proves the reference thin flow
+#### Scenario: External gate proves the reference class-aware flow
 - **WHEN** external release acceptance is evaluated
-- **THEN** evidence covers clean bootstrap, configuration validation, change creation, deterministic validation, Spec PR support, human-owned approval boundary, archive support, traceability, and package update or rollback on a synthetic reference project
+- **THEN** evidence covers clean bootstrap, configuration validation, legacy migration, minor/major/hotfix classification, change creation, Spec PR, DoR, human-owned approval, implementation controls, DoD, release or transfer readiness when applicable, archive support, traceability, and package update or rollback on a synthetic reference project
 
 #### Scenario: External gate proves AI-disabled operation
 - **WHEN** the AI assistant is disabled
-- **THEN** every gated action in the reference thin flow remains executable and verifiable through deterministic scripts, standard tools, and human decisions
+- **THEN** every gated action in the reference class-aware flow remains executable and verifiable through deterministic scripts, standard tools, and human decisions
 
 #### Scenario: External gate includes weak-model certification
 - **WHEN** the release candidate includes role instructions for Qwen/DeepSeek-class assistants
@@ -61,15 +61,15 @@ The SDD process SHALL limit corporate-environment work to verified environment i
 - **THEN** the gap is routed to the external canonical source as a controlled change rather than implemented as an untracked internal fork
 
 ### Requirement: Corporate pilot entry and acceptance
-The SDD process SHALL require an externally accepted release candidate and a green corporate adaptation check before a real thin-change pilot starts.
+The SDD process SHALL require an externally accepted release candidate and a green corporate adaptation check before a real governed-change pilot starts.
 
 #### Scenario: Pilot entry checks the real environment
 - **WHEN** maintainers request pilot entry
 - **THEN** deterministic evidence confirms the installed package version, OpenSpec compatibility, configuration validity, owner and project mappings, secret handling, available integration adapters, rollback path, and AI-disabled gate execution
 
-#### Scenario: Pilot executes one real thin change
+#### Scenario: Pilot executes one selected real governed change
 - **WHEN** pilot entry is accepted
-- **THEN** the team executes one bounded real change through creation, validation, Spec PR review, human approval, implementation evidence, traceability, and archive readiness while recording compatibility, usability, and intervention evidence
+- **THEN** the team selects and executes one bounded real minor, major, or hotfix change through triage, classification, Spec Review, DoR and human approval, implementation controls, DoD, applicable release or transfer readiness, traceability, and archive readiness while recording compatibility, usability, intervention, quality, flow, and follow-up evidence
 
 #### Scenario: Pilot failure preserves the accepted baseline
 - **WHEN** the real pilot exposes an integration, adapter, or workflow failure
@@ -87,12 +87,12 @@ The SDD process SHALL make the release candidate and corporate pilot traceable t
 - **THEN** the evidence identifies the installed release, real non-secret configuration revision, adapter versions, change ID, relevant PR and test evidence, human decisions, deviations, and follow-up changes
 
 ### Requirement: First transfer boundary preserves later-layer exclusions
-The transfer-ready release candidate SHALL prove the accepted thin-change flow without requiring later automation layers.
+The transfer-ready release candidate SHALL prove the accepted minor/major/hotfix core flow without requiring later automation layers.
 
 #### Scenario: Later integrations do not block transfer readiness
 - **WHEN** Jira task automation, Confluence publication, QA/AT proposal generation, role inboxes, deploy, Zephyr integration, or graph-backed project memory are absent
-- **THEN** their absence does not block release-candidate or thin-pilot readiness
+- **THEN** their absence does not block release-candidate or governed-pilot readiness
 
 #### Scenario: Standard integration wiring may be configured
-- **WHEN** a standard corporate tool feature is required for the real thin pilot
+- **WHEN** a standard corporate tool feature is required for the real governed pilot
 - **THEN** the adaptation layer may configure that feature without adding a custom integration client or expanding the release-candidate capability contract

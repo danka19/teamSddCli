@@ -2,7 +2,22 @@
 
 Date: 2026-07-13.
 
-Status: completed audit. No NIS behavior has been adopted into the accepted architecture or active Phase 2 scope.
+Status: completed evidence audit with a subsequent accepted remediation decision. The original findings remain valid evidence; the original sequencing recommendation is superseded by `D-013` and active change `adopt-nis-corporate-process-governance`.
+
+## Decision Addendum (2026-07-13)
+
+After reviewing the audit, the human owner clarified that NIS reflects the target real corporate processes and selected its flat `minor | major | hotfix` classification. The project will adopt the business-process layer now through a dedicated OpenSpec change and Phase 2 workstream rather than leave it as research-only input.
+
+The accepted remediation includes class criteria, `thin -> minor` and `full -> major` migration, hotfix safeguards, preliminary triage, Definition of Ready, implementation-complete and Definition of Done separation, release/archive/delivered separation, first-class Tech Lead governance and deterministic decision support, quality/regression/scope/stop/escalation/release controls, role-understanding evidence, human decision and AI-run evidence, flow-time categories, portfolio/pilot controls, and outcome measurement.
+
+The audit's conflict findings are not discarded. They define the repairs required during adoption: one canonical OpenSpec/policy source, normalized and pre-approved thresholds, privacy/retention boundaries, failed-run retention, deterministic and AI-disabled fallbacks, no AI-owned approvals, no absolute zero-risk claim, and no inheritance of PPRB organization or NIS project structure.
+
+Canonical follow-up:
+
+- decision `D-013` in `docs/DECISIONS.md`;
+- complete adoption plan in `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`;
+- proposed normative behavior and implementation tasks in `openspec/changes/adopt-nis-corporate-process-governance/`;
+- Phase 2 work item 2.3A in `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`.
 
 ## Executive Verdict
 
@@ -466,6 +481,8 @@ These should remain referenced through current canonical decisions/specs rather 
 
 ## Decision And Sequencing Recommendation
 
+Historical note: the recommendation in this section was the auditor's pre-decision default. It is superseded by the human decision addendum above. The risk evidence and required corrections remain applicable.
+
 ### Current Phase 2
 
 Do not add the full NIS experiment to Phase 2. Phase 2 must remain focused on the accepted transfer-ready deterministic process package, weak-model operating kit, AI-disabled operation, real Qwen/DeepSeek certification, bootstrap/update/rollback, release manifest, and transfer runbooks.
@@ -502,18 +519,12 @@ If the bounded pilot is accepted, create a separate OpenSpec change for an NIS-d
 ## Documentation Impact
 
 - This dated audit is the durable owner of the comparison evidence and recommendations.
-- No accepted OpenSpec spec, active change, roadmap phase, lifecycle, artifact contract, or architecture decision was modified by the audit.
+- The audit itself did not modify accepted behavior. The later human remediation decision created `D-013`, a dedicated active OpenSpec change, an adoption plan, and a Phase 2 workstream; accepted specs and implementation remain unchanged until that change is applied and promoted.
 - `docs/00_FILE_STRUCTURE.md` should reference this audit.
 - The local NIS package remains ignored and untracked.
 
-## Remediation Decision Required
+## Remediation Decision
 
-No remediation or NIS-derived capability has been authorized yet.
+Resolved by the human owner on 2026-07-13: adopt the repaired NIS corporate process through `adopt-nis-corporate-process-governance` and Phase 2 work item 2.3A. The choice is the flat NIS classification and a strong corporate-process foundation, not a research-only metrics overlay.
 
-Recommended default: keep the active Phase 2 plan unchanged. After Phase 2 implementation or when Phase 3 pilot planning starts, create a separate OpenSpec proposal for a repaired experiment/metrics layer using E-01 through E-12 and explicitly rejecting C-01 through C-12.
-
-The human owner must decide whether to:
-
-1. Keep this as research input only for now (recommended).
-2. Create a future OpenSpec change for the experiment/measurement layer, without changing Phase 2.
-3. Re-scope current Phase 2, which is not recommended because it would mix transfer readiness with organization-scale effectiveness research and delay the external release candidate.
+Implementation remains pending. Phase 2 work item 2.1 stays ready because package/config/schema foundation is still the prerequisite; class-dependent reference-flow, role, certification, release, and pilot work must consume the new governance contracts before final acceptance.

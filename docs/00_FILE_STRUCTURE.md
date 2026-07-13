@@ -33,6 +33,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
+| `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, measurement, migration, and Phase 2/3 sequencing |
 | `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
 | `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` | Abstracted structure analysis of the corporate analytics approval template and the plan for mapping it to SDD artifacts (typed YAML records instead of nested tables) |
 | `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md` | Evaluation criteria and topology comparison frame for the internal OpenSpec customization screenshots and work item 1.4 |
@@ -63,6 +64,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/specs/repo-topology-config/spec.md` | Accepted spec for the first supported repository topology, config files, process package distribution, OpenSpec version pin/upgrade policy, and owner/reviewer registry |
 | `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
 | `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 31 implementation tasks |
+| `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot measurement, and affected accepted-capability deltas |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts
@@ -80,10 +82,10 @@ These paths are planned by the ready Phase 2 plan but do not exist yet in this f
 
 | Path | Purpose |
 |---|---|
-| `process/` | Versioned reusable process-package source with metadata, workflow contract, schemas, templates, validators, role instructions, adapters, and certification fixtures |
+| `process/` | Versioned reusable process-package source with metadata, workflow/classification/gate contracts, schemas, templates, validators, analyst/developer/QA/Tech Lead role instructions, adapters, and certification fixtures |
 | `templates/team-specs/` | Synthetic central topology bootstrap with placeholder-only `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, and canonical folders |
 | `templates/project-adapter/` | Optional `.sdd-project.yaml` adapter template for project repositories |
-| `docs/runbooks/` | Setup, update/rollback, corporate adaptation, and thin-pilot runbooks created during Phase 2 |
+| `docs/runbooks/` | Setup, classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks created during Phase 2 |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |
 | `scripts/certify_process_release.py` | Planned AI-disabled and weak-model release certification entry point |

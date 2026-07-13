@@ -4,6 +4,8 @@ Date: 2026-07-13.
 
 Status: completed audit. The human accepted the recommended boundary; remediation planning is recorded in active OpenSpec change `define-transfer-ready-process-package` and the ready Phase 2 plan.
 
+Decision addendum: `D-013` later superseded the target thin/full process vocabulary with NIS-aligned `minor|major|hotfix` and added class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot measurement through active change `adopt-nis-corporate-process-governance`. References below to a thin flow describe the implementation state and audit baseline at inspection time; the transfer boundary remains accepted, but the release candidate must now consume work item 2.3A before class-dependent acceptance.
+
 ## Audit Boundary
 
 Target:

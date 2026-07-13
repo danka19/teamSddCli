@@ -4,7 +4,7 @@
 The SDD process SHALL select the applicable weak-model workflow, role instruction, read pack, output contract, and stop point outside the AI model.
 
 #### Scenario: User starts a bounded role operation
-- **WHEN** a user starts an analyst, developer, or QA thin-change operation
+- **WHEN** a user starts an analyst, developer, QA, or Tech Lead operation for a minor, major, or hotfix change
 - **THEN** a deterministic launcher or explicit non-AI procedure supplies the exact instruction, canonical inputs, required output, evidence fields, and stage boundary
 
 #### Scenario: Model does not select its own authority
@@ -79,7 +79,7 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 
 #### Scenario: Certification covers first pilot roles
 - **WHEN** release-candidate weak-model certification is complete
-- **THEN** it includes analyst, developer, and QA thin-change walkthroughs plus negative cases for missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, and invalid lifecycle transition
+- **THEN** it includes analyst, developer, QA, and Tech Lead class-aware walkthroughs plus negative cases for missing context, conflicting sources, under-classification, pseudo-hotfix, fabricated evidence, forbidden approval, unsafe resume, unresolved reconciliation, skipped stop point, and invalid lifecycle transition
 
 #### Scenario: Fluency does not substitute for compliance
 - **WHEN** a model produces readable output that fails deterministic validation, violates a stop point, hides uncertainty, or claims forbidden authority

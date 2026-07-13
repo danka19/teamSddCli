@@ -4,19 +4,19 @@
 - [ ] 1.2 Add schemas and representative fixtures for `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, optional `.sdd-project.yaml`, process-package metadata, and release manifest.
 - [ ] 1.3 Implement deterministic configuration discovery, schema validation, OpenSpec `1.4.1` pin checking, process-package compatibility checking, and secret/private-value rejection with focused negative tests.
 
-## 2. Deterministic Thin-Flow Package
+## 2. Deterministic Class-Aware Flow Package
 
-- [ ] 2.1 Move the existing change template and validator into the versioned process package while preserving backward-compatible repository entry points and all accepted validator behavior.
+- [ ] 2.1 Move the existing change template and validator into the versioned process package while preserving bounded legacy compatibility and consuming the schema/classification outcome of `adopt-nis-corporate-process-governance`.
 - [ ] 2.2 Add non-interactive bootstrap and change-creation entry points that copy only versioned templates, reject unsupported topology or destination state, and produce machine-readable evidence.
 - [ ] 2.3 Add Spec PR preparation and archive-support entry points that collect deterministic evidence without approving, merging, or archiving on behalf of a human.
 - [ ] 2.4 Add update, compatibility-check, and rollback entry points that preserve accepted OpenSpec history and restore the previously pinned package/config version on failure.
-- [ ] 2.5 Prove the packaged reference thin flow with focused positive and negative tests plus an AI-disabled walkthrough fixture.
+- [ ] 2.5 Prove the packaged reference minor/major/hotfix flow, DoR/DoD, Tech Lead authority, and legacy migration with focused positive and negative tests plus AI-disabled walkthrough fixtures.
 
 ## 3. Weak-Model Operating Kit
 
 - [ ] 3.1 Define the tool-agnostic task-launch contract, authority-labelled read-pack schema, operation evidence schema, and explicit blocked/missing-context behavior.
 - [ ] 3.2 Implement deterministic read-pack assembly from configured canonical sources, including source authority, stable paths or IDs, known traps, and unresolved inputs.
-- [ ] 3.3 Create bounded analyst, developer, and QA thin-change role instructions with numbered steps, one-stage outputs, self-review, negative examples, and human stop points.
+- [ ] 3.3 Create bounded analyst, developer, QA, and Tech Lead class-aware role instructions with numbered steps, one-stage outputs, self-review, negative examples, and human stop points.
 - [ ] 3.4 Add thin adapter templates for Qwen/DeepSeek/GigaCode-class CLIs that package the selected instruction and read pack without owning process rules.
 - [ ] 3.5 Add deterministic checks that reject unsupported completion claims, AI-owned approvals or lifecycle transitions, missing evidence boundaries, and derived artifacts that lack canonical source references.
 
@@ -25,8 +25,8 @@
 - [ ] 4.1 Create synthetic reference repositories, canonical change/spec inputs, expected role outputs, and deterministic golden validation results without corporate or private data.
 - [ ] 4.2 Add negative certification cases for missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, invalid lifecycle transition, adapter failure, and context-limit failure.
 - [ ] 4.3 Implement a certification runner and evidence record that captures model/runtime identifier, adapter version, process-package version, read-pack identity, validation result, human intervention, forbidden-action result, and limitations.
-- [ ] 4.4 Execute and record AI-disabled certification for every gated thin-flow operation.
-- [ ] 4.5 Execute and record actual Qwen/DeepSeek-class certification for analyst, developer, and QA workflows; route unreliable operations to deterministic or mandatory-human fallbacks.
+- [ ] 4.4 Execute and record AI-disabled certification for every gated minor/major/hotfix operation, including Tech Lead, stop/resume, and hotfix reconciliation cases.
+- [ ] 4.5 Execute and record actual Qwen/DeepSeek-class certification for analyst, developer, QA, and Tech Lead workflows; route unreliable operations to deterministic or mandatory-human fallbacks.
 
 ## 5. Release Candidate And Transfer Runbook
 
@@ -39,7 +39,7 @@
 
 - [ ] 6.1 Create a non-secret corporate environment inventory template covering runtimes, OpenSpec, Git, package distribution, network policy, Bitbucket/Jenkins/Jira/Confluence capabilities, MCP policy, and available AI CLI/model adapters.
 - [ ] 6.2 Create real-configuration and pilot-entry checklists that verify installed package, project and owner mappings, approved secret references, integration wiring, rollback path, and AI-disabled gates.
-- [ ] 6.3 Create a monitored thin-change pilot evidence template covering change/requirement/scenario IDs, PR and test evidence, human decisions, adapter/runtime versions, interventions, deviations, rollback or hold, and follow-up changes.
+- [ ] 6.3 Create a monitored governed-change pilot evidence template covering selection/class rationale, change/requirement/scenario IDs, DoR/DoD and release evidence, PR/tests, human decisions, adapter/runtime versions, flow/quality metrics, interventions, deviations, rollback or hold, privacy, comparison integrity, and follow-up changes.
 - [ ] 6.4 Verify that reusable corporate findings are routed through the external OpenSpec/change workflow and that internal package forks are detected or explicitly rejected.
 
 ## 7. Documentation, Review, And Acceptance

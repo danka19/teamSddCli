@@ -6,7 +6,7 @@ Status: ready. The human owner accepted the transfer boundary; work item 2.1 may
 
 ## Goal
 
-Build and externally certify a reusable release candidate for the deterministic thin-change SDD process so the corporate environment requires only verified environment inventory, real project/owner/path configuration, approved integration wiring, thin Qwen/DeepSeek/GigaCode adapter configuration, and a monitored real pilot.
+Build and externally certify a reusable release candidate for the deterministic NIS-aligned `minor | major | hotfix` SDD process so the corporate environment requires only verified environment inventory, real project/owner/path/workflow configuration, approved integration wiring, thin Qwen/DeepSeek/GigaCode adapter configuration, and a monitored real pilot.
 
 Phase 2 does not perform the real corporate pilot. It produces the accepted release candidate and the adaptation/pilot package consumed by Phase 3.
 
@@ -28,6 +28,7 @@ Status: accepted.
 - No Phase 1 item is `pending_acceptance` or blocks Phase 2.
 - The human owner accepted the release-candidate boundary and the removal of schedule dates from project planning artifacts.
 - Active proposed change `define-transfer-ready-process-package` contains proposal, design, two capability deltas, and implementation tasks.
+- Active proposed change `adopt-nis-corporate-process-governance` contains proposal, design, twelve capability deltas, and the implementation backlog for `D-013`.
 - Phase 2 is sequentially unblocked. Work item 2.1 is ready; other work items remain planned until their named dependencies close.
 
 ## Inputs To Read
@@ -43,6 +44,8 @@ Status: accepted.
 - `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md`
 - `docs/AI_STEP_VERIFICATION_CHECKLIST.md`
 - `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`
+- `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`
+- `docs/audits/NIS_V1_6_ARCHITECTURE_COMPATIBILITY_AUDIT_2026-07-13.md`
 - `openspec/specs/repo-topology-config/spec.md`
 - `openspec/specs/documentation-governance/spec.md`
 - `openspec/specs/change-package-foundation/spec.md`
@@ -51,6 +54,7 @@ Status: accepted.
 - `openspec/specs/traceability-contract/spec.md`
 - `openspec/specs/waiver-policy/spec.md`
 - `openspec/changes/define-transfer-ready-process-package/`
+- `openspec/changes/adopt-nis-corporate-process-governance/`
 - Existing `templates/change/`, `scripts/validate_change.py`, and `tests/test_validate_change.py`
 
 ## OpenSpec And Acceptance Mapping
@@ -60,8 +64,8 @@ Affected accepted requirements:
 - `openspec/specs/repo-topology-config/spec.md`: central topology, config discovery, versioned package distribution, OpenSpec pin, owner registry, and bounded read-pack workflow.
 - `openspec/specs/documentation-governance/spec.md`: scenario-first verification, human feedback memory, source ownership, derived-artifact metadata, and weak-model authority labels.
 - `openspec/specs/change-package-foundation/spec.md`: copyable template, deterministic validator, pre-commit entry point, and placeholder validation.
-- `openspec/specs/change-lifecycle/spec.md`: human-owned transitions and first thin-flow capability boundary.
-- `openspec/specs/change-artifact-contracts/spec.md`: thin/full package behavior and later-layer exclusions.
+- `openspec/specs/change-lifecycle/spec.md`: accepted six-state lifecycle and human-owned transitions; the NIS adoption change proposes class-aware DoR/DoD and external-delivery separation.
+- `openspec/specs/change-artifact-contracts/spec.md`: historical accepted thin/full behavior; the NIS adoption change proposes replacement by minor/major/hotfix matrices.
 - `openspec/specs/traceability-contract/spec.md`: review/archive evidence and AI-advisory traceability.
 - `openspec/specs/waiver-policy/spec.md`: human-owned waiver approval and prohibited bypasses.
 
@@ -70,16 +74,19 @@ Active proposed change:
 - `openspec/changes/define-transfer-ready-process-package/`
   - new capability `transfer-readiness`;
   - new capability `weak-model-guardrails`.
+- `openspec/changes/adopt-nis-corporate-process-governance/`
+  - new capabilities `corporate-change-classification`, `readiness-completion-gates`, `tech-lead-workflow`, `corporate-flow-controls`, and `process-measurement-pilot`;
+  - modified package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities.
 
 Acceptance scenarios:
 
 - A clean supported environment can bootstrap and validate the synthetic central `team-specs` reference without AI.
 - Config, package, OpenSpec version, ownership, release manifest, and compatibility failures are rejected deterministically.
-- The packaged thin flow covers create, validate, Spec PR support, human approval boundary, archive support, and traceability evidence.
+- The packaged flow covers deterministic minor/major/hotfix classification, migration, create, validate, Spec PR, DoR, human approval, implementation controls, DoD, applicable release/transfer readiness, archive support, and traceability evidence.
 - Package update and rollback preserve canonical OpenSpec history.
 - A deterministic launcher supplies one bounded role operation and an authority-labelled read pack.
 - Missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, invalid transition, adapter failure, and context-limit failure are visible and safe.
-- Actual Qwen-class and DeepSeek-class runs are recorded for analyst, developer, and QA thin-change workflows.
+- Actual Qwen-class and DeepSeek-class runs are recorded for minor, major, hotfix, analyst, developer, QA, and Tech Lead workflows plus negative authority cases.
 - Every gated action passes an AI-disabled walkthrough.
 - Release manifest and transfer runbook contain no corporate or private values.
 - Corporate adaptation templates limit work to real configuration, approved wiring, thin adapters, and pilot evidence.
@@ -89,9 +96,9 @@ Verification evidence expected before Phase 2 completion:
 - Focused TDD tests for each schema, validator, workflow entry point, read-pack builder, certification rule, release manifest, and rollback behavior.
 - Full Python test suite.
 - Synthetic clean-bootstrap rehearsal.
-- Packaged thin-flow positive and negative walkthroughs.
+- Packaged minor/major/hotfix positive and negative walkthroughs, including migration, under-classification, pseudo-hotfix, hold/resume, and hotfix reconciliation.
 - AI-disabled certification for every gated operation.
-- Actual Qwen-class and DeepSeek-class certification evidence for analyst, developer, and QA roles.
+- Actual Qwen-class and DeepSeek-class certification evidence for analyst, developer, QA, and Tech Lead roles.
 - Secret/private-value scan over release assets and certification fixtures.
 - Release-manifest validation and rollback rehearsal.
 - `openspec list`, `openspec list --specs`, and `openspec validate --all --strict`.
@@ -117,6 +124,14 @@ process/
     operation-evidence.schema.json
     release-manifest.schema.json
     certification-record.schema.json
+    classification-policy.schema.json
+    change-v2.schema.json
+    readiness-completion.schema.json
+    regression-matrix.schema.json
+    flow-control-record.schema.json
+    release-package.schema.json
+    metric-definition.schema.json
+    pilot-evidence.schema.json
   templates/
     change/
   validators/
@@ -124,9 +139,10 @@ process/
     validate_config.py
     validate_release.py
   roles/
-    analyst-thin-change.md
-    developer-thin-change.md
-    qa-thin-change.md
+    analyst-change.md
+    developer-change.md
+    qa-change.md
+    tech-lead-change.md
   adapters/
     qwen.md
     deepseek.md
@@ -160,7 +176,12 @@ tests/
   test_validate_change.py
   test_validate_process_config.py
   test_bootstrap_team_specs.py
-  test_thin_flow_entrypoints.py
+  test_classification_migration.py
+  test_change_flow_entrypoints.py
+  test_readiness_completion.py
+  test_tech_lead_workflow.py
+  test_corporate_flow_controls.py
+  test_process_measurement.py
   test_build_read_pack.py
   test_weak_model_contract.py
   test_process_update_rollback.py
@@ -170,7 +191,7 @@ docs/runbooks/
   PROCESS_PACKAGE_SETUP.md
   PROCESS_PACKAGE_UPDATE_AND_ROLLBACK.md
   CORPORATE_ADAPTATION.md
-  THIN_CHANGE_PILOT.md
+  GOVERNED_CHANGE_PILOT.md
 ```
 
 Compatibility rule:
@@ -190,7 +211,7 @@ Reason: Leaving process-package design, weak-model safeguards, or reusable workf
 Affected specs: Active change `define-transfer-ready-process-package`; accepted repo-topology, documentation-governance, lifecycle, artifact, traceability, waiver, and change-package-foundation specs remain the baseline.
 Affected architecture: Establishes an external reusable core, a thin corporate adaptation layer, separate external-release and corporate-pilot gates, and a no-fork feedback path.
 Data contract impact: Adds proposed release manifest, read-pack, operation-evidence, certification-record, compatibility, and adaptation/pilot evidence contracts.
-Verification impact: Requires clean bootstrap, packaged thin flow, AI-disabled execution, actual Qwen and DeepSeek certification, negative safety cases, release/rollback evidence, and human release acceptance.
+Verification impact: Requires clean bootstrap, packaged class-aware flow, AI-disabled execution, actual Qwen and DeepSeek certification, negative safety cases, release/rollback evidence, and human release acceptance.
 Status: accepted. The boundary is captured in the active OpenSpec change, this Phase 2 plan, roadmap, decision log, audit, context, and verification guidance.
 ```
 
@@ -205,6 +226,19 @@ Affected architecture: None.
 Data contract impact: None.
 Verification impact: Phase planning review must confirm that no delivery schedule or deadline was introduced.
 Status: accepted. Phase 2 and roadmap planning are gate-based and contain no delivery dates or deadlines.
+```
+
+```text
+Idea: Adopt the real NIS corporate process as target behavior, including the flat minor/major/hotfix classification, readiness and completion criteria, Tech Lead automation, regression/scope/stop/release controls, role verification, and pilot measurement.
+Source: Human correction and explicit choice after the NIS v1.6 architecture audit.
+Type: scope_refinement, architecture_change, data_contract_change, new_feature, verification_change, documentation_change
+Decision: create_openspec_change
+Reason: The accepted Phase 1 thin/full baseline does not yet represent the real corporate workflow. The human owner selected the NIS process and explicitly chose its flat classification model; implementing the transfer release without this adoption would certify the wrong target.
+Affected specs: New active change `adopt-nis-corporate-process-governance` modifies package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities and adds classification, readiness/completion, Tech Lead, corporate-flow, and measurement capabilities.
+Affected architecture: Preserves Git/OpenSpec canonical ownership, the six lifecycle states, deterministic/AI-disabled gates, human decisions, external-release boundary, and no-fork rule while adding corporate business gates and Tech Lead governance.
+Data contract impact: Adds schema version 2, `classification: minor|major|hotfix`, migration from legacy mode, readiness/completion, regression, flow-control, release-package, decision/AI evidence, and measurement/pilot records.
+Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix negative cases, Tech Lead authority cases, stop/resume and reconciliation evidence, AI-disabled operation, actual Qwen/DeepSeek certification, privacy/comparison checks, and independent review.
+Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; work item 2.3A is the Phase 2 implementation owner.
 ```
 
 ## Work Items
@@ -298,26 +332,77 @@ Exit criteria:
 
 - Configuration and compatibility state can be proven before any gated operation, with no AI inference required.
 
-### 2.3 Packaged Deterministic Thin Flow
+### 2.3A NIS Corporate Governance And Classification Migration
 
 Status: planned.
 
-Dependency status: sequential. Starts after 2.1 and 2.2 are closed.
+Dependency status: sequential. Starts after 2.1 and 2.2 are closed. It must close before work items 2.3-2.8 finalize class-dependent flow, role, certification, release, or pilot behavior.
 
 Objective:
 
-- Make the accepted thin flow consumable from the versioned process package while preserving the existing validator contract and root compatibility entry point.
+- Implement `D-013`: schema-versioned minor/major/hotfix classification, conservative deterministic rules, legacy migration, class artifact matrices, DoR/DoD, Tech Lead governance, corporate flow controls, release handoff, and pilot-measurement evidence.
 
 OpenSpec source:
 
-- Accepted change-package-foundation, lifecycle, artifact, traceability, and waiver requirements.
-- Active tasks 2.1-2.5.
+- Complete active change `adopt-nis-corporate-process-governance`, including its twelve capability deltas and task groups 1-8.
+- Planning rationale and source-to-target matrix in `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`.
+
+Expected files/modules:
+
+- schema version 2 and classification policy/matrix schemas
+- classification and migration check/apply entry points
+- readiness/completion, regression, stop/escalation, release-package, decision/AI evidence, and metric/pilot schemas
+- deterministic class, DoR/DoD, Tech Lead, traceability, workflow-mapping, and pilot-evidence reports
+- minor, major, hotfix, migration, hold/resume, and reconciliation fixtures/tests
+- updated templates, compatibility wrappers, role instructions, runbooks, and certification matrix
+
+Verification:
+
+- Start each requirement scenario with a failing focused test or fixture.
+- Prove `thin -> minor`, `full -> major`, no automatic hotfix, idempotency, conflict refusal, preserved metadata, and no archive rewriting.
+- Prove minor all-conditions, major any-trigger, harm-based hotfix, under-classification/lower-class-waiver rejection, audited source correction and recalculation, and stricter-route selection.
+- Prove DoR, implementation complete, DoD, release ready, archive ready, archived, and external delivered/Done remain distinct.
+- Prove hotfix cannot bypass human ownership, minimum verification, required risk decisions, rollback/hold, traceability, or reconciliation.
+- Prove Tech Lead automation is source-linked decision support and AI cannot approve, waive, resume, or close.
+- Prove all core gates in AI-disabled mode; later certification adds actual Qwen/DeepSeek evidence.
+
+Documentation updates:
+
+- Replace target thin/full language while preserving clearly marked historical/migration evidence.
+- Update setup, migration, governed-flow, Tech Lead, release, corporate-adaptation, and pilot runbooks.
+- Keep NIS-derived role views and scorecards linked to canonical policy/spec IDs.
+
+Recommended subagents:
+
+- worker: one task group at a time.
+- reviewer: classification/gate correctness and migration safety.
+- architecture-checker: source ownership, authority, transfer, and no-fork boundaries.
+- verification-checker: negative cases, AI-disabled evidence, and privacy/measurement integrity.
+
+Exit criteria:
+
+- All OpenSpec tasks for `adopt-nis-corporate-process-governance` are complete, strict validation and tests pass, migration/reconciliation evidence is reproducible, and no target surface still offers thin/full as current routes.
+
+### 2.3 Packaged Deterministic Class-Aware Flow
+
+Status: planned.
+
+Dependency status: sequential. Starts after 2.1, 2.2, and the applicable 2.3A schema/classification foundation are closed; final flow acceptance waits for all of 2.3A.
+
+Objective:
+
+- Make the minor, major, and hotfix flow consumable from the versioned process package while preserving a bounded legacy-reader/migration contract and the root compatibility entry point.
+
+OpenSpec source:
+
+- Accepted change-package-foundation, lifecycle, artifact, traceability, and waiver baseline plus the corresponding deltas in `adopt-nis-corporate-process-governance`.
+- Tasks 2.1-2.5 in `define-transfer-ready-process-package` and relevant classification/gate tasks in the NIS adoption change.
 
 Expected files/modules:
 
 - `process/templates/change/**`
 - `process/validators/validate_change.py`
-- thin root wrapper `scripts/validate_change.py`
+- root compatibility wrapper `scripts/validate_change.py`
 - `scripts/bootstrap_team_specs.py`
 - `scripts/create_change.py`
 - `scripts/prepare_spec_pr.py`
@@ -329,12 +414,12 @@ Verification:
 
 - Preserve all existing 34 validator tests before expanding behavior.
 - Add red-green tests for bootstrap, create, PR evidence, archive evidence, update, and rollback.
-- Prove AI-disabled thin flow on the synthetic reference setup.
+- Prove AI-disabled minor, major, and hotfix flows on the synthetic reference setup.
 - Verify no entry point approves, merges, waives, or archives without human evidence.
 
 Documentation updates:
 
-- setup, thin-flow, update, and rollback runbooks
+- setup, governed-flow, classification migration, update, and rollback runbooks
 - current audit evidence
 
 Recommended subagents:
@@ -343,27 +428,28 @@ Recommended subagents:
 
 Exit criteria:
 
-- The complete reference thin flow is reproducible from the packaged assets, deterministic gates remain AI-independent, and rollback preserves accepted history.
+- The complete reference class-aware flow is reproducible from the packaged assets, deterministic gates remain AI-independent, migration is safe, and rollback preserves accepted history.
 
 ### 2.4 Weak-Model Operating Contracts And Role Kit
 
 Status: planned.
 
-Dependency status: parallel-after-foundation. May start after 2.1 closes because it depends on stable canonical paths and package metadata but not on completion of every thin-flow entry point.
+Dependency status: parallel-after-foundation. Source-independent read-pack mechanics may start after 2.1; final role contracts and certification fixtures wait for 2.3A because they must use minor/major/hotfix, DoR/DoD, Tech Lead authority, and corporate stop/release rules.
 
 Parallel independence rationale:
 
-- It does not change accepted lifecycle/artifact behavior.
+- It does not independently define lifecycle/artifact behavior; it consumes the active NIS governance contracts.
 - It consumes canonical IDs and paths from 2.1.
 - It cannot accept release readiness before 2.3 and 2.5 close.
 
 Objective:
 
-- Implement deterministic task selection, authority-labelled bounded read packs, evidence output, explicit blocked behavior, and analyst/developer/QA role instructions for weak models.
+- Implement deterministic task selection, authority-labelled bounded read packs, evidence output, explicit blocked behavior, and analyst/developer/QA/Tech Lead role instructions for weak models.
 
 OpenSpec source:
 
 - Active `weak-model-guardrails` requirements.
+- Active `tech-lead-workflow`, `corporate-change-classification`, `readiness-completion-gates`, and `corporate-flow-controls` requirements.
 - Accepted documentation-governance source-ownership scenarios.
 - Active tasks 3.1-3.5.
 
@@ -401,11 +487,11 @@ Exit criteria:
 
 Status: planned.
 
-Dependency status: sequential. Starts after 2.3 and 2.4 are closed.
+Dependency status: sequential. Starts after 2.3A, 2.3, and 2.4 are closed.
 
 Objective:
 
-- Build repeatable certification fixtures and record actual Qwen-class, DeepSeek-class, and AI-disabled evidence for the first pilot roles.
+- Build repeatable certification fixtures and record actual Qwen-class, DeepSeek-class, and AI-disabled evidence for all three classes and the first pilot roles.
 
 OpenSpec source:
 
@@ -422,8 +508,8 @@ Expected files/modules:
 Verification:
 
 - Record exact model/runtime and adapter identifiers rather than generic family claims.
-- Cover analyst, developer, and QA thin flows.
-- Cover missing context, source conflict, fabricated evidence, forbidden approval, skipped stop, invalid transition, adapter failure, and context-limit failure.
+- Cover minor, major, hotfix, analyst, developer, QA, and Tech Lead flows.
+- Cover missing context, source conflict, fabricated evidence, under-classification, pseudo-hotfix, forbidden approval, unsafe resume, unresolved reconciliation, invalid transition, adapter failure, and context-limit failure.
 - Require deterministic validation of outputs.
 - If either Qwen-class or DeepSeek-class actual execution is unavailable, mark this work item blocked; do not claim external release readiness without a new human scope decision.
 
@@ -441,13 +527,13 @@ Recommended subagents:
 
 Exit criteria:
 
-- Both model families and the AI-disabled path have reproducible evidence; fluent but non-compliant outputs fail certification.
+- Both model families and the AI-disabled path have reproducible class/role evidence; fluent but non-compliant or authority-violating outputs fail certification.
 
 ### 2.6 Release Manifest, Transfer Runbook, And Rehearsal
 
 Status: planned.
 
-Dependency status: sequential. Starts after 2.2, 2.3, and 2.5 are closed.
+Dependency status: sequential. Starts after 2.2, 2.3A, 2.3, and 2.5 are closed.
 
 Objective:
 
@@ -496,7 +582,8 @@ Dependency status: sequential. Starts after 2.6 is closed; it prepares Phase 3 b
 
 Objective:
 
-- Provide non-secret environment inventory, real-config, pilot-entry, monitored-pilot, rollback/hold, and no-fork feedback templates for Phase 3.
+- Provide non-secret environment inventory, real-config, pilot-selection/entry, monitored-pilot, measurement, privacy, rollback/hold, hotfix reconciliation, and no-fork feedback templates for Phase 3.
+- Label the Phase 3 one-change evidence as operability/transfer proof and provide a separate deferred Phase 4 scale/effectiveness protocol skeleton so one change cannot be misreported as NIS viability evidence.
 
 OpenSpec source:
 
@@ -506,7 +593,7 @@ OpenSpec source:
 Expected files/modules:
 
 - `docs/runbooks/CORPORATE_ADAPTATION.md`
-- `docs/runbooks/THIN_CHANGE_PILOT.md`
+- `docs/runbooks/GOVERNED_CHANGE_PILOT.md`
 - environment inventory and pilot evidence templates
 - internal-fork detection or package-version mismatch checks
 
@@ -516,7 +603,8 @@ Verification:
 - Confirm every real fact is an explicit input.
 - Confirm secrets are referenced, never embedded.
 - Confirm reusable gaps route to external OpenSpec.
-- Confirm Jira/Confluence/QA/AT/role-inbox layers are not pilot prerequisites.
+- Confirm Jira/Confluence/QA/AT/broad role-inbox layers are not pilot prerequisites while Tech Lead evidence remains available through deterministic files/reports.
+- Confirm one synthetic or real change cannot satisfy an effectiveness/scale decision and that the later protocol requires approved population, comparator, sample, contamination, production-stability, and decision-owner evidence.
 
 Documentation updates:
 
@@ -535,7 +623,7 @@ Exit criteria:
 
 Status: planned.
 
-Dependency status: sequential-final. Starts after 2.1-2.7 are closed.
+Dependency status: sequential-final. Starts after 2.1-2.7 and 2.3A are closed.
 
 Objective:
 
@@ -555,8 +643,8 @@ Expected files/modules:
 Verification:
 
 - Focused and full tests.
-- Clean bootstrap and packaged thin-flow rehearsal.
-- AI-disabled, Qwen-class, and DeepSeek-class certification.
+- Clean bootstrap, legacy migration, and packaged minor/major/hotfix rehearsal.
+- AI-disabled, Qwen-class, and DeepSeek-class certification for analyst, developer, QA, and Tech Lead authority cases.
 - Secret/private-data scan.
 - Rollback rehearsal.
 - `openspec list`, `openspec list --specs`, `openspec validate --all --strict`, and `git diff --check`.
@@ -582,7 +670,8 @@ Exit criteria:
 |---|---|
 | 2.1 | 1.1-1.2 |
 | 2.2 | 1.3 |
-| 2.3 | 2.1-2.5 |
+| 2.3A | `adopt-nis-corporate-process-governance` task groups 1-8 |
+| 2.3 | `define-transfer-ready-process-package` 2.1-2.5 plus the class/gate integration tasks from 2.3A |
 | 2.4 | 3.1-3.5 |
 | 2.5 | 4.1-4.5 |
 | 2.6 | 5.1-5.4 |
@@ -597,11 +686,12 @@ Status: planned.
 
 Phase 2 can move to `pending_acceptance` only when:
 
-- work items 2.1-2.7 are closed;
+- work items 2.1-2.7 and 2.3A are closed;
 - work item 2.8 verification is complete;
 - the external release candidate and manifest are reproducible;
 - all deterministic gates pass without AI;
-- actual Qwen-class and DeepSeek-class certification evidence exists for analyst, developer, and QA thin flows;
+- actual Qwen-class and DeepSeek-class certification evidence exists for minor, major, hotfix, analyst, developer, QA, and Tech Lead flows;
+- legacy migration, DoR/DoD separation, under-classification, hotfix safety/reconciliation, Tech Lead authority, stop/resume, release-package, privacy, and comparison-integrity scenarios pass;
 - negative safety scenarios pass;
 - clean bootstrap, update, rollback, and secret/private-data checks pass;
 - corporate adaptation and pilot materials are complete;
@@ -618,11 +708,13 @@ Resolved:
 - Reusable core and weak-model safeguards are completed externally.
 - Corporate work is limited to real paths, projects, owners, approved secret references, integration wiring, thin model adapters, environment checks, and pilot evidence.
 - The plan and roadmap contain no delivery dates or calendar deadlines.
+- `D-013` accepts the flat NIS target model `minor|major|hotfix`, legacy mapping `thin -> minor` and `full -> major`, class-aware DoR/DoD, Tech Lead governance, and corporate flow/measurement adoption with the corrections recorded in the active OpenSpec change.
 
-No decision currently blocks work item 2.1.
+No decision currently blocks work item 2.1. Work items that encode target classification, roles, gates, certification, release, or pilot behavior must consume 2.3A instead of finalizing the historical thin/full model.
 
 Mandatory later evidence, not current design decisions:
 
 - Exact Qwen and DeepSeek model/runtime identifiers used for certification.
 - Actual corporate runtime, network, artifact distribution, MCP, and integration capabilities.
+- Real Jira/workflow mappings, owner/Tech Lead delegates, security approvers, retention/privacy rules, pilot candidate, comparator, and local metric thresholds.
 - Human acceptance of the external release candidate before Phase 3.

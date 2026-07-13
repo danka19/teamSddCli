@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is ready to build an externally certified transfer-ready release candidate from the existing deterministic template/validator prototype. The release candidate must include the reusable process package, configuration/bootstrap/update/rollback, thin-flow entry points, bounded weak-model operating kit, actual Qwen/DeepSeek certification, AI-disabled evidence, and transfer runbooks before corporate configuration and pilot work begin.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is ready to build an externally certified transfer-ready release candidate from the existing deterministic template/validator prototype. Human decision `D-013` makes the NIS-aligned `minor | major | hotfix` model, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must implement and certify that target, migration from legacy thin/full, AI-disabled operation, configuration/bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 
@@ -19,7 +19,7 @@ In scope:
 - Integration boundaries for Bitbucket, Jenkins, Confluence, Jira or an equivalent tracker, code repositories, QA repositories, and AT repositories.
 - Change packages with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability.
 - Local AI support for drafts, reviews, context packs, and test or automation skeletons.
-- External certification of the first thin flow with Qwen/DeepSeek-class assistants while all gates remain executable with AI disabled.
+- External certification of minor, major, hotfix, and Tech Lead workflows with Qwen/DeepSeek-class assistants while all gates remain executable with AI disabled.
 - Phase-based delivery of a minimal pilot, task automation, QA/AT automation, and process hardening.
 
 Out of scope:
@@ -72,6 +72,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
 - 2026-07-09: Accept the full Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes into accepted specs in one batch execution step; future corrections now use new OpenSpec changes against `openspec/specs/`.
 - 2026-07-13: Require an externally completed transfer-ready release candidate before corporate adaptation. Reusable core, deterministic gates, process package, bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are external work; the corporate environment is limited to real configuration, approved wiring, thin adapters, and a monitored pilot. Planning is gate-based and does not record delivery dates or calendar deadlines.
+- 2026-07-13: Adopt NIS v1.6 as primary corporate-process input and the flat target classification `minor | major | hotfix`. Migrate legacy `thin -> minor` and `full -> major`, never infer hotfix, and add class-aware DoR/DoD, separate release/archive/delivered states, Tech Lead decision support, regression/scope/stop/escalation/release controls, role verification, and outcome-based pilot evidence. Correct inconsistent NIS thresholds and unsafe AI-only/zero-risk assumptions; do not inherit PPRB organization or NIS project structure. See `D-013` and active change `adopt-nis-corporate-process-governance`.
 
 ## Architecture Sources
 
@@ -86,7 +87,9 @@ Current architecture sources:
 - `docs/IMPLEMENTATION_STRATEGY.md` for the accepted deterministic-process-first delivery strategy.
 - `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
 - `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the broader memory/guardrail source analysis; its minimum transfer subset is promoted into the active Phase 2 change.
+- `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` for the complete NIS source-to-target adoption matrix, terminology migration, business gates, Tech Lead automation, flow controls, measurement model, and sequencing.
 - `openspec/changes/define-transfer-ready-process-package/` for the proposed transfer-readiness and weak-model-guardrail behavior, design, and implementation tasks.
+- `openspec/changes/adopt-nis-corporate-process-governance/` for the proposed canonical minor/major/hotfix, DoR/DoD, Tech Lead, corporate flow, release, and pilot-measurement behavior.
 - `openspec/specs/` for accepted SDD workflow, artifact, traceability, waiver, documentation, topology/config, and Confluence feedback contracts; `openspec/changes/` for future proposed changes and archived source packages.
 
 Important concepts preserved in current docs:
@@ -102,19 +105,20 @@ Important concepts preserved in current docs:
 - Maintenance path: deterministic sync and upgrade checks after the related topology/config and OpenSpec version policies are approved.
 - Historical broad pilot picture: `team-specs`, OpenSpec CLI, deterministic validation, Jenkins Spec PR pipeline, Bitbucket reviewer assignment, Confluence preview, Jira task creation, and `traceability.yaml`.
 
-The accepted MVP is narrower than the historical broad pilot picture. Per the accepted 2026-07-03/2026-07-06 decisions, the first MVP proves the thin change flow and basic traceability before Jira task automation, Confluence publication, QA/AT proposal generation, or role inboxes become implementation scope.
+The accepted Phase 1 MVP was narrower than the historical broad pilot picture and proved the legacy thin-flow baseline. Decision `D-013` now requires the Phase 2 target to migrate that baseline to minor/major/hotfix and class-aware corporate gates before the real pilot. Jira task automation, Confluence publication, QA/AT proposal generation, and broad role inboxes remain later layers.
 
 ## First Valuable Outcome
 
-The first useful delivery should prove the smallest thin SDD change flow at pilot scale:
+The first useful release candidate should prove the smallest complete class-aware SDD flow before corporate pilot scale:
 
-1. Create a change package from templates.
-2. Validate structure, policy, and basic traceability locally.
-3. Create a Spec PR.
-4. Archive the completed change into living specs.
-5. Preserve enough traceability to show requirement -> scenario -> change evidence.
+1. Triage and create a versioned change package.
+2. Classify it as minor, major, or hotfix and validate the applicable evidence matrix.
+3. Pass Spec Review, class-aware Definition of Ready, and human approval.
+4. Implement with scope, regression, stop/escalation, and traceability controls.
+5. Pass implementation-complete, Definition of Done, applicable release/transfer readiness, and human archive readiness.
+6. Preserve explicit separation between archived specs and external delivered/Done state.
 
-Before that flow moves into the corporate environment, Phase 2 must package it as a reproducible external release candidate, prove all gates with AI disabled, certify the bounded analyst/developer/QA workflows using actual Qwen-class and DeepSeek-class assistants, and provide installation, compatibility, transfer, and rollback evidence. Phase 3 then supplies real project/owner/path configuration, approved integration wiring, the available model adapter, and one monitored real pilot.
+Before that flow moves into the corporate environment, Phase 2 must package it as a reproducible external release candidate, prove all gates with AI disabled, certify bounded analyst/developer/QA/Tech Lead workflows and all three classes using actual Qwen-class and DeepSeek-class assistants, and provide migration, installation, compatibility, transfer, and rollback evidence. Phase 3 then supplies real project/owner/path/workflow configuration, approved integration wiring, the available model adapter, and one monitored real pilot selected through the approved criteria.
 
 Confluence publication, Jira task creation, QA/AT proposal generation, and role inboxes remain important, but they are not required for the first MVP unless the human owner explicitly re-scopes the pilot.
 

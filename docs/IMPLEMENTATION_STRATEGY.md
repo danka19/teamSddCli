@@ -1,6 +1,6 @@
 # Implementation Strategy: SDD Automation Without a Custom `sdd` CLI
 
-Status: accepted by the human owner on 2026-07-03.
+Status: accepted by the human owner on 2026-07-03; process measurement and target classification refined by `D-013` on 2026-07-13.
 
 This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The historical architecture draft that originally motivated the project was removed on 2026-07-06 after current decisions moved into `docs/` and `openspec/`; this strategy defines how the process is delivered first.
 
@@ -44,42 +44,53 @@ Portability rules derived from this constraint:
 - All guarantees stay in the deterministic layer (section 1 hard rule); the weaker corporate assistant only degrades convenience, never correctness.
 - Skills are authored as plain markdown instruction files with tool-agnostic content; per-tool packaging for Qwen, DeepSeek, GigaCode, Claude Code, or another supported surface is a thin adapter kept separate from the instructions themselves.
 - No external-only dependencies inside gates: scripts must run on the corporate stack (verify Python availability, network restrictions, artifact mirrors).
-- Before transfer, accept a reproducible release candidate with clean bootstrap, package/config/OpenSpec compatibility, thin-flow evidence, update/rollback, privacy checks, AI-disabled operation, and actual Qwen/DeepSeek certification.
+- Before transfer, accept a reproducible release candidate with clean bootstrap, package/config/OpenSpec compatibility, legacy thin/full migration, minor/major/hotfix flow evidence, Tech Lead authority checks, update/rollback, privacy checks, AI-disabled operation, and actual Qwen/DeepSeek certification.
 - During corporate adaptation, verify MCP availability and policy, the available Qwen/DeepSeek/GigaCode adapter, Bitbucket/Jenkins/Jira/Confluence versions (Cloud vs Server/DC), secrets handling, network rules, and artifact distribution without redesigning reusable process behavior.
 - Follow-up adjustments that affect reusable behavior return to the external OpenSpec/change workflow and a new package release rather than becoming ad-hoc internal divergence.
 
-## 5. Success and Usability Criteria
+## 5. Success, Gate, and Usability Evidence
 
-Measured per sprint from Git/Jira/CI data (M-metrics) and monthly per-role checks (U-criteria). Baselines are collected during the pilot's first two sprints; targets apply from sprint 3.
+`D-013` removes universal thin/full thresholds and separates correctness gates from process-effectiveness metrics. Canonical proposed definitions live in `process-measurement-pilot`, `readiness-completion-gates`, and the NIS adoption plan. Exact thresholds, sample gates, comparator, and review cadence are approved before a real pilot and stored in versioned policy/configuration rather than copied into this strategy.
 
-### Process health metrics
+### Mandatory gates
 
-| ID | Metric | Target | Source |
-|---|---|---|---|
-| M1 | Median time from change creation to first green validation | Thin change <= 30 min; full package <= 1 working day | Git/CI timestamps |
-| M2 | Spec PRs green on first CI run | >= 70% | Jenkins |
-| M3 | Median time to first review on Spec PR | <= 1 working day | Bitbucket |
-| M4 | Share of changes using a waiver | <= 20%, no growth two sprints in a row | Change packages |
-| M5 | Requirement->scenario->test links derived automatically | >= 90%; red traceability rows resolved within a sprint | Traceability report |
-| M6 | Behavior changes merged without a change package (process bypass) | <= 10% | Sprint sampling of merged PRs |
-| M7 | Tooling support burden after stabilization | <= 0.5 person-day/week | DevOps/owner log |
+DoR, DoD, release/transfer readiness, archive readiness, required approvals, stop conditions, and hotfix reconciliation protect correctness. A good or bad process metric cannot waive them, and passing them does not prove that the process improved outcomes.
 
-### Usability criteria
+### Process and outcome metrics
+
+| ID | Metric family | Required definition/evidence |
+|---|---|---|
+| M1 | Cycle and flow time | Defined start/end events plus active human, automated, queue, review, external wait, and hand-off intervals |
+| M2 | First-pass acceptance | Stable denominator and first deterministic/review result from Git/CI/review sources |
+| M3 | Human effort and manual intervention | Approved categories, source, role boundary, and labelled manual fallback |
+| M4 | Machine/runtime cost and reliability | Runtime/tool version, attempts, failures, retries, adapter/MCP availability, and cost source where approved |
+| M5 | Defects, rework, and delivery stability | Materiality rule, observation window, escaped-defect/rollback/support evidence, and no fabricated production outcome |
+| M6 | Engineering-package completeness | Class-specific substantive evidence matrix, not raw file or prompt count |
+| M7 | Waiver, override, deferral, bypass, and follow-up behavior | Policy version, denominator, expiry, unresolved reconciliation, and accountable decision evidence |
+| M8 | Repeatability and comparison integrity | Historical/control/experimental/certification/production label, process version, contamination, and missing-data treatment |
+| M9 | Tooling support burden and usability | Approved event/log or survey method without personal performance ranking |
+
+Every metric records purpose, unit, numerator/denominator, event sources, inclusions/exclusions, owner, missing-data behavior, privacy classification, aggregation, and pre-approved decision rule. Failed runs remain in the dataset. Activity proxies such as artifact count, prompt count, AI usage, or checklist completion are diagnostic only.
+
+The first real Phase 3 change proves bounded operability and transfer compatibility only. Effectiveness or scale claims require a separately accepted later protocol with sufficient comparison and production-stability evidence; they cannot be inferred from one successful change.
+
+### Usability and role-understanding criteria
 
 | ID | Criterion | Check |
 |---|---|---|
-| U1 | Each role completes its main flow without help after one onboarding session | Checklist walkthrough with a new participant |
-| U2 | Manual steps per flow stay small (analyst: template to open PR in <= 5 manual steps) | Flow audit |
-| U3 | Role satisfaction >= 3.5/5, no role below 3 | Monthly short survey |
-| U4 | Every gated action works with the AI assistant disabled | Quarterly walkthrough without AI |
+| U1 | Each role can complete its governed actions and identify its authority limits | Scenario walkthrough with positive, negative, stop, escalation, and AI-disabled cases |
+| U2 | Minor work remains proportionate while major and hotfix obligations are understandable | Class-specific flow audit against canonical matrices |
+| U3 | Participants can distinguish DoR, implementation complete, DoD, release ready, archive, and external Done | Role-understanding interview/walkthrough with source-linked disposition |
+| U4 | Every gated action works with the AI assistant disabled | Release certification and corporate adaptation walkthrough |
+| U5 | Tech Lead automation reduces evidence search without impersonating approval | Tech Lead review-pack audit and authority-boundary negative cases |
 
 ## 6. Triggers: When a Custom `sdd` CLI Becomes Justified
 
-A trigger fires when the condition persists for two consecutive sprints after at least one remediation attempt inside the current strategy.
+A trigger fires when the condition persists across the pre-approved observation gate after at least one remediation attempt inside the current strategy. The pilot plan defines the sample and observation rule before collection.
 
 | ID | Trigger | What it justifies building |
 |---|---|---|
-| T1 | M1 missed because of manual gluing between tools (not review wait time) | `sdd change new/validate` ergonomics commands |
+| T1 | M1 shows persistent controllable delay caused by manual gluing between tools rather than review or external wait | `sdd change new/validate` ergonomics commands |
 | T2 | Script sprawl: shared logic duplicated across 3+ repos, or validation scripts grow past maintainability with a rising defect rate | Consolidation of scripts into a distributed CLI |
 | T3 | Cross-repo operations (multi-repo changes, coordinated branches/PRs) done by hand repeatedly every sprint | Cross-repo orchestration commands |
 | T4 | The available Qwen/DeepSeek/GigaCode-class assistant cannot reliably execute a bounded role flow after one documented remediation attempt | Deterministic commands, simpler instructions, or mandatory-human execution replacing the assistant layer for affected flows |
@@ -90,5 +101,5 @@ Scope rule: when a trigger fires, build only the commands that answer that trigg
 
 ## 7. Review Cadence
 
-- Metrics reviewed at the end of every sprint by the process owner.
-- Strategy (including trigger table and targets) reviewed after the pilot and then quarterly, or immediately after transfer to the corporate environment.
+- Metrics are reviewed at the pre-approved pilot decision gates by the process owner and required role owners.
+- Strategy, trigger rules, and local thresholds are reviewed after pilot evidence or when a material environment/process change invalidates the comparison; schedule cadence remains an operating-calendar decision outside this repository.
