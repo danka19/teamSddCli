@@ -241,6 +241,19 @@ Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix n
 Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; work item 2.3A is the Phase 2 implementation owner.
 ```
 
+```text
+Idea: Create one presentation-ready report that clearly separates what already matches NIS, what is borrowed, what is adapted or rejected, and which metrics/control ideas are documented.
+Source: Human request for a concise acceptance summary and a durable full report for a future presentation.
+Type: documentation_change
+Decision: adopt_now
+Reason: The comparison already exists across the evidence audit, adoption plan, and OpenSpec change, but a presentation audience needs one clearly labelled read model without changing normative behavior.
+Affected specs: None. The report references `D-013` and `adopt-nis-corporate-process-governance`; OpenSpec remains the normative owner.
+Affected architecture: None. The report preserves source ownership and explicitly distinguishes accepted direction, proposed behavior, and current implementation.
+Data contract impact: None.
+Verification impact: Cross-check the report against the NIS audit, 22-file source-coverage appendix, active OpenSpec change, task count, and current implementation status; keep the NIS package ignored and untracked.
+Status: completed in `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md`.
+```
+
 ## Work Items
 
 ### 2.1 Process Package And Synthetic Central Topology

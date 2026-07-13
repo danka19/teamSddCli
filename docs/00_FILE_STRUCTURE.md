@@ -44,6 +44,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
 | `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` | Documentation/architecture audit: findings F1-F6, drift records, and the open human decision batch |
 | `docs/audits/NIS_V1_6_ARCHITECTURE_COMPATIBILITY_AUDIT_2026-07-13.md` | Evidence-backed comparison of the local NIS v1.6 reference package against accepted architecture, including alignments, useful additions, conflicts, internal inconsistencies, and adoption boundaries |
+| `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md` | Presentation-ready summary of what matches NIS, what the project borrows, what is adapted or rejected, recorded metrics/control ideas, current acceptance status, and suggested slide structure |
 | `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md` | Evidence-backed audit of phase status, deterministic baseline, weak-model readiness, transfer gaps, and the accepted remediation boundary |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
