@@ -47,6 +47,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md` | Presentation-ready summary of what matches NIS, what the project borrows, what is adapted or rejected, the failed-run rule, current acceptance status, and suggested slide structure |
 | `docs/audits/PROCESS_EFFECTIVENESS_DOCUMENTATION_REMOVAL_AUDIT_2026-07-13.md` | Reproducible verification that process-effectiveness evaluation was removed from current tracked docs/OpenSpec while failed-run retention and ordinary QA/safety controls remain |
 | `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md` | Evidence-backed audit of phase status, deterministic baseline, weak-model readiness, transfer gaps, and the accepted remediation boundary |
+| `docs/audits/PHASE_2_PLAN_COMPLETENESS_AUDIT_2026-07-13.md` | Evidence-backed audit of Phase 2 scope coverage, statuses, task ownership, dependency cycles, OpenSpec mapping, verification specificity, and planning drift |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
