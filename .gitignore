@@ -21,6 +21,9 @@ tracker-exports/
 confluence-exports/
 context-packs/
 
+# Local reference package used for architecture comparison; may contain corporate material
+docs/NIS_Clean_v1.6_Approved_Package/
+
 # Local-only working material with corporate content (photos, screenshots) - never commit
 arch-screenshots/
 analytic-template/
