@@ -2,7 +2,7 @@
 
 Date: 2026-07-13.
 
-Status: completed read-only audit. Planning and remediation require the human boundary decision described below.
+Status: completed audit. The human accepted the recommended boundary; remediation planning is recorded in active OpenSpec change `define-transfer-ready-process-package` and the ready Phase 2 plan.
 
 ## Audit Boundary
 
@@ -111,7 +111,7 @@ No machine-readable roadmap/phase-status consumer exists in this repository. The
 - Affected behavior: A weak model could still miss required context, invent missing rules, skip stop points, or make unverifiable completion claims.
 - Root cause: Weak-model work was deferred from the thin MVP and placed mainly in later Phase 4 planning.
 - Residual uncertainty: Exact Qwen/DeepSeek models, context windows, CLI/tool interface, and corporate prompt/skill packaging are unknown.
-- Recommended next action: create `define-project-memory-and-weak-model-guardrails` against the accepted baseline and move the minimum weak-model operating kit into pre-transfer readiness.
+- Recommended next action: implement the minimum weak-model operating kit through active change `define-transfer-ready-process-package`; leave broader project-memory automation for a later pilot-driven change.
 - Related sources: `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`, `openspec/specs/documentation-governance/spec.md`.
 
 ### TR-004: Corporate transfer gate is described but not operationalized
@@ -155,6 +155,15 @@ The project is ready to plan and build the transfer-ready layer; it is not ready
 - Corporate environment owns only verified environment inventory, real project/owner/path configuration, approved secret setup, standard-tool integration wiring, a limited adapter for the available Qwen/DeepSeek/GigaCode surface, and a monitored real thin-change pilot.
 - Any missing reusable capability found internally returns to the external canonical source as a controlled change; it is not maintained as an internal fork.
 
-## Remediation Decision Required
+## Remediation Decision
 
-Recommended decision: approve the boundary above and authorize a new OpenSpec proposal plus a detailed Phase 2 transfer-readiness plan. Until that decision is approved, roadmap reordering, weak-model acceptance criteria, and implementation work remain intentionally blocked; the current accepted Phase 1 baseline remains unchanged.
+Accepted: the external environment must produce the reusable release candidate, including deterministic core, package/config/bootstrap/update/rollback behavior, bounded weak-model operating kit, actual Qwen/DeepSeek and AI-disabled certification, transfer manifest, and runbooks. The corporate environment is limited to real configuration, approved integration wiring, thin adapters, environment checks, and a monitored pilot.
+
+Durable routing:
+
+- behavior and acceptance: `openspec/changes/define-transfer-ready-process-package/`;
+- execution plan: `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`;
+- roadmap ordering: Phase 2 external release candidate, Phase 3 corporate adaptation/pilot, Phase 4 post-pilot hardening and expansion;
+- decision record: `docs/DECISIONS.md` (`D-012`).
+
+Residual implementation risk remains open under `AUDIT-020` until the Phase 2 and Phase 3 gates produce evidence.

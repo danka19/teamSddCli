@@ -2,18 +2,19 @@
 
 Status: in_progress.
 
-Last status reconciliation: 2026-07-11.
+Last status reconciliation: 2026-07-13.
 
-## Phase And OpenSpec Status Reconciliation (2026-07-11)
+## Phase And OpenSpec Status Reconciliation (2026-07-13)
 
 - Phase 0 is `closed`: its repository-foundation gate is satisfied, and its former Phase 1 decision items were resolved or explicitly deferred by the accepted Phase 1 package.
 - Phase 1 is `closed`: all 11 work items are reconciled, the human Option A decision supplies acceptance evidence, and eight changes were archived into accepted specs on 2026-07-09.
-- Phases 2-4 are `planned`: roadmap intent exists, but no detailed plan has been accepted and implementation has not started.
-- Active OpenSpec changes: none. `openspec/changes/archive/` contains the accepted Phase 1 source packages; `openspec/specs/` contains eight accepted specs.
-- Sequential next work is not blocked by pending acceptance. It is blocked only by planning: Phase 2 needs a detailed plan and production `team-specs` setup scope before implementation.
-- No parallel roadmap work is declared safe yet because the Phase 2 dependency boundaries have not been documented.
+- Phase 2 is `ready`: the human accepted the external release-candidate boundary, `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` defines the dependency-ordered plan, and work item 2.1 is unblocked.
+- Phases 3-4 are `planned`: Phase 3 depends on human acceptance of the Phase 2 external release candidate; Phase 4 depends on real pilot evidence.
+- Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with proposal, design, `transfer-readiness` and `weak-model-guardrails` deltas, and 31 unchecked implementation tasks. `openspec/changes/archive/` retains the accepted Phase 1 source packages; `openspec/specs/` contains eight accepted specs.
+- Sequential next work is not blocked by pending acceptance: start Phase 2 work item 2.1.
+- Parallel work item 2.4 becomes safe only after 2.1 closes because it needs stable package paths and metadata; it does not change accepted lifecycle/artifact behavior and cannot accept release readiness independently of work items 2.3 and 2.5.
 
-Last updated: 2026-07-11.
+Last updated: 2026-07-13.
 
 ## Repository Baseline
 
@@ -21,13 +22,13 @@ Last updated: 2026-07-11.
 |---|---|
 | Repository root | `C:\Users\danoc\Documents\projects\teamSsdCli` |
 | Git repository | Initialized locally on 2026-07-03 |
-| Current branch | `phase-1/change-template-validation` |
+| Current branch | `codex/phase-2-transfer-readiness-plan` |
 | Remote | `origin` -> `https://github.com/danka19/teamSddCli.git` |
-| Latest known commit before this post-archive wording cleanup | `ef4c323 Archive phase 1 OpenSpec baseline` |
+| Transfer-readiness audit commit | `96b3614 docs: audit transfer readiness` |
 | GitHub repository rename | Repository was renamed from `danka19/teamSsdCli` to `danka19/teamSddCli`; local folder path still uses `teamSsdCli` |
 | Architecture source of truth | Current decisions live in `docs/` and `openspec/`; stale historical architecture draft removed on 2026-07-06 |
 | Implementation source code | No custom `sdd` CLI source exists; deterministic script `scripts/validate_change.py` is present |
-| OpenSpec project artifacts | Present; 8 accepted specs cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, repo-topology/config/version, and Confluence feedback/publication contracts; the source changes are archived under `openspec/changes/archive/2026-07-09-*` |
+| OpenSpec project artifacts | Present; 8 accepted specs cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, repo-topology/config/version, and Confluence feedback/publication contracts; active change `define-transfer-ready-process-package` proposes transfer-readiness and weak-model-guardrail capabilities |
 
 ## Useful Starting Points
 
@@ -35,6 +36,9 @@ Last updated: 2026-07-11.
 - Roadmap exists at `docs/ROADMAP.md`.
 - Agent work rules are recorded in `AGENTS.md`.
 - Project memory and weak-model planning input is recorded in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`.
+- The current Phase 2 execution plan is `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`.
+- The active proposed behavior is under `openspec/changes/define-transfer-ready-process-package/`.
+- The reproducible pre-plan evidence is `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md`.
 - The 2026-07-06 documentation/architecture review with current findings and the open decision batch is `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md`; its staged-plan companion is `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md`.
 - Workflow skills are global (`~/.codex/skills`); this repository intentionally has no `.codex/skills/` directory.
 - Current architecture and implementation planning are in `docs/`, `openspec/`, and accepted human decisions.
@@ -53,9 +57,10 @@ Last updated: 2026-07-11.
 | Template validation | After work item 1.8, `python scripts/validate_change.py --allow-placeholders templates/change` passed, and `python scripts/validate_change.py templates/change` rejected placeholder values as expected |
 | OpenSpec CLI installed | `openspec --version` returned `1.4.1` |
 | OpenSpec validation | During the Phase 1 archive batch on 2026-07-09, `openspec archive <change> -y` promoted all 8 readiness-complete changes. After the archive, `openspec list` reported no active changes, `openspec list --specs` reported 8 accepted specs, and `openspec validate --all --strict` passed all 8 specs with 0 failures. |
+| Phase 2 OpenSpec proposal validation | `openspec status --change define-transfer-ready-process-package` reports 4/4 planning artifacts complete; `openspec validate --all --strict` passes the active change plus 8 accepted specs with 0 failures; 31 implementation tasks remain unchecked. |
 | Pre-commit installed | Not available on PATH during Phase 1 artifact work; config is present but end-to-end hook execution still needs tool installation |
 | Local app/server available | No local app/server found; this work item is script/template based |
-| Documentation bootstrap | `project-starter-kit` created `AGENTS.md`, `docs/`, `.codex/skills/`, `.gitignore`, and `.env.example` |
+| Documentation bootstrap | `project-starter-kit` created the repository operating/docs structure; repository-local `.codex/skills/` is intentionally absent because workflow skills are global |
 | Starter structure check | `python C:/Users/danoc/.codex/skills/project-starter-kit/scripts/bootstrap_project.py --target C:/Users/danoc/Documents/projects/teamSsdCli --check` passed |
 | Markdown/code whitespace check | `rg -n "[ \t]+$" AGENTS.md docs openspec templates scripts tests .pre-commit-config.yaml pytest.ini .gitignore` returned no matches |
 
@@ -69,19 +74,20 @@ Last updated: 2026-07-11.
 | AUDIT-004 | This folder was initialized as a git repository, connected to `danka19/teamSddCli`, committed, and pushed to `origin/main`. | Human/Phase 0 | closed |
 | AUDIT-005 | OpenSpec folder structure for this CLI project's own requirements is initialized and now includes accepted spec `openspec/specs/change-package-foundation/spec.md`; the original `add-change-template-validation` change is archived. | Phase 1 | closed |
 | AUDIT-006 | Placeholder corporate repo/owner/Jira/Confluence/Jenkins examples from the removed historical draft must not be treated as real configuration. Current docs still forbid inferring real corporate configuration from examples. | Phase 1/2 | closed |
-| AUDIT-007 | Corporate environment specifics are unverified: GigaCode CLI capability against skill flows, MCP policy inside the corporate network, Bitbucket/Jenkins/Jira/Confluence versions, and network/artifact restrictions. Must be checked in the pre-transfer adaptation review. | Transfer phase | open |
+| AUDIT-007 | Corporate environment specifics are unverified: available Qwen/DeepSeek/GigaCode model and adapter capabilities, MCP policy, Bitbucket/Jenkins/Jira/Confluence versions, secrets handling, and network/artifact restrictions. Phase 2 must prepare the inventory and compatibility checks; Phase 3 must execute them before the real pilot. | Phase 2/3 | open |
 | AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
 | AUDIT-009 | `pre-commit` is not installed on the current machine, so the hook config cannot yet be executed end-to-end locally. | Phase 1/local environment | open |
 | AUDIT-010 | The generated Confluence publication model is planned, and the 2026-07-09 decisions accept analyst/change-owner triage, blocker/non-blocker comment handling, explicit dispositions, editable/disableable triage SLA defaults (1 working day for blockers, 3 working days for non-blockers), generated source warnings, and evidence-backed status display. Publication automation still remains outside the first MVP; the first generated view set is intentionally decided later inside the corporate environment using real templates, approval practices, and tooling constraints. | Phase 1/4 | open |
 | AUDIT-011 | Journey and screen artifacts are now planned future contracts, but `journey.yaml`, `screens.yaml`, screen asset storage, and generated gallery views are not implemented or validated. | Phase 1/4 | open |
 | AUDIT-012 | Legacy baseline mode is planned for already-written code, but no accepted workflow or template exists yet for baseline changes, observed behavior, known gaps, or legacy coverage risk reporting. | Phase 1/4 | open |
 | AUDIT-013 | Canonical OpenSpec language is now English by default and generated Confluence may be localized to Russian, but no bilingual glossary or translation review process exists yet. | Phase 1/4 | open |
-| AUDIT-014 | Project memory, documentation quality controls, weak-model guardrails, repeated-error memory, spec-questioning workflow, and analyst/QA onboarding have planning defaults: memory follows the future `team-specs` topology, the first graph/navigation implementation should be a lightweight deterministic index, mandatory pilot guardrails are read packs/role skills/evidence checklists, and first role guides are analyst/developer/QA thin-change walkthroughs. They are not yet specified as accepted OpenSpec contracts or deterministic checks. | Phase 1/4 | open |
+| AUDIT-014 | The minimum weak-model operating kit is now proposed in `define-transfer-ready-process-package` and planned for Phase 2: deterministic launch, authority-labelled bounded read packs, analyst/developer/QA role instructions, evidence boundaries, negative cases, AI-disabled fallback, and actual Qwen/DeepSeek certification. It remains unimplemented and unaccepted until Phase 2/3 evidence and human gates close. Broader project-map, graph/navigation, repeated-error-memory, and spec-questioning automation remains Phase 4 scope. | Phase 2/4 | open |
 | AUDIT-015 | Source ownership and write-once/reference-many documentation rules are captured in the accepted documentation-governance baseline, but deterministic linting for duplicate normative text, source links, generated blocks, stale memory, and orphan docs is not implemented yet. | Phase 1/4 | open |
 | AUDIT-016 | Work item 1.8 and its review-finding follow-up reconcile the deterministic layer with the approved Phase 1 contracts: `scripts/validate_change.py` rejects the historical status vocabulary in favor of the canonical six states, keeps thin packages lightweight by default, enforces the approved full-package trigger matrix for risky thin changes, validates placeholder-mode enum structure, requires traceability waivers to match the affected requirement/scenario and evidence kind, validates canonical human approver keys or owner-group references, preserves staged discovery behavior, and `templates/change/change.yaml` no longer defaults to the contradictory `mode: thin` + `type: new_feature` combination. Work item 1.9 then hardened the evidence with explicit tests for missing requirement scenarios, missing traceability rows, pending downstream link lifecycle handling, and thin archive-ready practical verification evidence. See `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` finding F1. | Phase 1 (work items 1.8/1.9) | closed |
-| AUDIT-017 | The OpenSpec CLI version is decided to be pinned, `openspec 1.4.1` is the verified installed version, and the 2026-07-09 gate 1.5 decision approves pinning `1.4.1` in central `team-specs/sdd.config.yaml` with reviewed upgrade evidence. The actual production config file still does not exist until the future `team-specs` setup creates it. | Phase 1/production setup | open |
+| AUDIT-017 | The OpenSpec CLI version is decided to be pinned, `openspec 1.4.1` is the verified installed version, and the 2026-07-09 gate 1.5 decision approves pinning `1.4.1` in central `team-specs/sdd.config.yaml` with reviewed upgrade evidence. Phase 2 work items 2.1-2.2 must create and validate the production-oriented synthetic config/package artifacts. | Phase 2 | open |
 | AUDIT-018 | Analytics-source readiness is partially resolved: the language decision is made (Russian prose, English keywords/IDs), the corporate approval template is fully analyzed with a migration plan in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`, and the 2026-07-09 decisions keep the existing Confluence analytics corpus as a read-only archive, avoid bulk migration for the first pilot, use Git-managed source or source+export with stable IDs for accepted diagrams/screens, and keep approval readiness minimal/validator-backed for now. Still open: concrete future schemas and validator checks for typed analytics artifacts and asset metadata. Local photos of the template live in git-ignored `arch-screenshots/analytic-template/` and must never be committed. | Phase 1/4 | open |
 | AUDIT-019 | Screenshots of an internal OpenSpec customization / repository-topology approach are available locally in git-ignored `arch-screenshots/openspec-de/`; they were reviewed on 2026-07-09 against the product goal, thin-MVP boundary, analytics-template mapping, and work item 1.4 criteria. The review is captured in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` with the criteria frame in `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`, and the recommendations are now routed into `define-repo-topology-config`, `define-change-artifact-contracts`, `define-change-lifecycle`, and weak-model planning docs. Binding topology/config/OpenSpec-version decisions were approved at gate 1.5 on 2026-07-09. | Phase 1 (work items 1.4/1.5) | closed |
+| AUDIT-020 | Transfer readiness is now explicitly defined: external work must produce the reusable package, deterministic thin flow, weak-model operating kit, actual Qwen/DeepSeek and AI-disabled certification, release manifest, clean bootstrap, update/rollback, privacy checks, and transfer/pilot materials. None of these production artifacts exist yet; implementation is tracked by the ready Phase 2 plan and active OpenSpec change. Corporate adaptation and the real pilot remain Phase 3 and cannot start before external release acceptance. | Phase 2/3 | open |
 
 ## Accepted Human Decisions
 
@@ -98,7 +104,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 | 2026-07-03 | Deliver the SDD process without a custom `sdd` CLI first (deterministic scripts/templates in `team-specs` + standard tool features + AI role skills); build CLI parts only on the triggers in `docs/IMPLEMENTATION_STRATEGY.md`. | Phase plans must target templates, validation scripts, skills, and pipelines instead of CLI source code until a trigger fires. |
 | 2026-07-03 | OpenSpec = Fission-AI/OpenSpec with team reference docs at <https://lzw.me/docs/openspec>; pin the CLI version. | Phase 1 must record the pinned version; upstream docs win over the mirror on discrepancy. |
 | 2026-07-03 | Jira/Confluence access from AI tooling via MCP only (verified working by the human owner); no custom REST clients; automating local MCP server provisioning is a planned experiment. | Integration specs must define MCP usage boundaries, not API client contracts. |
-| 2026-07-03 | Develop in the external environment (Claude Code) first, then transfer to the corporate environment where only GigaCode CLI is available. | Gates must never depend on the AI layer; skills stay tool-agnostic; an environment adaptation review is required before transfer. |
+| 2026-07-03 | Develop in the external environment (Claude Code) first, then transfer to the corporate environment where only GigaCode CLI was then expected. | Gates must never depend on the AI layer; skills stay tool-agnostic; the later `D-012` decision refines the target assistant set to Qwen/DeepSeek/GigaCode-class tools and requires an accepted external release candidate before adaptation. |
 | 2026-07-03 | The first Phase 1 artifact is `templates/change/` + `scripts/validate_change.py` + `.pre-commit-config.yaml`, on branch `phase-1/change-template-validation`, tracked by OpenSpec change `add-change-template-validation`. | Phase 1 starts with deterministic templates and validation before broader specs, integrations, or custom CLI work. |
 | 2026-07-06 | Approve the Phase 1 risk-oriented thin/full artifact matrix default. | Thin behavior-changing SDD changes require intent, OpenSpec delta, scenarios, basic traceability, and verification evidence; full packages are required for new features, public API, mobile, cross-repo, data/security, high-risk, or broad behavior changes. |
 | 2026-07-06 | Approve role-appropriate waiver approvers and minimum evidence. | Waivers require the responsible role owner, affected requirement/scenario, reason, substitute evidence, and follow-up/expiry when residual risk remains. |
@@ -128,6 +134,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 | 2026-07-09 | Project memory/weak-model defaults: memory follows the future `team-specs` topology, first graph/navigation is a lightweight deterministic index, mandatory pilot guardrails are read packs/role skills/evidence checklists, and first role guides are analyst/developer/QA thin-change walkthroughs. | Future memory tooling remains outside the first thin MVP unless explicitly re-scoped; later proposals must turn these defaults into concrete schemas/checks before implementation. |
 | 2026-07-09 | Generated-view selection for the first Confluence-enabled workflow is deferred to the corporate environment. | See `docs/DECISIONS.md` (`D-010`). The external planning repo records source-of-truth and feedback contracts, but the actual view set depends on real corporate templates, approval practices, and tooling constraints. |
 | 2026-07-09 | Accept the whole Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes in one batch execution step. | See `docs/DECISIONS.md` (`D-011`). Future changes now build on accepted specs in `openspec/specs/`; publication automation remains a later layer, not implemented by this archive. |
+| 2026-07-13 | Require an externally certified transfer-ready release candidate before corporate adaptation, and keep roadmap/phase/OpenSpec planning free of delivery dates or calendar deadlines. | See `docs/DECISIONS.md` (`D-012`). Phase 2 owns reusable core, deterministic gates, bootstrap/update/rollback, weak-model operating kit, actual Qwen/DeepSeek and AI-disabled certification, and transfer evidence; Phase 3 owns real configuration, approved wiring, thin adapters, and the monitored pilot. |
 
 ## Audit Rules
 

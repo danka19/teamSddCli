@@ -11,6 +11,7 @@ Before changing code or product documentation, confirm:
 - Current branch matches the active phase branch or the user approved a different branch.
 - `AGENTS.md`, `docs/README.md`, `docs/00_FILE_STRUCTURE.md`, `docs/ROADMAP.md`, `docs/IMPLEMENTATION_STRATEGY.md`, `docs/CONTEXT.md`, the relevant phase plan, `openspec/` when SDD applies, `docs/CURRENT_PROJECT_AUDIT.md`, and this checklist were read when changing SDD workflow, CLI behavior, product scope, or architecture.
 - The active `openspec/changes/<change-id>/` folder was read when work implements or plans a proposed change.
+- Phase 2 implementation reads `openspec/changes/define-transfer-ready-process-package/` and `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` before changing package, config, weak-model, certification, release, or transfer behavior.
 - Task-specific audit, acceptance-gap, handoff, or planning documents were read.
 - Existing code and tests were searched for the concepts being changed.
 - The work was classified as CLI behavior, SDD workflow behavior, architecture, setup, operations, security, roadmap status, artifact/process contract, user-visible command/help text, or docs-only.
@@ -48,6 +49,9 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Do not treat heuristic or LLM output as source-of-truth data.
 - Record architecture decisions that affect module boundaries, persistence, integrations, security, deployment, or operations.
 - Preserve the accepted thin-MVP boundary unless the human owner explicitly re-scopes the work: first prove `sdd change new`, `sdd change validate`, `sdd change pr`, `sdd change archive`, and basic traceability before adding Jira, QA/AT, Confluence publication, or role inbox automation.
+- Do not move reusable package, schema, validator, workflow, role-instruction, read-pack, certification, update/rollback, or release-manifest design into the corporate environment. Phase 2 completes and externally certifies that core; Phase 3 supplies only verified real configuration, approved wiring, thin adapters, and pilot evidence.
+- Weak models do not select their own workflow or authority. A deterministic launcher or explicit non-AI procedure must supply the role instruction, bounded authority-labelled read pack, output/evidence contract, and stop point.
+- Every weak-model-assisted gate must have an AI-disabled fallback, and reusable corporate findings must return to the external OpenSpec workflow rather than create an internal fork.
 - Do not require Gherkin for every QA artifact; require a testable scenario first, and require Gherkin only when the scenario is executable or exported to AT.
 
 ## Test And Evidence Check
@@ -60,6 +64,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Run `git diff --check` before completion when files changed.
 - For SDD/OpenSpecs changes, run `openspec list`, `openspec list --specs`, and `openspec validate --all --strict`.
 - For mutating CLI or integration behavior, verify dry-run behavior, idempotency, machine-readable JSON output, and audit logging whenever those contracts are in scope.
+- Before claiming Phase 2 release readiness, verify clean bootstrap, packaged thin flow, configuration/package/OpenSpec compatibility, secret/private-data checks, update/rollback, AI-disabled operation, and actual Qwen-class plus DeepSeek-class analyst/developer/QA certification with exact model/runtime evidence.
 - For starter-kit documentation changes, run the project-starter-kit bootstrap script with `--check`.
 - If a test or check cannot run, record the exact command and blocker.
 - If automated tests do not exist for the affected CLI/workflow behavior, record manual verification steps and remaining manual-verification risk.
@@ -80,6 +85,7 @@ Before reporting completion, ask:
 - Does `docs/CONTEXT.md` need a glossary term?
 - Does this checklist need an update because the human introduced a new verification habit or rejected behavior?
 - Did any new phase idea need an intake record, OpenSpec change, audit note, or deferred backlog entry?
+- For Phase 2/3 planning, does the roadmap preserve the external-release versus corporate-adaptation boundary and avoid delivery dates or calendar deadlines?
 - Does this change duplicate requirement, scenario, acceptance, lifecycle, traceability, waiver, or artifact-contract behavior outside OpenSpec instead of linking to canonical IDs or source paths?
 - If docs, specs, memory, role guides, or generated views disagree, was the canonical owner identified and the derived surface corrected?
 - Do generated or role-facing summaries include source links, source metadata, or a clear pointer back to the canonical artifact?

@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. The deterministic process artifact exists (`templates/change/`, `scripts/validate_change.py`, and pre-commit configuration), and the 2026-07-09 Option A archive promoted eight readiness-complete OpenSpec changes into accepted specs. The main direction remains the deterministic SDD process layer, not a custom command-line product; Confluence publication automation is still a later layer.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is ready to build an externally certified transfer-ready release candidate from the existing deterministic template/validator prototype. The release candidate must include the reusable process package, configuration/bootstrap/update/rollback, thin-flow entry points, bounded weak-model operating kit, actual Qwen/DeepSeek certification, AI-disabled evidence, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 
@@ -19,6 +19,7 @@ In scope:
 - Integration boundaries for Bitbucket, Jenkins, Confluence, Jira or an equivalent tracker, code repositories, QA repositories, and AT repositories.
 - Change packages with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability.
 - Local AI support for drafts, reviews, context packs, and test or automation skeletons.
+- External certification of the first thin flow with Qwen/DeepSeek-class assistants while all gates remain executable with AI disabled.
 - Phase-based delivery of a minimal pilot, task automation, QA/AT automation, and process hardening.
 
 Out of scope:
@@ -47,7 +48,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-03: Deliver the SDD process through the deterministic base first: templates, validation scripts, pre-commit/Jenkins checks in `team-specs`, standard tool features (Bitbucket default reviewers, Jira Automation, markdown->Confluence publisher, OpenSpec CLI), and AI role skills as a convenience layer. A custom wrapper is optional future ergonomics only when the trigger criteria in `docs/IMPLEMENTATION_STRATEGY.md` fire.
 - 2026-07-03: OpenSpec means Fission-AI/OpenSpec; the team reference documentation is <https://lzw.me/docs/openspec> (community multilingual mirror; upstream docs win on discrepancy); the CLI version is pinned.
 - 2026-07-03: Jira and Confluence access from AI tooling goes through MCP servers, not hand-written REST integrations; MCP was tested by the human owner and works. Automating local MCP server provisioning for employees is a planned experiment.
-- 2026-07-03: Development happens in an external environment (Claude Code available) and is later transferred to the internal corporate environment where only GigaCode CLI is available; all process guarantees must live in the deterministic layer, skills must be tool-agnostic markdown, and an environment adaptation review is required before transfer.
+- 2026-07-03, refined 2026-07-13: Development happens externally and produces an accepted transfer-ready release candidate before entry into the internal corporate environment. The external package is certified with actual Qwen-class and DeepSeek-class assistants plus an AI-disabled walkthrough; the internal environment may expose Qwen/DeepSeek/GigaCode-class tools and is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
 - 2026-07-03: Start Phase 1 with the deterministic base artifact `templates/change/` + `scripts/validate_change.py` + `.pre-commit-config.yaml`, tracked as project OpenSpec change `add-change-template-validation`.
 - 2026-07-06: Approve the risk-oriented thin/full artifact matrix as the Phase 1 default: thin behavior-changing SDD changes need intent, OpenSpec delta, scenario, traceability, and verification evidence; full packages are required for new feature, public API, mobile, cross-repo, data/security, high-risk, or broad behavior changes.
 - 2026-07-06: Approve role-appropriate waiver ownership: QA owners approve test evidence gaps, AT owners approve automation gaps, tech leads approve design/risk exceptions, and analyst/product owners approve scope or documentation exceptions, with reason, affected requirement/scenario, approver, substitute evidence, and follow-up/expiry when risk remains.
@@ -70,6 +71,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-06: Treat reusability by other teams - easy bootstrap of the deterministic base, templates, and skills in another team - as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
 - 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
 - 2026-07-09: Accept the full Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes into accepted specs in one batch execution step; future corrections now use new OpenSpec changes against `openspec/specs/`.
+- 2026-07-13: Require an externally completed transfer-ready release candidate before corporate adaptation. Reusable core, deterministic gates, process package, bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are external work; the corporate environment is limited to real configuration, approved wiring, thin adapters, and a monitored pilot. Planning is gate-based and does not record delivery dates or calendar deadlines.
 
 ## Architecture Sources
 
@@ -83,7 +85,8 @@ Current architecture sources:
 - `docs/CONTEXT.md` for canonical terms and boundary rules.
 - `docs/IMPLEMENTATION_STRATEGY.md` for the accepted deterministic-process-first delivery strategy.
 - `docs/ROADMAP.md` and `docs/phases/` for phase scope, gates, and current work.
-- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued planning input on project memory, Graphify-like navigation, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability.
+- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the broader memory/guardrail source analysis; its minimum transfer subset is promoted into the active Phase 2 change.
+- `openspec/changes/define-transfer-ready-process-package/` for the proposed transfer-readiness and weak-model-guardrail behavior, design, and implementation tasks.
 - `openspec/specs/` for accepted SDD workflow, artifact, traceability, waiver, documentation, topology/config, and Confluence feedback contracts; `openspec/changes/` for future proposed changes and archived source packages.
 
 Important concepts preserved in current docs:
@@ -110,6 +113,8 @@ The first useful delivery should prove the smallest thin SDD change flow at pilo
 3. Create a Spec PR.
 4. Archive the completed change into living specs.
 5. Preserve enough traceability to show requirement -> scenario -> change evidence.
+
+Before that flow moves into the corporate environment, Phase 2 must package it as a reproducible external release candidate, prove all gates with AI disabled, certify the bounded analyst/developer/QA workflows using actual Qwen-class and DeepSeek-class assistants, and provide installation, compatibility, transfer, and rollback evidence. Phase 3 then supplies real project/owner/path configuration, approved integration wiring, the available model adapter, and one monitored real pilot.
 
 Confluence publication, Jira task creation, QA/AT proposal generation, and role inboxes remain important, but they are not required for the first MVP unless the human owner explicitly re-scopes the pilot.
 

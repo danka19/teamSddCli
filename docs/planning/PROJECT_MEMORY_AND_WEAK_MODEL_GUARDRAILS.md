@@ -1,6 +1,6 @@
 # Project Memory And Weak-Model Guardrails
 
-Status: Phase 1 planning input; not an accepted implementation contract yet.
+Status: active cross-phase planning source. The minimum transfer-readiness subset is now proposed by `define-transfer-ready-process-package`; broader project-memory capabilities remain later planning input.
 
 Date: 2026-07-06.
 
@@ -43,7 +43,7 @@ Human planning defaults accepted on 2026-07-09:
 - the first graph/navigation implementation should be a lightweight deterministic index or script, not a graph database from day one;
 - mandatory pilot guardrails are read packs, role skills, and evidence checklists;
 - first role guides are analyst, developer, and QA thin-change walkthroughs;
-- these ideas remain Phase 1/Phase 4 planning input and should not expand the first thin MVP unless the human owner explicitly re-scopes it.
+- the human owner re-scoped the minimum weak-model operating kit into Phase 2 transfer readiness: deterministic task launch, authority-labelled bounded read packs, analyst/developer/QA role instructions, evidence boundaries, negative cases, AI-disabled fallback, and actual Qwen/DeepSeek certification; graph-backed navigation, broad memory sync, and repeated-error automation remain later work.
 
 Still not accepted:
 
@@ -389,4 +389,4 @@ Future verification should cover:
 
 ## Recommended Next Planning Step
 
-Create an OpenSpec proposal for `define-project-memory-and-weak-model-guardrails` after the current Phase 1 proposal set is synchronized enough to avoid overlap with documentation governance, repo topology/config, traceability, and OpenSpec version policy.
+Implement the minimum transfer subset through active proposal `openspec/changes/define-transfer-ready-process-package/` and `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`. After the real pilot, use measured gaps to decide whether the broader project-map, navigation-index, repeated-error-memory, and spec-questioning capabilities need a separate OpenSpec change.

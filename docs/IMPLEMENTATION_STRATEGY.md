@@ -36,16 +36,17 @@ A custom `sdd` CLI is built only when the trigger criteria in section 6 fire, an
 
 Development happens in two environments, in order:
 
-1. External development environment (current): Claude Code and comparable strong AI CLIs are available. The toolchain (templates, scripts, skills, pipelines) is designed and proven here.
-2. Internal corporate environment (target): only GigaCode CLI is available as the AI assistant, and it performs noticeably worse than Claude for this kind of work. The finished toolchain is transferred there.
+1. External development environment (current): Claude Code and comparable strong AI CLIs are available. The reusable toolchain is designed, implemented, and certified here, including actual Qwen-class and DeepSeek-class weak-model runs plus an AI-disabled walkthrough.
+2. Internal corporate environment (target): Qwen/DeepSeek/GigaCode-class assistants may be available and perform noticeably worse than Claude for this kind of work. Only an externally accepted release candidate is transferred; internal work is limited to real configuration, approved integration wiring, thin adapter setup, environment checks, and a monitored pilot.
 
 Portability rules derived from this constraint:
 
 - All guarantees stay in the deterministic layer (section 1 hard rule); the weaker corporate assistant only degrades convenience, never correctness.
-- Skills are authored as plain markdown instruction files with tool-agnostic content; per-tool packaging (Claude Code skill format, GigaCode equivalent) is a thin adapter kept separate from the instructions themselves.
+- Skills are authored as plain markdown instruction files with tool-agnostic content; per-tool packaging for Qwen, DeepSeek, GigaCode, Claude Code, or another supported surface is a thin adapter kept separate from the instructions themselves.
 - No external-only dependencies inside gates: scripts must run on the corporate stack (verify Python availability, network restrictions, artifact mirrors).
-- Before transfer, run an environment adaptation review: MCP availability and policy in the corporate network, GigaCode capability check against each skill flow, Bitbucket/Jenkins/Jira/Confluence versions (Cloud vs Server/DC), and secrets handling.
-- Expect follow-up adjustments after transfer; record them as changes to this strategy rather than ad-hoc divergence.
+- Before transfer, accept a reproducible release candidate with clean bootstrap, package/config/OpenSpec compatibility, thin-flow evidence, update/rollback, privacy checks, AI-disabled operation, and actual Qwen/DeepSeek certification.
+- During corporate adaptation, verify MCP availability and policy, the available Qwen/DeepSeek/GigaCode adapter, Bitbucket/Jenkins/Jira/Confluence versions (Cloud vs Server/DC), secrets handling, network rules, and artifact distribution without redesigning reusable process behavior.
+- Follow-up adjustments that affect reusable behavior return to the external OpenSpec/change workflow and a new package release rather than becoming ad-hoc internal divergence.
 
 ## 5. Success and Usability Criteria
 
@@ -81,7 +82,7 @@ A trigger fires when the condition persists for two consecutive sprints after at
 | T1 | M1 missed because of manual gluing between tools (not review wait time) | `sdd change new/validate` ergonomics commands |
 | T2 | Script sprawl: shared logic duplicated across 3+ repos, or validation scripts grow past maintainability with a rising defect rate | Consolidation of scripts into a distributed CLI |
 | T3 | Cross-repo operations (multi-repo changes, coordinated branches/PRs) done by hand repeatedly every sprint | Cross-repo orchestration commands |
-| T4 | GigaCode CLI cannot reliably execute the skill flows in the corporate environment | Deterministic commands replacing the assistant layer for affected flows |
+| T4 | The available Qwen/DeepSeek/GigaCode-class assistant cannot reliably execute a bounded role flow after one documented remediation attempt | Deterministic commands, simpler instructions, or mandatory-human execution replacing the assistant layer for affected flows |
 | T5 | MCP is restricted or unavailable in the corporate environment | A packaged integration layer as MCP fallback |
 | T6 | U1 onboarding repeatedly fails for new team members | Unified UX entry point |
 

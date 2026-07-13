@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: Phase 2 planning and production `team-specs` setup after the Phase 1 accepted-spec baseline.
+- Current roadmap focus: execute the ready Phase 2 plan and build the externally certified transfer-ready process package after the Phase 1 accepted-spec baseline.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -15,7 +15,8 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human feedback from 2026-07-06 (adoption-readiness batch) adopts `Master Spec` / `Delta Spec` team-facing terminology and the other-team reusability constraint for the topology proposal, and opens the analytics language, existing-Confluence migration, and diagram/asset storage decisions (see the Phase 1 plan and AUDIT-018).
 - Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, editable/disableable SLA, weak-model guardrail, and role-guide planning defaults. The first generated Confluence view set is deferred to the corporate environment.
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
-- Management deadline recorded 2026-07-07: SDD/OpenSpec adoption is mandatory within 1.5 months (by ~2026-08-20) — remaining Phase 1 gates, validator reconciliation (1.8), a production `team-specs` setup, and a real-change pilot must land inside that window; Q3 2026 must show measurable pilot results and Q4 2026 must deliver the AI-automation layers. The deadline is met by the thin flow alone; later layers are not adoption preconditions.
+- Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
+- Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
 ## Phase 0. Project Foundation
@@ -55,44 +56,61 @@ Likely scope:
 Detailed plan:
 
 - `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md`
-- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for the queued project-memory and weak-model planning input that may become a later OpenSpec proposal.
+- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` for broader memory planning; its minimum transfer-readiness subset is now promoted into active change `define-transfer-ready-process-package` and Phase 2.
 
 Current work:
 
 - Completed deterministic baseline artifact: `templates/change/`, `scripts/validate_change.py`, and `.pre-commit-config.yaml`.
-- Completed accepted-spec baseline on 2026-07-09: `openspec list` reports no active changes, and `openspec list --specs` reports eight accepted specs: `change-package-foundation`, `change-lifecycle`, `change-artifact-contracts`, `traceability-contract`, `waiver-policy`, `documentation-governance`, `repo-topology-config`, and `confluence-feedback-loop`.
+- Completed accepted-spec baseline on 2026-07-09: immediately after the archive, `openspec list` reported no active changes and `openspec list --specs` reported eight accepted specs. Phase 2 now has active change `define-transfer-ready-process-package` against that baseline.
 - Confluence feedback/source/publication-read-model contracts are accepted, but actual Confluence publication automation and first generated-view selection remain later-layer work after corporate-environment validation.
 
-## Phase 2. Architecture And Data Model
+## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
+
+Status: ready. The transfer boundary is accepted, the detailed phase plan exists, and work item 2.1 is unblocked.
+
+Goal: build and externally certify a reusable release candidate for the deterministic thin-change process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
+
+Detailed plan:
+
+- `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`
+
+Active OpenSpec change:
+
+- `openspec/changes/define-transfer-ready-process-package/`
+
+Scope:
+
+- Create the versioned `process/` package, synthetic central `team-specs` bootstrap, central/project config schemas, owner/project registries, OpenSpec pin checks, and compatibility validation.
+- Package the accepted thin flow: create, validate, Spec PR support, archive support, traceability, update, and rollback without AI-owned gates.
+- Add deterministic task launch, authority-labelled bounded read packs, evidence output, role instructions, and thin Qwen/DeepSeek/GigaCode adapter templates.
+- Certify analyst, developer, and QA thin-change workflows using actual Qwen-class and DeepSeek-class runtimes plus an AI-disabled walkthrough.
+- Add release manifest, clean-bootstrap rehearsal, update/rollback evidence, private-data checks, transfer runbook, corporate inventory, and pilot templates.
+- Keep custom Jira/Confluence clients and all later-layer automation outside the phase.
+
+Phase gate:
+
+- Human accepts the reproducible external release candidate after all deterministic, AI-disabled, Qwen-class, DeepSeek-class, rollback, privacy, and documentation checks pass.
+
+## Phase 3. Corporate Adaptation And Real Thin-Change Pilot
 
 Status: planned. A detailed phase plan has not been accepted yet.
 
-Goal: define the stable data model, core entities, storage boundaries, schemas, and integration contracts for the deterministic process layer. Per the accepted `docs/IMPLEMENTATION_STRATEGY.md`, no custom `sdd` CLI is built in this phase; CLI architecture questions apply only if a strategy trigger fires.
+Goal: install the accepted Phase 2 release candidate in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real thin-change pilot.
+
+Dependency gate:
+
+- Phase 3 cannot start until the Phase 2 external release candidate is explicitly accepted.
+- Phase 3 must not redesign reusable process behavior or maintain an internal package fork. Reusable gaps return to the external OpenSpec/change workflow.
 
 Likely scope:
 
-- Model `change.yaml`, `traceability.yaml`, owners registry, projects registry, quality policy, and local state.
-- Decide implementation language/runtime for `sdd CLI` only if a `docs/IMPLEMENTATION_STRATEGY.md` trigger has fired; otherwise the deterministic scripts remain the implementation surface.
-- Define adapters for OpenSpec CLI, Git, and PR creation first; defer Bitbucket/Jenkins/Confluence/Jira write integrations until the thin flow is stable.
-- Define CLI mutation contracts: dry-run behavior, idempotency, machine-readable JSON output, and auditable action logs.
-- Establish validation gates for thin Spec PR/archive first, then broaden to Code PR, QA PR, and AT PR gates in later work.
-
-## Phase 3. First Usable Workflow
-
-Status: planned. A detailed phase plan has not been accepted yet.
-
-Goal: implement the smallest end-to-end pilot flow that proves SDD automation value.
-
-Naming note: the `sdd change ...` names below denote the four thin-flow capabilities, not a shipped CLI binary. Per the accepted strategy they are delivered through templates, `scripts/validate_change.py`, pre-commit/CI, standard tool features, and AI role skills; a custom CLI wraps them only when a `docs/IMPLEMENTATION_STRATEGY.md` trigger fires.
-
-Likely scope:
-
-- `sdd change new` (create a change package from templates)
-- `sdd change validate` (deterministic package validation)
-- `sdd change pr` (Spec PR creation support)
-- `sdd change archive` (archive into living specs after human approval)
-- Basic `traceability.yaml` validation.
-- Supporting setup or doctor behavior only where required to make the thin flow usable.
+- Verify corporate runtime, OpenSpec/Git/package compatibility, network and artifact restrictions, MCP policy, and available Bitbucket/Jenkins/Jira/Confluence capabilities.
+- Populate real project paths, `projects.yaml`, `owners.yaml`, optional project adapters, policy overrides, and approved secret references.
+- Configure supported standard-tool integrations and the available Qwen/DeepSeek/GigaCode adapter without moving gates into AI.
+- Re-run package/config/release checks and the AI-disabled thin flow in the real environment.
+- Execute one bounded real change through creation, validation, Spec PR review, human approval, implementation evidence, traceability, and archive readiness.
+- Record compatibility, usability, intervention, deviation, rollback/hold, and follow-up evidence.
+- Complete OpenSpec task 7.5 and stop for human pilot/contract acceptance before archive promotion.
 
 Explicitly deferred from the first MVP:
 
@@ -102,27 +120,27 @@ Explicitly deferred from the first MVP:
 - `sdd at propose`
 - `sdd inbox`
 
-## Phase 4. Hardening And Pilot Readiness
+## Phase 4. Post-Pilot Hardening And Expansion
 
 Status: planned. A detailed phase plan has not been accepted yet.
 
-Goal: improve reliability, safety, command usability, process operations, and acceptance evidence for pilot usage.
+Goal: harden the accepted real workflow, act on measured pilot evidence, and add later layers only through new accepted changes.
 
 Likely scope:
 
-- Waiver policy and evidence requirements.
+- Pilot-driven reliability, usability, compatibility, and support-burden improvements.
+- Broader project memory, project map drift checks, repeated-error memory, and deterministic sync/upgrade maintenance beyond the minimum Phase 2 operating kit.
+- Legacy baseline workflow for existing product areas when the pilot expands beyond the first bounded change.
 - Confluence preview/final publication after the feedback loop contract is specified.
 - Generated publication model implementation after feedback-loop, source-warning, localization, and generated-view contracts are accepted.
 - Customer journey and screen/gallery generated views after journey/screen metadata contracts are proven.
-- Legacy baseline workflow for existing product areas when a pilot touches already-written behavior.
-- Project memory sync, project map drift checks, and template/spec-package upgrade migration after topology/config and OpenSpec version policies are accepted.
-- Analyst and QA onboarding materials after the role workflows and first thin flow are stable enough to explain without overpromising later integrations.
+- Expanded analyst/developer/QA onboarding after the pilot validates the first role instructions.
 - Jira task planning/creation after thin change archive works.
 - Role inbox hardening after task/status sources are stable.
 - QA/AT proposal and skeleton generation after scenario and traceability contracts are validated.
 - Drift detection for generated Confluence blocks.
 - Bitbucket Code Insights or equivalent reporting.
-- Read-only MCP exploration only after CLI/API flow is working.
+- Read-only MCP exploration only after the deterministic and standard-tool flow is working.
 
 ## Phase Planning Rule
 

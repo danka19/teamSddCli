@@ -171,7 +171,7 @@ Affected specs: Proposed documentation-governance behavior, future repo topology
 Affected architecture: Points toward deterministic navigation/indexing, concise evidence-backed memory, generated or validated project maps, reusable failure-pattern records, and a spec-questioning workflow before implementation planning.
 Data contract impact: Possible future contracts for memory index, known failure records, role guides, documentation lint rules, and spec-question prompts; no data contract is accepted yet.
 Verification impact: Future work should define checks for stale docs, orphaned docs, unreferenced memory entries, repeated failure recurrence, and role walkthrough evidence for QA/analyst usability.
-Status: deferred. Detailed planning input is captured in `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`; it is not accepted implementation scope.
+Status: superseded. The Phase 1 deferral was replaced by the accepted Phase 2 transfer boundary; the minimum weak-model operating kit is now proposed in `define-transfer-ready-process-package` and planned in `PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`, while broader memory capabilities remain deferred.
 ```
 
 ```text

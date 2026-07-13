@@ -42,9 +42,11 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/` | Focused audit reports |
 | `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
 | `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` | Documentation/architecture audit: findings F1-F6, drift records, and the open human decision batch |
+| `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md` | Evidence-backed audit of phase status, deterministic baseline, weak-model readiness, transfer gaps, and the accepted remediation boundary |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
+| `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | Ready Phase 2 plan for the external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 
 ## OpenSpec
@@ -59,6 +61,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/specs/documentation-governance/spec.md` | Accepted spec for documentation source ownership, AI verification evidence, TDD-style checks, canonical language, localized generated views, write-once/reference-many rules, and weak-model read packs |
 | `openspec/specs/repo-topology-config/spec.md` | Accepted spec for the first supported repository topology, config files, process package distribution, OpenSpec version pin/upgrade policy, and owner/reviewer registry |
 | `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
+| `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 31 implementation tasks |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts
@@ -70,14 +73,19 @@ This document is the repository map for agents and humans. Keep it current whene
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
 
-## Expected Future Project Structure
+## Planned Phase 2 Project Structure
 
-These paths are expected by the documented SDD workflow but do not exist yet in this folder:
+These paths are planned by the ready Phase 2 plan but do not exist yet in this folder:
 
 | Path | Purpose |
 |---|---|
-| `src/` | Future CLI implementation source |
-| `schemas/` | Future schemas for `change.yaml`, registries, traceability, and config |
+| `process/` | Versioned reusable process-package source with metadata, workflow contract, schemas, templates, validators, role instructions, adapters, and certification fixtures |
+| `templates/team-specs/` | Synthetic central topology bootstrap with placeholder-only `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, and canonical folders |
+| `templates/project-adapter/` | Optional `.sdd-project.yaml` adapter template for project repositories |
+| `docs/runbooks/` | Setup, update/rollback, corporate adaptation, and thin-pilot runbooks created during Phase 2 |
+| `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
+| `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |
+| `scripts/certify_process_release.py` | Planned AI-disabled and weak-model release certification entry point |
 
 ## Skills
 
