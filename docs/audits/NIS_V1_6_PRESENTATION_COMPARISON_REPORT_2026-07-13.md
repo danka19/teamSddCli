@@ -1,499 +1,283 @@
-# NIS v1.6 Presentation Comparison And Adoption Report
+# NIS v1.6 Presentation Comparison Report
 
-Date: 2026-07-13.
+Date: 2026-07-13
+Status: updated after the human decision to exclude process-effectiveness evaluation; presentation-ready current comparison.
+Normative owner: `D-013` and `openspec/changes/adopt-nis-corporate-process-governance/`.
 
-Status: presentation-ready read model of accepted decision `D-013`. It summarizes evidence and accepted direction; it is not a second normative process source and does not mean the proposed behavior has been implemented.
+## 1. Executive Summary
 
-Canonical sources:
+NIS does not replace the teamSddCli architecture. Git/OpenSpec remains canonical, Confluence remains a generated publication surface, Jira remains workflow/status, Bitbucket PR remains review/audit, Jenkins remains deterministic verification, and AI remains advisory.
 
-- human decision: `docs/DECISIONS.md`, `D-013`;
-- evidence audit: `docs/audits/NIS_V1_6_ARCHITECTURE_COMPATIBILITY_AUDIT_2026-07-13.md`;
-- complete adoption and source-coverage plan: `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`;
-- proposed normative behavior: `openspec/changes/adopt-nis-corporate-process-governance/specs/`;
-- architecture rationale: `openspec/changes/adopt-nis-corporate-process-governance/design.md`;
-- implementation backlog: `openspec/changes/adopt-nis-corporate-process-governance/tasks.md`.
+NIS strengthens the operating process with corporate practices that were previously incomplete:
 
-## 1. Executive Summary For Presentation
+- flat `minor | major | hotfix` classification;
+- explicit criteria for when work may start and when it is complete;
+- first-class Tech Lead governance and automation support;
+- quality strategy and regression ownership;
+- scope-drift, stop, hold, escalation, and resume controls;
+- release/transfer-package handoff;
+- separation of archive, release, and external Done;
+- role-understanding evidence;
+- bounded pilot safety;
+- retention of failed attempts after retry.
 
-The project does not copy NIS verbatim. It adopts the corporate delivery process that matches real work, keeps the parts that already align with the project architecture, repairs inconsistent or unsafe rules, and rejects team-specific organization and project structure.
+The project does not borrow the NIS process-effectiveness evaluation layer. The future process contains no effectiveness scorecard, comparison groups, separate comparison-assurance role, comparison-contamination records, missing-measurement-data rules, sample rules, or outcome thresholds.
 
-The central accepted decision is:
+## 2. One-Slide Decision
 
-```text
-Target classification: minor | major | hotfix
-Legacy migration: thin -> minor, full -> major
-No legacy value maps to hotfix automatically
-```
-
-The project also accepts NIS-derived business gates, Tech Lead governance, quality and regression controls, release-package handoff, stop/escalation behavior, role-understanding evidence, measurement, and controlled-pilot practices.
-
-What remains unchanged from the project architecture:
-
-- Git/OpenSpec is canonical;
-- Confluence is generated publication;
-- Jira/tracker owns workflow status, not requirements;
-- CI and deterministic checks own validation evidence;
-- humans own approval, risk, merge, release, archive, and correctness decisions;
-- AI is an assistant, not a process authority;
-- reusable behavior is developed and certified externally before corporate adaptation;
-- PPRB organization and NIS repository structure are not adopted.
-
-Implementation status:
-
-- accepted as documentation and architecture direction;
-- fully specified in an apply-ready OpenSpec change;
-- 47 implementation tasks are planned;
-- current accepted specs and validator still represent the legacy Phase 1 thin/full implementation baseline until the change is implemented, verified, accepted, and promoted.
-
-## 2. Short Answer: Metrics And Control Ideas Recorded
-
-Yes. The documentation records both outcome metrics and experiment/control ideas.
-
-### 2.1 Outcome and process metrics
-
-| Metric family | What is recorded |
+| Question | Decision |
 |---|---|
-| End-to-end cycle time | Time from accepted input to the defined result, with explicit start and end events |
-| Active human effort | Time spent on clarification, decisions, review, verification, approval, and recovery |
-| Machine/runtime time and cost | Model/tool execution, retries, adapter failures, and approved cost source |
-| Waiting and handoff time | Internal queue, review wait, external dependency wait, and team handoff intervals |
-| Context switching and WIP | Leave/resume events, concurrent work, attribution limitations, and privacy boundary |
-| First-pass acceptance | Share of changes accepted at the defined first review or verification point |
-| Material defects | Critical/material defect rules, escaped defects, rollback, and support evidence |
-| Rework | Repeated implementation, spec correction, review cycles, and post-verification repair |
-| Engineering-package completeness | Substantive class-specific evidence, not simple file counts |
-| Manual intervention | Human corrections, fallbacks, overrides of AI proposals, and recovery actions |
-| Repeatability | Stability of results across comparable runs, models, projects, or process versions |
-| Tool and adapter reliability | Failed runs, retries, MCP/adapter/runtime availability, and evidence corruption |
-| Waivers, deferrals, and bypasses | Denominator, approver, expiry, residual risk, and unresolved follow-up |
-| Delivery stability | Applicable lead time, deployment frequency, change failure, restore time, escaped defects, support, and rollback after the operability pilot |
+| Does NIS become the architecture? | No. Existing teamSddCli architecture remains authoritative. |
+| Does NIS become primary corporate-process input? | Yes. |
+| Which classification is accepted? | Flat `minor | major | hotfix`. |
+| How is legacy metadata migrated? | `thin -> minor`, `full -> major`; hotfix is never inferred. |
+| What is the main operational addition? | Business gates, Tech Lead governance, quality/regression, stop/release controls, and role evidence. |
+| What evaluation material is adopted? | None. |
+| What single rule is retained from that material? | Failed attempts remain visible after successful retry. |
+| Is the NIS team/project structure copied? | No. PPRB organization and NIS repository layout are excluded. |
 
-### 2.2 Control and comparison ideas
+## 3. What Was Already The Same
 
-The documentation records:
-
-- historical baseline;
-- concurrent control when separately justified;
-- experimental treatment;
-- certification runs;
-- production follow-up;
-- fixed identical input and source baseline for a paired comparison;
-- predefined acceptance set and allowed differences;
-- isolation between treatment and control;
-- independent assurance ownership;
-- input-change and contamination records;
-- automatic event collection where possible;
-- labelled manual data where automation is unavailable;
-- failed-run retention;
-- missing-data and non-comparability rules;
-- sample-entry, minimum-analysis, decision-ready, rollout, and stop gates;
-- explicit decisions: scale, bounded rollout, continue collection, revise and repeat, hold, or stop.
-
-The control branch is optional, not mandatory for every pilot. A paired implementation can improve comparison quality, but it may also double cost, delay delivery, or increase data exposure. A bounded Phase 3 operability pilot may use approved historical evidence instead.
-
-### 2.3 What is not accepted as proof
-
-The following may be diagnostic data but cannot prove effectiveness by themselves:
-
-- number of generated files;
-- number of prompts;
-- volume of AI usage;
-- checklist completion;
-- fluent AI output;
-- one successful real change;
-- green deterministic checks without outcome comparison;
-- archive completion without production evidence.
-
-## 3. What Is The Same In NIS And The Project
-
-These ideas were already aligned before the NIS adoption decision.
-
-| Area | Shared position | Project interpretation |
+| Area | Existing teamSddCli direction | NIS alignment |
 |---|---|---|
-| Engineering source of truth | Git-centered engineering artifacts | Git/OpenSpec is canonical; generated views cannot own behavior |
-| Workflow tracker | Tracker records intake and status | Jira or equivalent does not own requirements |
-| Generated publication | Business readers need readable views | Confluence is generated from canonical source and links back to it |
-| Human accountability | People remain responsible for decisions | AI and CI cannot approve, merge, accept risk, or archive |
-| AI execution vs responsibility | AI can perform or prepare work | Every AI result remains proposed evidence until deterministic/human review |
-| Traceability | Work must connect input to output | Requirement -> scenario -> implementation -> test -> release evidence |
-| Quality before release | Verification must be planned and evidenced | Quality strategy, regression matrix, QA ownership, and completion gates |
-| Stop and escalation | Unsafe or invalid work must stop | Structured stop/hold/escalation/resume records and non-disableable minimum triggers |
-| Release handoff | A release candidate needs a complete package | Version, contents, tests, limits, instructions, rollback, support, and owners |
-| Outcome measurement | Process value must be measured, not assumed | Cycle, effort, cost, quality, completeness, intervention, and stability evidence |
-| Failed-run visibility | Failures must not disappear after retry | Failed AI, adapter, validation, and workflow runs remain in evidence |
-| Controlled rollout | Expansion requires evidence and a decision | External release gate, corporate operability pilot, then a separate scale gate |
+| Canonical source | Git/OpenSpec owns behavior | Git-centered process and reconstructable evidence |
+| Human authority | Humans approve, merge, waive, release, and archive | Named role ownership and decision records |
+| AI boundary | AI drafts and checks but cannot own gates | AI execution is separated from accountable decisions |
+| Traceability | Requirement/scenario/change/implementation/test links | End-to-end reconstructability |
+| Quality | Scenario-first checks and deterministic validation | Quality strategy and regression discipline |
+| Safety | Stop points, waivers, rollback, secret/private-data boundaries | Explicit stop and release controls |
+| Portability | Reusable external package before corporate adaptation | Repeatable process package and role guidance |
+| Corporate systems | Jira/Confluence/PR/CI remain distinct systems | Cross-system operating flow |
 
-Presentation message:
-
-> NIS does not replace the architecture. It gives the architecture a stronger corporate operating process and measurement layer.
+The strongest agreement is architectural: process guarantees cannot depend on one AI model, and accountable humans remain visible.
 
 ## 4. What Is Borrowed From NIS
 
 ### 4.1 Flat change classification
 
-The project adopts the NIS classification as the only target process-route vocabulary:
+The target enum is:
 
-- `minor`;
-- `major`;
-- `hotfix`.
-
-No hidden second classification axis is introduced. Work `type`, lifecycle `status`, and risk evidence are separate metadata, not competing process routes.
+```text
+minor | major | hotfix
+```
 
 #### Minor
 
-Minor is allowed only when all low-impact conditions are known and satisfied:
+Minor is permitted only when all low-impact conditions are known and satisfied. Unknown impact is not minor.
 
-- local and small change;
-- simple rollback;
-- no user-scenario impact;
-- no SLA impact;
-- no security/compliance impact;
-- no external-integration impact;
-- no data-model impact;
-- no component-interaction impact;
-- no public-API or cross-repository impact;
-- no material reliability, performance, operations, governed-test, or governed-documentation impact;
-- no architecture decision requirement.
-
-Unknown impact does not count as low impact.
+Minor must remain local and small, have simple rollback, and avoid user-scenario, SLA, security/compliance, integration, data-model, component, public-API, cross-repository, reliability, performance, operations, governed-test, governed-documentation, and architecture impact.
 
 #### Major
 
-Major is mandatory when any major trigger exists:
+Major is required when any major trigger exists: feature/business logic, user scenario, component interaction, governed test/documentation obligations, API/integration/data/security/compliance/SLA, dependency/cross-repository, reliability/performance/operations, material regression risk, difficult rollback, or architecture decision.
 
-- new feature;
-- changed business logic or user scenario;
-- changed component interaction;
-- changed required test behavior;
-- changed governed user or operational documentation;
-- public API, integration, data, security, compliance, or SLA impact;
-- external dependency;
-- cross-repository work;
-- reliability, performance, or operations impact;
-- regression risk;
-- high rollback cost;
-- architecture decision.
-
-A major trigger cannot be reduced to minor by a waiver, Tech Lead decision, or AI recommendation. Incorrect input evidence may be corrected and classification recalculated. A stricter route may always be selected. Weakening a canonical criterion requires a new accepted policy/OpenSpec change.
+A major trigger cannot be waived down to minor. Only corrected source evidence followed by recalculation, a stricter route, or a separate accepted policy change can alter the result.
 
 #### Hotfix
 
-Hotfix is used when delay increases concrete production or pre-production harm. It is not a shortcut for deadlines or reduced documentation.
+Hotfix is justified only when delay increases concrete harm. It accelerates sequence and waiting, not responsibility.
 
-Hotfix retains:
+It retains named ownership, minimum scenario/regression/safety evidence, security/compliance checks, rollback/hold, traceability, release-package evidence when releasable, and mandatory reconciliation before closure.
 
-- named human decision owner;
-- urgency and harm rationale;
-- bounded scope;
-- minimum test and regression evidence;
-- security/compliance decisions when triggered;
-- rollback or hold instructions;
-- traceability;
-- release-package evidence for a releasable result;
-- mandatory reconciliation of permitted deferred artifacts before closure.
+### 4.2 Business gates
 
-### 4.2 Business-process gates
+The project adopts distinct checkpoints:
 
-The project adopts NIS readiness and completion thinking but makes each state explicit.
+1. Preliminary triage.
+2. Review ready.
+3. Definition of Ready.
+4. Implementation complete.
+5. Definition of Done.
+6. Release/transfer ready when applicable.
+7. Archive ready.
+8. Archived.
+9. External Delivered/Done as an independent external state.
 
-| Gate or state | Meaning |
-|---|---|
-| Preliminary triage | Decide proceed, hold, split, redirect, or reject before team planning |
-| Review ready | Package has enough structure and evidence for Spec Review |
-| Definition of Ready | Common and class-specific evidence is sufficient for human implementation approval |
-| Implementation complete | Code/config, required tests, checks, and source-linked implementation evidence exist |
-| Definition of Done | Acceptance, defects, reviews, docs, traceability, waivers, and class obligations are complete |
-| Release/transfer ready | Reproducible artifact/handoff package, limitations, instructions, rollback, operations, and owners are complete |
-| Archive ready | Canonical evidence can be reconciled into accepted Master Specs |
-| Archived | Human-approved OpenSpec reconciliation is complete |
-| Delivered / production Done | Real tracker, deployment, customer, or operational state is satisfied according to corporate mapping |
-
-Archive and Delivered are independent. One is not inferred from the other.
+This prevents one word such as “done” from hiding missing verification, release, archive, or receiver acceptance.
 
 ### 4.3 Tech Lead governance and automation
 
-The project adopts Tech Lead as a first-class governed role.
+The Tech Lead becomes a first-class human role for:
 
-Human responsibilities:
+- classification and source-correction review;
+- readiness and missing-context control;
+- architecture/risk review;
+- owner/repository/dependency mapping;
+- scope-drift review;
+- stop/hold/escalation/resume;
+- engineering-completion review;
+- release-readiness recommendation;
+- waiver expiry and hotfix follow-up.
 
-- confirm or challenge classification;
-- prevent under-classification;
-- own technical readiness;
-- coordinate architecture and technical risk decisions;
-- verify repository, system, owner, and dependency coverage;
-- control technical stop/resume;
-- confirm engineering completion;
-- issue release-readiness recommendation.
-
-Automation to be built:
-
-- classification report and all triggered rules;
-- DoR blocker/advisory report;
-- bounded Tech Lead review pack;
-- repository/system/owner/dependency map;
-- architecture-decision required/not-required evidence;
-- scope-drift and missing-context report;
-- quality/regression gaps;
-- stop/hold/escalation and resume-condition report;
-- implementation-complete, DoD, and release-readiness reports;
-- waiver/deferral/expiry view;
-- hotfix reconciliation view;
-- configurable scheduled or event-driven control report;
-- later role inbox only after tracker/task sources are authoritative.
-
-AI may draft analysis but cannot confirm classification, approve DoR/DoD, accept residual risk, approve a waiver, resume held work, approve release readiness, or mutate canonical state.
+Automation may generate source-linked review packs, gap reports, stop/resume records, completion/release views, and configurable scheduled or event-driven control reports. It may not approve or impersonate another role.
 
 ### 4.4 Corporate flow controls
 
 Borrowed controls include:
 
 - preliminary initiative triage;
-- fixed approved input baseline;
-- material scope-change record and reassessment;
-- class-aware quality strategy before implementation;
-- source-linked regression matrix;
-- QA/test-owner approval of strategy, matrix sufficiency, and run results;
-- stop, hold, escalation, resume, and deviation records;
-- release-package handoff;
-- human decision log;
-- AI execution/certification log;
-- role-understanding walkthroughs;
-- controlled versus external time;
-- WIP and context-switch evidence;
-- pilot/project selection;
-- tracker/Git/OpenSpec/PR/CI/artifact repository/release traceability.
-
-Canonical production stop/hold triggers include:
-
-- missing or contradictory canonical context;
-- unapproved material scope drift;
-- unavailable required verification;
-- unresolved critical defect;
-- security, compliance, access, leakage, or accidental-delivery risk;
-- failed mandatory evidence collection;
-- owner-authority conflict;
-- unavailable rollback or hold path;
-- integration corruption of canonical evidence;
-- continued work beyond approved safety authority.
-
-Local configuration may add stop triggers but cannot remove these minimums without an accepted policy change.
+- approved input baseline;
+- material scope-drift reassessment;
+- class-aware quality strategy;
+- deterministic regression matrix;
+- QA/test-owner sufficiency and result disposition;
+- structured deviation, waiver, deferral, stop, hold, escalation, and resume evidence;
+- human decision log separated from AI execution evidence;
+- versioned release/transfer package;
+- receiver acceptance/deviation record;
+- portfolio WIP prioritization;
+- bounded pilot selection and safety;
+- no-fork feedback to the external canonical package.
 
 ### 4.5 Portable role model
 
-The project borrows responsibilities, not the PPRB organization chart.
+The reusable role map keeps responsibilities without copying PPRB hierarchy:
 
-| Responsibility | Portable target role |
+| Responsibility | Target owner |
 |---|---|
-| Business value, scope, product acceptance | Business/product owner |
-| Technical class, readiness, architecture/risk, stop/resume | Tech Lead, architect/security when triggered |
-| Requirements, scenarios, baseline, feedback, traceability | Analyst/change owner |
-| Implementation evidence | Developer/implementation owner |
-| Quality strategy, regression, tests, defect disposition | QA/test owner and AT owner where separately governed |
-| Release package, operations, rollback, support handoff | Release/deployment/support owner |
-| Independent comparison evidence | Control/assurance role when a controlled experiment is used |
-| Scale, continue, revise, hold, or stop decision | Configured process owner or sponsor, never AI |
+| Business value and scope | Business/product owner |
+| Requirements and scenarios | Analyst/product role |
+| Engineering design, classification, stop/resume | Tech Lead within authority |
+| Implementation and developer verification | Developer |
+| Quality strategy and regression disposition | QA/test owner |
+| Release/transfer/support | Release or support owner |
+| Specialized risk | Architecture, security, or compliance owner when applicable |
 
-Missing human ownership is a blocker. AI cannot fill an absent accountable role.
+Missing human ownership is a blocker; AI cannot fill it.
+
+### 4.6 Failed-run integrity
+
+When validation, AI, adapter, integration, or workflow execution fails, the failed attempt remains source-linked after a successful retry. Both attempts stay identifiable, and required disposition remains visible.
+
+This rule supports traceability, diagnosis, and safety. It is not used to score productivity or process value.
 
 ## 5. What Is Adapted Rather Than Copied
 
-| NIS idea | Why it needs adaptation | Accepted project form |
+| NIS idea | Why direct copying is unsafe | Project adaptation |
 |---|---|---|
-| AI creates every artifact | Useful as an experiment but unsafe as production dependency | Optional isolated treatment; production has deterministic, human-authored, manual fallback |
-| No manual testing | May hide exploratory, accessibility, security, operational, and incident risks | QA-owned strategy with automated and manual evidence as applicable |
-| Independent AI checker | Agent separation alone does not make evidence independent | AI may propose adversarial checks; deterministic evidence and human QA ownership remain required |
-| Paired manual control branch | Improves comparability but doubles cost and exposure | Optional when justified; approved historical comparator is allowed for bounded operability pilot |
-| Daily/weekly Tech Lead checks | Cadence varies by project | Configurable scheduled, release-based, or event-driven checkpoints with canonical report content |
-| Nexus linkage | Real artifact repository may differ or be unavailable | Generic immutable artifact coordinate; Nexus is one corporate configuration option |
-| Project-selection score | NIS files contain different formulas and weights | One approved local schema; representativeness, risk, rollback, privacy, comparator, and exclusions are explicit |
-| Viability thresholds | Memo, deck, standard, guide, and CSV disagree | One versioned metric/decision schema approved before collection |
-| Minimum sample | Package uses conflicting values | Separate entry, minimum-analysis, decision-ready, and rollout gates |
-| Experiment duration | A protocol needs an observation window | Stored as experiment configuration, never a roadmap deadline |
-| Control definition | NIS alternates between production team, manual specialist, and history | Primary comparator and secondary evidence are named before collection |
-| Whole-project rollout | May precede production stability and cross-project evidence | Phase 3 proves operability; Phase 4 or later owns effectiveness and scale evidence |
+| NIS as a complete standard | It mixes business process, organization, project layout, and unsafe AI assumptions | Extract portable process behavior into OpenSpec |
+| Hard-coded daily/weekly Tech Lead routine | Corporate cadence varies | Configurable scheduled or event-driven checkpoints |
+| One team hierarchy | PPRB is a different team | Portable responsibilities plus local owner mapping |
+| NIS repository structure | Project topology was already decided | Keep existing central package/config architecture |
+| No manual production work | Removes deterministic/human fallback | Human-authored and manual verification remain supported |
+| Universal release sequence | Archive and delivery order varies by system | Link the states but do not infer one from the other |
+| Project-selection formula | Fixed weights do not transfer safely | Qualitative class/risk/readiness/rollback/privacy selection record |
+| Broad rollout sequence | External certification and local safety come first | Phase 2 release candidate, then one bounded Phase 3 pilot |
 
 ## 6. What Does Not Match And Is Rejected
 
-### 6.1 Architecture conflicts
+### Architecture conflicts
 
-| Rejected default | Why it conflicts |
-|---|---|
-| AI owns production artifact creation | Makes process guarantees depend on model behavior and availability |
-| Zero manual authoring | Removes safe human fallback and can turn correction into a methodology failure |
-| No manual testing | Conflicts with human QA ownership and risk-based verification |
-| AI checker is sufficient independent evidence | Evidence independence requires external ownership and deterministic verification |
-| LLM/MCP availability at every stage | Core gates must work with AI disabled and integrations unavailable |
-| Confluence or duplicated documents become normative | Git/OpenSpec remains the single canonical behavior source |
-| NIS repository/project structure | The project already has an accepted topology and transfer boundary |
-| PPRB cluster/direction/team structure | It belongs to another team and was explicitly excluded by the human owner |
+- AI-only production constitution.
+- AI approval or correctness authority.
+- Mandatory LLM/MCP dependency for process gates.
+- PPRB organization and reporting lines as universal roles.
+- NIS repository/project layout as target structure.
+- Confluence/Jira copies becoming canonical rules.
 
-### 6.2 Safety and rollout conflicts
+### Safety conflicts
 
-| Rejected default | Why it conflicts |
-|---|---|
-| “No production risk” | Branch isolation reduces some risk but does not cover secrets, privacy, logs, access, accidental delivery, adapters, or rollback failure |
-| Busiest/highest-load project first | Improves representativeness but maximizes blast radius, dependencies, and data exposure |
-| Broad project switch after initial decision | May happen before production stability and cross-project evidence exist |
-| One successful change proves effectiveness | It proves bounded operability only |
-| Failed retries may disappear behind final success | Hides model/tool/process reliability and manual intervention cost |
+- “Zero risk” claims.
+- Manual work or testing forbidden in production.
+- Client delivery without explicit release/rollback ownership.
+- Busiest-project-first pilot as a universal default.
+- Automatic broad rollout after one bounded pilot.
 
-### 6.3 Documentation and measurement conflicts
+### Evaluation material excluded by human decision
 
-The NIS package contains verified internal disagreements:
+- process-effectiveness or productivity scoring;
+- historical, control, or experimental comparison cohorts;
+- separate comparison-assurance ownership;
+- comparison-contamination records;
+- missing-measurement-data treatment;
+- sample, analysis, decision, or rollout thresholds;
+- scorecards and outcome-based scale decisions.
 
-- document approval status;
-- viability thresholds;
-- allowed amount of manual execution;
-- minimum sample;
-- project-selection formula;
-- primary control definition;
-- rollout timing.
-
-Therefore, the package cannot be copied as one deterministic standard. The project uses one canonical OpenSpec/policy source and generates role guides, scorecards, dashboards, templates, and presentation views from it.
+Failed-run retention is the sole preserved rule from this excluded material.
 
 ## 7. Presentation-Ready Comparison Matrix
 
-| Topic | Same as our architecture | Borrow from NIS | Adapt or reject |
+| Topic | Already aligned | Borrowed or strengthened | Excluded or corrected |
 |---|---|---|---|
-| Source of truth | Git/OpenSpec canonical | End-to-end Git-centered evidence | Reject duplicated normative copies |
-| Change routes | Existing risk-aware process intent | Flat `minor|major|hotfix` and exact criteria | Replace legacy thin/full through migration |
-| Readiness | Human approval and deterministic evidence | Explicit DoR and class-specific gates | Do not equate ticket existence with readiness |
-| Completion | Human-owned validation/archive | DoD and complete release package | Split implementation, DoD, release, archive, Delivered |
-| Tech Lead | Existing waiver/design responsibility | Full classification/readiness/stop/release role | AI supports but never impersonates approval |
-| QA | Scenario and evidence orientation | Quality strategy and regression matrix ownership | Reject AI-only independent quality proof |
-| Release | Transfer/rollback already required | Full major/hotfix release package and external handoff | Artifact repository is configured, not assumed |
-| Metrics | Strategy already wanted outcome evidence | Cycle, effort, cost, acceptance, defects, completeness, intervention, repeatability | Normalize conflicting thresholds and data rules |
-| Control | AI-disabled and negative certification | Historical/control/experimental comparison discipline | Paired control is optional, not universal |
-| Pilot | External release before corporate work | Fixed input, stop rules, decision log, evidence collection | First real change proves operability, not scale |
-| Organization | Human roles and owner registry | Portable responsibility map | Reject PPRB structure and NIS team ratios |
-| Integrations | Jira/Confluence/MCP boundaries already defined | Artifact/release traceability | No custom clients or guessed corporate values |
+| Architecture | Git/OpenSpec canonical, human decisions | Cross-system evidence chain | NIS topology and PPRB hierarchy |
+| Classification | Risk-aware change handling | Flat minor/major/hotfix and legacy migration | Lower-class waiver |
+| Readiness | Spec Review and approvals | Explicit DoR | AI readiness approval |
+| Completion | Verification and archive evidence | Implementation complete, DoD, release, archive, Delivered separation | One overloaded Done state |
+| Tech Lead | Human architecture/risk ownership | First-class packs, reports, stop/resume, follow-ups | AI approval impersonation |
+| QA | Scenario and evidence orientation | Quality strategy and regression ownership | Separate comparison-control role |
+| Release | Traceability and rollback direction | Versioned release package and receiver acceptance | Zero-risk claim |
+| Pilot | External release before corporate use | Bounded safety/risk/rollback package | Evaluation program and automatic scale decision |
+| Execution history | Source-linked evidence | Failed attempts survive retry | Hiding failed runs |
 
 ## 8. Suggested Future Presentation Structure
 
 ### Slide 1: Why NIS matters
 
-- It describes real corporate delivery rather than an abstract SDD workflow.
-- It fills gaps in classification, readiness, completion, Tech Lead operations, release handoff, and measurement.
+NIS reflects real corporate delivery and fills gaps in classification, readiness, completion, Tech Lead operations, release handoff, and pilot safety.
 
 ### Slide 2: What was already the same
 
-- Git/OpenSpec truth;
-- human accountability;
-- deterministic gates;
-- generated Confluence;
-- tracker status;
-- traceability and audit.
+Git/OpenSpec source ownership, human authority, deterministic gates, traceability, and AI as assistant.
 
-### Slide 3: The accepted classification
+### Slide 3: Accepted classification
 
-- `minor | major | hotfix`;
-- `thin -> minor`, `full -> major`;
-- any major factor means major;
-- hotfix is accelerated but not simplified.
+Show `thin -> minor`, `full -> major`, and hotfix only for increasing concrete harm.
 
 ### Slide 4: When work may start
 
-- preliminary triage;
-- fixed scope/input;
-- classification;
-- requirements and scenarios;
-- quality/regression strategy;
-- risk, rollback, owners;
-- human DoR approval.
+Show triage, fixed input, Spec Review, DoR, owners, quality strategy, regression, risks, and rollback.
 
-### Slide 5: When work is really complete
+### Slide 5: When work is complete
 
-- implementation complete;
-- DoD;
-- release/transfer ready;
-- archive ready;
-- archived;
-- external Delivered/Done.
+Separate implementation complete, DoD, release ready, archive ready, archived, and external Done.
 
 ### Slide 6: Tech Lead automation
 
-- reports, review pack, dependencies, gaps, scope drift;
-- stop/resume and follow-up control;
-- release recommendation;
-- clear AI authority boundary.
+Show review packs, source-linked reports, scope/risk control, stop/resume, release recommendation, and follow-up visibility.
 
 ### Slide 7: Quality and release package
 
-- QA-owned quality strategy;
-- regression matrix and result disposition;
-- mandatory release package for releasable major/hotfix;
-- artifact, CI, tests, limitations, rollback, support.
+Show QA-owned strategy/regression and reproducible release/transfer handoff.
 
-### Slide 8: Metrics and controls
+### Slide 8: Pilot safety and failed runs
 
-- cycle, effort, cost, acceptance, defects, completeness;
-- intervention, repeatability, waiting, context switching;
-- historical/control/experimental/production labels;
-- failed runs, missing data, privacy, contamination.
+Show bounded risk, rollback/hold, AI-disabled path, operational stop conditions, and the rule that retries never erase failures.
 
-### Slide 9: What was corrected or rejected
+### Slide 9: What is deliberately excluded
 
-- no AI-only production constitution;
-- no zero-risk claim;
-- no conflicting thresholds;
-- no busiest-project-first requirement;
-- no PPRB structure or NIS repository topology;
-- no effectiveness claim from one pilot.
+Show AI-only production, PPRB/project structure, zero-risk claims, and the entire process-effectiveness evaluation layer.
 
 ### Slide 10: Delivery path
 
-- Phase 2: implement and externally certify the class-aware process;
-- Phase 3: configure the real environment and run one operability pilot;
-- Phase 4: only if approved, run a scale/effectiveness evidence protocol;
-- reusable findings return to the external canonical OpenSpec source.
+Phase 2 builds and certifies the reusable package; Phase 3 configures it and runs one bounded corporate pilot; later expansion requires new accepted changes.
 
-## 9. Current Documentation Acceptance
+## 9. Current Acceptance And Implementation Status
 
-Accepted in project documentation:
+Accepted direction:
 
-- decision `D-013`;
-- flat classification and migration direction;
-- exact class criteria and no lower-class override;
-- business gates and completion-state separation;
-- Tech Lead governance/automation boundary;
-- QA ownership, regression, production stop triggers, release handoff;
-- metrics, control ideas, privacy, failed-run and comparison rules;
-- Phase 3 operability limitation and later scale gate;
-- PPRB/project-structure exclusions;
-- complete source coverage of the 22 NIS package files/categories.
+- `D-013` records the flat classification and corporate process boundary;
+- the NIS package is ignored and untracked;
+- the active OpenSpec change contains 11 capability deltas and 42 tasks after removing the evaluation capability;
+- Phase 2 work item 2.3A owns implementation;
+- failed-run retention remains a requirement and task.
 
-Not yet implemented or promoted into accepted specs:
+Not implemented yet:
 
-- schema version 2;
-- classifier and migration command;
-- minor/major/hotfix templates and validators;
-- DoR/DoD reports;
-- Tech Lead automation;
+- schema version 2 and classification migration;
+- class-aware artifact matrices and gates;
+- Tech Lead workflow reports;
 - flow-control and release-package schemas;
-- metric/pilot evidence collection;
-- Qwen/DeepSeek and AI-disabled certification for the new process.
+- failed-run and pilot-safety evidence;
+- certification of the expanded process.
 
-The active OpenSpec change contains 47 unchecked implementation tasks. The next implementation sequence remains Phase 2 work items 2.1, 2.2, and then task-sized slices of 2.3A.
+The accepted Phase 1 specs and current validator still represent the legacy implementation baseline until the active change is applied, verified, accepted, synchronized, and archived.
 
 ## 10. Evidence And Limitations
 
-Verified evidence:
+This report is based on the local ignored NIS v1.6 package, current project decisions, active OpenSpec changes, Phase 2 planning, and the architecture audit.
 
-- every NIS package file/category is mapped in the adoption source-coverage appendix;
-- the local NIS package is git-ignored and untracked;
-- the active NIS governance change is structurally complete and strict-valid;
-- the previous independent critic returned `PASS`;
-- the previous reviewer-approver returned `APPROVE WITH NON-BLOCKING NOTES`;
-- accepted/current thin/full behavior is explicitly distinguished from proposed target behavior.
+It does not claim that proposed behavior is implemented. It also does not preserve or endorse the removed evaluation methodology. Current presentation language must distinguish accepted direction from implemented behavior.
 
-Limitations:
+The durable presentation message is:
 
-- no actual NIS experiment dataset or result was supplied;
-- no real corporate Jira, repository, owner, model, MCP, Nexus, privacy, retention, deployment, or support configuration was verified;
-- the report does not prove NIS effectiveness;
-- exact pilot thresholds remain future approved corporate configuration;
-- current automated tests prove the legacy implementation baseline, not the proposed 47-task implementation.
-
-Presentation safety rule:
-
-> Present the adopted process and implementation plan as accepted direction. Do not present it as already deployed, statistically proven, or accepted into current Master Specs until implementation, verification, human acceptance, and OpenSpec promotion are complete.
+> NIS supplies realistic corporate process behavior for classification, readiness, completion, Tech Lead control, quality, release, and pilot safety. teamSddCli keeps its architecture, human authority, deterministic gates, and transfer boundary. The evaluation layer is excluded; only failed-run retention remains.

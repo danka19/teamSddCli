@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Corporate governance policy configuration
-The central process configuration SHALL declare the versioned policy sources used for classification, readiness, completion, regression, stop/escalation, release handoff, and pilot measurement.
+The central process configuration SHALL declare the versioned policy sources used for classification, readiness, completion, regression, stop/escalation, release handoff, pilot safety, and failed-run evidence.
 
 #### Scenario: Config points to canonical policy versions
 - **WHEN** deterministic tooling evaluates a change package
@@ -12,7 +12,7 @@ The central process configuration SHALL declare the versioned policy sources use
 - **THEN** validation identifies the override source and rejects any value that falls below a non-configurable canonical safety or approval minimum
 
 #### Scenario: Missing corporate value is not guessed
-- **WHEN** a real Jira state, SLA threshold, approver identity, retention period, environment, integration endpoint, or pilot value is required but absent
+- **WHEN** a real Jira state, SLA value, approver identity, evidence-retention period, environment, integration endpoint, or pilot-safety value is required but absent
 - **THEN** setup or validation reports the missing corporate input and does not infer a production value
 
 ### Requirement: Tech lead ownership registry

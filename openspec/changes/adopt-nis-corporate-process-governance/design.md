@@ -2,7 +2,7 @@
 
 The accepted Phase 1 baseline defines `thin` and `full` change modes, six internal lifecycle states, deterministic validation, traceability, waivers, central ownership, and human approval boundaries. The active transfer-readiness change packages that baseline for external certification and a later corporate pilot, but its role kit and reference flow still use the internal `thin-change` vocabulary and cover analyst, developer, and QA roles only.
 
-The local, git-ignored `NIS_Clean_v1.6_Approved_Package` documents real corporate process expectations: `minor`, `major`, and `hotfix` classification; preliminary initiative triage; tech-lead control; readiness and completion expectations; regression planning; stop/escalation rules; release-package handoff; audit and role-understanding records; flow measurement; controlled experimentation; and post-pilot production measures. The architecture audit recorded strong alignment as well as internal NIS inconsistencies and unsafe AI-only production assumptions. The human owner subsequently decided that the NIS corporate process model is authoritative input for this project's target workflow and explicitly chose the flat NIS classification over an alternative two-axis model.
+The local, git-ignored `NIS_Clean_v1.6_Approved_Package` documents real corporate process expectations: `minor`, `major`, and `hotfix` classification; preliminary initiative triage; tech-lead control; readiness and completion expectations; regression planning; stop/escalation rules; release-package handoff; audit and role-understanding records; pilot safety; and failed-run retention. The architecture audit recorded strong alignment as well as internal NIS inconsistencies and unsafe AI-only production assumptions. The human owner subsequently decided that the NIS corporate process model is authoritative input for this project's target workflow, explicitly chose the flat NIS classification over an alternative two-axis model, and excluded the package's process-effectiveness measurement layer.
 
 The design must therefore promote the useful corporate process into canonical OpenSpec behavior while preserving existing non-negotiable architecture: deterministic and AI-disabled gates, human-owned decisions, Git/OpenSpec source ownership, generated Confluence, no inferred corporate values, no internal package fork, and the external-release-before-corporate-pilot boundary.
 
@@ -16,8 +16,8 @@ Stakeholders are product/business owners, analysts, developers, QA/AT owners, te
 - Define deterministic, auditable classification, readiness, completion, stop, escalation, and release-handoff behavior.
 - Make the tech lead a first-class role with bounded authority and deterministic decision support.
 - Preserve the accepted six-state OpenSpec lifecycle while attaching explicit business gates to its transitions.
-- Distinguish transition gates from performance metrics and distinguish archive completion from tracker delivery completion.
-- Adopt the useful NIS business processes, role checks, evidence records, regression/release controls, and pilot measurement model.
+- Distinguish archive completion from tracker delivery completion.
+- Adopt the useful NIS business processes, role checks, evidence records, regression/release controls, pilot safety, and failed-run retention.
 - Normalize NIS inconsistencies into single canonical contracts and generated/derived role views.
 - Migrate current templates, validators, tests, role instructions, and read packs without rewriting accepted archive history.
 - Complete and externally certify the reusable behavior before the real corporate pilot.
@@ -29,7 +29,7 @@ Stakeholders are product/business owners, analysts, developers, QA/AT owners, te
 - Making AI output an approval, waiver, lifecycle, release, or correctness authority.
 - Adding deploy automation, Zephyr integration, custom Jira/Confluence clients, or real corporate credentials/configuration.
 - Defining one universal Jira workflow; tracker mapping remains configuration over the canonical OpenSpec lifecycle and gates.
-- Treating one experiment threshold set as universally valid before one canonical measurement contract and human approval exist.
+- Adding process-effectiveness metrics, comparison methodology, sample rules, or decision thresholds to the target workflow.
 
 ## Decisions
 
@@ -135,23 +135,20 @@ The process adds or plans typed records/views for:
 - stop, hold, escalation, resume, and deviation records;
 - release-package handoff;
 - role-understanding checks and role walkthrough evidence;
-- controlled versus external wait/hand-off time;
-- portfolio WIP and context-switch evidence;
-- pilot/project-selection and comparison evidence.
+- portfolio WIP and pilot/project-selection evidence;
+- pilot safety, rollback/hold, and failed-run evidence.
 
-Exact storage paths are implemented inside the versioned process package after schema design. Derived Markdown guides, dashboards, scorecards, and Confluence views reference or render these canonical records; they do not maintain separate thresholds or rules.
+Exact storage paths are implemented inside the versioned process package after schema design. Derived Markdown guides and Confluence views reference or render these canonical records; they do not maintain separate rules.
 
-### 9. Keep process measurement separate from lifecycle gating
+### 9. Preserve failed-run evidence without creating a measurement layer
 
-Lifecycle gates answer whether required evidence exists. Metrics evaluate whether the process improves outcomes.
+Failed validation, AI, adapter, integration, and workflow attempts remain in source-linked execution evidence even when a later retry succeeds. Retention protects traceability and incident diagnosis; it is not a productivity or effectiveness metric.
 
-The measurement contract covers cycle time, active human time, machine time, waiting/hand-off time, cost, first-pass acceptance, critical/material defects, rework, engineering-package completeness, manual intervention, MCP/adapter/tool reliability, repeatability, waiver/bypass behavior, and post-pilot delivery stability. It defines event sources, start/end events, denominators, missing-data behavior, failed-run retention, privacy/redaction, owner, and pre-approved decision thresholds.
-
-Historical, control, experimental, and production comparisons are explicitly labelled. The primary comparator, staffing model, sample-entry gate, minimum-analysis gate, decision-ready gate, and rollout gate must be specified before collection. Protocol observation windows are experiment parameters, not roadmap delivery deadlines.
+The target process does not define effectiveness metrics, comparison cohorts, comparison-integrity or contamination records, missing-measurement-data treatment, sample gates, or outcome thresholds. Operational correctness remains governed by DoR, DoD, required verification, stop/hold, release, rollback, reconciliation, and human decisions.
 
 ### 10. Preserve safe AI and corporate-transfer boundaries
 
-The NIS prohibition on manual artifacts/testing is retained only as an optional controlled-experiment treatment. Production workflow always has templates, deterministic commands, human-authored artifacts, and manual verification/waiver paths where allowed. A separate AI checker may propose adversarial tests but does not independently prove quality.
+The NIS prohibition on manual artifacts/testing is rejected. Production workflow always has templates, deterministic commands, human-authored artifacts, and manual verification/waiver paths where allowed. QA ownership remains part of the governed quality strategy; the target process does not create a separate comparison-assurance role.
 
 No package may claim zero production risk. Pilot evidence includes data/privacy, secret, access, accidental-delivery, rollback, adapter, runtime, and logging risks. Real corporate values remain configuration supplied during adaptation. Reusable findings return to the external canonical source rather than an internal fork.
 
@@ -169,8 +166,7 @@ The existing transfer-readiness change may continue through foundation work that
 - [DoR/DoD becomes bureaucratic] -> Use class-specific matrices; minor remains small, major expands by risk, and hotfix accelerates sequence while preserving minimum evidence.
 - [Role guides duplicate rules] -> Generate or validate from canonical specs and include source metadata/IDs.
 - [AI-generated classification or review appears authoritative] -> Deterministic reports label proposals and require named human decisions before state mutation.
-- [Corporate processes vary by project] -> Keep canonical minimums in OpenSpec and configurable mappings/thresholds in validated process config; do not infer real values externally.
-- [Metrics become surveillance or unreliable self-report] -> Collect only approved process events, minimize personal data, define retention/redaction/access, prefer system timestamps, and expose missing/contaminated data.
+- [Corporate processes vary by project] -> Keep canonical minimums in OpenSpec and configurable mappings in validated process config; do not infer real values externally.
 - [NIS source documents disagree] -> Treat this change as the normalized canonical contract; future NIS-derived views are generated from it rather than copied.
 - [Hotfix follow-up is forgotten] -> Block final archive/closure when mandatory reconciliation evidence or follow-up disposition remains pending.
 
@@ -181,14 +177,14 @@ The existing transfer-readiness change may continue through foundation work that
 3. Add schema version 2 and deterministic legacy classification discovery.
 4. Add migration check/apply behavior with `thin -> minor`, `full -> major`, no automatic hotfix mapping, idempotency, JSON evidence, and rollback/hold instructions.
 5. Replace templates, validator matrices, diagnostics, tests, examples, role guides, read packs, and certification fixtures with `minor|major|hotfix` behavior.
-6. Add readiness/completion, tech-lead, flow-control, release-package, and measurement schemas plus deterministic validators.
+6. Add readiness/completion, tech-lead, flow-control, release-package, pilot-safety, and failed-run-evidence schemas plus deterministic validators.
 7. Extend AI-disabled and Qwen/DeepSeek certification to minor, major, hotfix, and tech-lead negative/authority cases.
 8. Rehearse migration and rollback on synthetic legacy/current packages without rewriting archived specs.
 9. Update release manifest, transfer runbook, corporate adaptation checklist, and pilot template.
 10. Stop for external release-candidate human acceptance before Phase 3.
-11. In Phase 3, map real Jira statuses, owners, thresholds, systems, and integration evidence through validated corporate configuration and run one monitored real change.
+11. In Phase 3, map real Jira statuses, owners, systems, and integration evidence through validated corporate configuration and run one monitored real change.
 12. Route reusable pilot findings through new external OpenSpec changes; never maintain an internal behavior fork.
 
 ## Open Questions
 
-No product-architecture question blocks proposal readiness. Exact real Jira state names, corporate SLA/threshold values, selected pilot project, model/runtime identifiers, Nexus/integration availability, retention periods, and security approvers are mandatory corporate adaptation inputs and must remain configurable rather than guessed externally.
+No product-architecture question blocks proposal readiness. Exact real Jira state names, corporate SLA values, selected pilot project, model/runtime identifiers, Nexus/integration availability, evidence-retention periods, and security approvers are mandatory corporate adaptation inputs and must remain configurable rather than guessed externally.

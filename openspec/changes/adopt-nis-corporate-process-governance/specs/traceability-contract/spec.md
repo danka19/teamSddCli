@@ -19,6 +19,10 @@ Traceability SHALL connect classification, readiness, flow-control, completion, 
 - **WHEN** a release or transfer package is prepared
 - **THEN** it links included change, requirement, scenario, artifact, verification, limitation, rollback, and follow-up identifiers
 
+#### Scenario: Failed attempts remain traceable after retry
+- **WHEN** a validation, AI, adapter, integration, or workflow attempt fails and a later attempt succeeds
+- **THEN** traceability preserves both attempt identifiers, outcomes, source evidence, and the required disposition instead of replacing the failure with the successful result
+
 
 ## MODIFIED Requirements
 

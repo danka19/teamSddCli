@@ -63,7 +63,7 @@ Recommendation (human decision, section 5 question 3): create one canonical deci
 1. OpenSpec version pin: the accepted decision says "the CLI version is pinned", and audit evidence shows `openspec 1.4.1` installed, but no pin is recorded anywhere (no pin file, no version statement in strategy or proposals). Until `define-openspec-version-policy` exists, the pin is a statement without a location. Recorded as `AUDIT-017`.
 2. Lifecycle public-vs-internal naming: open in `define-change-lifecycle/tasks.md` 2.2 but was absent from the phase plan's Human Decisions list (fixed in this review). It blocks validator status reconciliation (F1).
 3. Enforcement staging for work item 1.8: the exit criteria say the approved matrix is "enforced or explicitly staged as warnings according to the accepted gate decision", but no gate question for warnings-vs-errors staging exists anywhere. Added to section 5, question 2.
-4. Process/metrics owner: `docs/IMPLEMENTATION_STRATEGY.md` section 7 assigns metric review to "the process owner" and M7 to "DevOps/owner log" without naming a role. Acceptable pre-pilot; must be resolved before pilot baseline collection.
+4. Historical process-evaluation ownership question: superseded by the 2026-07-13 human decision to remove process-effectiveness evaluation from the target process.
 
 ### F5. Proposal-set shape (low)
 
@@ -75,7 +75,7 @@ Recommendation (human decision, section 5 question 3): create one canonical deci
 - `AGENTS.md` Required Read Order had a stranded item `11.` after the scaling-rule paragraph (list formatting bug). Fixed.
 - `docs/00_FILE_STRUCTURE.md` was missing rows for `CLAUDE.md`, `docs/phases/PHASE_0_PROJECT_FOUNDATION.md`, and `docs/phases/PHASE_PLAN_TEMPLATE.md`. Fixed; new audit/planning files from this review added.
 - `docs/CURRENT_PROJECT_AUDIT.md` referenced `cde51ef` as the latest known commit; updated to `41114fa`.
-- `docs/IMPLEMENTATION_STRATEGY.md` M2/M3 metrics assume Jenkins/Bitbucket data that exists only in the corporate environment; baseline collection in the external environment is undefined. Note only; resolves itself at transfer.
+- Historical evaluation-data note: superseded by the 2026-07-13 removal of the process-effectiveness evaluation layer.
 
 ## 3. Answers To The Audit Questions
 

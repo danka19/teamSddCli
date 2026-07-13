@@ -61,12 +61,12 @@ Interpretation: the concept is stronger than any found analog (none solve the te
 | ID | Recommendation | Rationale | Status |
 |---|---|---|---|
 | REC-001 | Keep the MVP narrowed to the spec-change loop (`sdd change new/validate/pr/archive` + basic traceability); remove stale broad-start guidance from the current source-of-truth path | External evidence confirms the accepted 2026-07-03 narrowing; value must be proven before integration spend | Accepted; stale architecture draft removed on 2026-07-06 |
-| REC-002 | Make `thin change` the default path; require `full change package` only for feature/API/cross-repo/high-risk changes. Track median change-preparation time and waiver share as process health metrics | Spec Kit experience shows heavy-by-default processes die in the first sprint; rising waiver share signals perceived bureaucracy | Proposed |
+| REC-002 | Make `thin change` the default path; require `full change package` only for feature/API/cross-repo/high-risk changes | Spec Kit experience shows heavy-by-default processes die in the first sprint | Historical proposal; superseded by `D-013` minor/major/hotfix classification |
 | REC-003 | Do not build a Confluence publisher from scratch; wrap an existing markdown->Confluence tool (e.g. kovetskiy/mark or markdown-confluence) and keep only drift detection and page mapping custom | Mature tools already run this exact one-way model in CI; removes a large slice of K4 risk | Proposed |
 | REC-004 | Derive traceability instead of hand-editing it: generate `traceability.yaml` from tags in `.feature` files, PR links, and task ids in branches; humans resolve conflicts only | Manually maintained traceability matrices reliably degrade; derived ones survive | Proposed |
 | REC-005 | Define a single status owner per lifecycle segment: `change.yaml` is authoritative until `approved`, Jira after `tasks_created`; everything else is derived | Three concurrent status owners recreate the dual-source-of-truth problem | Proposed |
 | REC-006 | Pin the OpenSpec version and isolate it behind an adapter layer in the CLI | Upstream is young and has already changed its workflow once | Proposed |
-| REC-007 | Define pilot success metrics before Phase 2: change lead time, time to first review, share of changes passing without waiver | Without metrics, the decision to roll out Jira/QA automation will be made by feel | Proposed |
+| REC-007 | Require a bounded, reviewable pilot decision before expanding Jira/QA automation | Expansion should follow verified operational behavior and explicit human acceptance | Superseded: process-effectiveness evaluation was excluded on 2026-07-13 |
 
 ## 4. Alternative Solution Paths
 
@@ -102,7 +102,7 @@ Context: how to solve the same problem — automating the team flow from analysi
 
 ### Recommended combination
 
-Start with A + B (conventions, skills, thin CI scripts, existing publisher, Jira automation rules, read-only MCP). Add comment-ops (C) for anything that must be enforced rather than assisted. Introduce a custom `sdd` CLI only where measured friction proves conventions are not enough — most likely candidates: `change new/validate` ergonomics and traceability derivation (REC-004). This keeps the full architecture as the target picture while making every intermediate stage independently useful.
+Start with A + B (conventions, skills, thin CI scripts, existing publisher, Jira automation rules, read-only MCP). Add comment-ops (C) for anything that must be enforced rather than assisted. Introduce a custom `sdd` CLI only where recurring documented friction shows conventions are not enough — most likely candidates: `change new/validate` ergonomics and traceability derivation (REC-004). This keeps the full architecture as the target picture while making every intermediate stage independently useful.
 
 ## 5. Open Human Decisions
 

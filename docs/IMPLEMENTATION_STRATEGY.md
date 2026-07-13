@@ -1,6 +1,6 @@
 # Implementation Strategy: SDD Automation Without a Custom `sdd` CLI
 
-Status: accepted by the human owner on 2026-07-03; process measurement and target classification refined by `D-013` on 2026-07-13.
+Status: accepted by the human owner on 2026-07-03; target classification and corporate governance refined by `D-013` on 2026-07-13.
 
 This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The historical architecture draft that originally motivated the project was removed on 2026-07-06 after current decisions moved into `docs/` and `openspec/`; this strategy defines how the process is delivered first.
 
@@ -48,33 +48,15 @@ Portability rules derived from this constraint:
 - During corporate adaptation, verify MCP availability and policy, the available Qwen/DeepSeek/GigaCode adapter, Bitbucket/Jenkins/Jira/Confluence versions (Cloud vs Server/DC), secrets handling, network rules, and artifact distribution without redesigning reusable process behavior.
 - Follow-up adjustments that affect reusable behavior return to the external OpenSpec/change workflow and a new package release rather than becoming ad-hoc internal divergence.
 
-## 5. Success, Gate, and Usability Evidence
+## 5. Mandatory Gates And Role-Understanding Evidence
 
-`D-013` removes universal thin/full thresholds and separates correctness gates from process-effectiveness metrics. Canonical proposed definitions live in `process-measurement-pilot`, `readiness-completion-gates`, and the NIS adoption plan. Exact thresholds, sample gates, comparator, and review cadence are approved before a real pilot and stored in versioned policy/configuration rather than copied into this strategy.
+`D-013` keeps correctness and safety in explicit business gates. DoR, DoD, release/transfer readiness, archive readiness, required approvals, stop conditions, rollback/hold, and hotfix reconciliation cannot be waived by convenience or an AI statement.
 
-### Mandatory gates
+Failed validation, AI, adapter, integration, or workflow attempts remain in source-linked execution evidence even after a successful retry. This retention supports traceability and incident diagnosis; it is not an effectiveness measurement.
 
-DoR, DoD, release/transfer readiness, archive readiness, required approvals, stop conditions, and hotfix reconciliation protect correctness. A good or bad process metric cannot waive them, and passing them does not prove that the process improved outcomes.
+The project does not maintain process-effectiveness metrics, comparison cohorts, comparison-contamination rules, missing-measurement-data rules, or sample and decision thresholds.
 
-### Process and outcome metrics
-
-| ID | Metric family | Required definition/evidence |
-|---|---|---|
-| M1 | Cycle and flow time | Defined start/end events plus active human, automated, queue, review, external wait, and hand-off intervals |
-| M2 | First-pass acceptance | Stable denominator and first deterministic/review result from Git/CI/review sources |
-| M3 | Human effort and manual intervention | Approved categories, source, role boundary, and labelled manual fallback |
-| M4 | Machine/runtime cost and reliability | Runtime/tool version, attempts, failures, retries, adapter/MCP availability, and cost source where approved |
-| M5 | Defects, rework, and delivery stability | Materiality rule, observation window, escaped-defect/rollback/support evidence, and no fabricated production outcome |
-| M6 | Engineering-package completeness | Class-specific substantive evidence matrix, not raw file or prompt count |
-| M7 | Waiver, override, deferral, bypass, and follow-up behavior | Policy version, denominator, expiry, unresolved reconciliation, and accountable decision evidence |
-| M8 | Repeatability and comparison integrity | Historical/control/experimental/certification/production label, process version, contamination, and missing-data treatment |
-| M9 | Tooling support burden and usability | Approved event/log or survey method without personal performance ranking |
-
-Every metric records purpose, unit, numerator/denominator, event sources, inclusions/exclusions, owner, missing-data behavior, privacy classification, aggregation, and pre-approved decision rule. Failed runs remain in the dataset. Activity proxies such as artifact count, prompt count, AI usage, or checklist completion are diagnostic only.
-
-The first real Phase 3 change proves bounded operability and transfer compatibility only. Effectiveness or scale claims require a separately accepted later protocol with sufficient comparison and production-stability evidence; they cannot be inferred from one successful change.
-
-### Usability and role-understanding criteria
+### Usability and role-understanding checks
 
 | ID | Criterion | Check |
 |---|---|---|
@@ -86,20 +68,19 @@ The first real Phase 3 change proves bounded operability and transfer compatibil
 
 ## 6. Triggers: When a Custom `sdd` CLI Becomes Justified
 
-A trigger fires when the condition persists across the pre-approved observation gate after at least one remediation attempt inside the current strategy. The pilot plan defines the sample and observation rule before collection.
+A trigger is a documented engineering or usability problem that remains after a reasonable remediation attempt inside the current strategy. The human owner decides whether the evidence justifies a bounded CLI addition; no effectiveness score or experiment is required.
 
 | ID | Trigger | What it justifies building |
 |---|---|---|
-| T1 | M1 shows persistent controllable delay caused by manual gluing between tools rather than review or external wait | `sdd change new/validate` ergonomics commands |
+| T1 | Manual gluing between tools repeatedly blocks or misroutes governed work and cannot be corrected safely with the existing scripts/templates | `sdd change new/validate` ergonomics commands |
 | T2 | Script sprawl: shared logic duplicated across 3+ repos, or validation scripts grow past maintainability with a rising defect rate | Consolidation of scripts into a distributed CLI |
 | T3 | Cross-repo operations (multi-repo changes, coordinated branches/PRs) done by hand repeatedly every sprint | Cross-repo orchestration commands |
 | T4 | The available Qwen/DeepSeek/GigaCode-class assistant cannot reliably execute a bounded role flow after one documented remediation attempt | Deterministic commands, simpler instructions, or mandatory-human execution replacing the assistant layer for affected flows |
 | T5 | MCP is restricted or unavailable in the corporate environment | A packaged integration layer as MCP fallback |
-| T6 | U1 onboarding repeatedly fails for new team members | Unified UX entry point |
+| T6 | Scenario-based onboarding repeatedly fails for new team members | Unified UX entry point |
 
 Scope rule: when a trigger fires, build only the commands that answer that trigger, reusing the existing scripts as the CLI's internals. Re-evaluate the remaining triggers afterwards; any broader CLI surface is assembled incrementally from accepted docs and OpenSpec requirements, not from a separate architecture draft.
 
 ## 7. Review Cadence
 
-- Metrics are reviewed at the pre-approved pilot decision gates by the process owner and required role owners.
-- Strategy, trigger rules, and local thresholds are reviewed after pilot evidence or when a material environment/process change invalidates the comparison; schedule cadence remains an operating-calendar decision outside this repository.
+- Strategy and trigger rules are reviewed after the monitored pilot or when a material environment or process change invalidates current assumptions; schedule cadence remains an operating-calendar decision outside this repository.

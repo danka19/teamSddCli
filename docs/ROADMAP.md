@@ -16,7 +16,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, editable/disableable SLA, weak-model guardrail, and role-guide planning defaults. The first generated Confluence view set is deferred to the corporate environment.
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
-- Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, and outcome-based pilot evidence, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
+- Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, pilot safety, and failed-run retention, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Process-effectiveness measurement is excluded. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -111,15 +111,10 @@ Likely scope:
 - Populate real project paths, `projects.yaml`, `owners.yaml`, optional project adapters, policy overrides, and approved secret references.
 - Configure supported standard-tool integrations and the available Qwen/DeepSeek/GigaCode adapter without moving gates into AI.
 - Re-run package/config/release checks and the AI-disabled class-aware flow in the real environment.
-- Select one representative bounded real change with explicit class, comparator, risk, rollback, privacy, and evidence-source justification; a minor change is the default recommendation unless representativeness requires another class.
+- Select one representative bounded real change with explicit class, risk, rollback, privacy, and evidence-source justification; a minor change is the default recommendation unless representativeness requires another class.
 - Execute it through triage, classification, Spec Review, DoR and human approval, implementation controls, DoD, applicable release/transfer readiness, traceability, and archive readiness.
-- Record compatibility, usability, cycle/effort/quality evidence, intervention, deviation, external waiting, rollback/hold, hotfix reconciliation where applicable, and follow-up evidence.
+- Record compatibility, role usability, failed attempts, interventions, deviations, rollback/hold, hotfix reconciliation where applicable, and follow-up evidence.
 - Complete OpenSpec task 7.5 and stop for human pilot/contract acceptance before archive promotion.
-
-Evidence boundary:
-
-- One monitored Phase 3 change is an operability/transfer pilot only. It cannot establish NIS productivity, quality-effectiveness, statistical viability, or organization-scale rollout readiness.
-- Any scale/effectiveness conclusion requires a separately accepted Phase 4 protocol with a predefined eligible population, comparator, sample and decision gates, contamination handling, production-stability evidence, and accountable decision owner.
 
 Explicitly deferred from the first MVP:
 
@@ -133,12 +128,11 @@ Explicitly deferred from the first MVP:
 
 Status: planned. A detailed phase plan has not been accepted yet.
 
-Goal: harden the accepted real workflow, act on measured pilot evidence, and add later layers only through new accepted changes.
+Goal: harden the accepted real workflow using operational findings and add later layers only through new accepted changes.
 
 Likely scope:
 
 - Pilot-driven reliability, usability, compatibility, and support-burden improvements.
-- A separate NIS effectiveness/scale evidence gate when the human chooses to evaluate broader rollout: approved population, historical/control method, sample sufficiency, metric thresholds, contamination rules, production observation, and scale/continue/revise/hold/stop authority.
 - Broader project memory, project map drift checks, repeated-error memory, and deterministic sync/upgrade maintenance beyond the minimum Phase 2 operating kit.
 - Legacy baseline workflow for existing product areas when the pilot expands beyond the first bounded change.
 - Confluence preview/final publication after the feedback loop contract is specified.

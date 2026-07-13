@@ -109,7 +109,7 @@ The process SHALL preserve the portable responsibilities from the NIS role model
 
 #### Scenario: Governed roles are mapped explicitly
 - **WHEN** a project configures the corporate process
-- **THEN** it maps business or product owner, Tech Lead, analyst, developer, QA/test owner, release or deployment/support owner, independent control or assurance role, architecture and security roles when applicable, and the process-scale decision owner to real people or approved groups
+- **THEN** it maps business or product owner, Tech Lead, analyst, developer, QA/test owner, release or deployment/support owner, and architecture and security roles when applicable to real people or approved groups
 
 #### Scenario: Missing role is not assigned to AI
 - **WHEN** a required responsibility has no configured human owner or delegate
@@ -130,24 +130,39 @@ The process SHALL preserve traceable separation between business workflow, canon
 - **WHEN** a major or hotfix release expects Nexus or another artifact repository but the corporate integration is unavailable or unverified
 - **THEN** release readiness records the missing integration or approved substitute evidence and does not fabricate an artifact coordinate
 
-### Requirement: Controlled and external time separation
-Process measurement SHALL distinguish work controlled by the process from external wait and hand-off time.
-
-#### Scenario: Time categories are explicit
-- **WHEN** cycle-time evidence is recorded
-- **THEN** active human work, automated execution, internal queue, external dependency wait, review wait, and hand-off time use defined categories and event sources
-
-#### Scenario: External delay is not hidden
-- **WHEN** a corporate dependency delays a change
-- **THEN** the total cycle remains visible while the external interval is separately attributed rather than removed from results
-
 ### Requirement: Portfolio WIP and pilot-selection controls
 The process SHALL record enough portfolio context to select a representative pilot and expose excessive parallel work.
 
 #### Scenario: Pilot selection is justified
 - **WHEN** a real pilot candidate is chosen
-- **THEN** the record includes representativeness, class, systems, dependencies, data/security constraints, team readiness, rollback feasibility, comparison source, and exclusion risks
+- **THEN** the record includes representativeness, class, systems, dependencies, data/security constraints, team readiness, rollback feasibility, and exclusion risks
 
 #### Scenario: Excessive WIP is visible
 - **WHEN** concurrent governed changes exceed an approved team or pilot limit
 - **THEN** the process reports the WIP condition and requires an explicit prioritization, hold, or exception decision rather than silently starting more work
+
+### Requirement: Failed-run evidence retention
+The process SHALL preserve failed validation, AI, adapter, integration, and workflow attempts as source-linked execution evidence.
+
+#### Scenario: Successful retry does not erase failure
+- **WHEN** a failed attempt is followed by a successful retry
+- **THEN** both attempts remain identifiable with outcome, source, time, relevant version or configuration, and reviewer or owner disposition where required
+
+#### Scenario: Failed run can trigger operational control
+- **WHEN** a failed attempt indicates corrupted evidence, unsafe continuation, unavailable rollback, or an unresolved mandatory check
+- **THEN** the applicable stop, hold, escalation, or remediation rule is evaluated without converting the failure into an effectiveness score
+
+### Requirement: Monitored-pilot safety boundary
+The monitored corporate pilot SHALL use a bounded risk register and operational stop/rollback controls without claiming zero production risk.
+
+#### Scenario: Pilot risk register covers operational boundaries
+- **WHEN** pilot entry is reviewed
+- **THEN** the record covers data/privacy, secrets, access, accidental delivery, rollback or hold, adapters and MCPs, model/runtime behavior, logs, external dependencies, support ownership, evidence corruption, and process bypass
+
+#### Scenario: AI-disabled path is certified
+- **WHEN** the process is considered transfer-ready for the pilot
+- **THEN** the core classification, readiness, validation, stop, completion, release, and failed-run-evidence path has passed an AI-disabled walkthrough
+
+#### Scenario: Operational pilot stop is testable
+- **WHEN** access or isolation fails, unauthorized output delivery is possible, safety or security risk exceeds authority, tooling corrupts canonical evidence, rollback becomes unavailable, or a mandatory failed-run disposition is unresolved
+- **THEN** the pilot stops or holds according to the canonical rule and records escalation and resume conditions

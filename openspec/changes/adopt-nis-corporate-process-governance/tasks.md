@@ -1,7 +1,7 @@
 ## 1. Policy and schema foundation
 
 - [ ] 1.1 Define schema-version-2 `change.yaml` fields for `classification`, separate work `type`, lifecycle `status`, classification evidence, decision ownership, and compatibility metadata; validate against `corporate-change-classification` and `change-package-foundation` scenarios.
-- [ ] 1.2 Define canonical, versioned policy schemas for classification rules, class artifact matrices, readiness/completion gates, regression rules, stop/escalation records, release packages, and metric definitions.
+- [ ] 1.2 Define canonical, versioned policy schemas for classification rules, class artifact matrices, readiness/completion gates, regression rules, stop/escalation records, release packages, pilot safety, and failed-run evidence.
 - [ ] 1.3 Add synthetic valid and invalid minor, major, and hotfix fixtures, including unknown inputs, conflicting legacy metadata, under-classification, major-impact hotfix, and non-urgent pseudo-hotfix cases.
 - [ ] 1.4 Add deterministic policy/config discovery from the central process package and project adapter, including clear failure for missing corporate values and attempts to weaken non-configurable minimums.
 
@@ -39,32 +39,27 @@
 - [ ] 5.3 Implement class-aware quality-strategy and regression-matrix schemas, configured QA-owner sufficiency/result decisions, and deterministic coverage-gap reporting.
 - [ ] 5.4 Implement structured deviation, waiver, deferral, stop, hold, escalation, resume, human-decision, and AI-execution evidence records with expiry/follow-up behavior plus non-disableable canonical production stop triggers.
 - [ ] 5.5 Implement the versioned release/transfer-package manifest, tracker/Git/OpenSpec/PR/CI/artifact-repository evidence chain, and consumer acceptance/deviation record using synthetic external-contour fixtures.
-- [ ] 5.6 Implement the portable human role map and role-understanding walkthrough evidence for business/product, analyst, developer, QA, Tech Lead, release/support, independent assurance, architecture/security when applicable, and process-decision owners; reject missing-owner AI substitution and checklist-only certification.
+- [ ] 5.6 Implement the portable human role map and role-understanding walkthrough evidence for business/product, analyst, developer, QA, Tech Lead, release/support, and architecture/security when applicable; reject missing-owner AI substitution and checklist-only certification.
 - [ ] 5.7 Define the portfolio WIP and pilot-selection record, with explicit prioritization/hold behavior when an approved WIP limit is exceeded.
 
-## 6. Measurement and pilot evidence
+## 6. Pilot safety and failed-run integrity
 
-- [ ] 6.1 Define canonical metric records for cycle, effort, cost, waiting/hand-off, context switching, quality, completeness, intervention, repeatability, adapter/tool reliability, waivers/bypasses, and post-pilot stability.
-- [ ] 6.2 Implement event provenance and time-category capture from approved system sources, with labelled manual fallback, missing-data behavior, failed-run retention, and contamination flags.
-- [ ] 6.3 Add privacy, access, storage, retention, redaction, export, deletion, and incident-handling validation without storing secrets, unrestricted prompts, or personal performance rankings.
-- [ ] 6.4 Implement historical/control/experimental/certification/production labels, optional paired-control baseline/isolation/independence records, and comparison-integrity checks for staffing, scope, tooling, dependencies, and process-version differences.
-- [ ] 6.5 Add pre-registered sample-entry, minimum-analysis, decision-ready, scale/continue/revise/hold/stop outcome, rollout, and testable pilot-stop gates; ensure protocol observation windows cannot mutate roadmap deadlines.
-- [ ] 6.6 Build a controlled-pilot evidence template and risk register covering data/privacy, secrets, access, accidental delivery, rollback, adapters/MCPs, model/runtime, logging, dependencies, support, and bypass risks.
-- [ ] 6.7 Add the Phase 3 one-change operability non-claim rule and a separate Phase 4 scale/effectiveness evidence-gate template with approved population, comparator, sample, contamination, production-stability, and decision-owner fields.
+- [ ] 6.1 Implement source-linked failed-run evidence for validation, AI, adapter, integration, and workflow attempts; prove that a successful retry cannot erase or overwrite the failed attempt.
+- [ ] 6.2 Build a monitored-pilot safety template and risk register covering data/privacy, secrets, access, accidental delivery, rollback/hold, adapters/MCPs, model/runtime, logging, dependencies, support, evidence corruption, and bypass risks.
 
 ## 7. Traceability, publication, and integration boundaries
 
 - [ ] 7.1 Extend traceability schemas and validators to link classification confirmation/correction, DoR/DoD, stop/resume, release, waiver/deferral, and hotfix reconciliation evidence to requirements and scenarios.
-- [ ] 7.2 Update read packs, dashboards, scorecards, role guides, and future Confluence views to display canonical record IDs and policy versions instead of duplicating normative rules.
+- [ ] 7.2 Update read packs, reports, role guides, and future Confluence views to display canonical record IDs and policy versions instead of duplicating normative rules.
 - [ ] 7.3 Implement validated external workflow mapping that keeps OpenSpec archive, release readiness, deployment, acceptance, and corporate tracker Done distinct and stops on unknown mappings.
 - [ ] 7.4 Document and test the manual, AI-disabled fallback for every core gate when Jira, Confluence, model runtime, MCP, or role inbox integration is unavailable.
 
 ## 8. Certification, migration rehearsal, and release acceptance
 
 - [ ] 8.1 Add deterministic unit/integration coverage for all positive and negative requirement scenarios and keep fixtures free of corporate identifiers and secrets.
-- [ ] 8.2 Run minor, major, hotfix, migration, tech-lead, hold/resume, release-package, and pilot-evidence walkthroughs in AI-disabled mode and record source-linked results.
-- [ ] 8.3 Run the approved Qwen-class and DeepSeek-class certification matrix, including authority-boundary, failed-run, manual-intervention, and adversarial reviewer cases.
+- [ ] 8.2 Run minor, major, hotfix, migration, tech-lead, hold/resume, release-package, failed-run-retention, and pilot-safety walkthroughs in AI-disabled mode and record source-linked results.
+- [ ] 8.3 Run the approved Qwen-class and DeepSeek-class certification matrix, including authority-boundary, failed-run, manual-intervention, and QA-review cases.
 - [ ] 8.4 Rehearse check/apply migration, idempotency, process-package version rollback/hold, and no-archive-rewrite behavior on synthetic legacy and current packages.
 - [ ] 8.5 Update the transfer manifest, adaptation checklist, operating runbook, phase evidence index, and release-candidate acceptance packet with all new schemas, reports, role evidence, limitations, and follow-ups.
-- [ ] 8.6 Run `openspec validate --all --strict`, project verification, secret/privacy scans, documentation-sync audit, and independent reviewer approval before requesting human acceptance for the transfer-ready release.
+- [ ] 8.6 Run `openspec validate --all --strict`, project verification, secret/privacy scans, documentation-sync audit, and a source-linked human acceptance-readiness review before requesting human acceptance for the transfer-ready release.
 - [ ] 8.7 Stop at the external release-candidate human gate; after acceptance, configure real corporate values and run one monitored Phase 3 change without creating an internal behavior fork.

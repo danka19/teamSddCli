@@ -75,7 +75,7 @@ Active proposed change:
   - new capability `transfer-readiness`;
   - new capability `weak-model-guardrails`.
 - `openspec/changes/adopt-nis-corporate-process-governance/`
-  - new capabilities `corporate-change-classification`, `readiness-completion-gates`, `tech-lead-workflow`, `corporate-flow-controls`, and `process-measurement-pilot`;
+  - new capabilities `corporate-change-classification`, `readiness-completion-gates`, `tech-lead-workflow`, and `corporate-flow-controls`;
   - modified package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities.
 
 Acceptance scenarios:
@@ -130,7 +130,6 @@ process/
     regression-matrix.schema.json
     flow-control-record.schema.json
     release-package.schema.json
-    metric-definition.schema.json
     pilot-evidence.schema.json
   templates/
     change/
@@ -181,7 +180,7 @@ tests/
   test_readiness_completion.py
   test_tech_lead_workflow.py
   test_corporate_flow_controls.py
-  test_process_measurement.py
+  test_pilot_safety_and_failed_runs.py
   test_build_read_pack.py
   test_weak_model_contract.py
   test_process_update_rollback.py
@@ -229,20 +228,20 @@ Status: accepted. Phase 2 and roadmap planning are gate-based and contain no del
 ```
 
 ```text
-Idea: Adopt the real NIS corporate process as target behavior, including the flat minor/major/hotfix classification, readiness and completion criteria, Tech Lead automation, regression/scope/stop/release controls, role verification, and pilot measurement.
+Idea: Adopt the real NIS corporate process as target behavior, including the flat minor/major/hotfix classification, readiness and completion criteria, Tech Lead automation, regression/scope/stop/release controls, role verification, pilot safety, and failed-run retention.
 Source: Human correction and explicit choice after the NIS v1.6 architecture audit.
 Type: scope_refinement, architecture_change, data_contract_change, new_feature, verification_change, documentation_change
 Decision: create_openspec_change
 Reason: The accepted Phase 1 thin/full baseline does not yet represent the real corporate workflow. The human owner selected the NIS process and explicitly chose its flat classification model; implementing the transfer release without this adoption would certify the wrong target.
-Affected specs: New active change `adopt-nis-corporate-process-governance` modifies package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities and adds classification, readiness/completion, Tech Lead, corporate-flow, and measurement capabilities.
+Affected specs: New active change `adopt-nis-corporate-process-governance` modifies package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities and adds classification, readiness/completion, Tech Lead, and corporate-flow capabilities.
 Affected architecture: Preserves Git/OpenSpec canonical ownership, the six lifecycle states, deterministic/AI-disabled gates, human decisions, external-release boundary, and no-fork rule while adding corporate business gates and Tech Lead governance.
-Data contract impact: Adds schema version 2, `classification: minor|major|hotfix`, migration from legacy mode, readiness/completion, regression, flow-control, release-package, decision/AI evidence, and measurement/pilot records.
-Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix negative cases, Tech Lead authority cases, stop/resume and reconciliation evidence, AI-disabled operation, actual Qwen/DeepSeek certification, privacy/comparison checks, and independent review.
+Data contract impact: Adds schema version 2, `classification: minor|major|hotfix`, migration from legacy mode, readiness/completion, regression, flow-control, release-package, decision/AI evidence, pilot-safety, and failed-run records.
+Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix negative cases, Tech Lead authority cases, stop/resume and reconciliation evidence, failed-run retention, pilot safety, AI-disabled operation, actual Qwen/DeepSeek certification, and human review.
 Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; work item 2.3A is the Phase 2 implementation owner.
 ```
 
 ```text
-Idea: Create one presentation-ready report that clearly separates what already matches NIS, what is borrowed, what is adapted or rejected, and which metrics/control ideas are documented.
+Idea: Create one presentation-ready report that clearly separates what already matches NIS, what is borrowed, and what is adapted or rejected.
 Source: Human request for a concise acceptance summary and a durable full report for a future presentation.
 Type: documentation_change
 Decision: adopt_now
@@ -251,7 +250,20 @@ Affected specs: None. The report references `D-013` and `adopt-nis-corporate-pro
 Affected architecture: None. The report preserves source ownership and explicitly distinguishes accepted direction, proposed behavior, and current implementation.
 Data contract impact: None.
 Verification impact: Cross-check the report against the NIS audit, 22-file source-coverage appendix, active OpenSpec change, task count, and current implementation status; keep the NIS package ignored and untracked.
-Status: completed in `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md`.
+Status: closed. The report is stored in `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md`.
+```
+
+```text
+Idea: Remove all process-effectiveness measurement material from project documentation and OpenSpec while retaining failed-run evidence.
+Source: Human correction after reviewing the measurement terminology.
+Type: scope_refinement, verification_change, documentation_change
+Decision: adopt_now
+Reason: The target process should govern correctness, safety, roles, and delivery flow without introducing an effectiveness-evaluation program. Failed attempts must still remain visible for traceability and incident diagnosis.
+Affected specs: Remove the proposed `process-measurement-pilot` capability; update `corporate-flow-controls`, `traceability-contract`, and `repo-topology-config` deltas.
+Affected architecture: Removes historical/control/experimental comparison design, independent comparison assurance, contamination accounting, missing-measurement-data rules, sample/decision thresholds, and effectiveness/scale conclusions. Keeps DoR/DoD, QA ownership, operational stop/hold rules, pilot safety, and failed-run retention.
+Data contract impact: Removes metric-definition and comparison records; retains source-linked failed-run and pilot-safety records.
+Verification impact: Strict OpenSpec validation, documentation-wide forbidden-term scan, failed-run-retention scenario check, and documentation-sync audit are required.
+Status: accepted and applied to the active documentation/OpenSpec proposal on 2026-07-13.
 ```
 
 ## Work Items
@@ -353,19 +365,19 @@ Dependency status: sequential. Starts after 2.1 and 2.2 are closed. It must clos
 
 Objective:
 
-- Implement `D-013`: schema-versioned minor/major/hotfix classification, conservative deterministic rules, legacy migration, class artifact matrices, DoR/DoD, Tech Lead governance, corporate flow controls, release handoff, and pilot-measurement evidence.
+- Implement `D-013`: schema-versioned minor/major/hotfix classification, conservative deterministic rules, legacy migration, class artifact matrices, DoR/DoD, Tech Lead governance, corporate flow controls, release handoff, pilot safety, and failed-run retention.
 
 OpenSpec source:
 
-- Complete active change `adopt-nis-corporate-process-governance`, including its twelve capability deltas and task groups 1-8.
+- Complete active change `adopt-nis-corporate-process-governance`, including its eleven capability deltas and task groups 1-8.
 - Planning rationale and source-to-target matrix in `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`.
 
 Expected files/modules:
 
 - schema version 2 and classification policy/matrix schemas
 - classification and migration check/apply entry points
-- readiness/completion, regression, stop/escalation, release-package, decision/AI evidence, and metric/pilot schemas
-- deterministic class, DoR/DoD, Tech Lead, traceability, workflow-mapping, and pilot-evidence reports
+- readiness/completion, regression, stop/escalation, release-package, decision/AI evidence, pilot-safety, and failed-run schemas
+- deterministic class, DoR/DoD, Tech Lead, traceability, workflow-mapping, pilot-safety, and failed-run reports
 - minor, major, hotfix, migration, hold/resume, and reconciliation fixtures/tests
 - updated templates, compatibility wrappers, role instructions, runbooks, and certification matrix
 
@@ -383,14 +395,14 @@ Documentation updates:
 
 - Replace target thin/full language while preserving clearly marked historical/migration evidence.
 - Update setup, migration, governed-flow, Tech Lead, release, corporate-adaptation, and pilot runbooks.
-- Keep NIS-derived role views and scorecards linked to canonical policy/spec IDs.
+- Keep NIS-derived role views linked to canonical policy/spec IDs.
 
 Recommended subagents:
 
 - worker: one task group at a time.
 - reviewer: classification/gate correctness and migration safety.
 - architecture-checker: source ownership, authority, transfer, and no-fork boundaries.
-- verification-checker: negative cases, AI-disabled evidence, and privacy/measurement integrity.
+- verification-checker: negative cases, AI-disabled evidence, pilot safety, and failed-run retention.
 
 Exit criteria:
 
@@ -595,8 +607,7 @@ Dependency status: sequential. Starts after 2.6 is closed; it prepares Phase 3 b
 
 Objective:
 
-- Provide non-secret environment inventory, real-config, pilot-selection/entry, monitored-pilot, measurement, privacy, rollback/hold, hotfix reconciliation, and no-fork feedback templates for Phase 3.
-- Label the Phase 3 one-change evidence as operability/transfer proof and provide a separate deferred Phase 4 scale/effectiveness protocol skeleton so one change cannot be misreported as NIS viability evidence.
+- Provide non-secret environment inventory, real-config, pilot-selection/entry, monitored-pilot safety, failed-run evidence, privacy, rollback/hold, hotfix reconciliation, and no-fork feedback templates for Phase 3.
 
 OpenSpec source:
 
@@ -617,7 +628,7 @@ Verification:
 - Confirm secrets are referenced, never embedded.
 - Confirm reusable gaps route to external OpenSpec.
 - Confirm Jira/Confluence/QA/AT/broad role-inbox layers are not pilot prerequisites while Tech Lead evidence remains available through deterministic files/reports.
-- Confirm one synthetic or real change cannot satisfy an effectiveness/scale decision and that the later protocol requires approved population, comparator, sample, contamination, production-stability, and decision-owner evidence.
+- Confirm failed attempts remain visible after retries and that the pilot stops or holds when safety, access, evidence integrity, or rollback requirements fail.
 
 Documentation updates:
 
@@ -704,7 +715,7 @@ Phase 2 can move to `pending_acceptance` only when:
 - the external release candidate and manifest are reproducible;
 - all deterministic gates pass without AI;
 - actual Qwen-class and DeepSeek-class certification evidence exists for minor, major, hotfix, analyst, developer, QA, and Tech Lead flows;
-- legacy migration, DoR/DoD separation, under-classification, hotfix safety/reconciliation, Tech Lead authority, stop/resume, release-package, privacy, and comparison-integrity scenarios pass;
+- legacy migration, DoR/DoD separation, under-classification, hotfix safety/reconciliation, Tech Lead authority, stop/resume, release-package, privacy, pilot-safety, and failed-run-retention scenarios pass;
 - negative safety scenarios pass;
 - clean bootstrap, update, rollback, and secret/private-data checks pass;
 - corporate adaptation and pilot materials are complete;
@@ -721,7 +732,7 @@ Resolved:
 - Reusable core and weak-model safeguards are completed externally.
 - Corporate work is limited to real paths, projects, owners, approved secret references, integration wiring, thin model adapters, environment checks, and pilot evidence.
 - The plan and roadmap contain no delivery dates or calendar deadlines.
-- `D-013` accepts the flat NIS target model `minor|major|hotfix`, legacy mapping `thin -> minor` and `full -> major`, class-aware DoR/DoD, Tech Lead governance, and corporate flow/measurement adoption with the corrections recorded in the active OpenSpec change.
+- `D-013` accepts the flat NIS target model `minor|major|hotfix`, legacy mapping `thin -> minor` and `full -> major`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, pilot safety, and failed-run retention. Process-effectiveness measurement is excluded.
 
 No decision currently blocks work item 2.1. Work items that encode target classification, roles, gates, certification, release, or pilot behavior must consume 2.3A instead of finalizing the historical thin/full model.
 
@@ -729,5 +740,5 @@ Mandatory later evidence, not current design decisions:
 
 - Exact Qwen and DeepSeek model/runtime identifiers used for certification.
 - Actual corporate runtime, network, artifact distribution, MCP, and integration capabilities.
-- Real Jira/workflow mappings, owner/Tech Lead delegates, security approvers, retention/privacy rules, pilot candidate, comparator, and local metric thresholds.
+- Real Jira/workflow mappings, owner/Tech Lead delegates, security approvers, evidence-retention/privacy rules, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

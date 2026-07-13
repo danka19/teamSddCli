@@ -28,12 +28,12 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/DECISIONS.md` | Canonical human decision log with stable decision IDs and evidence pointers |
 | `docs/ROADMAP.md` | Phase-level roadmap and gates |
 | `docs/CURRENT_PROJECT_AUDIT.md` | Current setup/repository audit and known risks |
-| `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, success metrics, and CLI-build triggers |
+| `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, mandatory gates, usability checks, and CLI-build triggers |
 | `docs/AI_STEP_VERIFICATION_CHECKLIST.md` | Mandatory self-check for AI agents |
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
-| `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, measurement, migration, and Phase 2/3 sequencing |
+| `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, failed-run retention, migration, and Phase 2/3 sequencing |
 | `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
 | `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` | Abstracted structure analysis of the corporate analytics approval template and the plan for mapping it to SDD artifacts (typed YAML records instead of nested tables) |
 | `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md` | Evaluation criteria and topology comparison frame for the internal OpenSpec customization screenshots and work item 1.4 |
@@ -44,7 +44,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md` | Architecture critique, external comparison, recommendations, and alternative solution paths |
 | `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` | Documentation/architecture audit: findings F1-F6, drift records, and the open human decision batch |
 | `docs/audits/NIS_V1_6_ARCHITECTURE_COMPATIBILITY_AUDIT_2026-07-13.md` | Evidence-backed comparison of the local NIS v1.6 reference package against accepted architecture, including alignments, useful additions, conflicts, internal inconsistencies, and adoption boundaries |
-| `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md` | Presentation-ready summary of what matches NIS, what the project borrows, what is adapted or rejected, recorded metrics/control ideas, current acceptance status, and suggested slide structure |
+| `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md` | Presentation-ready summary of what matches NIS, what the project borrows, what is adapted or rejected, the failed-run rule, current acceptance status, and suggested slide structure |
+| `docs/audits/PROCESS_EFFECTIVENESS_DOCUMENTATION_REMOVAL_AUDIT_2026-07-13.md` | Reproducible verification that process-effectiveness evaluation was removed from current tracked docs/OpenSpec while failed-run retention and ordinary QA/safety controls remain |
 | `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md` | Evidence-backed audit of phase status, deterministic baseline, weak-model readiness, transfer gaps, and the accepted remediation boundary |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
@@ -65,7 +66,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/specs/repo-topology-config/spec.md` | Accepted spec for the first supported repository topology, config files, process package distribution, OpenSpec version pin/upgrade policy, and owner/reviewer registry |
 | `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
 | `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 31 implementation tasks |
-| `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot measurement, and affected accepted-capability deltas |
+| `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot safety, failed-run retention, and affected accepted-capability deltas |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts

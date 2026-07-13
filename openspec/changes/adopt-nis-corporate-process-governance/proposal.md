@@ -1,6 +1,6 @@
 ## Why
 
-The accepted SDD baseline uses internal `thin` / `full` terminology and does not yet encode several real corporate delivery controls documented by the approved NIS v1.6 reference package: `minor` / `major` / `hotfix` classification, readiness and completion gates, tech-lead governance, stop/escalation rules, regression and release-package expectations, and outcome-based process measurement. The human owner has decided that these corporate processes must become first-class project behavior before the real corporate pilot rather than remain research input.
+The accepted SDD baseline uses internal `thin` / `full` terminology and does not yet encode several real corporate delivery controls documented by the approved NIS v1.6 reference package: `minor` / `major` / `hotfix` classification, readiness and completion gates, tech-lead governance, stop/escalation rules, regression and release-package expectations, pilot safety, and failed-run retention. The human owner has decided that these corporate processes must become first-class project behavior before the real corporate pilot rather than remain research input.
 
 ## What Changes
 
@@ -9,10 +9,10 @@ The accepted SDD baseline uses internal `thin` / `full` terminology and does not
 - Define business-process gates for intake, Spec Review, Definition of Ready, implementation, verification, Definition of Done, release/transfer readiness, and archive/closure without conflating OpenSpec archive state with Jira delivery state.
 - Define `minor`, `major`, and accelerated `hotfix` artifact/evidence matrices. Hotfix shortens sequence and waiting, but cannot bypass human ownership, minimum safety evidence, rollback/hold behavior, or mandatory follow-up for deferred artifacts.
 - Add tech lead as a first-class governed role with deterministic classification, readiness, risk/design, stop/resume, completion, and release-readiness support. AI may prepare evidence and options but cannot approve on the tech lead's behalf.
-- Adopt NIS-derived preliminary initiative triage, scope-change control, automatic regression-matrix planning, stop/escalation criteria, release-package handoff, role-understanding checks, human decision logs, AI execution evidence, controlled/external wait-time separation, and portfolio/pilot measurement boundaries.
-- Define outcome metrics and a controlled-pilot evidence contract separately from transition gates: cycle time, human effort, cost, first-pass acceptance, defects, engineering-package completeness, manual intervention, repeatability, waiting/hand-off time, and post-pilot delivery stability.
-- Correct NIS package ambiguities before adoption: one canonical rule source, normalized thresholds and sample gates, explicit control definition, privacy/retention boundaries, no absolute “zero production risk” claim, and no AI-only or no-manual-testing production dependency.
-- Require all role guides, checklists, dashboards, scorecards, and generated views to reference canonical OpenSpec requirements instead of becoming duplicate normative sources.
+- Adopt NIS-derived preliminary initiative triage, scope-change control, automatic regression-matrix planning, stop/escalation criteria, release-package handoff, role-understanding checks, human decision logs, AI execution evidence, portfolio/pilot safety boundaries, and failed-run retention.
+- Exclude the NIS process-effectiveness measurement layer, including comparison groups, independent comparison assurance, comparison-contamination handling, missing-measurement-data rules, and sample or decision thresholds.
+- Correct retained NIS ambiguities before adoption: one canonical rule source, explicit privacy and security boundaries, no absolute “zero production risk” claim, and no AI-only or no-manual-testing production dependency.
+- Require all role guides, checklists, reports, and generated views to reference canonical OpenSpec requirements instead of becoming duplicate normative sources.
 - Place this change after the transfer-package/configuration foundation and before the real Phase 3 pilot acceptance path; do not infer corporate values or implement production integrations externally.
 
 ## Capabilities
@@ -22,8 +22,7 @@ The accepted SDD baseline uses internal `thin` / `full` terminology and does not
 - `corporate-change-classification`: Defines the canonical `minor`, `major`, and `hotfix` classes, classification evidence, escalation triggers, under-classification rejection, human confirmation/correction, and the prohibition on per-change lower-class overrides.
 - `readiness-completion-gates`: Defines Definition of Ready, implementation-complete, Definition of Done, release/transfer readiness, archive readiness, and the distinction from tracker-level delivered/done state.
 - `tech-lead-workflow`: Defines tech-lead responsibilities, authority limits, deterministic decision-support outputs, stop/resume behavior, review inputs, and AI advisory boundaries.
-- `corporate-flow-controls`: Defines preliminary initiative triage, input/scope control, regression matrix, stop and escalation rules, release-package handoff, role-understanding checks, and external-contour timing boundaries.
-- `process-measurement-pilot`: Defines process/outcome metric ownership, event and evidence boundaries, controlled-pilot records, data quality, privacy, comparison integrity, and post-pilot measurement.
+- `corporate-flow-controls`: Defines preliminary initiative triage, input/scope control, regression matrix, stop and escalation rules, release-package handoff, role-understanding checks, pilot safety, and failed-run retention.
 
 ### Modified Capabilities
 

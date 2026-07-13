@@ -39,7 +39,7 @@
 
 - [ ] 6.1 Create a non-secret corporate environment inventory template covering runtimes, OpenSpec, Git, package distribution, network policy, Bitbucket/Jenkins/Jira/Confluence capabilities, MCP policy, and available AI CLI/model adapters.
 - [ ] 6.2 Create real-configuration and pilot-entry checklists that verify installed package, project and owner mappings, approved secret references, integration wiring, rollback path, and AI-disabled gates.
-- [ ] 6.3 Create a monitored governed-change pilot evidence template covering selection/class rationale, change/requirement/scenario IDs, DoR/DoD and release evidence, PR/tests, human decisions, adapter/runtime versions, flow/quality metrics, interventions, deviations, rollback or hold, privacy, comparison integrity, and follow-up changes.
+- [ ] 6.3 Create a monitored governed-change pilot evidence template covering selection/class rationale, change/requirement/scenario IDs, DoR/DoD and release evidence, PR/tests, human decisions, adapter/runtime versions, failed attempts, interventions, deviations, rollback or hold, privacy, and follow-up changes.
 - [ ] 6.4 Verify that reusable corporate findings are routed through the external OpenSpec/change workflow and that internal package forks are detected or explicitly rejected.
 
 ## 7. Documentation, Review, And Acceptance
