@@ -4,6 +4,7 @@ version: 1.0.0
 kind: failed-runs
 canonical_sources:
   - openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
 rules:
   - id: failed-runs.retention-enabled
     override_mode: locked
@@ -13,5 +14,20 @@ rules:
     strictness: minimum
     value: 1
   - id: failed-runs.source-linked
+    override_mode: locked
+    value: true
+  - id: failed-runs.attempt-kinds
+    override_mode: locked
+    value: [validation, ai, adapter, integration, workflow]
+  - id: failed-runs.minimum-fields
+    override_mode: locked
+    value:
+      - attempt-id
+      - outcome
+      - source
+      - time
+      - version-or-configuration
+      - owner-disposition
+  - id: failed-runs.successful-retry-preserves-failure
     override_mode: locked
     value: true

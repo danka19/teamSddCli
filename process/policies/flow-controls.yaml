@@ -7,10 +7,22 @@ canonical_sources:
 rules:
   - id: flow.production-stop-triggers
     override_mode: locked
-    value: [authority-exceeded, access-failure, evidence-corruption, rollback-unavailable]
+    value:
+      - required-context-missing-or-contradictory
+      - material-scope-drift-unassessed
+      - required-verification-unavailable
+      - critical-defect-unresolved
+      - security-compliance-access-policy-violation
+      - unauthorized-data-or-output-leakage-risk
+      - mandatory-evidence-collection-failure
+      - owner-authority-conflict
+      - rollback-or-hold-unavailable
+      - canonical-evidence-corruption
+      - approved-safety-authority-exceeded
   - id: flow.rollback-or-hold-required
     override_mode: locked
     value: true
   - id: flow.additional-stop-triggers
     override_mode: additive
+    value_type: id-list
     value: []

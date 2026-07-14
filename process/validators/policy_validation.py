@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
@@ -304,9 +305,16 @@ def _apply_overrides(
                     "An additive policy minimum can only be extended.", source, pointer
                 ))
                 continue
+            if not _matches_override_value_type(value, rule.get("value_type")):
+                result.diagnostics.append(_diag(
+                    "policy.override-value-invalid",
+                    "An override value does not match the policy slot's declared type.",
+                    source,
+                    f"{pointer}/value",
+                ))
+                continue
             base = list(current.value) if isinstance(current.value, tuple) else []
-            additions = value if isinstance(value, list) else [value]
-            value = [*base, *[item for item in additions if item not in base]]
+            value = [*base, *[item for item in value if item not in base]]
         elif mode == "stricter_only":
             if operation != "set" or not _is_stricter(
                 current.value, value, rule.get("strictness")
@@ -346,6 +354,16 @@ def _is_stricter(current: Any, proposed: Any, direction: Any) -> bool:
             return set(current) <= set(proposed)
         except TypeError:
             return False
+    return False
+
+
+def _matches_override_value_type(value: Any, declared: Any) -> bool:
+    if declared == "id-list":
+        return isinstance(value, list) and all(
+            isinstance(item, str)
+            and re.fullmatch(r"[a-z][a-z0-9-]*", item) is not None
+            for item in value
+        )
     return False
 
 

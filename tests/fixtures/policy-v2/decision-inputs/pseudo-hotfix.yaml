@@ -1,7 +1,7 @@
 schema_version: 2
 id: pseudo-hotfix-input
 title: Pseudo hotfix input
-type: emergency
+type: bugfix
 classification: hotfix
 status: draft
 systems: [sample-app]

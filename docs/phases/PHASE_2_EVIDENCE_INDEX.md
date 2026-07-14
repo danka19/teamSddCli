@@ -142,11 +142,12 @@ Status: implementation evidence recorded; independent worker review, architectur
 
 | Scenario family | Evidence |
 |---|---|
-| Explicit schema v2, canonical classes, separate type/class/status, tri-state source evidence, human ownership, and no native-v2 legacy fields | `test_change_v2_accepts_all_classes_and_preserves_decision_facts`; `test_change_v2_rejects_unknown_class_and_legacy_mode`; `test_native_v2_change_rejects_legacy_reference` |
+| Explicit schema v2, canonical classes, canonical separate work-type vocabulary, separate type/class/status, tri-state source evidence, human ownership, and no native-v2 legacy fields | `test_change_v2_accepts_all_classes_and_preserves_decision_facts`; `test_change_v2_rejects_unknown_class_and_legacy_mode`; `test_native_v2_change_rejects_legacy_reference` |
 | Unknown, under-classification, major-impact hotfix, and pseudo-hotfix facts remain available without a classifier verdict | `test_negative_change_fixtures_retain_facts_without_computing_a_verdict` |
-| One local manifest pins eight policy kinds, exact document identity/schema/version, canonical sources, and mandatory kind-specific rule catalogs | `test_manifest_pins_one_versioned_local_policy_set`; `test_policy_document_schema_requires_kind_specific_foundation_catalogs` |
+| One local manifest pins eight policy kinds, exact document identity/schema/version, canonical sources, and complete item-level static catalogs for classification, artifacts, gates, regression, stop triggers, release, pilot safety, and failed runs | `test_manifest_pins_one_versioned_local_policy_set`; `test_policy_document_schema_requires_kind_specific_foundation_catalogs` |
 | Effective policy values are immutable and retain source, policy ID/version, and pointer provenance | `test_policy_bundle_builds_immutable_provenance_snapshot` |
 | Missing corporate values, unresolved owner references, and locked/additive/stricter-only weakening or unsafe comparison fail with stable provenance diagnostics | `test_policy_bundle_rejects_missing_values_and_weakening_with_provenance`; `test_stricter_only_rejects_boolean_and_incomparable_numeric_types`; `test_policy_weakening_has_human_json_parity_and_provenance`; `test_missing_corporate_policy_value_is_not_guessed`; `test_corporate_policy_owner_references_must_resolve_against_registry` |
+| Additive central/project overrides must match the selected rule slot's declared ID-list type and fail before snapshot construction with source/pointer provenance | `test_additive_overrides_enforce_slot_value_type_with_provenance` |
 | Adapter policy path injection is forbidden | `test_adapter_override_is_bounded_and_cannot_supply_policy_paths`; `test_adapter_cannot_supply_arbitrary_policy_paths` |
 | Version mismatch, duplicate IDs, missing `refs`/`requires`, and cycles fail | `test_policy_integrity_rejects_versions_duplicates_missing_refs_and_cycles`; `test_policy_integrity_rejects_missing_requires_before_cycle_detection` |
 | Existing config discovery, local-schema safety, redaction, human/JSON, and CWD contracts remain intact | `tests/test_validate_process_config.py`; `tests/test_process_package.py` |
@@ -160,6 +161,8 @@ Status: implementation evidence recorded; independent worker review, architectur
 - Worker-baseline serial full suite: `python -m pytest -q` -> 100 passed.
 - Independent-review fix RED: five focused scenarios -> 7 failed, including three parameterized corporate-owner slots.
 - Independent-review fix GREEN: the same focused scenarios -> 7 passed; policy/config regression -> 58 passed; final serial full suite -> 107 passed.
+- Architecture-fix RED: `python -m pytest tests/test_policy_schema_v2.py -q` -> 3 failed and 11 passed for the legacy work-type enum, incomplete static catalogs, and untyped additive override values.
+- Architecture-fix GREEN: focused policy/schema suite -> 14 passed; combined policy/config/package suite -> 74 passed; final serial full suite -> 108 passed.
 - Python compilation: `python -m compileall -q process/validators scripts/validate_process_config.py` -> exit 0.
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`; migration remains later scope.
 - Roadmap/OpenSpec governance JSON validator -> 5 phases, 8 specs, 2 active changes, 0 errors, 0 warnings.

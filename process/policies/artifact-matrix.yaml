@@ -11,6 +11,57 @@ rules:
   - id: artifacts.minimum-verification-evidence
     override_mode: locked
     value: true
+  - id: artifacts.minor-required
+    override_mode: locked
+    value:
+      - proposal-intent
+      - openspec-delta-when-behavior-changes
+      - testable-scenarios
+      - classification-rationale
+      - bounded-impact-risk-evidence
+      - quality-regression-approach
+      - basic-traceability
+      - implementation-plan
+      - verification-evidence
+      - rollback-or-hold
+      - human-decisions
+  - id: artifacts.major-required
+    override_mode: locked
+    value:
+      - expanded-design-impact-analysis
+      - architecture-decision-or-not-required
+      - owner-dependency-map
+      - quality-strategy
+      - qa-test-plan-or-valid-waiver
+      - automation-plan-or-valid-waiver
+      - broad-regression-matrix
+      - migration-evidence-when-applicable
+      - rollback-evidence-when-applicable
+      - release-transfer-package-or-not-applicable
+      - complete-traceability
+      - class-appropriate-approvals
+  - id: artifacts.hotfix-entry-required
+    override_mode: locked
+    value:
+      - harm-urgency-rationale
+      - bounded-scope
+      - affected-contour
+      - named-decision-owner
+      - known-gaps
+      - testable-scenario
+      - minimum-safety-regression-evidence
+      - rollback-or-hold
+      - required-risk-decisions
+      - traceability
+      - reconciliation-plan
+  - id: artifacts.hotfix-reconciliation-required
+    override_mode: locked
+    value:
+      - deferred-artifact-disposition
+      - post-change-verification
+      - release-transfer-package-when-applicable
+      - completed-reconciliation-follow-up
   - id: artifacts.additional-required-artifacts
     override_mode: additive
+    value_type: id-list
     value: []

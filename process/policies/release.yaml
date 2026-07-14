@@ -4,13 +4,34 @@ version: 1.0.0
 kind: release
 canonical_sources:
   - openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
 rules:
   - id: release.distinct-states
     override_mode: locked
-    value: [ready_to_archive, release_ready, delivered]
+    value:
+      - implementation-complete
+      - definition-of-done
+      - release-ready
+      - archive-ready
+      - archived
+      - delivered
   - id: release.final-archive-human-approval
     override_mode: locked
     value: true
   - id: release.hotfix-reconciliation
     override_mode: locked
     value: true
+  - id: release.package-minimums
+    override_mode: locked
+    value:
+      - artifact-version
+      - included-changes
+      - requirements-scenarios
+      - verification-evidence
+      - known-limitations
+      - configuration-assumptions
+      - installation-transfer-steps
+      - rollback-or-hold
+      - operations-support-contacts
+      - unresolved-follow-ups

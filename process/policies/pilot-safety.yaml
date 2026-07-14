@@ -10,4 +10,20 @@ rules:
     value: advisory-only
   - id: pilot.minimum-risk-controls
     override_mode: additive
-    value: [privacy, secrets, access, rollback]
+    value_type: id-list
+    value:
+      - data-privacy
+      - secrets
+      - access
+      - accidental-delivery
+      - rollback-or-hold
+      - adapters-and-mcps
+      - model-runtime-behavior
+      - logging
+      - external-dependencies
+      - support-ownership
+      - evidence-corruption
+      - process-bypass
+  - id: pilot.ai-disabled-core-required
+    override_mode: locked
+    value: true

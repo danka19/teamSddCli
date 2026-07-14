@@ -78,6 +78,22 @@ def test_change_v2_accepts_all_classes_and_preserves_decision_facts() -> None:
         }
         assert "mode" not in document
 
+    canonical_types = (
+        "new_feature",
+        "behavior_change",
+        "bugfix",
+        "refactor",
+        "docs_only",
+        "config_ops",
+    )
+    candidate = load_yaml(FIXTURES / "valid" / "minor.yaml")
+    for work_type in canonical_types:
+        candidate["type"] = work_type
+        assert errors("change-v2.schema.json", candidate) == [], work_type
+    for legacy_or_route_value in ("feature", "maintenance", "emergency", "hotfix"):
+        candidate["type"] = legacy_or_route_value
+        assert errors("change-v2.schema.json", candidate), legacy_or_route_value
+
 
 def test_change_v2_rejects_unknown_class_and_legacy_mode() -> None:
     valid = load_yaml(FIXTURES / "valid" / "minor.yaml")
@@ -147,12 +163,175 @@ def test_manifest_pins_one_versioned_local_policy_set() -> None:
 
 def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> None:
     manifest = load_yaml(POLICIES / "manifest.yaml")
+    required_catalogs = {
+        "classification": {
+            "classification.minor-conditions": {
+                "local-change", "small-scope", "simple-rollback",
+                "no-user-scenario-impact", "no-sla-impact",
+                "no-security-compliance-impact", "no-external-integration-impact",
+                "no-data-model-impact", "no-component-interaction-impact",
+                "no-public-api-impact", "no-cross-repository-impact",
+                "no-reliability-impact", "no-performance-impact",
+                "no-operations-impact", "no-governed-test-impact",
+                "no-governed-documentation-impact",
+                "no-architecture-decision-required",
+            },
+            "classification.major-triggers": {
+                "new-feature", "business-logic-change", "user-scenario-change",
+                "component-interaction-change", "required-test-behavior-change",
+                "governed-documentation-change", "public-api-impact",
+                "integration-impact", "data-impact", "security-impact",
+                "compliance-impact", "sla-impact", "external-dependency",
+                "cross-repository-work", "reliability-impact",
+                "performance-impact", "operations-impact", "regression-risk",
+                "high-rollback-cost", "architecture-decision-required",
+            },
+            "classification.hotfix-eligibility": {
+                "delay-increases-harm", "accelerated-route-required",
+                "bounded-scope", "named-decision-owner",
+            },
+            "classification.hotfix-obligations": {
+                "human-ownership", "minimum-scenario-evidence",
+                "minimum-regression-evidence", "rollback-or-hold",
+                "traceability", "required-security-compliance-review",
+                "reconciliation-follow-up", "retain-major-impact-obligations",
+            },
+        },
+        "artifact-matrix": {
+            "artifacts.minor-required": {
+                "proposal-intent", "openspec-delta-when-behavior-changes",
+                "testable-scenarios", "classification-rationale",
+                "bounded-impact-risk-evidence", "quality-regression-approach",
+                "basic-traceability", "implementation-plan",
+                "verification-evidence", "rollback-or-hold", "human-decisions",
+            },
+            "artifacts.major-required": {
+                "expanded-design-impact-analysis",
+                "architecture-decision-or-not-required",
+                "owner-dependency-map", "quality-strategy",
+                "qa-test-plan-or-valid-waiver",
+                "automation-plan-or-valid-waiver", "broad-regression-matrix",
+                "migration-evidence-when-applicable",
+                "rollback-evidence-when-applicable",
+                "release-transfer-package-or-not-applicable",
+                "complete-traceability", "class-appropriate-approvals",
+            },
+            "artifacts.hotfix-entry-required": {
+                "harm-urgency-rationale", "bounded-scope", "affected-contour",
+                "named-decision-owner", "known-gaps", "testable-scenario",
+                "minimum-safety-regression-evidence", "rollback-or-hold",
+                "required-risk-decisions", "traceability", "reconciliation-plan",
+            },
+            "artifacts.hotfix-reconciliation-required": {
+                "deferred-artifact-disposition", "post-change-verification",
+                "release-transfer-package-when-applicable",
+                "completed-reconciliation-follow-up",
+            },
+        },
+        "gates": {
+            "gates.named-catalog": {
+                "review-ready", "definition-of-ready", "implementation-complete",
+                "definition-of-done", "release-transfer-readiness",
+                "archive-readiness", "archive-approval",
+            },
+            "gates.common-definition-of-ready": {
+                "business-goal-value", "owner", "scope-and-exclusions",
+                "type-classification-rationale", "affected-systems-owners",
+                "dependencies", "requirements-scenarios", "acceptance-criteria",
+                "quality-verification-strategy", "security-data-operations-assessment",
+                "rollback-or-hold", "initial-traceability",
+                "resolved-blocking-questions", "valid-waivers", "human-approvals",
+            },
+            "gates.definition-of-done": {
+                "acceptance-evidence", "defect-disposition",
+                "review-comment-disposition", "documentation-current",
+                "traceability-current", "required-checks-complete",
+                "valid-waivers", "class-obligations-resolved",
+            },
+            "gates.release-transfer-readiness": {
+                "version-or-tag", "release-notes", "included-scope-ids",
+                "verification-summary", "known-limitations",
+                "deployment-or-transfer-instructions", "rollback-or-hold",
+                "operational-support-checks", "responsible-roles",
+                "unresolved-follow-ups",
+            },
+            "gates.archive-readiness": {
+                "definition-of-done", "release-transfer-evidence-when-applicable",
+                "traceability", "waiver-disposition", "follow-up-disposition",
+                "current-policy-compatibility",
+            },
+        },
+        "regression": {
+            "regression.matrix-required-fields": {
+                "product-or-module", "requirement-scenario", "change-class",
+                "risk-trigger", "required-check", "test-data-environment",
+                "evidence-type", "owner", "current-result",
+            },
+            "regression.minimum-obligations": {
+                "source-linked-evidence", "applicable-row-or-not-applicable",
+                "qa-owner-disposition", "visible-coverage-gaps",
+            },
+        },
+        "flow-controls": {
+            "flow.production-stop-triggers": {
+                "required-context-missing-or-contradictory",
+                "material-scope-drift-unassessed",
+                "required-verification-unavailable", "critical-defect-unresolved",
+                "security-compliance-access-policy-violation",
+                "unauthorized-data-or-output-leakage-risk",
+                "mandatory-evidence-collection-failure", "owner-authority-conflict",
+                "rollback-or-hold-unavailable", "canonical-evidence-corruption",
+                "approved-safety-authority-exceeded",
+            },
+        },
+        "release": {
+            "release.distinct-states": {
+                "implementation-complete", "definition-of-done", "release-ready",
+                "archive-ready", "archived", "delivered",
+            },
+            "release.package-minimums": {
+                "artifact-version", "included-changes", "requirements-scenarios",
+                "verification-evidence", "known-limitations",
+                "configuration-assumptions", "installation-transfer-steps",
+                "rollback-or-hold", "operations-support-contacts",
+                "unresolved-follow-ups",
+            },
+        },
+        "pilot-safety": {
+            "pilot.minimum-risk-controls": {
+                "data-privacy", "secrets", "access", "accidental-delivery",
+                "rollback-or-hold", "adapters-and-mcps", "model-runtime-behavior",
+                "logging", "external-dependencies", "support-ownership",
+                "evidence-corruption", "process-bypass",
+            },
+        },
+        "failed-runs": {
+            "failed-runs.attempt-kinds": {
+                "validation", "ai", "adapter", "integration", "workflow",
+            },
+            "failed-runs.minimum-fields": {
+                "attempt-id", "outcome", "source", "time",
+                "version-or-configuration", "owner-disposition",
+            },
+        },
+    }
 
     for item in manifest["policies"]:
         policy = load_yaml(ROOT / "process" / item["path"])
-        policy["rules"] = policy["rules"][1:]
-
-        assert errors("policy-document.schema.json", policy), item["kind"]
+        rules = {rule["id"]: rule for rule in policy["rules"]}
+        for rule_id, required_items in required_catalogs[item["kind"]].items():
+            assert rule_id in rules, rule_id
+            assert set(rules[rule_id]["value"]) == required_items, rule_id
+            for missing_item in required_items:
+                candidate = copy.deepcopy(policy)
+                candidate_rule = next(
+                    rule for rule in candidate["rules"] if rule["id"] == rule_id
+                )
+                candidate_rule["value"].remove(missing_item)
+                assert errors("policy-document.schema.json", candidate), (
+                    rule_id,
+                    missing_item,
+                )
 
 
 def test_policy_bundle_builds_immutable_provenance_snapshot() -> None:
@@ -235,6 +414,46 @@ def test_adapter_addition_builds_on_central_addition_in_discovery_order() -> Non
     assert result.snapshot.rules["classification.additional-major-triggers"].source == (
         "project-adapter"
     )
+
+
+def test_additive_overrides_enforce_slot_value_type_with_provenance() -> None:
+    manifest = load_yaml(POLICIES / "manifest.yaml")
+    invalid_values = ("scalar-trigger", {"trigger": "object"}, ["not valid id"])
+
+    for source, invalid_value in (
+        ("central-config", invalid_values[0]),
+        ("central-config", invalid_values[1]),
+        ("project-adapter", invalid_values[2]),
+    ):
+        config = load_yaml(FIXTURES / "config" / "valid-central.yaml")
+        adapter = None
+        override = {
+            "rule_id": "classification.additional-major-triggers",
+            "operation": "add",
+            "value": invalid_value,
+        }
+        if source == "central-config":
+            config["policy_set"]["overrides"] = [override]
+        else:
+            config["policy_set"]["overrides"] = []
+            adapter = {
+                "policy_set": {
+                    "id": "sdd-core",
+                    "version": "1.0.0",
+                    "overrides": [override],
+                }
+            }
+
+        result = validate_policy_bundle(ROOT / "process", manifest, config, adapter)
+
+        assert result.snapshot is None
+        diagnostic = next(
+            item
+            for item in result.diagnostics
+            if item.code == "policy.override-value-invalid"
+        )
+        assert diagnostic.source == source
+        assert diagnostic.pointer == "/policy_set/overrides/0/value"
 
 
 def test_policy_integrity_rejects_versions_duplicates_missing_refs_and_cycles(

@@ -21,12 +21,14 @@
         "properties": {
           "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)+$"},
           "override_mode": {"enum": ["locked", "additive", "stricter_only", "replaceable"]},
+          "value_type": {"enum": ["id-list"]},
           "strictness": {"enum": ["minimum", "maximum"]},
           "value": {},
           "refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
           "requires": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
         },
         "allOf": [
+          {"if": {"properties": {"override_mode": {"const": "additive"}}}, "then": {"required": ["value_type"], "properties": {"value_type": {"const": "id-list"}, "value": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}}}}},
           {"if": {"properties": {"override_mode": {"const": "stricter_only"}}}, "then": {"required": ["strictness"]}}
         ]
       }
@@ -43,7 +45,11 @@
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.allowed-classes"}, "override_mode": {"const": "locked"}, "value": {"const": ["minor", "major", "hotfix"]}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.no-downgrade"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.no-automatic-hotfix-migration"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.additional-major-triggers"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.minor-conditions"}, "override_mode": {"const": "locked"}, "value": {"const": ["local-change", "small-scope", "simple-rollback", "no-user-scenario-impact", "no-sla-impact", "no-security-compliance-impact", "no-external-integration-impact", "no-data-model-impact", "no-component-interaction-impact", "no-public-api-impact", "no-cross-repository-impact", "no-reliability-impact", "no-performance-impact", "no-operations-impact", "no-governed-test-impact", "no-governed-documentation-impact", "no-architecture-decision-required"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.major-triggers"}, "override_mode": {"const": "locked"}, "value": {"const": ["new-feature", "business-logic-change", "user-scenario-change", "component-interaction-change", "required-test-behavior-change", "governed-documentation-change", "public-api-impact", "integration-impact", "data-impact", "security-impact", "compliance-impact", "sla-impact", "external-dependency", "cross-repository-work", "reliability-impact", "performance-impact", "operations-impact", "regression-risk", "high-rollback-cost", "architecture-decision-required"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.hotfix-eligibility"}, "override_mode": {"const": "locked"}, "value": {"const": ["delay-increases-harm", "accelerated-route-required", "bounded-scope", "named-decision-owner"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.hotfix-obligations"}, "override_mode": {"const": "locked"}, "value": {"const": ["human-ownership", "minimum-scenario-evidence", "minimum-regression-evidence", "rollback-or-hold", "traceability", "required-security-compliance-review", "reconciliation-follow-up", "retain-major-impact-obligations"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value_type", "value"], "properties": {"id": {"const": "classification.additional-major-triggers"}, "override_mode": {"const": "additive"}, "value_type": {"const": "id-list"}, "value": {"const": []}}}}
           ]}
         }
       }
@@ -57,7 +63,11 @@
           "rules": {"allOf": [
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.minimum-scenario-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.minimum-verification-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.additional-required-artifacts"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.minor-required"}, "override_mode": {"const": "locked"}, "value": {"const": ["proposal-intent", "openspec-delta-when-behavior-changes", "testable-scenarios", "classification-rationale", "bounded-impact-risk-evidence", "quality-regression-approach", "basic-traceability", "implementation-plan", "verification-evidence", "rollback-or-hold", "human-decisions"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.major-required"}, "override_mode": {"const": "locked"}, "value": {"const": ["expanded-design-impact-analysis", "architecture-decision-or-not-required", "owner-dependency-map", "quality-strategy", "qa-test-plan-or-valid-waiver", "automation-plan-or-valid-waiver", "broad-regression-matrix", "migration-evidence-when-applicable", "rollback-evidence-when-applicable", "release-transfer-package-or-not-applicable", "complete-traceability", "class-appropriate-approvals"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.hotfix-entry-required"}, "override_mode": {"const": "locked"}, "value": {"const": ["harm-urgency-rationale", "bounded-scope", "affected-contour", "named-decision-owner", "known-gaps", "testable-scenario", "minimum-safety-regression-evidence", "rollback-or-hold", "required-risk-decisions", "traceability", "reconciliation-plan"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.hotfix-reconciliation-required"}, "override_mode": {"const": "locked"}, "value": {"const": ["deferred-artifact-disposition", "post-change-verification", "release-transfer-package-when-applicable", "completed-reconciliation-follow-up"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value_type", "value"], "properties": {"id": {"const": "artifacts.additional-required-artifacts"}, "override_mode": {"const": "additive"}, "value_type": {"const": "id-list"}, "value": {"const": []}}}}
           ]}
         }
       }
@@ -71,7 +81,12 @@
           "rules": {"allOf": [
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.human-approval-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.security-compliance-minimum"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.additional-review-gates"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.named-catalog"}, "override_mode": {"const": "locked"}, "value": {"const": ["review-ready", "definition-of-ready", "implementation-complete", "definition-of-done", "release-transfer-readiness", "archive-readiness", "archive-approval"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.common-definition-of-ready"}, "override_mode": {"const": "locked"}, "value": {"const": ["business-goal-value", "owner", "scope-and-exclusions", "type-classification-rationale", "affected-systems-owners", "dependencies", "requirements-scenarios", "acceptance-criteria", "quality-verification-strategy", "security-data-operations-assessment", "rollback-or-hold", "initial-traceability", "resolved-blocking-questions", "valid-waivers", "human-approvals"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.definition-of-done"}, "override_mode": {"const": "locked"}, "value": {"const": ["acceptance-evidence", "defect-disposition", "review-comment-disposition", "documentation-current", "traceability-current", "required-checks-complete", "valid-waivers", "class-obligations-resolved"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.release-transfer-readiness"}, "override_mode": {"const": "locked"}, "value": {"const": ["version-or-tag", "release-notes", "included-scope-ids", "verification-summary", "known-limitations", "deployment-or-transfer-instructions", "rollback-or-hold", "operational-support-checks", "responsible-roles", "unresolved-follow-ups"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.archive-readiness"}, "override_mode": {"const": "locked"}, "value": {"const": ["definition-of-done", "release-transfer-evidence-when-applicable", "traceability", "waiver-disposition", "follow-up-disposition", "current-policy-compatibility"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value_type", "value"], "properties": {"id": {"const": "gates.additional-review-gates"}, "override_mode": {"const": "additive"}, "value_type": {"const": "id-list"}, "value": {"const": []}}}}
           ]}
         }
       }
@@ -81,10 +96,12 @@
       "then": {
         "properties": {
           "policy_id": {"const": "regression"},
-          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md"]},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
           "rules": {"allOf": [
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "regression.source-linked-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "strictness", "value"], "properties": {"id": {"const": "regression.minimum-scenarios"}, "override_mode": {"const": "stricter_only"}, "strictness": {"const": "minimum"}, "value": {"const": 1}}}}
+            {"contains": {"required": ["id", "override_mode", "strictness", "value"], "properties": {"id": {"const": "regression.minimum-scenarios"}, "override_mode": {"const": "stricter_only"}, "strictness": {"const": "minimum"}, "value": {"const": 1}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "regression.matrix-required-fields"}, "override_mode": {"const": "locked"}, "value": {"const": ["product-or-module", "requirement-scenario", "change-class", "risk-trigger", "required-check", "test-data-environment", "evidence-type", "owner", "current-result"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "regression.minimum-obligations"}, "override_mode": {"const": "locked"}, "value": {"const": ["source-linked-evidence", "applicable-row-or-not-applicable", "qa-owner-disposition", "visible-coverage-gaps"]}}}}
           ]}
         }
       }
@@ -96,9 +113,9 @@
           "policy_id": {"const": "flow-controls"},
           "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
           "rules": {"allOf": [
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.production-stop-triggers"}, "override_mode": {"const": "locked"}, "value": {"const": ["authority-exceeded", "access-failure", "evidence-corruption", "rollback-unavailable"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.production-stop-triggers"}, "override_mode": {"const": "locked"}, "value": {"const": ["required-context-missing-or-contradictory", "material-scope-drift-unassessed", "required-verification-unavailable", "critical-defect-unresolved", "security-compliance-access-policy-violation", "unauthorized-data-or-output-leakage-risk", "mandatory-evidence-collection-failure", "owner-authority-conflict", "rollback-or-hold-unavailable", "canonical-evidence-corruption", "approved-safety-authority-exceeded"]}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.rollback-or-hold-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.additional-stop-triggers"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+            {"contains": {"required": ["id", "override_mode", "value_type", "value"], "properties": {"id": {"const": "flow.additional-stop-triggers"}, "override_mode": {"const": "additive"}, "value_type": {"const": "id-list"}, "value": {"const": []}}}}
           ]}
         }
       }
@@ -108,11 +125,12 @@
       "then": {
         "properties": {
           "policy_id": {"const": "release"},
-          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md"]},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md", "openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md", "openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
           "rules": {"allOf": [
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.distinct-states"}, "override_mode": {"const": "locked"}, "value": {"const": ["ready_to_archive", "release_ready", "delivered"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.distinct-states"}, "override_mode": {"const": "locked"}, "value": {"const": ["implementation-complete", "definition-of-done", "release-ready", "archive-ready", "archived", "delivered"]}}}},
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.final-archive-human-approval"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.hotfix-reconciliation"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.hotfix-reconciliation"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.package-minimums"}, "override_mode": {"const": "locked"}, "value": {"const": ["artifact-version", "included-changes", "requirements-scenarios", "verification-evidence", "known-limitations", "configuration-assumptions", "installation-transfer-steps", "rollback-or-hold", "operations-support-contacts", "unresolved-follow-ups"]}}}}
           ]}
         }
       }
@@ -125,7 +143,8 @@
           "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
           "rules": {"allOf": [
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "pilot.ai-authority-boundary"}, "override_mode": {"const": "locked"}, "value": {"const": "advisory-only"}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "pilot.minimum-risk-controls"}, "override_mode": {"const": "additive"}, "value": {"const": ["privacy", "secrets", "access", "rollback"]}}}}
+            {"contains": {"required": ["id", "override_mode", "value_type", "value"], "properties": {"id": {"const": "pilot.minimum-risk-controls"}, "override_mode": {"const": "additive"}, "value_type": {"const": "id-list"}, "value": {"const": ["data-privacy", "secrets", "access", "accidental-delivery", "rollback-or-hold", "adapters-and-mcps", "model-runtime-behavior", "logging", "external-dependencies", "support-ownership", "evidence-corruption", "process-bypass"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "pilot.ai-disabled-core-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
           ]}
         }
       }
@@ -135,11 +154,14 @@
       "then": {
         "properties": {
           "policy_id": {"const": "failed-runs"},
-          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md"]},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md", "openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
           "rules": {"allOf": [
             {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.retention-enabled"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
             {"contains": {"required": ["id", "override_mode", "strictness", "value"], "properties": {"id": {"const": "failed-runs.minimum-retention-days"}, "override_mode": {"const": "stricter_only"}, "strictness": {"const": "minimum"}, "value": {"const": 1}}}},
-            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.source-linked"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.source-linked"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.attempt-kinds"}, "override_mode": {"const": "locked"}, "value": {"const": ["validation", "ai", "adapter", "integration", "workflow"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.minimum-fields"}, "override_mode": {"const": "locked"}, "value": {"const": ["attempt-id", "outcome", "source", "time", "version-or-configuration", "owner-disposition"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.successful-retry-preserves-failure"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
           ]}
         }
       }

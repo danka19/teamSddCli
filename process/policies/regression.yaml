@@ -3,7 +3,7 @@ policy_id: regression
 version: 1.0.0
 kind: regression
 canonical_sources:
-  - openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
 rules:
   - id: regression.source-linked-evidence
     override_mode: locked
@@ -12,3 +12,22 @@ rules:
     override_mode: stricter_only
     strictness: minimum
     value: 1
+  - id: regression.matrix-required-fields
+    override_mode: locked
+    value:
+      - product-or-module
+      - requirement-scenario
+      - change-class
+      - risk-trigger
+      - required-check
+      - test-data-environment
+      - evidence-type
+      - owner
+      - current-result
+  - id: regression.minimum-obligations
+    override_mode: locked
+    value:
+      - source-linked-evidence
+      - applicable-row-or-not-applicable
+      - qa-owner-disposition
+      - visible-coverage-gaps

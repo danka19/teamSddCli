@@ -14,6 +14,68 @@ rules:
   - id: classification.no-automatic-hotfix-migration
     override_mode: locked
     value: true
+  - id: classification.minor-conditions
+    override_mode: locked
+    value:
+      - local-change
+      - small-scope
+      - simple-rollback
+      - no-user-scenario-impact
+      - no-sla-impact
+      - no-security-compliance-impact
+      - no-external-integration-impact
+      - no-data-model-impact
+      - no-component-interaction-impact
+      - no-public-api-impact
+      - no-cross-repository-impact
+      - no-reliability-impact
+      - no-performance-impact
+      - no-operations-impact
+      - no-governed-test-impact
+      - no-governed-documentation-impact
+      - no-architecture-decision-required
+  - id: classification.major-triggers
+    override_mode: locked
+    value:
+      - new-feature
+      - business-logic-change
+      - user-scenario-change
+      - component-interaction-change
+      - required-test-behavior-change
+      - governed-documentation-change
+      - public-api-impact
+      - integration-impact
+      - data-impact
+      - security-impact
+      - compliance-impact
+      - sla-impact
+      - external-dependency
+      - cross-repository-work
+      - reliability-impact
+      - performance-impact
+      - operations-impact
+      - regression-risk
+      - high-rollback-cost
+      - architecture-decision-required
+  - id: classification.hotfix-eligibility
+    override_mode: locked
+    value:
+      - delay-increases-harm
+      - accelerated-route-required
+      - bounded-scope
+      - named-decision-owner
+  - id: classification.hotfix-obligations
+    override_mode: locked
+    value:
+      - human-ownership
+      - minimum-scenario-evidence
+      - minimum-regression-evidence
+      - rollback-or-hold
+      - traceability
+      - required-security-compliance-review
+      - reconciliation-follow-up
+      - retain-major-impact-obligations
   - id: classification.additional-major-triggers
     override_mode: additive
+    value_type: id-list
     value: []

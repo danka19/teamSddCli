@@ -1,7 +1,7 @@
 schema_version: 2
 id: sample-hotfix
 title: Sample hotfix change
-type: emergency
+type: bugfix
 classification: hotfix
 status: approved
 systems: [sample-app]

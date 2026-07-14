@@ -1,7 +1,7 @@
 schema_version: 2
 id: under-classification-input
 title: Under-classification input
-type: feature
+type: new_feature
 classification: minor
 status: draft
 systems: [sample-app]

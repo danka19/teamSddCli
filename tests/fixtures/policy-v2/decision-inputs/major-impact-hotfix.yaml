@@ -1,7 +1,7 @@
 schema_version: 2
 id: major-impact-hotfix-input
 title: Major impact hotfix input
-type: emergency
+type: behavior_change
 classification: hotfix
 status: draft
 systems: [sample-app]

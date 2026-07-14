@@ -11,6 +11,68 @@ rules:
   - id: gates.security-compliance-minimum
     override_mode: locked
     value: true
+  - id: gates.named-catalog
+    override_mode: locked
+    value:
+      - review-ready
+      - definition-of-ready
+      - implementation-complete
+      - definition-of-done
+      - release-transfer-readiness
+      - archive-readiness
+      - archive-approval
+  - id: gates.common-definition-of-ready
+    override_mode: locked
+    value:
+      - business-goal-value
+      - owner
+      - scope-and-exclusions
+      - type-classification-rationale
+      - affected-systems-owners
+      - dependencies
+      - requirements-scenarios
+      - acceptance-criteria
+      - quality-verification-strategy
+      - security-data-operations-assessment
+      - rollback-or-hold
+      - initial-traceability
+      - resolved-blocking-questions
+      - valid-waivers
+      - human-approvals
+  - id: gates.definition-of-done
+    override_mode: locked
+    value:
+      - acceptance-evidence
+      - defect-disposition
+      - review-comment-disposition
+      - documentation-current
+      - traceability-current
+      - required-checks-complete
+      - valid-waivers
+      - class-obligations-resolved
+  - id: gates.release-transfer-readiness
+    override_mode: locked
+    value:
+      - version-or-tag
+      - release-notes
+      - included-scope-ids
+      - verification-summary
+      - known-limitations
+      - deployment-or-transfer-instructions
+      - rollback-or-hold
+      - operational-support-checks
+      - responsible-roles
+      - unresolved-follow-ups
+  - id: gates.archive-readiness
+    override_mode: locked
+    value:
+      - definition-of-done
+      - release-transfer-evidence-when-applicable
+      - traceability
+      - waiver-disposition
+      - follow-up-disposition
+      - current-policy-compatibility
   - id: gates.additional-review-gates
     override_mode: additive
+    value_type: id-list
     value: []
