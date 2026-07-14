@@ -481,6 +481,60 @@ def test_package_schema_graph_rejects_indirect_remote_references(
     assert diagnostic_codes(stdout) == ["package.schema-invalid"]
 
 
+@pytest.mark.parametrize("reference_keyword", ["$ref", "$dynamicRef"])
+def test_package_schema_graph_rejects_relative_reference_under_remote_id(
+    tmp_path: Path, reference_keyword: str
+) -> None:
+    root = build_central_layout(tmp_path / reference_keyword.removeprefix("$"))
+    schema_root = root / "process" / "schemas"
+    workflow_path = schema_root / "workflow.schema.json"
+    workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
+    workflow["$defs"] = {
+        "remote-base": {
+            "$id": "https://example.invalid/base/",
+            reference_keyword: "auxiliary.schema.json",
+        }
+    }
+    workflow_path.write_text(json.dumps(workflow), encoding="utf-8")
+    (schema_root / "auxiliary.schema.json").write_text(
+        json.dumps({"$schema": "https://json-schema.org/draft/2020-12/schema"}),
+        encoding="utf-8",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["package.schema-invalid"]
+
+
+@pytest.mark.parametrize("reference_keyword", ["$ref", "$dynamicRef"])
+def test_package_schema_graph_resolves_reference_from_local_relative_id(
+    tmp_path: Path, reference_keyword: str
+) -> None:
+    root = build_central_layout(tmp_path / reference_keyword.removeprefix("$"))
+    schema_root = root / "process" / "schemas"
+    workflow_path = schema_root / "workflow.schema.json"
+    workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
+    workflow["$defs"] = {
+        "local-base": {
+            "$id": "nested/",
+            reference_keyword: "auxiliary.schema.json",
+        }
+    }
+    workflow_path.write_text(json.dumps(workflow), encoding="utf-8")
+    nested = schema_root / "nested"
+    nested.mkdir()
+    (nested / "auxiliary.schema.json").write_text(
+        json.dumps({"$schema": "https://json-schema.org/draft/2020-12/schema"}),
+        encoding="utf-8",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 0
+    assert diagnostic_codes(stdout) == []
+
+
 def test_package_schema_graph_stays_contained_and_handles_local_cycles(
     tmp_path: Path,
 ) -> None:

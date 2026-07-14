@@ -10,7 +10,8 @@ from collections.abc import Mapping
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from types import MappingProxyType
 from typing import Any, Callable
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
+from urllib.request import url2pathname
 
 import yaml
 from jsonschema import Draft202012Validator
@@ -462,36 +463,50 @@ def _validate_schema_resource(
         raise ValueError("schema resource exceeds validation limit")
     schema = json.loads(path.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
-    for reference in collect_refs(schema):
-        target_name = reference.partition("#")[0]
-        if not target_name:
-            continue
-        parsed = urlsplit(target_name)
-        if (
-            parsed.scheme
-            or parsed.netloc
-            or PurePosixPath(target_name).is_absolute()
-            or bool(PureWindowsPath(target_name).anchor)
-        ):
-            raise ValueError("non-local schema reference")
-        target = (path.parent / target_name).resolve()
-        target.relative_to(schema_root)
-        if not target.is_file():
-            raise ValueError("missing local schema reference")
-        _validate_schema_resource(target, schema_root, visited)
+    _validate_schema_references(schema, path.as_uri(), schema_root, visited)
 
 
-def collect_refs(value: Any) -> list[str]:
+def _validate_schema_references(
+    value: Any, base_uri: str, schema_root: Path, visited: set[Path]
+) -> None:
     if isinstance(value, dict):
-        found = [
-            value[keyword]
-            for keyword in ("$ref", "$dynamicRef")
-            if isinstance(value.get(keyword), str)
-        ]
-        return found + [item for child in value.values() for item in collect_refs(child)]
-    if isinstance(value, list):
-        return [item for child in value for item in collect_refs(child)]
-    return []
+        effective_base = base_uri
+        if isinstance(value.get("$id"), str):
+            effective_base = urljoin(base_uri, value["$id"])
+        for keyword in ("$ref", "$dynamicRef"):
+            reference = value.get(keyword)
+            if isinstance(reference, str):
+                _validate_schema_reference(
+                    reference, effective_base, schema_root, visited
+                )
+        for child in value.values():
+            _validate_schema_references(child, effective_base, schema_root, visited)
+    elif isinstance(value, list):
+        for child in value:
+            _validate_schema_references(child, base_uri, schema_root, visited)
+
+
+def _validate_schema_reference(
+    reference: str, base_uri: str, schema_root: Path, visited: set[Path]
+) -> None:
+    authored = urlsplit(reference)
+    if not authored.path and not authored.query:
+        return
+    if (
+        authored.scheme
+        or authored.netloc
+        or PurePosixPath(authored.path).is_absolute()
+        or bool(PureWindowsPath(authored.path).anchor)
+    ):
+        raise ValueError("non-local schema reference")
+    resolved = urlsplit(urljoin(base_uri, reference))
+    if resolved.scheme != "file" or resolved.netloc:
+        raise ValueError("non-local schema reference")
+    target = Path(url2pathname(resolved.path)).resolve()
+    target.relative_to(schema_root)
+    if not target.is_file():
+        raise ValueError("missing local schema reference")
+    _validate_schema_resource(target, schema_root, visited)
 
 
 def safe_registry_path(root: Path, value: Any, result: ValidationResult, pointer: str) -> Path | None:

@@ -58,7 +58,7 @@ python scripts/validate_process_config.py C:/work/sample-app --json
 python scripts/validate_process_config.py C:/work/sample-app --registry central=C:/work/team-specs --json
 ```
 
-The validator discovers `sdd.config.yaml` for central mode or `.sdd-project.yaml` for adapter mode, then performs bounded UTF-8/duplicate-key-safe YAML loading, high-confidence inline-secret rejection, bundled JSON Schema checks, package/workflow/schema checks, exact config/package/adapter/`VERSION`/OpenSpec compatibility, registry and owner/project/adapter integrity, and only then `openspec --version`. It never writes configuration or canonical artifacts.
+The validator discovers `sdd.config.yaml` for central mode or `.sdd-project.yaml` for adapter mode, then performs bounded UTF-8/duplicate-key-safe YAML loading, high-confidence inline-secret rejection, bundled JSON Schema checks, package/workflow/schema checks, exact config/package/adapter/`VERSION`/OpenSpec compatibility, registry and owner/project/adapter integrity, and only then `openspec --version`. Package schema traversal applies nested `$id` effective-base semantics before `$ref` and `$dynamicRef`: relative local bases may resolve only to files inside the package schema directory, while remote/network-backed effective targets are rejected. It never writes configuration or canonical artifacts.
 
 Human mode writes stable error codes and remediation to stderr. `--json` writes exactly one JSON object to stdout with `schema_version`, `status`, `mode`, `diagnostics`, and `compatibility`. Diagnostics use safe logical source labels and JSON pointers; they do not echo secret values or unrestricted absolute paths.
 
