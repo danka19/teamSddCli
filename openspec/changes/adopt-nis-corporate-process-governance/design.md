@@ -154,7 +154,7 @@ No package may claim zero production risk. Pilot evidence includes data/privacy,
 
 ### 11. Place the change before the real pilot without invalidating the package foundation
 
-Phase 2 work items 2.1-2.6 are closed with a versioned foundation, configuration compatibility validation, schema-v2 change contract, canonical policy catalogs, deterministic classification/migration, class-aware gate reports, guarded lifecycle decisions, and non-mutating Tech Lead governance required by both active changes. Work item 2.7 is ready for corporate flow controls, safety, and failed-run integrity; later sequential work adds the broader packaged flow, expanded role certification, release-candidate acceptance, and Phase 3 pilot entry.
+Phase 2 work items 2.1-2.6 are closed with a versioned foundation, configuration compatibility validation, schema-v2 change contract, canonical policy catalogs, deterministic classification/migration, class-aware gate reports, guarded lifecycle decisions, and non-mutating Tech Lead governance required by both active changes. Work item 2.7 is active for corporate flow controls, safety, and failed-run integrity; later sequential work adds the broader packaged flow, expanded role certification, release-candidate acceptance, and Phase 3 pilot entry.
 
 The existing transfer-readiness change may continue through foundation work that does not encode `thin/full` as permanent behavior. Before the packaged reference flow, role kit, certification, manifest, and release acceptance are finalized, they must consume the accepted outcome of this change or explicitly remain blocked.
 

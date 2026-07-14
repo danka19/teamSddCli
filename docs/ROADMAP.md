@@ -71,7 +71,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.6 are closed; work item 2.7 is ready under the worker/reviewer/architecture/verification workflow.
+Work items 2.1-2.6 are closed; work item 2.7 is active under the worker/reviewer/architecture/verification workflow.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
