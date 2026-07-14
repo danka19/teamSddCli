@@ -16,8 +16,17 @@ from process.validators.config_discovery import default_runtime_probe, validate_
 from process.validators.config_validation import Diagnostic, ValidationResult
 
 
+class UsageArgumentError(ValueError):
+    """A parser failure that must be rendered through the stable CLI contract."""
+
+
+class ContractArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise UsageArgumentError(message)
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = ContractArgumentParser(description=__doc__)
     parser.add_argument("start", help="Repository directory where discovery starts.")
     parser.add_argument(
         "--registry", action="append", default=[], metavar="ID=PATH",
@@ -34,41 +43,54 @@ def main(
     stdout: Callable[[str], object] = print,
     stderr: Callable[[str], object] | None = None,
 ) -> int:
-    args = parse_args(sys.argv[1:] if argv is None else argv)
+    raw_args = sys.argv[1:] if argv is None else argv
     error_output = stderr or (lambda message: print(message, file=sys.stderr))
-    start = Path(args.start)
-    usage_error = False
     try:
-        mappings = parse_registry(args.registry)
-    except ValueError:
+        args = parse_args(raw_args)
+    except UsageArgumentError:
         usage_error = True
         result = ValidationResult()
         result.add(Diagnostic(
-            "usage.registry", "usage",
-            "A registry mapping is malformed or duplicates an identifier.", 0,
-            hint="Pass each mapping once as --registry ID=PATH.",
+            "usage.arguments", "usage",
+            "Command arguments are missing, unknown, or malformed.", 0,
+            hint="Pass START and only the documented --registry ID=PATH and --json options.",
         ))
-    if not usage_error and not start.is_dir():
-        usage_error = True
-        result = ValidationResult()
-        result.add(Diagnostic(
-            "usage.start-directory", "usage",
-            "The explicit start directory does not exist or is not a directory.", 0,
-            hint="Pass an existing repository directory.",
-        ))
-    elif not usage_error:
+        json_output = "--json" in raw_args
+    else:
+        json_output = args.json
+        start = Path(args.start)
+        usage_error = False
         try:
-            result = validate_configuration(
-                start.resolve(), mappings, runtime_probe or default_runtime_probe
-            )
-        except Exception:
+            mappings = parse_registry(args.registry)
+        except ValueError:
+            usage_error = True
             result = ValidationResult()
             result.add(Diagnostic(
-                "internal.validator-failure", "operational",
-                "The validator failed unexpectedly without exposing internal paths or data.", 10,
-                hint="Re-run focused tests and inspect the local traceback in a controlled environment.",
+                "usage.registry", "usage",
+                "A registry mapping is malformed or duplicates an identifier.", 0,
+                hint="Pass each mapping once as --registry ID=PATH.",
             ))
-    if args.json:
+        if not usage_error and not start.is_dir():
+            usage_error = True
+            result = ValidationResult()
+            result.add(Diagnostic(
+                "usage.start-directory", "usage",
+                "The explicit start directory does not exist or is not a directory.", 0,
+                hint="Pass an existing repository directory.",
+            ))
+        elif not usage_error:
+            try:
+                result = validate_configuration(
+                    start.resolve(), mappings, runtime_probe or default_runtime_probe
+                )
+            except Exception:
+                result = ValidationResult()
+                result.add(Diagnostic(
+                    "internal.validator-failure", "operational",
+                    "The validator failed unexpectedly without exposing internal paths or data.", 10,
+                    hint="Re-run focused tests and inspect the local traceback in a controlled environment.",
+                ))
+    if json_output:
         stdout(json.dumps(result.as_payload(), sort_keys=True, separators=(",", ":")))
     else:
         if result.diagnostics:

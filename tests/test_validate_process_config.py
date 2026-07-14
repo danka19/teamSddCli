@@ -455,6 +455,105 @@ def test_package_schemas_reject_remote_reference_keywords(
     assert diagnostic_codes(stdout) == ["package.schema-invalid"]
 
 
+@pytest.mark.parametrize("reference_keyword", ["$ref", "$dynamicRef"])
+def test_package_schema_graph_rejects_indirect_remote_references(
+    tmp_path: Path, reference_keyword: str
+) -> None:
+    root = build_central_layout(tmp_path / reference_keyword.removeprefix("$"))
+    schema_root = root / "process" / "schemas"
+    workflow_path = schema_root / "workflow.schema.json"
+    workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
+    workflow["$defs"] = {"indirect": {"$ref": "auxiliary.schema.json"}}
+    workflow_path.write_text(json.dumps(workflow), encoding="utf-8")
+    (schema_root / "auxiliary.schema.json").write_text(
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                reference_keyword: "https://example.invalid/remote.schema.json",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["package.schema-invalid"]
+
+
+def test_package_schema_graph_stays_contained_and_handles_local_cycles(
+    tmp_path: Path,
+) -> None:
+    root = build_central_layout(tmp_path / "cyclic-escape")
+    schema_root = root / "process" / "schemas"
+    workflow_path = schema_root / "workflow.schema.json"
+    workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
+    workflow["$defs"] = {"cycle": {"$ref": "cycle-a.schema.json"}}
+    workflow_path.write_text(json.dumps(workflow), encoding="utf-8")
+    (schema_root / "cycle-a.schema.json").write_text(
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$ref": "cycle-b.schema.json",
+            }
+        ),
+        encoding="utf-8",
+    )
+    (schema_root / "cycle-b.schema.json").write_text(
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$defs": {
+                    "cycle": {"$ref": "cycle-a.schema.json"},
+                    "escape": {"$ref": "../outside.schema.json"},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "process" / "outside.schema.json").write_text(
+        json.dumps({"$schema": "https://json-schema.org/draft/2020-12/schema"}),
+        encoding="utf-8",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["package.schema-invalid"]
+
+
+def test_schema_validation_uses_injected_immutable_resources(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from process.validators import config_discovery, config_validation
+
+    loader = getattr(config_discovery, "load_schema_resources", None)
+    assert loader is not None, "schema resources must be loaded by the I/O boundary"
+    resources = loader(REPO_ROOT / "process" / "schemas")
+    with pytest.raises(TypeError):
+        resources["new.schema.json"] = {}
+    with pytest.raises(TypeError):
+        resources["sdd-config.schema.json"]["type"] = "array"
+
+    root = build_central_layout(tmp_path / "central")
+    config = read_yaml(root / "sdd.config.yaml")
+
+    def fail_on_validation_file_io(*args, **kwargs):
+        raise AssertionError("pure schema validation attempted filesystem I/O")
+
+    monkeypatch.setattr(Path, "read_text", fail_on_validation_file_io)
+    diagnostics = config_validation.schema_diagnostics(
+        "sdd-config.schema.json",
+        config,
+        "central-config",
+        stage=4,
+        schema_resources=resources,
+    )
+
+    assert diagnostics == []
+    assert not hasattr(config_validation, "SCHEMA_ROOT")
+
+
 def test_secret_diagnostics_are_redacted_and_human_json_codes_match(tmp_path: Path) -> None:
     token = "ghp_abcdefghijklmnopqrstuvwxyz1234567890"
     root = build_central_layout(tmp_path / "central")
@@ -548,15 +647,34 @@ def test_real_entry_point_imports_package_from_any_working_directory(
     assert json.loads(completed.stdout)["status"] == "valid"
 
 
-def test_usage_error_exits_two() -> None:
-    from scripts import validate_process_config
+@pytest.mark.parametrize(
+    ("human_args", "json_args"),
+    [
+        ([], ["--json"]),
+        (["{root}", "--unknown"], ["{root}", "--unknown", "--json"]),
+        (["{root}", "--registry"], ["{root}", "--registry", "--json"]),
+    ],
+    ids=["missing-start", "unknown-option", "malformed-option"],
+)
+def test_generic_parser_failures_use_stable_human_and_json_contracts(
+    tmp_path: Path, human_args: list[str], json_args: list[str]
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    human = [value.format(root=root) for value in human_args]
+    machine = [value.format(root=root) for value in json_args]
 
-    try:
-        validate_process_config.main([], runtime_probe=lambda: "1.4.1")
-    except SystemExit as error:
-        assert error.code == 2
-    else:
-        raise AssertionError("missing explicit start directory was accepted")
+    json_code, json_stdout, json_stderr = run_cli(machine, lambda: "1.4.1")
+    human_code, human_stdout, human_stderr = run_cli(human, lambda: "1.4.1")
+
+    assert json_code == human_code == 2
+    assert json_stderr == human_stdout == ""
+    assert diagnostic_codes(json_stdout) == ["usage.arguments"]
+    assert json.loads(json_stdout)["status"] == "invalid"
+    assert json_stdout.count("\n") == 0
+    assert "[usage.arguments]" in human_stderr
+    assert not human_stderr.lower().startswith("usage:")
+    assert "\nusage:" not in human_stderr.lower()
+    assert ": error:" not in human_stderr.lower()
 
 
 def test_nonexistent_start_directory_is_usage_error(tmp_path: Path) -> None:

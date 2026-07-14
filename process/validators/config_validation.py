@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import json
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Iterable
 
 from jsonschema import Draft202012Validator
@@ -18,7 +17,6 @@ TOPOLOGY = "central-team-specs"
 PACKAGE_ID = "sdd-process"
 PACKAGE_VERSION = "0.1.0"
 OPENSPEC_VERSION = "1.4.1"
-SCHEMA_ROOT = Path(__file__).resolve().parents[1] / "schemas"
 
 
 @dataclass(frozen=True)
@@ -99,22 +97,29 @@ def pointer(parts: Iterable[Any]) -> str:
     return "/" + "/".join(encoded) if encoded else ""
 
 
-def _schema_registry() -> Registry:
+def _schema_registry(schema_resources: Mapping[str, Any]) -> Registry:
     registry = Registry()
-    for path in sorted(SCHEMA_ROOT.glob("*.json")):
-        schema = json.loads(path.read_text(encoding="utf-8"))
+    for name in sorted(schema_resources):
+        schema = schema_resources[name]
         registry = registry.with_resource(
-            path.name,
+            name,
             Resource.from_contents(schema, default_specification=DRAFT202012),
         )
     return registry
 
 
 def schema_diagnostics(
-    schema_name: str, data: Any, source: str, *, stage: int
+    schema_name: str,
+    data: Any,
+    source: str,
+    *,
+    stage: int,
+    schema_resources: Mapping[str, Any],
 ) -> list[Diagnostic]:
-    schema = json.loads((SCHEMA_ROOT / schema_name).read_text(encoding="utf-8"))
-    validator = Draft202012Validator(schema, registry=_schema_registry())
+    schema = schema_resources[schema_name]
+    validator = Draft202012Validator(
+        schema, registry=_schema_registry(schema_resources)
+    )
     return [
         Diagnostic(
             "schema.invalid",

@@ -6,8 +6,11 @@ import json
 import re
 import shutil
 import subprocess
+from collections.abc import Mapping
 from pathlib import Path, PurePosixPath, PureWindowsPath
+from types import MappingProxyType
 from typing import Any, Callable
+from urllib.parse import urlsplit
 
 import yaml
 from jsonschema import Draft202012Validator
@@ -26,6 +29,7 @@ from .config_validation import (
 
 
 MAX_FILE_BYTES = 1_048_576
+BUNDLED_SCHEMA_ROOT = Path(__file__).resolve().parents[1] / "schemas"
 REFERENCE_PATTERN = re.compile(r"^(sibling|registry|path):(.+)$")
 REFERENCE_ID = re.compile(r"^[a-z][a-z0-9-]*$")
 PORTABLE_PATH = re.compile(r"^[A-Za-z0-9 _.-]+(?:/[A-Za-z0-9 _.-]+)*$")
@@ -106,6 +110,28 @@ def load_yaml(path: Path, source: str, result: ValidationResult, stage: int = 2)
     return value
 
 
+def load_schema_resources(schema_root: Path) -> Mapping[str, Any]:
+    """Load a deeply immutable snapshot of local JSON Schema resources."""
+    resources: dict[str, Any] = {}
+    for path in sorted(schema_root.glob("*.json")):
+        if path.stat().st_size > MAX_FILE_BYTES:
+            raise ValueError("schema resource exceeds validation limit")
+        resources[path.name] = _freeze_json(
+            json.loads(path.read_text(encoding="utf-8"))
+        )
+    return MappingProxyType(resources)
+
+
+def _freeze_json(value: Any) -> Any:
+    if isinstance(value, dict):
+        return MappingProxyType(
+            {key: _freeze_json(child) for key, child in value.items()}
+        )
+    if isinstance(value, list):
+        return tuple(_freeze_json(child) for child in value)
+    return value
+
+
 def validate_configuration(
     start: Path,
     registry: dict[str, Path],
@@ -131,6 +157,8 @@ def validate_configuration(
         ))
         return result
 
+    schema_resources = load_schema_resources(BUNDLED_SCHEMA_ROOT)
+
     adapter: dict[str, Any] | None = None
     if adapter_path.is_file():
         result.mode = "adapter"
@@ -140,7 +168,10 @@ def validate_configuration(
         result.add(*secret_diagnostics(adapter, "project-adapter"))
         if result.diagnostics:
             return result
-        result.add(*schema_diagnostics("project-adapter.schema.json", adapter, "project-adapter", stage=4))
+        result.add(*schema_diagnostics(
+            "project-adapter.schema.json", adapter, "project-adapter", stage=4,
+            schema_resources=schema_resources,
+        ))
         result.add(*adapter_compatibility(adapter))
         if result.diagnostics:
             reference = adapter.get("team_specs", {}).get("reference")
@@ -178,7 +209,10 @@ def validate_configuration(
     result.add(*secret_diagnostics(config, "central-config"))
     if result.diagnostics:
         return result
-    result.add(*schema_diagnostics("sdd-config.schema.json", config, "central-config", stage=4))
+    result.add(*schema_diagnostics(
+        "sdd-config.schema.json", config, "central-config", stage=4,
+        schema_resources=schema_resources,
+    ))
     result.add(*config_compatibility(config))
     if result.diagnostics:
         return result
@@ -192,7 +226,10 @@ def validate_configuration(
     result.add(*secret_diagnostics(package, "process-package"))
     if result.diagnostics:
         return result
-    result.add(*schema_diagnostics("process-package.schema.json", package, "process-package", stage=5))
+    result.add(*schema_diagnostics(
+        "process-package.schema.json", package, "process-package", stage=5,
+        schema_resources=schema_resources,
+    ))
     if result.diagnostics:
         return result
 
@@ -203,7 +240,10 @@ def validate_configuration(
     if workflow is None:
         return result
     result.add(*secret_diagnostics(workflow, "process-workflow"))
-    result.add(*schema_diagnostics("workflow.schema.json", workflow, "process-workflow", stage=5))
+    result.add(*schema_diagnostics(
+        "workflow.schema.json", workflow, "process-workflow", stage=5,
+        schema_resources=schema_resources,
+    ))
     validate_package_schemas(package_root, package.get("schemas"), result)
     version = load_version(package_root / "VERSION", result)
     if result.diagnostics:
@@ -221,8 +261,14 @@ def validate_configuration(
     result.add(*secret_diagnostics(owners, "owners-registry"))
     if result.diagnostics:
         return result
-    result.add(*schema_diagnostics("projects.schema.json", projects, "projects-registry", stage=8))
-    result.add(*schema_diagnostics("owners.schema.json", owners, "owners-registry", stage=8))
+    result.add(*schema_diagnostics(
+        "projects.schema.json", projects, "projects-registry", stage=8,
+        schema_resources=schema_resources,
+    ))
+    result.add(*schema_diagnostics(
+        "owners.schema.json", owners, "owners-registry", stage=8,
+        schema_resources=schema_resources,
+    ))
     if result.diagnostics:
         return result
 
@@ -387,29 +433,52 @@ def _unsafe_asset(result: ValidationResult, source: str, pointer: str) -> None:
 def validate_package_schemas(root: Path, schemas: Any, result: ValidationResult) -> None:
     if not isinstance(schemas, dict):
         return
+    schema_root = (root / "schemas").resolve()
+    visited: set[Path] = set()
     for name, relative in sorted(schemas.items()):
         path = safe_package_path(root, relative, result, "process-package", f"/schemas/{name}")
         if path is None:
             continue
         try:
-            schema = json.loads(path.read_text(encoding="utf-8"))
-            Draft202012Validator.check_schema(schema)
-            for reference in collect_refs(schema):
-                if "://" in reference:
-                    raise ValueError("network schema reference")
-                target_name = reference.partition("#")[0]
-                if target_name:
-                    target = (path.parent / target_name).resolve()
-                    target.relative_to(path.parent.resolve())
-                    if not target.is_file():
-                        raise ValueError("missing local schema reference")
-        except (OSError, UnicodeError, json.JSONDecodeError, ValueError, Exception) as error:
+            _validate_schema_resource(path, schema_root, visited)
+        except Exception:
             # jsonschema exposes several validation exception types; none are safe to render verbatim.
             result.add(Diagnostic(
                 "package.schema-invalid", "schema",
                 "A declared package schema is invalid or has a non-local reference.", 5,
                 source="process-package", pointer=f"/schemas/{name}",
             ))
+
+
+def _validate_schema_resource(
+    path: Path, schema_root: Path, visited: set[Path]
+) -> None:
+    path = path.resolve()
+    path.relative_to(schema_root)
+    if path in visited:
+        return
+    visited.add(path)
+    if path.stat().st_size > MAX_FILE_BYTES:
+        raise ValueError("schema resource exceeds validation limit")
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    for reference in collect_refs(schema):
+        target_name = reference.partition("#")[0]
+        if not target_name:
+            continue
+        parsed = urlsplit(target_name)
+        if (
+            parsed.scheme
+            or parsed.netloc
+            or PurePosixPath(target_name).is_absolute()
+            or bool(PureWindowsPath(target_name).anchor)
+        ):
+            raise ValueError("non-local schema reference")
+        target = (path.parent / target_name).resolve()
+        target.relative_to(schema_root)
+        if not target.is_file():
+            raise ValueError("missing local schema reference")
+        _validate_schema_resource(target, schema_root, visited)
 
 
 def collect_refs(value: Any) -> list[str]:
