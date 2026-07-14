@@ -38,8 +38,8 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 - Focused GREEN: `python -m pytest tests/test_process_package.py -q` -> 9 passed.
 - Self-review RED: the same focused command -> 1 failed because the optional adapter did not declare the consumed central config-schema version.
 - Self-review GREEN: the same focused command -> 9 passed after adding the explicit config-schema version contract.
-- Final focused test: `python -m pytest tests/test_process_package.py -q` -> 9 passed.
-- Complete test suite: `python -m pytest -q` -> 43 passed.
+- Post-review-fix final focused test: `python -m pytest tests/test_process_package.py -q` -> 10 passed in 0.19s.
+- Post-review-fix complete test suite: `python -m pytest -q` -> 44 passed in 0.67s.
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - OpenSpec inventory: `openspec list` -> both active changes remain 0 tasks complete; `openspec list --specs` -> 8 accepted specs.
 - Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.
