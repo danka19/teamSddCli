@@ -265,4 +265,4 @@ Add only separately accepted product/process layers. No effectiveness-evaluation
 
 ## Remediation Decision
 
-Resolved by the human owner on 2026-07-13: adopt the repaired NIS corporate process through `adopt-nis-corporate-process-governance` and Phase 2 work item 2.3A, using the flat NIS classification and the corporate governance controls above. Exclude process-effectiveness evaluation. Preserve failed-run retention as traceability and safety evidence.
+Resolved by the human owner on 2026-07-13 and remapped on 2026-07-14: adopt the repaired NIS corporate process through `adopt-nis-corporate-process-governance` and exact Phase 2 work items 2.3-2.14, using the flat NIS classification and the corporate governance controls above. Exclude process-effectiveness evaluation. Preserve failed-run retention as traceability and safety evidence.

@@ -26,6 +26,10 @@ The SDD process SHALL provide deterministic bootstrap, compatibility validation,
 - **WHEN** a package or configuration upgrade fails its verification gate
 - **THEN** the runbook restores the previously pinned package and configuration version without rewriting canonical change or living-spec history
 
+#### Scenario: Supported desktop hosts produce equivalent governed behavior
+- **WHEN** the release candidate is bootstrapped on clean supported Windows, Linux, and macOS hosts with the documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned
+- **THEN** the same canonical fixtures, deterministic gates, evidence contracts, update path, and rollback behavior pass without platform-specific weakening or manual source edits
+
 ### Requirement: External release acceptance gate
 The SDD process SHALL require reproducible external evidence before a release candidate is accepted for corporate transfer.
 
@@ -89,6 +93,10 @@ The SDD process SHALL make the release candidate and corporate pilot traceable t
 #### Scenario: Pilot evidence identifies installed state
 - **WHEN** pilot results are recorded
 - **THEN** the evidence identifies the installed release, real non-secret configuration revision, adapter versions, change ID, relevant PR and test evidence, human decisions, deviations, and follow-up changes
+
+#### Scenario: Verification coverage is traceable and gaps remain visible
+- **WHEN** release-candidate verification is reviewed
+- **THEN** every applicable requirement and positive or negative scenario links to an automated test or recorded manual evidence, while any permitted gap records risk, owner, reason, compensating evidence, and follow-up instead of being hidden by an aggregate pass result
 
 ### Requirement: First transfer boundary preserves later-layer exclusions
 The transfer-ready release candidate SHALL prove the accepted minor/major/hotfix core flow without requiring later automation layers.

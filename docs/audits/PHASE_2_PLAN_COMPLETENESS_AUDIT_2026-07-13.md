@@ -2,7 +2,7 @@
 
 Date: 2026-07-13.
 
-Status: completed audit. Remediation direction was accepted on 2026-07-14 in `D-015`; the risk-oriented certification matrix is now accepted, and implementation is paused until the Apple target is clarified and the corrected plan is accepted.
+Status: completed audit. Remediation was applied on 2026-07-14: the phase plan now uses exact work items `2.1-2.14`, Windows/Linux/macOS and the risk-oriented matrix are accepted, and implementation is paused only for explicit human acceptance of the corrected plan.
 
 ## Executive Result
 
@@ -10,7 +10,31 @@ The Phase 2 plan is strong in scope coverage, architecture boundaries, acceptanc
 
 At audit time, work item 2.1 was technically independent. The later plan contained a blocking dependency cycle: work item 2.3A claimed ownership of all 42 then-current tasks in `adopt-nis-corporate-process-governance` and had to close before certification and release work items, while NIS tasks 8.3-8.7 themselves required that later certification, release evidence, human acceptance, and Phase 3 pilot work. The same broad ownership also overlapped work assigned to Phase 2 items 2.3-2.8.
 
-Accepted disposition under `D-015`: pause all Phase 2 implementation, replace the draft mapping with clean sequential work items `2.3-2.14`, assign every task once, split the Phase 3 portion of NIS task 8.7 into new task 8.8, and accept the corrected plan before returning 2.1 to `ready`. The risk-oriented certification matrix is accepted; only the requested Apple execution target (`iOS` device/runtime or `macOS` host) remains open input to that final rewrite.
+Applied disposition under `D-015`: all Phase 2 implementation remains paused; the draft mapping is replaced by clean sequential work items `2.3-2.14`; every task has one owner; the Phase 3 portion of NIS task 8.7 is split into task 8.8; and explicit human plan acceptance is required before 2.1 becomes `ready`. The accepted host matrix is Windows, Linux, and macOS.
+
+## Remediation Verification (2026-07-14)
+
+The findings and line references below describe the audited pre-remediation plan. The current canonical plan is `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`; this section records the verified remediation result.
+
+Criteria and results:
+
+| Criterion | Evidence | Result |
+|---|---|---|
+| Clean numbering | Active work items are exactly `2.1-2.14`; no active `2.3A` item remains | pass |
+| Exact transfer-task coverage | Mechanical range expansion compared the plan table with the task file: 33 actual, 33 mapped, 0 duplicate, 0 missing, 0 extra | pass |
+| Exact NIS-task coverage | Mechanical range expansion compared the plan table with the task file: 43 actual, 43 mapped, 0 duplicate, 0 missing, 0 extra | pass |
+| Phase boundary | Transfer task 7.5 and NIS task 8.8 map only to Phase 3; Phase 2 closes without pilot evidence | pass |
+| Dependency acyclicity | Plan sequence ends at external human acceptance before Phase 3; no Phase 2 item depends on Phase 3 | pass |
+| Status integrity | Roadmap/Phase 2 status parser found only allowed explicit statuses; plan acceptance is `pending_acceptance`, phase execution and 2.1 remain `blocked` | pass |
+| OpenSpec validity | `openspec validate --all --strict`: 10 passed, 0 failed | pass |
+| Existing deterministic regression | `python -m pytest tests/test_validate_change.py -q`: 34 passed | pass |
+| Documentation structure and diff | Starter structure check passed; `git diff --check` passed | pass |
+
+Remediation conclusion:
+
+- Findings `P2P-001` and `P2P-002` are fixed in the current plan; their original evidence remains below as historical audit context.
+- `D-016` adds two transfer tasks and acceptance scenarios for traceable verification coverage and safe parallel AI execution; this raises the transfer change from 31 to 33 tasks without reintroducing the removed process-effectiveness program.
+- The plan is complete enough for human review but is not accepted. Phase 2 and work item 2.1 correctly remain blocked until explicit human plan acceptance.
 
 ## Audit Boundary
 

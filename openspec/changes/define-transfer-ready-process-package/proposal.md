@@ -10,6 +10,9 @@ The accepted Phase 1 baseline proves the core change-package contracts and local
 - Require reusable capability gaps found during corporate adaptation to return to the external canonical source through a controlled change instead of becoming an internal fork.
 - Define the minimum weak-model operating kit for Qwen/DeepSeek-class assistants: deterministic task launchers, bounded authority-labelled read packs, role instructions, explicit stop points, evidence blocks, negative cases, and deterministic fallbacks.
 - Require certification evidence from actual weak-model runs and from an AI-disabled walkthrough before release-candidate acceptance.
+- Require equivalent clean-host evidence on Windows, Linux, and macOS with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned.
+- Require broader risk-oriented positive/negative coverage and requirement/scenario-to-test/evidence mapping with visible residual gaps.
+- Allow AI-assisted parallel execution only for explicit independent tasks with separate owners/write scopes/evidence and a deterministic combined integration gate.
 - Keep Jira task automation, Confluence publication, QA/AT proposal generation, role inboxes, graph databases, broad project-memory automation, and other later layers outside this change.
 - Do not define calendar dates or delivery deadlines in the product, roadmap, phase, or OpenSpec contract.
 
@@ -17,8 +20,8 @@ The accepted Phase 1 baseline proves the core change-package contracts and local
 
 ### New Capabilities
 
-- `transfer-readiness`: Defines the external release-candidate contents, acceptance gate, transfer manifest, corporate adaptation boundary, pilot entry criteria, and no-fork feedback path.
-- `weak-model-guardrails`: Defines the minimum task-launch, context, authority, stop-point, evidence, safety, and certification contract for Qwen/DeepSeek-class assistants.
+- `transfer-readiness`: Defines the external release-candidate contents, Windows/Linux/macOS equivalence, traceable verification coverage, acceptance gate, transfer manifest, corporate adaptation boundary, pilot entry criteria, and no-fork feedback path.
+- `weak-model-guardrails`: Defines the minimum task-launch, context, authority, stop-point, evidence, safe-parallel execution, safety, and certification contract for Qwen/DeepSeek-class assistants.
 
 ### Modified Capabilities
 
@@ -29,6 +32,8 @@ None directly. The change implements and composes the accepted baseline plus the
 - Adds production process-package, bootstrap/configuration, certification-fixture, release-manifest, and transfer-runbook artifacts.
 - Extends deterministic validation and tests for configuration, package compatibility, release readiness, and weak-model output/evidence contracts.
 - Adds tool-agnostic role instructions and a thin adapter boundary for supported local AI CLIs.
+- Adds safe-parallel task/evidence contracts and combined deterministic integration checks for independent AI work.
+- Adds cross-platform host evidence and requirement/scenario coverage reporting as release acceptance inputs.
 - Reframes Phase 2 around delivery of the transfer-ready deterministic package and weak-model operating kit.
 - Limits corporate work to verified environment inventory, real configuration, integration wiring, adapter configuration, and pilot evidence.
 - Does not add custom Jira/Confluence REST clients or make AI part of any gate.

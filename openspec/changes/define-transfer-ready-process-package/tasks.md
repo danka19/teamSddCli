@@ -19,6 +19,7 @@
 - [ ] 3.3 Create bounded analyst, developer, QA, and Tech Lead class-aware role instructions with numbered steps, one-stage outputs, self-review, negative examples, and human stop points.
 - [ ] 3.4 Add thin adapter templates for Qwen/DeepSeek/GigaCode-class CLIs that package the selected instruction and read pack without owning process rules.
 - [ ] 3.5 Add deterministic checks that reject unsupported completion claims, AI-owned approvals or lifecycle transitions, missing evidence boundaries, and derived artifacts that lack canonical source references.
+- [ ] 3.6 Implement safe parallel-task planning and evidence contracts that permit concurrent AI work only for dependency-free, non-overlapping write scopes and require focused plus combined integration checks before promotion.
 
 ## 4. Certification Fixtures And Evidence
 
@@ -27,13 +28,14 @@
 - [ ] 4.3 Implement a certification runner and evidence record that captures model/runtime identifier, adapter version, process-package version, read-pack identity, validation result, human intervention, forbidden-action result, and limitations; commit normalized synthetic evidence/manifests/hashes to Git and reference raw outputs stored in the versioned release artifact by checksum.
 - [ ] 4.4 Execute and record AI-disabled certification for every gated minor/major/hotfix operation, including Tech Lead, stop/resume, and hotfix reconciliation cases.
 - [ ] 4.5 Execute and record the accepted risk-oriented pairwise Qwen/DeepSeek-class matrix: each model family performs analyst, developer, QA, and Tech Lead work once, minor/major/hotfix are each exercised by both families, and critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negative cases run on both; route unreliable operations to deterministic or mandatory-human fallbacks.
+- [ ] 4.6 Generate a requirement/scenario-to-test/evidence coverage report, add focused positive and negative tests for uncovered deterministic behavior, and keep permitted residual gaps source-linked with owner, risk, compensating evidence, and follow-up.
 
 ## 5. Release Candidate And Transfer Runbook
 
 - [ ] 5.1 Implement deterministic release-manifest generation and validation for package/config/OpenSpec versions, included assets, compatibility assumptions, normalized Git evidence, raw versioned-artifact references and checksums, known limitations, and rollback reference.
 - [ ] 5.2 Add clean-bootstrap and release-candidate acceptance automation that fails on missing, stale, failed, private, or AI-only evidence.
 - [ ] 5.3 Write installation, compatibility inventory, approved secret setup, integration-adapter configuration, update, rollback, and no-fork feedback procedures.
-- [ ] 5.4 Produce a transfer rehearsal from the human-approved clean supported reference environment and record the evidence packet used for external release-candidate acceptance.
+- [ ] 5.4 Produce clean transfer rehearsals on supported Windows, Linux, and macOS hosts with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned; prove equivalent bootstrap, deterministic flow, update, rollback, and evidence behavior and record the acceptance packet.
 
 ## 6. Corporate Adaptation And Pilot Package
 

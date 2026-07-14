@@ -14,6 +14,9 @@ Stakeholders are the process owner, analysts, developers, QA, repository and CI 
 - Make configuration, validation, setup, upgrade, rollback, and transfer evidence reproducible.
 - Prove the reference class-aware flow, Tech Lead authority, and negative safety cases both without AI and with Qwen/DeepSeek-class assistants.
 - Keep weak-model work bounded through deterministic launchers, authority-labelled read packs, role instructions, stop points, and evidence checks.
+- Provide equivalent governed behavior on supported Windows, Linux, and macOS hosts with documented provisioned prerequisites and MCP.
+- Increase reliability through broader risk-oriented test coverage and requirement/scenario-to-evidence traceability.
+- Increase delivery speed through AI-assisted decomposition and safe parallel execution of independent tasks with deterministic integration checks.
 - Restrict corporate work to real environment adaptation and pilot evidence.
 - Return reusable gaps to the external canonical source instead of creating an internal fork.
 
@@ -73,6 +76,18 @@ Weak-model certification uses actual Qwen/DeepSeek-class runs against role workf
 
 Draft quality may be assessed for usability, but release acceptance requires deterministic validity, correct stop behavior, visible uncertainty, and absence of AI-owned approvals or mutations. This avoids treating fluent output as correctness evidence.
 
+### 7. Permit parallel AI execution only across explicit independent boundaries
+
+Concurrent work requires separate task IDs, owners, dependency declarations, non-overlapping write scopes, read packs, evidence records, and stop conditions. Tasks that share a canonical artifact, depend on unfinished output, or can make conflicting policy/lifecycle decisions are serialized. Every parallel output passes focused checks and one combined deterministic integration, traceability, review, and conflict gate before promotion.
+
+Unbounded multi-agent execution was rejected because throughput without ownership and integration controls would reduce reliability and make failures harder to reconstruct.
+
+### 8. Certify one shared core on Windows, Linux, and macOS
+
+The package uses shared schemas, policy, workflow, and evidence contracts with thin platform launch/path/shell adapters. Clean hosts provision documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies, then execute the same fixtures, deterministic flow, update, rollback, and evidence checks.
+
+Treating one workstation or one container as proof of portability was rejected because the human owner requires equivalent full desktop-host behavior across all three operating-system families.
+
 ## Risks / Trade-offs
 
 - [Corporate runtime differs from the external certification environment] -> Keep adapters thin, publish compatibility assumptions, and require an internal environment inventory before pilot entry.
@@ -82,17 +97,20 @@ Draft quality may be assessed for usability, but release acceptance requires det
 - [Certification fixtures accidentally contain private data] -> Use synthetic reference content and add secret/private-path checks to release validation.
 - [Corporate fixes diverge from the external package] -> Require a recorded compatibility finding, upstream change, new package version, and controlled upgrade.
 - [Unknown integrations block the pilot] -> Treat integration inventory and wiring as corporate adaptation inputs; keep Jira/Confluence automation outside this release candidate.
+- [Parallel workers race on canonical state] -> Require dependency/write-scope analysis, serialize conflicts, isolate evidence, and run a combined integration gate.
+- [Platform adapters drift into separate behavior forks] -> Keep policy/evidence shared, adapters thin, and run the same canonical fixture/evidence matrix on Windows, Linux, and macOS.
+- [Aggregate coverage hides untested requirements] -> Generate requirement/scenario-to-test/evidence mapping and record residual gaps with owner, risk, compensation, and follow-up.
 
 ## Migration Plan
 
 1. Create the accepted central configuration and process-package skeleton in this repository using synthetic defaults.
 2. Add deterministic schemas, validation entry points, package metadata, and compatibility reporting.
 3. Move or consume the existing change template and validator through the versioned package without changing accepted artifact behavior.
-4. Add role instructions, task launcher inputs, bounded read-pack format, evidence-output format, and synthetic certification fixtures.
-5. Prove clean bootstrap, legacy migration, reference minor/major/hotfix flows, AI-disabled operation, actual weak-model/Tech Lead runs, negative cases, and upgrade/rollback behavior.
-6. Produce a release manifest and transfer runbook; freeze an externally accepted release candidate.
+4. Add role instructions, task launcher inputs, bounded read-pack format, safe-parallel task/evidence contracts, evidence-output format, and synthetic certification fixtures.
+5. Expand positive/negative coverage, generate requirement/scenario evidence mapping, and prove clean bootstrap, legacy migration, reference minor/major/hotfix flows, AI-disabled operation, actual weak-model/Tech Lead runs, negative cases, and upgrade/rollback behavior.
+6. Rehearse the same immutable candidate on clean Windows, Linux, and macOS hosts, then produce a release manifest and transfer runbook and freeze an externally accepted release candidate.
 7. In the corporate environment, inventory capabilities and restrictions, populate real non-secret configuration, install secrets through approved storage, configure standard-tool and AI adapters, and re-run deterministic checks.
-8. Execute one monitored real governed-change pilot selected through the approved class/risk/comparison criteria and record compatibility, usability, flow, quality, and follow-up evidence.
+8. Execute one monitored real governed-change pilot selected through the approved class, risk, safety, and bounded-scope criteria and record compatibility, usability, flow, quality, and follow-up evidence.
 9. Roll back by restoring the previous pinned process-package/config version; route reusable gaps into the external change workflow before publishing a replacement release.
 
 ## Open Questions

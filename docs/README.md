@@ -4,7 +4,7 @@
 
 teamSddCli is a local SDD process-automation project for a team workflow based on OpenSpec/Markdown, Git, deterministic validation scripts, Bitbucket, Jenkins, Confluence, Jira or another task tracker, and local AI tools.
 
-The project goal is to automate the end-to-end transition from analysis to development tasks, QA test cases, automated-test skeletons, verification, and archived living specs without introducing one centralized autonomous agent. The delivery strategy is deliberately two-stage: first make the complete governed process reliable without AI, then progressively automate bounded process work with AI over the deterministic control plane.
+The project goal is to automate the end-to-end transition from analysis to development tasks, QA test cases, automated-test skeletons, verification, and archived living specs without introducing one centralized autonomous agent. The delivery strategy is deliberately two-stage: first make the complete governed process reliable without AI, then progressively automate bounded process work with AI over the deterministic control plane. Reliability grows through broader risk-oriented test coverage and end-to-end evidence traceability; delivery speed grows through safe parallel AI work on explicitly independent tasks.
 
 Current checkpoint:
 
@@ -20,6 +20,8 @@ In scope:
 - Change packages with proposal, design, tasks, spec deltas, QA plans, test cases, automation plans, and traceability.
 - Local AI support for drafts, reviews, context packs, and test or automation skeletons.
 - Later progressive AI automation of bounded orchestration, evidence assembly, routing, monitoring, and transition preparation after the deterministic process and pilot are stable.
+- Risk-oriented positive and negative test expansion plus requirement/scenario-to-task/test/evidence traceability as primary reliability mechanisms.
+- AI-assisted task decomposition and parallel execution when dependencies, ownership, write scopes, evidence, and integration checks prove that the work is independent and safe to combine.
 - External certification of minor, major, hotfix, and Tech Lead workflows with Qwen/DeepSeek-class assistants while all gates remain executable with AI disabled.
 - Phase-based delivery of a minimal pilot, task automation, QA/AT automation, and process hardening.
 
@@ -75,6 +77,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-13: Require an externally completed transfer-ready release candidate before corporate adaptation. Reusable core, deterministic gates, process package, bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are external work; the corporate environment is limited to real configuration, approved wiring, thin adapters, and a monitored pilot. Planning is gate-based and does not record delivery dates or calendar deadlines.
 - 2026-07-13: Adopt NIS v1.6 as primary corporate-process input and the flat target classification `minor | major | hotfix`. Migrate legacy `thin -> minor` and `full -> major`, never infer hotfix, and add class-aware DoR/DoD, separate release/archive/delivered states, Tech Lead decision support, regression/scope/stop/escalation/release controls, role verification, pilot safety, and failed-run retention. Exclude process-effectiveness evaluation and correct unsafe AI-only/zero-risk assumptions; do not inherit PPRB organization or NIS project structure. See `D-013` and active change `adopt-nis-corporate-process-governance`.
 - 2026-07-14: Adopt the two-horizon automation strategy in `D-014`: AI-disabled deterministic operation is the first delivery requirement and permanent fallback, while later accepted changes should progressively automate bounded process execution with AI. Human authority and deterministic verification remain explicit boundaries rather than accidental limitations of the first release.
+- 2026-07-14: Adopt `D-016`: improve reliability through broader risk-oriented testing and end-to-end traceability, and improve speed through AI-assisted parallel execution of independent tasks with explicit ownership, separate evidence, and deterministic integration checks.
 
 ## Architecture Sources
 

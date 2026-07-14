@@ -59,6 +59,15 @@ The project intentionally separates two horizons:
 
 Progressive automation must remain observable, reversible where mutation occurs, evidence-backed, and bounded by the same dry-run, idempotency, JSON-output, audit-log, privacy, and stop/hold expectations as other mutating automation. AI does not gain approval, waiver, risk-acceptance, merge, release, archive, or accountable-owner authority by implication.
 
+### Reliability and safe parallel throughput
+
+`D-016` defines two linked engineering outcomes:
+
+- reliability increases through broader risk-oriented positive and negative tests and end-to-end links from requirements/scenarios to tasks, runs, decisions, failures, and verification evidence;
+- delivery speed increases when AI decomposes work into genuinely independent tasks that can run concurrently with explicit owners, non-overlapping write scopes, separate evidence, and a deterministic combined integration gate.
+
+Parallel execution is rejected when tasks share a mutable canonical artifact, depend on unfinished output, or can make conflicting lifecycle, policy, security, or architecture decisions. This direction does not reintroduce employee/process-effectiveness experiments excluded by `D-013`; coverage and traceability are verification controls, while parallelism is a bounded execution capability.
+
 ## 5. Mandatory Gates And Role-Understanding Evidence
 
 `D-013` keeps correctness and safety in explicit business gates. DoR, DoD, release/transfer readiness, archive readiness, required approvals, stop conditions, rollback/hold, and hotfix reconciliation cannot be waived by convenience or an AI statement.

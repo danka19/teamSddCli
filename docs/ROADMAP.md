@@ -17,7 +17,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
 - Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, pilot safety, and failed-run retention, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Process-effectiveness measurement is excluded. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
-- Human decisions `D-014` and `D-015` on 2026-07-14 establish the two-horizon automation strategy and Phase 2 remediation gate: deterministic/AI-disabled operation is the foundation and permanent fallback, future accepted changes progressively automate bounded process work with AI, implementation waits for the corrected Phase 2 plan, and the plan is cleanly renumbered from work item 2.3 onward after the remaining Apple execution-target clarification closes. The risk-oriented Qwen/DeepSeek certification matrix is accepted; the external package must cover Windows, Linux, and the clarified Apple target with prerequisites and MCP provisioned.
+- Human decisions `D-014`, `D-015`, and `D-016` on 2026-07-14 establish the two-horizon automation strategy, Phase 2 remediation gate, and reliability/throughput direction: deterministic/AI-disabled operation is the foundation and fallback; the release package must cover Windows, Linux, and macOS; reliability grows through risk-oriented tests and traceability; speed grows through safe parallel AI work on independent tasks. Implementation still waits for explicit acceptance of the corrected `2.3-2.14` plan.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -68,7 +68,7 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: blocked. The transfer boundary, product scope, and risk-oriented certification matrix are accepted, but the human owner chose to finish and accept the corrected dependency/task plan before work item 2.1 starts. The remaining blocker is clarification of the Apple execution target (`iOS` device/runtime or `macOS` host), followed by the resulting `2.3-2.14` plan rewrite.
+Status: blocked. The transfer boundary, product scope, Windows/Linux/macOS host matrix, risk-oriented certification matrix, and reliability/parallel-throughput direction are accepted. Implementation waits only for explicit human acceptance of the corrected `2.3-2.14` dependency/task plan.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -87,8 +87,10 @@ Scope:
 - Replace the target legacy thin/full route with schema-versioned minor, major, and hotfix classification plus deterministic migration and class-aware artifacts.
 - Package create, validate, Spec PR, DoR, implementation, DoD, release/transfer readiness, archive, traceability, update, rollback, stop/escalation, and hotfix reconciliation without AI-owned gates.
 - Add deterministic task launch, authority-labelled bounded read packs, evidence output, analyst/developer/QA/Tech Lead role instructions, and thin Qwen/DeepSeek/GigaCode adapter templates.
+- Add safe parallel-task contracts so AI can execute independent work concurrently with explicit ownership, non-overlapping write scopes, separate evidence, and one deterministic integration gate.
+- Expand risk-oriented positive/negative tests and generate requirement/scenario-to-test/evidence coverage with visible residual gaps.
 - Certify minor, major, hotfix, Tech Lead, and negative authority workflows using actual Qwen-class and DeepSeek-class runtimes plus an AI-disabled walkthrough.
-- Add release manifest, clean-bootstrap rehearsal, update/rollback evidence, private-data checks, transfer runbook, corporate inventory, and pilot templates.
+- Add release manifest, equivalent Windows/Linux/macOS clean-bootstrap rehearsal, update/rollback evidence, private-data checks, transfer runbook, corporate inventory, and pilot templates.
 - Keep custom Jira/Confluence clients and all later-layer automation outside the phase.
 
 Phase gate:

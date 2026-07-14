@@ -1,35 +1,50 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: blocked. The technical prerequisites and risk-oriented certification matrix are accepted, but human decision `D-015` pauses all implementation until the requested Apple target is clarified (`iOS` device/runtime or `macOS` host) and the corrected, cleanly renumbered Phase 2 plan is accepted.
+Status: blocked. The corrected implementation plan is `pending_acceptance` under `D-015`; no Phase 2 work item may start until the human owner explicitly accepts this plan.
 
-> **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` to execute exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Each completed work item follows scenario-first TDD, passes its reviewer/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
+> **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
 ## Goal
 
-Build and externally certify a reusable release candidate for the deterministic NIS-aligned `minor | major | hotfix` SDD process so the corporate environment requires only verified environment inventory, real project/owner/path/workflow configuration, approved integration wiring, thin Qwen/DeepSeek/GigaCode adapter configuration, and a monitored real pilot.
+Build and externally certify a reusable release candidate for the deterministic NIS-aligned `minor | major | hotfix` SDD process. The package must provide equivalent governed behavior on Windows, Linux, and macOS with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies.
 
-Phase 2 does not perform the real corporate pilot. It produces the accepted release candidate and the adaptation/pilot package consumed by Phase 3.
+Reliability increases through broader risk-oriented positive and negative test coverage plus end-to-end traceability from requirements and scenarios to tasks, executions, decisions, failures, and verification evidence. Delivery speed increases through AI-assisted decomposition and safe parallel execution of explicitly independent tasks. AI-disabled execution remains the required foundation and fallback; AI never gains approval or accountable human authority by implication.
+
+Phase 2 produces the accepted external release candidate and the adaptation/pilot package. It does not configure real corporate values or execute the Phase 3 pilot.
 
 ## Planning Boundary
 
-- The plan is gate-based and intentionally contains no delivery dates or calendar deadlines.
-- External development owns all reusable schemas, deterministic checks, workflow entry points, package/bootstrap/update/rollback behavior, role instructions, read packs, certification fixtures, release evidence, and runbooks.
-- Corporate work owns only real non-secret configuration, approved secret references, environment-specific standard-tool wiring, thin AI adapter configuration, and pilot evidence.
-- Reusable gaps found in the corporate environment return to the external canonical source through OpenSpec; long-lived internal forks are rejected.
-- AI-disabled operation is the first delivery requirement and permanent fallback. Under `D-014`, later accepted changes are expected to automate bounded workflow orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation; AI is not a gate, approval owner, waiver approver, merge owner, archive owner, or canonical-state owner unless a future explicit human decision changes that authority contract.
+- Planning is gate-based and contains no delivery dates or calendar deadlines.
+- External development owns reusable schemas, deterministic checks, workflow entry points, package/bootstrap/update/rollback behavior, role instructions, read packs, safe-parallel contracts, certification fixtures, cross-platform evidence, release evidence, and runbooks.
+- Corporate adaptation owns real non-secret configuration, approved secret references, environment-specific standard-tool wiring, thin AI adapters, and monitored pilot evidence.
+- Reusable gaps found during corporate adaptation return to the external OpenSpec workflow; long-lived internal behavior forks are rejected.
+- Windows, Linux, and macOS are supported full desktop hosts. Provisioned prerequisites do not replace clean-bootstrap and equivalence evidence on each host.
+- Normalized synthetic evidence, manifests, and hashes are stored in Git. Raw certification outputs are stored in a versioned release artifact and referenced by manifest and checksum.
+- Both active OpenSpec changes remain open through the Phase 3 pilot. Phase 2 stops at external release-candidate acceptance.
 - Jira task automation, Confluence publication, QA/AT proposal generation, role inboxes, deploy, Zephyr integration, graph databases, and broad project-memory automation remain outside Phase 2.
 
 ## Dependency Gate
 
 Status: accepted.
 
-- Phase 0 is `closed`.
-- Phase 1 is `closed`; its 8 accepted specs pass strict validation.
-- No Phase 1 item is `pending_acceptance` or blocks Phase 2.
-- The human owner accepted the release-candidate boundary and the removal of schedule dates from project planning artifacts.
-- Active proposed change `define-transfer-ready-process-package` contains proposal, design, two capability deltas, and implementation tasks.
-- Active proposed change `adopt-nis-corporate-process-governance` contains proposal, design, twelve capability deltas, and the implementation backlog for `D-013`.
-- Product and technical prerequisites are available, but the human planning gate is closed under `D-015`. Work item 2.1 and the rest of Phase 2 must not start until the Apple target is clarified and the corrected plan replaces the defective `2.3A-2.8` mapping.
+- Phase 0 and Phase 1 are `closed`; eight accepted Phase 1 specs are present.
+- The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
+- Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
+- Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
+- Technical prerequisites are available. The only current blocker is explicit human acceptance of this corrected plan.
+
+## Planning Acceptance Gate
+
+Status: pending_acceptance.
+
+Acceptance confirms:
+
+- clean sequential work-item numbering `2.1-2.14`;
+- exact one-owner mapping for all 33 transfer-package tasks and all 43 NIS-governance tasks;
+- no circular Phase 2 dependencies;
+- `define-transfer-ready-process-package` task 7.5 and `adopt-nis-corporate-process-governance` task 8.8 remain Phase 3 work;
+- safe parallelism is limited to independent subtasks inside an active work item unless a later plan explicitly marks cross-item work `parallel-independent`;
+- Phase 2 implementation starts only after explicit human acceptance.
 
 ## Inputs To Read
 
@@ -41,73 +56,39 @@ Status: accepted.
 - `docs/CONTEXT.md`
 - `docs/DECISIONS.md`
 - `docs/CURRENT_PROJECT_AUDIT.md`
-- `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md`
 - `docs/AI_STEP_VERIFICATION_CHECKLIST.md`
-- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`
+- `docs/audits/PHASE_2_PLAN_COMPLETENESS_AUDIT_2026-07-13.md`
 - `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`
-- `docs/audits/NIS_V1_6_ARCHITECTURE_COMPATIBILITY_AUDIT_2026-07-13.md`
-- `openspec/specs/repo-topology-config/spec.md`
-- `openspec/specs/documentation-governance/spec.md`
-- `openspec/specs/change-package-foundation/spec.md`
-- `openspec/specs/change-lifecycle/spec.md`
-- `openspec/specs/change-artifact-contracts/spec.md`
-- `openspec/specs/traceability-contract/spec.md`
-- `openspec/specs/waiver-policy/spec.md`
-- `openspec/changes/define-transfer-ready-process-package/`
-- `openspec/changes/adopt-nis-corporate-process-governance/`
-- Existing `templates/change/`, `scripts/validate_change.py`, and `tests/test_validate_change.py`
+- accepted specs under `openspec/specs/`
+- both active changes under `openspec/changes/`
+- existing `templates/change/`, `scripts/validate_change.py`, and `tests/test_validate_change.py`
 
 ## OpenSpec And Acceptance Mapping
 
-Affected accepted requirements:
+Accepted baseline:
 
-- `openspec/specs/repo-topology-config/spec.md`: central topology, config discovery, versioned package distribution, OpenSpec pin, owner registry, and bounded read-pack workflow.
-- `openspec/specs/documentation-governance/spec.md`: scenario-first verification, human feedback memory, source ownership, derived-artifact metadata, and weak-model authority labels.
-- `openspec/specs/change-package-foundation/spec.md`: copyable template, deterministic validator, pre-commit entry point, and placeholder validation.
-- `openspec/specs/change-lifecycle/spec.md`: accepted six-state lifecycle and human-owned transitions; the NIS adoption change proposes class-aware DoR/DoD and external-delivery separation.
-- `openspec/specs/change-artifact-contracts/spec.md`: historical accepted thin/full behavior; the NIS adoption change proposes replacement by minor/major/hotfix matrices.
-- `openspec/specs/traceability-contract/spec.md`: review/archive evidence and AI-advisory traceability.
-- `openspec/specs/waiver-policy/spec.md`: human-owned waiver approval and prohibited bypasses.
+- `repo-topology-config`: central topology, configuration, package distribution, OpenSpec pin, and owners.
+- `documentation-governance`: scenario-first verification, source ownership, durable human feedback, and AI read-pack boundaries.
+- `change-package-foundation`, `change-lifecycle`, `change-artifact-contracts`, `traceability-contract`, and `waiver-policy`: current Phase 1 behavior that must be migrated without rewriting accepted history.
 
-Active proposed change:
+Active proposed behavior:
 
-- `openspec/changes/define-transfer-ready-process-package/`
-  - new capability `transfer-readiness`;
-  - new capability `weak-model-guardrails`.
-- `openspec/changes/adopt-nis-corporate-process-governance/`
-  - new capabilities `corporate-change-classification`, `readiness-completion-gates`, `tech-lead-workflow`, and `corporate-flow-controls`;
-  - modified package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities.
+- `define-transfer-ready-process-package`: `transfer-readiness` and `weak-model-guardrails`.
+- `adopt-nis-corporate-process-governance`: NIS-aligned classification, gates, Tech Lead governance, flow controls, traceability, safety, migration, certification, and release acceptance.
 
-Acceptance scenarios:
+Phase acceptance evidence must prove:
 
-- A clean supported environment can bootstrap and validate the synthetic central `team-specs` reference without AI.
-- Config, package, OpenSpec version, ownership, release manifest, and compatibility failures are rejected deterministically.
-- The packaged flow covers deterministic minor/major/hotfix classification, migration, create, validate, Spec PR, DoR, human approval, implementation controls, DoD, applicable release/transfer readiness, archive support, and traceability evidence.
-- Package update and rollback preserve canonical OpenSpec history.
-- A deterministic launcher supplies one bounded role operation and an authority-labelled read pack.
-- Missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, invalid transition, adapter failure, and context-limit failure are visible and safe.
-- Actual Qwen-class and DeepSeek-class runs are recorded for minor, major, hotfix, analyst, developer, QA, and Tech Lead workflows plus negative authority cases.
-- Every gated action passes an AI-disabled walkthrough.
-- Release manifest and transfer runbook contain no corporate or private values.
-- Corporate adaptation templates limit work to real configuration, approved wiring, thin adapters, and pilot evidence.
+- deterministic bootstrap, validation, update, rollback, and class-aware governed flow on Windows, Linux, and macOS;
+- `thin -> minor`, `full -> major`, no inferred hotfix, no archive rewrite, and safe rollback;
+- DoR, implementation-complete, DoD, release readiness, archive readiness, archived, and external Done remain distinct;
+- broader positive and negative verification coverage with requirement/scenario-to-evidence mapping and visible residual gaps;
+- every gate works with AI disabled;
+- the accepted risk-oriented Qwen/DeepSeek certification matrix passes or routes limitations explicitly;
+- concurrent AI work is allowed only for independent write scopes and passes focused plus combined integration checks;
+- release assets contain no secrets, corporate values, or private source material;
+- the human owner accepts the release candidate using Tech Lead and QA evidence plus security evidence when applicable.
 
-Verification evidence expected before Phase 2 completion:
-
-- Focused TDD tests for each schema, validator, workflow entry point, read-pack builder, certification rule, release manifest, and rollback behavior.
-- Full Python test suite.
-- Synthetic clean-bootstrap rehearsal.
-- Packaged minor/major/hotfix positive and negative walkthroughs, including migration, under-classification, pseudo-hotfix, hold/resume, and hotfix reconciliation.
-- AI-disabled certification for every gated operation.
-- Actual Qwen-class and DeepSeek-class certification evidence for analyst, developer, QA, and Tech Lead roles.
-- Secret/private-value scan over release assets and certification fixtures.
-- Release-manifest validation and rollback rehearsal.
-- `openspec list`, `openspec list --specs`, and `openspec validate --all --strict`.
-- `git diff --check`.
-- Human acceptance of the external release candidate before Phase 3 begins.
-
-## Implementation File Structure
-
-The implementation should converge on this responsibility split. Exact generated release output remains ignored or is stored as synthetic committed evidence only.
+## Target Implementation Structure
 
 ```text
 process/
@@ -115,51 +96,16 @@ process/
   package.yaml
   workflow.yaml
   schemas/
-    sdd-config.schema.json
-    projects.schema.json
-    owners.schema.json
-    project-adapter.schema.json
-    process-package.schema.json
-    read-pack.schema.json
-    operation-evidence.schema.json
-    release-manifest.schema.json
-    certification-record.schema.json
-    classification-policy.schema.json
-    change-v2.schema.json
-    readiness-completion.schema.json
-    regression-matrix.schema.json
-    flow-control-record.schema.json
-    release-package.schema.json
-    pilot-evidence.schema.json
-  templates/
-    change/
+  templates/change/
   validators/
-    validate_change.py
-    validate_config.py
-    validate_release.py
   roles/
-    analyst-change.md
-    developer-change.md
-    qa-change.md
-    tech-lead-change.md
   adapters/
-    qwen.md
-    deepseek.md
-    gigacode.md
-  certification/
-    fixtures/
-    expected/
-    negative-cases/
+  certification/fixtures/
+  certification/expected/
+  certification/negative-cases/
 
-templates/
-  team-specs/
-    sdd.config.yaml
-    projects.yaml
-    owners.yaml
-    openspec/
-    traceability/
-  project-adapter/
-    .sdd-project.yaml
+templates/team-specs/
+templates/project-adapter/
 
 scripts/
   bootstrap_team_specs.py
@@ -172,626 +118,442 @@ scripts/
   certify_process_release.py
 
 tests/
-  test_validate_change.py
-  test_validate_process_config.py
-  test_bootstrap_team_specs.py
-  test_classification_migration.py
-  test_change_flow_entrypoints.py
-  test_readiness_completion.py
-  test_tech_lead_workflow.py
-  test_corporate_flow_controls.py
-  test_pilot_safety_and_failed_runs.py
-  test_build_read_pack.py
-  test_weak_model_contract.py
-  test_process_update_rollback.py
-  test_release_certification.py
-
 docs/runbooks/
-  PROCESS_PACKAGE_SETUP.md
-  PROCESS_PACKAGE_UPDATE_AND_ROLLBACK.md
-  CORPORATE_ADAPTATION.md
-  GOVERNED_CHANGE_PILOT.md
 ```
 
-Compatibility rule:
+Compatibility rules:
 
 - `process/` becomes the reusable package source.
-- Existing root entry points remain thin compatibility wrappers until their removal is proposed and accepted separately.
-- Canonical behavior is not duplicated between root wrappers and package modules.
+- Existing root entry points remain thin compatibility wrappers until their removal is proposed separately.
+- Canonical behavior is not duplicated between wrappers, role instructions, generated views, and OpenSpec.
+- Cross-platform differences stay in thin launch/path/shell adapters; policy and evidence contracts remain shared.
 
 ## Change Intake
 
 ```text
-Idea: Complete the reusable SDD tool externally as a transfer-ready release candidate, including preparation and certification for weak Qwen/DeepSeek-class models, so the corporate environment performs only real configuration, integration adaptation, and a pilot.
-Source: Human confirmation after the transfer-readiness audit.
-Type: scope_refinement, architecture_change, verification_change, documentation_change
+Idea: Deliver a reusable externally certified process package before corporate adaptation.
+Source: Human transfer-readiness decision and D-012.
+Type: scope_refinement, architecture_change, verification_change
 Decision: adopt_now
-Reason: Leaving process-package design, weak-model safeguards, or reusable workflow behavior for the constrained corporate environment would make correctness depend on weaker assistants and create a high risk of internal forks.
-Affected specs: Active change `define-transfer-ready-process-package`; accepted repo-topology, documentation-governance, lifecycle, artifact, traceability, waiver, and change-package-foundation specs remain the baseline.
-Affected architecture: Establishes an external reusable core, a thin corporate adaptation layer, separate external-release and corporate-pilot gates, and a no-fork feedback path.
-Data contract impact: Adds proposed release manifest, read-pack, operation-evidence, certification-record, compatibility, and adaptation/pilot evidence contracts.
-Verification impact: Requires clean bootstrap, packaged class-aware flow, AI-disabled execution, actual Qwen and DeepSeek certification, negative safety cases, release/rollback evidence, and human release acceptance.
-Status: accepted. The boundary is captured in the active OpenSpec change, this Phase 2 plan, roadmap, decision log, audit, context, and verification guidance.
+Reason: Reusable correctness cannot be left to a constrained corporate environment or weaker assistants.
+Affected specs: define-transfer-ready-process-package and accepted Phase 1 baseline.
+Affected architecture: External reusable core, thin corporate adaptation, no-fork feedback path.
+Data contract impact: Release manifest, read pack, operation evidence, certification, compatibility, and pilot evidence.
+Verification impact: Clean bootstrap, AI-disabled and weak-model certification, update/rollback, privacy, and human acceptance.
+Status: accepted.
 ```
 
 ```text
-Idea: Do not record delivery dates or calendar deadlines in the roadmap, OpenSpec change, or Phase 2 plan.
-Source: Human confirmation after reviewing the recommended transfer plan.
-Type: documentation_change, scope_refinement
-Decision: adopt_now
-Reason: The project should be controlled by evidence and acceptance gates; schedule commitments are managed outside these durable product/process contracts.
-Affected specs: None; this is a planning/documentation boundary rather than SDD product behavior.
-Affected architecture: None.
-Data contract impact: None.
-Verification impact: Phase planning review must confirm that no delivery schedule or deadline was introduced.
-Status: accepted. Phase 2 and roadmap planning are gate-based and contain no delivery dates or deadlines.
-```
-
-```text
-Idea: Adopt the real NIS corporate process as target behavior, including the flat minor/major/hotfix classification, readiness and completion criteria, Tech Lead automation, regression/scope/stop/release controls, role verification, pilot safety, and failed-run retention.
-Source: Human correction and explicit choice after the NIS v1.6 architecture audit.
-Type: scope_refinement, architecture_change, data_contract_change, new_feature, verification_change, documentation_change
+Idea: Replace the Phase 1 thin/full target with the real NIS minor/major/hotfix process.
+Source: Human decision D-013.
+Type: scope_refinement, architecture_change, data_contract_change, verification_change
 Decision: create_openspec_change
-Reason: The accepted Phase 1 thin/full baseline does not yet represent the real corporate workflow. The human owner selected the NIS process and explicitly chose its flat classification model; implementing the transfer release without this adoption would certify the wrong target.
-Affected specs: New active change `adopt-nis-corporate-process-governance` modifies package, artifact, lifecycle, traceability, waiver, topology/config, and Confluence-boundary capabilities and adds classification, readiness/completion, Tech Lead, and corporate-flow capabilities.
-Affected architecture: Preserves Git/OpenSpec canonical ownership, the six lifecycle states, deterministic/AI-disabled gates, human decisions, external-release boundary, and no-fork rule while adding corporate business gates and Tech Lead governance.
-Data contract impact: Adds schema version 2, `classification: minor|major|hotfix`, migration from legacy mode, readiness/completion, regression, flow-control, release-package, decision/AI evidence, pilot-safety, and failed-run records.
-Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix negative cases, Tech Lead authority cases, stop/resume and reconciliation evidence, failed-run retention, pilot safety, AI-disabled operation, actual Qwen/DeepSeek certification, and human review.
-Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; its tasks will receive unique owners in the corrected `2.3-2.14` matrix, and the old 2.3A ownership claim is superseded by `D-015`.
+Reason: Certifying the historical baseline would certify the wrong corporate process.
+Affected specs: adopt-nis-corporate-process-governance and modified accepted capabilities.
+Affected architecture: Adds class-aware gates, Tech Lead governance, flow controls, safety, and failed-run retention without changing canonical ownership.
+Data contract impact: Schema v2, classification, gates, flow, release, decision, AI execution, safety, and failed-run records.
+Verification impact: Positive/negative class, migration, gate, authority, stop/resume, hotfix, and release evidence.
+Status: accepted.
 ```
 
 ```text
-Idea: Create one presentation-ready report that clearly separates what already matches NIS, what is borrowed, and what is adapted or rejected.
-Source: Human request for a concise acceptance summary and a durable full report for a future presentation.
-Type: documentation_change
+Idea: Repair the Phase 2 plan with clean numbering, exact task ownership, no circular dependencies, and a pre-implementation human gate.
+Source: Phase 2 completeness audit and human decision D-015.
+Type: planning_change, verification_change, documentation_change
 Decision: adopt_now
-Reason: The comparison already exists across the evidence audit, adoption plan, and OpenSpec change, but a presentation audience needs one clearly labelled read model without changing normative behavior.
-Affected specs: None. The report references `D-013` and `adopt-nis-corporate-process-governance`; OpenSpec remains the normative owner.
-Affected architecture: None. The report preserves source ownership and explicitly distinguishes accepted direction, proposed behavior, and current implementation.
-Data contract impact: None.
-Verification impact: Cross-check the report against the NIS audit, 22-file source-coverage appendix, active OpenSpec change, task count, and current implementation status; keep the NIS package ignored and untracked.
-Status: closed. The report is stored in `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md`.
+Reason: The former 2.3A-2.8 draft duplicated ownership and mixed Phase 2 acceptance with Phase 3 pilot work.
+Affected specs: Both active changes remain open; task 7.5 and task 8.8 are assigned to Phase 3.
+Affected architecture: No scope expansion beyond accepted boundaries.
+Data contract impact: Normalized Git evidence plus raw versioned-artifact references/checksums.
+Verification impact: Exact one-owner matrix and acyclic dependency audit.
+Status: pending_acceptance through this corrected plan.
 ```
 
 ```text
-Idea: Remove all process-effectiveness measurement material from project documentation and OpenSpec while retaining failed-run evidence.
-Source: Human correction after reviewing the measurement terminology.
-Type: scope_refinement, verification_change, documentation_change
+Idea: Support Windows, Linux, and macOS with all required runtimes, dependencies, and MCP provisioned.
+Source: Human platform clarification on 2026-07-14.
+Type: scope_refinement, architecture_change, verification_change
 Decision: adopt_now
-Reason: The target process should govern correctness, safety, roles, and delivery flow without introducing an effectiveness-evaluation program. Failed attempts must still remain visible for traceability and incident diagnosis.
-Affected specs: Remove the proposed `process-measurement-pilot` capability; update `corporate-flow-controls`, `traceability-contract`, and `repo-topology-config` deltas.
-Affected architecture: Removes historical/control/experimental comparison design, independent comparison assurance, contamination accounting, missing-measurement-data rules, sample/decision thresholds, and effectiveness/scale conclusions. Keeps DoR/DoD, QA ownership, operational stop/hold rules, pilot safety, and failed-run retention.
-Data contract impact: Removes metric-definition and comparison records; retains source-linked failed-run and pilot-safety records.
-Verification impact: Strict OpenSpec validation, documentation-wide forbidden-term scan, failed-run-retention scenario check, and documentation-sync audit are required.
-Status: accepted and applied to the active documentation/OpenSpec proposal on 2026-07-13.
+Reason: Portability is a release contract, not a best-effort assumption from one workstation.
+Affected specs: transfer-readiness portability scenario and release tasks.
+Affected architecture: Shared policy/core with thin platform launch/path/shell adapters.
+Data contract impact: Manifest records OS, architecture, shell, Python, Node.js/OpenSpec, Git, MCP, dependencies, and limitations.
+Verification impact: Equivalent bootstrap, flow, update, rollback, and evidence on all three hosts.
+Status: accepted.
 ```
 
 ```text
-Idea: Deliver the process in two automation horizons: first a complete AI-disabled deterministic process, then progressive AI automation of bounded process work after the process and pilot are stable.
-Source: Human clarification on 2026-07-14.
-Type: architecture_change, scope_refinement, verification_change, documentation_change
+Idea: Improve reliability through broader tests and traceability, and improve speed through parallel AI work on independent tasks.
+Source: Human goal clarification on 2026-07-14; D-016.
+Type: architecture_change, verification_change, documentation_change
 Decision: adopt_now
-Reason: The AI-disabled path is the reliability foundation and fallback, but the intended product direction is not permanently AI-minimal. Future automation must be planned explicitly without weakening deterministic checks or silently transferring accountable human authority.
-Affected specs: Current Phase 2 transfer and weak-model contracts retain AI-disabled certification; later automation capabilities require future OpenSpec changes after the governed pilot.
-Affected architecture: Establishes deterministic verification as the control plane and progressive AI automation as a later execution layer.
-Data contract impact: None in Phase 2 beyond keeping evidence and authority boundaries explicit; future automation contracts are out of current scope.
-Verification impact: Phase 2 must prove every gate without AI. Later automation must prove equivalent or stronger deterministic evidence and safe fallback behavior.
-Status: accepted as `D-014` and recorded in project and presentation-facing documentation.
-```
-
-```text
-Idea: Repair the Phase 2 work-item plan before implementation.
-Source: Human selections 1A, 2A, 3A, 6A, and 7A on 2026-07-14 after the Phase 2 completeness audit.
-Type: planning_change, data_contract_clarification, verification_change, documentation_change
-Decision: queue_current_phase
-Reason: The old `2.3A-2.8` mapping has circular and duplicate task ownership. Clean sequential renumbering, a pre-implementation acceptance gate, explicit evidence storage, and a named final human acceptor remove ambiguity without changing accepted product scope.
-Affected specs: Both active OpenSpec changes stay open through the Phase 3 pilot. NIS task 8.7 is split so Phase 2 stops at external release acceptance and Phase 3 owns real corporate configuration and pilot execution.
-Affected architecture: No change to canonical ownership or the external/corporate boundary.
-Data contract impact: Normalized synthetic evidence, manifests, and hashes are committed to Git; raw certification outputs live in a versioned release artifact and are referenced by manifest/checksum.
-Verification impact: The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable. Weak-model evidence uses the accepted risk-oriented pairwise matrix. Platform evidence must cover Windows, Linux, and the clarified Apple target; required runtimes, dependencies, and MCP are provisioned on every supported platform.
-Status: blocked. The listed `D-015` choices and certification matrix are accepted, but implementation remains blocked while `iOS` versus `macOS` is clarified; after that answer, the plan will replace `2.3A-2.8` with clean work items `2.3-2.14` and an exact one-owner task matrix.
-```
-
-```text
-Idea: Certify the package across Windows, Linux, and an Apple platform, with all required runtimes, dependencies, and MCP provisioned on every supported environment.
-Source: Human response to open decisions 4 and 5 on 2026-07-14.
-Type: scope_refinement, architecture_change, verification_change, documentation_change
-Decision: adopt_now
-Reason: Portability is a product requirement rather than a best-effort compatibility claim. The release evidence must prove each supported host instead of assuming that a successful Windows run generalizes to other platforms.
-Affected specs: The weak-model certification matrix is updated now. The transfer-readiness platform scenario will be finalized after the Apple target is clarified.
-Affected architecture: Windows and Linux are accepted full process-package hosts. The third Apple target remains ambiguous because native iOS execution requires an application-embedded runtime, whereas macOS is a conventional desktop CLI host.
-Data contract impact: The release manifest and certification evidence must identify OS family/version, architecture, shell, Python, Node.js/OpenSpec, Git, MCP/runtime versions, and platform-specific limitations.
-Verification impact: Run clean bootstrap, deterministic flow, AI-disabled gates, MCP connectivity, update, and rollback on every accepted host; do not treat provisioned prerequisites as evidence that the package itself is portable.
-Status: blocked. Risk-oriented matrix and Windows/Linux support are accepted; the exact Apple execution target requires one human clarification.
+Reason: Speed must come from safe decomposition and concurrency while reliability comes from explicit coverage and reconstructable evidence.
+Affected specs: weak-model-guardrails safe-parallel requirement; transfer-readiness coverage scenario.
+Affected architecture: Concurrent workers use separate task IDs, scopes, evidence, and integration responsibility; shared mutations serialize.
+Data contract impact: Parallel task plan/evidence records and requirement/scenario coverage report.
+Verification impact: Focused tests per output plus deterministic combined integration checks; uncovered scenarios remain visible with risk and owner.
+Status: accepted. This does not reintroduce the process-effectiveness measurement program excluded by D-013.
 ```
 
 ## Work Items
 
-Planning warning: the existing entries `2.3A-2.8` below document the audited draft only and are not executable. They will be replaced, not patched in place, by clean sequential work items `2.3-2.14` after the Apple execution target is clarified. No task may be started from the draft mapping.
-
 ### 2.1 Process Package And Synthetic Central Topology
 
-Status: blocked.
+Status: blocked. Becomes `ready` only after the planning acceptance gate closes.
 
-Dependency status: human-planning-gate. Phase 1 and technical prerequisites are complete, but `D-015` explicitly pauses implementation until the corrected whole-phase plan is accepted.
+Dependency status: human-planning-gate.
 
 Objective:
 
-- Create the versioned `process/` source package and synthetic `team-specs`/project-adapter bootstrap templates using accepted topology and configuration names.
+- Create the versioned `process/` skeleton, package/workflow metadata, synthetic central `team-specs` bootstrap, and project-adapter templates.
 
-OpenSpec source:
+OpenSpec source: transfer-package tasks 1.1-1.2 and accepted `repo-topology-config`.
 
-- Accepted `repo-topology-config` requirements for first topology, config files, package distribution, OpenSpec pin, and owner registry.
-- Active tasks 1.1-1.2 in `define-transfer-ready-process-package`.
+Expected files: `process/VERSION`, `process/package.yaml`, `process/workflow.yaml`, base schemas, `templates/team-specs/**`, `templates/project-adapter/**`, and fixture tests.
 
-Expected files/modules:
+Verification: schema-first tests; valid clean synthetic topology; negative missing-version, invalid-reference, secret/private-value, and production-looking-placeholder cases.
 
-- `process/VERSION`
-- `process/package.yaml`
-- `process/workflow.yaml`
-- `process/schemas/*.schema.json`
-- `templates/team-specs/**`
-- `templates/project-adapter/.sdd-project.yaml`
-- schema and fixture tests
+Parallelization: after the shared package naming and schema conventions are fixed, independent schema/fixture pairs may be assigned to separate workers; one integration owner validates the assembled topology.
 
-Verification:
+Documentation: file structure, setup notes, phase evidence index.
 
-- Write failing schema/fixture tests before each schema or template.
-- Validate one complete synthetic central setup.
-- Reject missing version pins, unsupported topology, invalid project/owner references, and production-looking placeholders.
-- Run focused tests and `git diff --check`.
-
-Documentation updates:
-
-- `docs/00_FILE_STRUCTURE.md`
-- setup-oriented docs only after paths exist
-- Phase 2 evidence section
-
-Recommended subagents:
-
-- worker: package/config skeleton and tests.
-- reviewer: schema completeness and placeholder/secret risks.
-- architecture-checker: accepted topology and package-boundary compliance.
-- verification-checker: fixture and negative-case evidence.
-
-Exit criteria:
-
-- Synthetic central topology is copyable, schemas are deterministic, package/config versions are explicit, and no corporate value is inferred.
+Exit criteria: the synthetic topology is reproducible, versioned, deterministic, and contains no inferred corporate values.
 
 ### 2.2 Configuration Discovery And Compatibility Validation
 
 Status: planned.
 
-Dependency status: sequential. Starts after 2.1 is closed.
+Dependency status: sequential after 2.1.
 
-Objective:
+Objective: implement central/project configuration discovery, schema validation, OpenSpec `1.4.1` pin checks, package compatibility, and secret rejection.
 
-- Implement central/project config discovery, schema validation, OpenSpec `1.4.1` pin checks, process-package compatibility checks, and safe diagnostics.
+OpenSpec source: transfer-package task 1.3 and accepted `repo-topology-config` scenarios.
 
-OpenSpec source:
+Expected files: config validators, compatibility fixtures, `tests/test_validate_process_config.py`, and thin root entry point.
 
-- Accepted `repo-topology-config` scenarios for config discovery, version mismatch, supported topology, and owner mapping.
-- Active task 1.3.
+Verification: central/adapter/sibling layouts, missing registry, invalid owner/project, version mismatch, unsupported topology, private value, and human/JSON diagnostic tests.
 
-Expected files/modules:
+Parallelization: positive discovery fixtures and independent negative compatibility fixtures may run in parallel after the discovery precedence contract is fixed.
 
-- `process/validators/validate_config.py`
-- `scripts/validate_process_config.py`
-- `tests/test_validate_process_config.py`
-- compatibility/rollback fixtures
+Documentation: process-package setup and compatibility inventory.
 
-Verification:
+Exit criteria: every gated command can prove compatible configuration before mutation without AI inference.
 
-- TDD cases for central config, optional adapter, sibling checkout, missing registry, version mismatch, unsupported topology, secrets, and invalid owner/project references.
-- Machine-readable and human-readable diagnostics must identify the exact failing field and source file.
+### 2.3 Policy Schema V2 And Class Foundation
 
-Documentation updates:
+Status: planned.
 
-- `docs/runbooks/PROCESS_PACKAGE_SETUP.md`
-- configuration section in file structure/context if needed
+Dependency status: sequential after 2.2.
 
-Recommended subagents:
+Objective: define schema-v2 change metadata and canonical policies for classification, gates, regression, flow controls, release, pilot safety, and failed runs.
 
-- worker, reviewer, architecture-checker, verification-checker.
+OpenSpec source: NIS tasks 1.1-1.4.
 
-Exit criteria:
+Expected files: versioned policy/change schemas plus valid and invalid minor/major/hotfix fixtures.
 
-- Configuration and compatibility state can be proven before any gated operation, with no AI inference required.
+Verification: schema-first positive/negative tests, policy discovery, unknown/conflicting input, and non-configurable-minimum weakening cases.
 
-### 2.3A NIS Corporate Governance And Classification Migration
+Parallelization: independent policy schemas and fixture families may use parallel workers after shared IDs/versioning are fixed; combined schema validation is mandatory.
 
-Status: superseded. Replaced by the clean `2.3-2.14` decomposition required by `D-015`; the replacement details wait for the Apple execution-target clarification.
+Documentation: schema inventory, compatibility rules, context terminology.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Exit criteria: one deterministic schema/policy foundation exists for all later class-aware work.
 
-Objective:
+### 2.4 Classification And Legacy Migration
 
-- Implement `D-013`: schema-versioned minor/major/hotfix classification, conservative deterministic rules, legacy migration, class artifact matrices, DoR/DoD, Tech Lead governance, corporate flow controls, release handoff, pilot safety, and failed-run retention.
+Status: planned.
 
-OpenSpec source:
+Dependency status: sequential after 2.3.
 
-- Complete active change `adopt-nis-corporate-process-governance`, including its eleven capability deltas and task groups 1-8.
-- Planning rationale and source-to-target matrix in `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md`.
+Objective: implement conservative minor/major/hotfix classification and idempotent legacy `thin/full` migration without inferring hotfix or rewriting archives.
 
-Expected files/modules:
+OpenSpec source: NIS tasks 2.1-2.6.
 
-- schema version 2 and classification policy/matrix schemas
-- classification and migration check/apply entry points
-- readiness/completion, regression, stop/escalation, release-package, decision/AI evidence, pilot-safety, and failed-run schemas
-- deterministic class, DoR/DoD, Tech Lead, traceability, workflow-mapping, pilot-safety, and failed-run reports
-- minor, major, hotfix, migration, hold/resume, and reconciliation fixtures/tests
-- updated templates, compatibility wrappers, role instructions, runbooks, and certification matrix
+Expected files: classifier, reports, migration check/apply commands, updated current-facing templates/diagnostics, and migration fixtures/tests.
 
-Verification:
+Verification: minor all-conditions, major any-trigger, harm-based hotfix, under-classification refusal, evidence correction/recalculation, stricter route, check/apply idempotency, conflict refusal, metadata preservation, and no archive rewrite.
 
-- Start each requirement scenario with a failing focused test or fixture.
-- Prove `thin -> minor`, `full -> major`, no automatic hotfix, idempotency, conflict refusal, preserved metadata, and no archive rewriting.
-- Prove minor all-conditions, major any-trigger, harm-based hotfix, under-classification/lower-class-waiver rejection, audited source correction and recalculation, and stricter-route selection.
-- Prove DoR, implementation complete, DoD, release ready, archive ready, archived, and external delivered/Done remain distinct.
-- Prove hotfix cannot bypass human ownership, minimum verification, required risk decisions, rollback/hold, traceability, or reconciliation.
-- Prove Tech Lead automation is source-linked decision support and AI cannot approve, waive, resume, or close.
-- Prove all core gates in AI-disabled mode; later certification adds actual Qwen/DeepSeek evidence.
+Parallelization: classifier reports and migration fixtures may proceed independently after the classification decision contract is tested; apply logic waits for check-mode acceptance.
 
-Documentation updates:
+Documentation: migration runbook and explicit historical-only thin/full references.
 
-- Replace target thin/full language while preserving clearly marked historical/migration evidence.
-- Update setup, migration, governed-flow, Tech Lead, release, corporate-adaptation, and pilot runbooks.
-- Keep NIS-derived role views linked to canonical policy/spec IDs.
+Exit criteria: current surfaces offer only minor/major/hotfix and legacy migration is safe and reversible.
 
-Recommended subagents:
+### 2.5 Artifact Matrices And Lifecycle Gates
 
-- worker: one task group at a time.
-- reviewer: classification/gate correctness and migration safety.
-- architecture-checker: source ownership, authority, transfer, and no-fork boundaries.
-- verification-checker: negative cases, AI-disabled evidence, pilot safety, and failed-run retention.
+Status: planned.
 
-Exit criteria:
+Dependency status: sequential after 2.4.
 
-- All OpenSpec tasks for `adopt-nis-corporate-process-governance` are complete, strict validation and tests pass, migration/reconciliation evidence is reproducible, and no target surface still offers thin/full as current routes.
+Objective: implement class-aware artifact matrices, review readiness, DoR, implementation-complete, DoD, release readiness, archive readiness, and guarded lifecycle transitions.
 
-### 2.3 Packaged Deterministic Class-Aware Flow
+OpenSpec source: NIS tasks 3.1-3.6.
 
-Status: superseded. This draft item will be redefined in the clean `2.3-2.14` plan required by `D-015`.
+Expected files: matrix/gate validators, reports, fixtures, and lifecycle transition tests.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Verification: substantive-content, conditional N/A, waiver, hotfix deferral, placeholder, stale evidence, skipped state, unresolved reconciliation, Jira Done, deployment, and AI-completion negative cases.
 
-Objective:
+Parallelization: class-specific matrix fixtures may run in parallel; shared lifecycle-transition logic remains single-owner and integrates all matrices.
 
-- Make the minor, major, and hotfix flow consumable from the versioned process package while preserving a bounded legacy-reader/migration contract and the root compatibility entry point.
+Documentation: governed-flow and gate semantics.
 
-OpenSpec source:
+Exit criteria: every transition reports exact blocking/advisory evidence and keeps human approval explicit.
 
-- Accepted change-package-foundation, lifecycle, artifact, traceability, and waiver baseline plus the corresponding deltas in `adopt-nis-corporate-process-governance`.
-- Tasks 2.1-2.5 in `define-transfer-ready-process-package` and relevant classification/gate tasks in the NIS adoption change.
+### 2.6 Tech Lead Governance
 
-Expected files/modules:
+Status: planned.
 
-- `process/templates/change/**`
-- `process/validators/validate_change.py`
-- root compatibility wrapper `scripts/validate_change.py`
-- `scripts/bootstrap_team_specs.py`
-- `scripts/create_change.py`
-- `scripts/prepare_spec_pr.py`
-- `scripts/prepare_archive.py`
-- `scripts/update_process_package.py`
-- focused and end-to-end tests
+Dependency status: sequential after 2.5.
 
-Verification:
+Objective: implement Tech Lead ownership, review packs, deterministic reports, stop/hold/escalate/resume records, scheduled/event-driven views, and authority-limit evidence.
 
-- Preserve all existing 34 validator tests before expanding behavior.
-- Add red-green tests for bootstrap, create, PR evidence, archive evidence, update, and rollback.
-- Prove AI-disabled minor, major, and hotfix flows on the synthetic reference setup.
-- Verify no entry point approves, merges, waives, or archives without human evidence.
+OpenSpec source: NIS tasks 4.1-4.6.
 
-Documentation updates:
+Expected files: owners schema extensions, Tech Lead pack/report builders, flow-control validators, role instruction source, and certification fixtures.
 
-- setup, governed-flow, classification migration, update, and rollback runbooks
-- current audit evidence
+Verification: owner/delegate conflicts, under-classification, missing context, unsafe continuation, AI resume/approval prohibition, completion/release recommendation, waiver expiry, and AI-disabled operation.
 
-Recommended subagents:
+Parallelization: report views and role fixtures may run in parallel after owner authority and stop/resume schemas close; authority validation has one integration owner.
 
-- worker, reviewer, architecture-checker, verification-checker.
+Documentation: Tech Lead operating guide and escalation model.
 
-Exit criteria:
+Exit criteria: Tech Lead automation reduces evidence search without impersonating decisions or other roles.
 
-- The complete reference class-aware flow is reproducible from the packaged assets, deterministic gates remain AI-independent, migration is safe, and rollback preserves accepted history.
+### 2.7 Corporate Flow Controls, Safety, And Failed Runs
 
-### 2.4 Weak-Model Operating Contracts And Role Kit
+Status: planned.
 
-Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
+Dependency status: sequential after 2.6.
 
-Dependency status: superseded. No parallel work is authorized before the corrected whole-phase plan is accepted.
+Objective: implement initiative triage, baseline/scope drift, quality/regression, decision/AI evidence, release handoff, role map, WIP, pilot safety, and failed-run retention records.
 
-Parallel independence rationale:
+OpenSpec source: NIS tasks 5.1-5.7 and 6.1-6.2.
 
-- It does not independently define lifecycle/artifact behavior; it consumes the active NIS governance contracts.
-- It consumes canonical IDs and paths from 2.1.
-- It cannot accept release readiness before 2.3 and 2.5 close.
+Expected files: flow-control, regression, release-package, role-map, WIP, safety, and failed-run schemas/validators/fixtures.
 
-Objective:
+Verification: proceed/hold/split/redirect/reject; scope reassessment; QA coverage gaps; waiver/deferral expiry; stop/resume; external evidence chain; missing-owner AI substitution; WIP hold; privacy/secrets; retry cannot erase failure.
 
-- Implement deterministic task selection, authority-labelled bounded read packs, evidence output, explicit blocked behavior, and analyst/developer/QA/Tech Lead role instructions for weak models.
+Parallelization: independent record families may use parallel workers after shared IDs and evidence references are fixed; cross-record traceability and stop-trigger integration are serialized.
 
-OpenSpec source:
+Documentation: quality, flow-control, release-handoff, pilot-safety, and failed-run guidance.
 
-- Active `weak-model-guardrails` requirements.
-- Active `tech-lead-workflow`, `corporate-change-classification`, `readiness-completion-gates`, and `corporate-flow-controls` requirements.
-- Accepted documentation-governance source-ownership scenarios.
-- Active tasks 3.1-3.5.
+Exit criteria: governed work is reconstructable from source-linked records and unsafe continuation is deterministically blocked.
 
-Expected files/modules:
+### 2.8 Packaged Deterministic Governed Flow
 
-- read-pack and operation-evidence schemas
-- `scripts/build_read_pack.py`
-- `process/roles/*.md`
-- `process/adapters/*.md`
-- `tests/test_build_read_pack.py`
-- `tests/test_weak_model_contract.py`
+Status: planned.
 
-Verification:
+Dependency status: sequential after 2.7 and requires 2.1-2.2.
 
-- TDD cases for authority labels, bounded context, missing sources, conflicting sources, stable IDs, private paths, evidence boundaries, forbidden authority, and stop points.
-- Self-review role instructions for one-stage scope, concrete examples, negative cases, and deterministic fallback.
+Objective: package templates/validators and implement bootstrap, create, Spec PR, archive preparation, update, rollback, traceability, external mapping, and AI-disabled fallbacks.
 
-Documentation updates:
+OpenSpec source: transfer-package tasks 2.1-2.5 and NIS tasks 7.1-7.4.
 
-- `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md`
-- role and adapter ownership map
+Expected files: `process/templates/change/**`, packaged validators, root wrappers, workflow scripts, traceability schemas, and end-to-end tests.
 
-Recommended subagents:
+Verification: existing 34 tests remain green; red-green entry-point tests; minor/major/hotfix flows; migration; DoR/DoD; update/rollback; unknown external mappings; unavailable Jira/Confluence/model/MCP fallback; no human authority substitution.
 
-- worker: role/read-pack implementation.
-- reviewer: weak-model ambiguity and instruction-height review.
-- architecture-checker: canonical-source and adapter boundaries.
-- verification-checker: negative-case completeness.
+Parallelization: command entry points with non-overlapping modules may use parallel workers after shared workflow/state contracts are fixed; one end-to-end integration gate validates the complete flow.
 
-Exit criteria:
+Documentation: setup, governed flow, update/rollback, and integration-boundary runbooks.
 
-- A model cannot select its own authority or silently proceed with missing context, and every assisted operation has an AI-disabled fallback.
+Exit criteria: the complete core flow is usable from the versioned package and remains fully executable with AI disabled.
 
-### 2.5 Weak-Model And AI-Disabled Certification
+### 2.9 Weak-Model Role Kit And Safe Parallel Execution
 
-Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
+Status: planned.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Dependency status: sequential after 2.8.
 
-Objective:
+Objective: implement deterministic role launch/read packs, bounded role instructions/adapters, evidence boundaries, authority checks, and safe parallel-task planning.
 
-- Build repeatable certification fixtures and record actual Qwen-class, DeepSeek-class, and AI-disabled evidence for all three classes and the first pilot roles.
+OpenSpec source: transfer-package tasks 3.1-3.6.
 
-OpenSpec source:
+Expected files: read-pack/evidence/parallel-task schemas, builder/launcher, analyst/developer/QA/Tech Lead instructions, adapters, and negative tests.
 
-- Active `weak-model-guardrails` certification requirements.
-- Active tasks 4.1-4.5.
+Verification: missing/conflicting context, source authority, stop points, unsupported completion, forbidden approval/transition, non-canonical derived output, overlapping write scope, unresolved dependency, separate evidence, and combined integration-gate cases.
 
-Expected files/modules:
+Parallelization: role instructions and adapter templates may use separate workers after launcher/read-pack contracts close; shared-source mutation and policy decisions are explicitly serialized.
 
-- `process/certification/**`
-- `scripts/certify_process_release.py`
-- `tests/test_release_certification.py`
-- committed synthetic certification summaries or evidence references
+Documentation: weak-model operating kit and parallel-execution safety guide.
 
-Verification:
+Exit criteria: AI can accelerate bounded independent work while deterministic launch, ownership, evidence, and integration controls prevent races and overreach.
 
-- Record exact model/runtime and adapter identifiers rather than generic family claims.
-- Cover minor, major, hotfix, analyst, developer, QA, and Tech Lead flows.
-- Cover missing context, source conflict, fabricated evidence, under-classification, pseudo-hotfix, forbidden approval, unsafe resume, unresolved reconciliation, invalid transition, adapter failure, and context-limit failure.
-- Require deterministic validation of outputs.
-- If either Qwen-class or DeepSeek-class actual execution is unavailable, mark this work item blocked; do not claim external release readiness without a new human scope decision.
+### 2.10 Certification Fixtures, Coverage, And Runner
 
-Documentation updates:
+Status: planned.
 
-- certification evidence index
-- current audit limitations and results
+Dependency status: sequential after 2.9.
 
-Recommended subagents:
+Objective: build synthetic fixtures, golden results, negative cases, certification runner/evidence, and requirement/scenario coverage reporting.
 
-- worker: fixture/runner implementation.
-- reviewer: instruction/evaluation bias and false-positive review.
-- architecture-checker: AI/non-AI responsibility boundary.
-- verification-checker: reproduce every claimed result.
+OpenSpec source: transfer-package tasks 4.1-4.3 and 4.6; NIS task 8.1.
 
-Exit criteria:
+Expected files: synthetic repos, role/class/platform fixtures, negative cases, runner, evidence manifest, coverage report, and deterministic tests.
 
-- Both model families and the AI-disabled path have reproducible class/role evidence; fluent but non-compliant or authority-violating outputs fail certification.
+Verification: every applicable scenario maps to an automated test or manual evidence; gaps record owner/risk/compensation/follow-up; raw outputs remain in versioned artifacts; normalized evidence/hashes remain in Git; secrets/private values are absent.
 
-### 2.6 Release Manifest, Transfer Runbook, And Rehearsal
+Parallelization: independent class, role, platform, and negative-case fixture families are preferred parallel worker slices; runner and coverage schema have single owners and one combined validation pass.
 
-Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
+Documentation: certification evidence format and evidence-storage policy.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Exit criteria: certification is repeatable, source-linked, privacy-safe, and exposes rather than hides verification gaps.
 
-Objective:
+### 2.11 AI-Disabled And Weak-Model Certification
 
-- Assemble and validate the external release candidate, transfer manifest, compatibility inventory, clean bootstrap, update/rollback rehearsal, and secret/private-data safety evidence.
+Status: planned.
 
-OpenSpec source:
+Dependency status: sequential after 2.10.
 
-- Active `transfer-readiness` release-content, bootstrap, external-gate, and evidence requirements.
-- Active tasks 5.1-5.4.
+Objective: execute all AI-disabled walkthroughs and the accepted risk-oriented Qwen/DeepSeek certification matrix.
 
-Expected files/modules:
+OpenSpec source: transfer-package tasks 4.4-4.5; NIS tasks 8.2-8.3.
 
-- release-manifest schema/template
-- `process/validators/validate_release.py`
-- release certification entry point
-- `docs/runbooks/PROCESS_PACKAGE_UPDATE_AND_ROLLBACK.md`
-- `docs/runbooks/CORPORATE_ADAPTATION.md`
-- synthetic transfer rehearsal evidence
+Expected files: normalized results, manifests/hashes, raw versioned release artifacts, limitation/fallback records, and phase evidence index entries.
 
-Verification:
+Verification: every gate works AI-disabled; each model family performs all four roles once; each class runs on both families; critical authority, fabricated-evidence, unsafe-resume, failed-run, QA-review, and hotfix-reconciliation negatives run on both.
 
-- Rebuild from a clean supported location.
-- Verify package/config/OpenSpec versions and evidence references.
-- Scan release assets for secrets, internal URLs, private paths, and corporate data.
-- Rehearse upgrade failure and rollback.
-- Reject missing, stale, failed, or AI-only evidence.
+Parallelization: independent model/role/class runs may execute concurrently when isolated workspaces and evidence paths are declared; shared fixture mutation and final result disposition are serialized.
 
-Documentation updates:
+Documentation: exact model/runtime/adapter versions, interventions, limitations, and fallbacks.
 
-- setup/update/rollback/adaptation runbooks
-- audit release-readiness findings
+Exit criteria: mandatory operations pass or have an explicit deterministic/mandatory-human fallback accepted for release.
 
-Recommended subagents:
+### 2.12 Cross-Platform Release Candidate And Rollback
 
-- worker, reviewer, architecture-checker, verification-checker.
+Status: planned.
 
-Exit criteria:
+Dependency status: sequential after 2.11 and requires 2.2 and 2.8.
 
-- A reproducible candidate and manifest exist, rollback works, and no corporate fact was guessed or embedded.
+Objective: generate/validate the release manifest, automate acceptance checks, rehearse migration/update/rollback, and prove equivalent Windows/Linux/macOS behavior.
 
-### 2.7 Corporate Adaptation And Pilot Package
+OpenSpec source: transfer-package tasks 5.1-5.4; NIS task 8.4.
 
-Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
+Expected files: release-manifest generator/validator, platform launch adapters, setup/update/rollback runbooks, platform evidence, checksums, and release artifact.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Verification: clean bootstrap, deterministic flow, MCP connectivity, OpenSpec/Git/Python/Node dependencies, migration, idempotency, update, rollback/hold, no archive rewrite, evidence equivalence, and missing/stale/failed/private/AI-only evidence rejection on all three hosts.
 
-Objective:
+Parallelization: Windows, Linux, and macOS rehearsals may run concurrently from the same immutable candidate; candidate construction and final manifest acceptance remain single-owner.
 
-- Provide non-secret environment inventory, real-config, pilot-selection/entry, monitored-pilot safety, failed-run evidence, privacy, rollback/hold, hotfix reconciliation, and no-fork feedback templates for Phase 3.
+Documentation: installation, platform inventory, compatibility, update, rollback, secrets, adapters, and no-fork feedback.
 
-OpenSpec source:
+Exit criteria: one immutable candidate produces equivalent governed results on all supported hosts and can be rolled back safely.
 
-- Active `transfer-readiness` corporate-boundary, pilot, evidence, and later-layer exclusion requirements.
-- Active tasks 6.1-6.4.
+### 2.13 Corporate Adaptation And Pilot Package
 
-Expected files/modules:
+Status: planned.
 
-- `docs/runbooks/CORPORATE_ADAPTATION.md`
-- `docs/runbooks/GOVERNED_CHANGE_PILOT.md`
-- environment inventory and pilot evidence templates
-- internal-fork detection or package-version mismatch checks
+Dependency status: sequential after 2.12.
 
-Verification:
+Objective: prepare non-secret environment inventory, real-configuration/pilot-entry checklists, monitored-pilot evidence template, and external feedback/no-fork checks without executing the pilot.
 
-- Walk through the templates using synthetic values.
-- Confirm every real fact is an explicit input.
-- Confirm secrets are referenced, never embedded.
-- Confirm reusable gaps route to external OpenSpec.
-- Confirm Jira/Confluence/QA/AT/broad role-inbox layers are not pilot prerequisites while Tech Lead evidence remains available through deterministic files/reports.
-- Confirm failed attempts remain visible after retries and that the pilot stops or holds when safety, access, evidence integrity, or rollback requirements fail.
+OpenSpec source: transfer-package tasks 6.1-6.4.
 
-Documentation updates:
+Expected files: corporate inventory, adaptation, pilot-entry, pilot-evidence, rollback/hold, and no-fork templates/runbooks.
 
-- Phase 3 dependency and entry-gate text in roadmap
-- context and audit boundaries
+Verification: templates cover runtimes, package distribution, network, Bitbucket/Jenkins/Jira/Confluence, MCP, models/adapters, owners/projects, secrets, rollback, AI-disabled gates, failures, interventions, privacy, and follow-up changes.
 
-Recommended subagents:
+Parallelization: inventory, entry checklist, and pilot evidence template may use separate workers against one accepted schema/source map; final no-fork and completeness review is combined.
 
-- worker, reviewer, architecture-checker, verification-checker.
+Documentation: corporate adaptation and governed pilot runbooks.
 
-Exit criteria:
+Exit criteria: Phase 3 can configure and pilot without inventing reusable behavior or storing real corporate values in the external package.
 
-- Phase 3 can start from an accepted candidate without designing reusable process behavior inside the corporate environment.
+### 2.14 Documentation, Final Verification, And Human Acceptance
 
-### 2.8 External Release Candidate Acceptance Review
+Status: planned.
 
-Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
+Dependency status: sequential-final after 2.1-2.13.
 
-Dependency status: superseded. This draft dependency must not be used for implementation.
+Objective: reconcile documentation/statuses, run complete verification, assemble the acceptance packet, complete review gates, and stop for human-owner acceptance.
 
-Objective:
+OpenSpec source: transfer-package tasks 7.1-7.4; NIS tasks 8.5-8.7.
 
-- Reconcile implementation, specs, tasks, tests, certification, documentation, audit, release manifest, and rollback evidence; stop for human acceptance.
+Expected files: current docs/audit/roadmap, phase evidence index, manifest, runbooks, review records, coverage/traceability report, limitations, and acceptance packet.
 
-OpenSpec source:
+Verification: focused/full tests; package/config/template validation; coverage/traceability; Windows/Linux/macOS evidence; AI-disabled and weak-model certification; privacy/secret scan; documentation-sync audit; `openspec list`; `openspec list --specs`; `openspec validate --all --strict`; `git diff --check`; worker/reviewer/architecture/verification gates.
 
-- Active tasks 7.1-7.4.
-- All proposed transfer-readiness and weak-model-guardrails scenarios.
+Parallelization: documentation review, architecture review, and verification evidence audit may run concurrently against the frozen candidate; fixes serialize through one integration owner and require re-verification.
 
-Expected files/modules:
+Documentation: all affected project, role, setup, operations, roadmap, audit, and presentation-facing material.
 
-- Phase 2 acceptance evidence section
-- updated roadmap/current audit/file structure/context/runbooks
-- release manifest and certification index
+Exit criteria: the human owner accepts or rejects the exact external candidate using mandatory Tech Lead and QA evidence plus security evidence when applicable. No corporate pilot begins before acceptance.
 
-Verification:
+## Exact OpenSpec Task Mapping
 
-- Focused and full tests.
-- Clean bootstrap, legacy migration, and packaged minor/major/hotfix rehearsal.
-- AI-disabled, Qwen-class, and DeepSeek-class certification for analyst, developer, QA, and Tech Lead authority cases.
-- Secret/private-data scan.
-- Rollback rehearsal.
-- `openspec list`, `openspec list --specs`, `openspec validate --all --strict`, and `git diff --check`.
-- Reviewer, architecture, and verification findings resolved or explicitly blocked.
+| Phase 2 work item | `define-transfer-ready-process-package` | `adopt-nis-corporate-process-governance` |
+|---|---|---|
+| 2.1 | 1.1-1.2 | - |
+| 2.2 | 1.3 | - |
+| 2.3 | - | 1.1-1.4 |
+| 2.4 | - | 2.1-2.6 |
+| 2.5 | - | 3.1-3.6 |
+| 2.6 | - | 4.1-4.6 |
+| 2.7 | - | 5.1-5.7, 6.1-6.2 |
+| 2.8 | 2.1-2.5 | 7.1-7.4 |
+| 2.9 | 3.1-3.6 | - |
+| 2.10 | 4.1-4.3, 4.6 | 8.1 |
+| 2.11 | 4.4-4.5 | 8.2-8.3 |
+| 2.12 | 5.1-5.4 | 8.4 |
+| 2.13 | 6.1-6.4 | - |
+| 2.14 | 7.1-7.4 | 8.5-8.7 |
+| Phase 3 | 7.5 | 8.8 |
 
-Documentation updates:
+Coverage check:
 
-- Mark Phase 2 gate `pending_acceptance` before asking the human.
-- Mark it `accepted`/`closed` only after explicit human acceptance and full status reconciliation.
-- Keep the OpenSpec change active for Phase 3 pilot evidence unless its accepted archive gate is explicitly revised by the human.
+- Transfer-package tasks: 33 total; 32 map exactly once to Phase 2 and task 7.5 maps exactly once to Phase 3.
+- NIS-governance tasks: 43 total; 42 map exactly once to Phase 2 and task 8.8 maps exactly once to Phase 3.
+- No task group is owned by more than one Phase 2 work item.
+- No Phase 2 work item depends on Phase 3 evidence for closure.
 
-Recommended subagents:
+## Dependency Sequence
 
-- reviewer, architecture-checker, verification-checker; worker only for accepted fixes.
+```text
+Planning acceptance
+  -> 2.1 -> 2.2 -> 2.3 -> 2.4 -> 2.5 -> 2.6 -> 2.7
+  -> 2.8 -> 2.9 -> 2.10 -> 2.11 -> 2.12 -> 2.13 -> 2.14
+  -> human release-candidate acceptance
+  -> Phase 3 adaptation and pilot
+```
 
-Exit criteria:
-
-- Human accepts the exact external release candidate for corporate adaptation, with known limitations and rollback evidence visible.
-
-## Superseded OpenSpec Task Mapping
-
-The table below records the audited draft mapping only. It is retained for traceability and must be replaced by an exact one-owner mapping in the corrected plan.
-
-| Phase 2 work item | OpenSpec task groups |
-|---|---|
-| 2.1 | 1.1-1.2 |
-| 2.2 | 1.3 |
-| 2.3A | `adopt-nis-corporate-process-governance` task groups 1-8 |
-| 2.3 | `define-transfer-ready-process-package` 2.1-2.5 plus the class/gate integration tasks from 2.3A |
-| 2.4 | 3.1-3.5 |
-| 2.5 | 4.1-4.5 |
-| 2.6 | 5.1-5.4 |
-| 2.7 | 6.1-6.4 |
-| 2.8 | 7.1-7.4 |
-
-OpenSpec task 7.5 belongs to Phase 3 because it requires successful real corporate adaptation and pilot evidence.
+This sequence controls canonical work-item integration. It does not forbid safe parallel workers inside an active item where the item explicitly identifies independent slices.
 
 ## Phase Gate
 
-Status: blocked. The gate criteria will be finalized with the clean `2.3-2.14` plan after the Apple execution target is clarified.
+Status: planned.
 
 Phase 2 can move to `pending_acceptance` only when:
 
-- work items 2.1-2.7 and 2.3A are closed;
-- work item 2.8 verification is complete;
-- the external release candidate and manifest are reproducible;
-- all deterministic gates pass without AI;
-- actual Qwen-class and DeepSeek-class certification evidence exists for minor, major, hotfix, analyst, developer, QA, and Tech Lead flows;
-- legacy migration, DoR/DoD separation, under-classification, hotfix safety/reconciliation, Tech Lead authority, stop/resume, release-package, privacy, pilot-safety, and failed-run-retention scenarios pass;
-- negative safety scenarios pass;
-- clean bootstrap, update, rollback, and secret/private-data checks pass;
-- corporate adaptation and pilot materials are complete;
-- no later-layer integration became a hidden prerequisite;
-- current docs, audit, roadmap, OpenSpec status, and phase statuses agree.
+- work items 2.1-2.13 are `closed` and 2.14 verification is complete;
+- the exact immutable release candidate, manifest, raw artifact, hashes, and rollback reference are reproducible;
+- Windows, Linux, and macOS clean-host evidence proves equivalent governed behavior;
+- all deterministic gates pass with AI disabled;
+- risk-oriented Qwen/DeepSeek certification and negative authority/safety cases are complete;
+- broader positive/negative coverage is linked to requirements/scenarios and residual gaps are explicit;
+- safe parallel-execution contracts and combined integration gates pass positive and negative cases;
+- migration, gates, Tech Lead authority, flow controls, hotfix reconciliation, privacy, safety, and failed-run retention pass;
+- adaptation/pilot materials are complete and contain no real corporate values;
+- roadmap, audit, phase status, OpenSpec status, docs, tests, and evidence agree.
 
-Phase 2 becomes `closed` only after explicit human acceptance of the external release candidate. Phase 3 must not install or pilot an unaccepted candidate.
+Phase 2 becomes `closed` only after explicit human acceptance of the external release candidate. Both active OpenSpec changes remain open for Phase 3 pilot evidence; Phase 3 must not use an unaccepted candidate.
 
 ## Human Decisions
 
 Resolved:
 
-- External transfer-ready release candidate is the required boundary before corporate adaptation.
-- Reusable core and weak-model safeguards are completed externally.
-- Corporate work is limited to real paths, projects, owners, approved secret references, integration wiring, thin model adapters, environment checks, and pilot evidence.
-- The plan and roadmap contain no delivery dates or calendar deadlines.
-- `D-013` accepts the flat NIS target model `minor|major|hotfix`, legacy mapping `thin -> minor` and `full -> major`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, pilot safety, and failed-run retention. Process-effectiveness measurement is excluded.
-- `D-014` accepts two automation horizons: Phase 2 first proves a complete AI-disabled deterministic process; later accepted changes progressively automate bounded process work while deterministic checks remain the control plane and accountable human authority stays explicit.
-- `D-015` selects clean sequential renumbering from `2.3`, requires plan acceptance before any Phase 2 implementation, and keeps both active OpenSpec changes open through the Phase 3 pilot.
-- Certification evidence storage uses normalized synthetic evidence, manifests, and hashes in Git, with raw outputs in a versioned release artifact referenced by checksum and manifest.
-- The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable.
-- Certification uses the risk-oriented pairwise matrix: each Qwen-class and DeepSeek-class family performs analyst, developer, QA, and Tech Lead work once; minor, major, and hotfix are each exercised by both families; critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negative cases run on both.
-- The process package must be cross-platform across Windows, Linux, and the clarified Apple target. Required runtimes, dependencies, and MCP will be provisioned on every supported platform rather than treated as optional or unavailable-environment fallbacks.
+- `D-012`: external transfer-ready candidate before corporate adaptation; no delivery dates in durable phase planning.
+- `D-013`: NIS-aligned minor/major/hotfix target, migration, gates, Tech Lead governance, flow/safety controls, failed-run retention, and no process-effectiveness measurement program.
+- `D-014`: deterministic/AI-disabled foundation first, progressive bounded AI automation later.
+- `D-015`: clean numbering, plan-first acceptance, both changes open through Phase 3, normalized/raw evidence split, human-owner final acceptance, risk-oriented certification matrix, and Windows/Linux/macOS support with provisioned prerequisites and MCP.
+- `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 
-Open clarification that blocks the corrected plan and all implementation:
+Current human decision:
 
-- Apple execution target: does `iOS` mean that the full process package, OpenSpec CLI, Python validators, Git operations, and MCP server must run natively inside an iPhone/iPad application sandbox, or was `macOS` intended as the third desktop host alongside Windows and Linux? Native iOS would require a dedicated mobile host/application architecture because OpenSpec currently requires Node.js on `PATH`, while Python on iOS is embedded into an application rather than installed as an ordinary desktop CLI runtime.
+- Accept or reject this corrected Phase 2 plan. Until acceptance, Phase 2 and work item 2.1 remain blocked.
 
-The old `2.3A-2.8` mapping must not be used for implementation. Once the Apple target is clarified, the plan must be rewritten as `2.3-2.14`, checked for one-owner task coverage and acyclic dependencies, and explicitly accepted before 2.1 can return to `ready`.
+Mandatory later evidence, not design decisions:
 
-Mandatory later evidence, not current design decisions:
-
-- Exact Qwen and DeepSeek model/runtime identifiers used for certification.
-- Actual corporate runtime, network, artifact distribution, MCP, and integration capabilities.
-- Real Jira/workflow mappings, owner/Tech Lead delegates, security approvers, evidence-retention/privacy rules, and pilot candidate.
+- Exact Qwen-class and DeepSeek-class model/runtime identifiers.
+- Exact supported Windows, Linux, and macOS versions/architectures and dependency versions used for certification.
+- Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

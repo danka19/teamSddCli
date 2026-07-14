@@ -107,3 +107,18 @@ Role instructions, read packs, examples, and certification fixtures SHALL refere
 #### Scenario: Derived artifact conflict is corrected from source
 - **WHEN** a weak-model artifact conflicts with its referenced canonical contract
 - **THEN** the derived artifact is fixed or regenerated from the canonical source and is not used to edit multiple copies of the rule
+
+### Requirement: Safe parallel AI execution
+The SDD process SHALL allow AI-assisted work to execute in parallel only when task independence, ownership, write scope, dependencies, and integration responsibility are explicit.
+
+#### Scenario: Independent tasks run concurrently
+- **WHEN** two or more AI-assisted tasks have no unresolved dependency and do not mutate the same owned artifact or state boundary
+- **THEN** the launcher may assign them concurrently with separate task IDs, read packs, write scopes, evidence records, owners, and stop conditions
+
+#### Scenario: Shared mutation prevents unsafe parallelism
+- **WHEN** proposed concurrent tasks would edit the same canonical artifact, depend on an unfinished output, or make conflicting lifecycle or policy decisions
+- **THEN** the process serializes them, splits the shared boundary, or blocks execution until a human-approved dependency and ownership plan exists
+
+#### Scenario: Parallel outputs pass an integration gate
+- **WHEN** concurrent task outputs are complete
+- **THEN** each output passes its focused checks and the combined result passes deterministic integration, traceability, review, and conflict checks before it can become canonical evidence

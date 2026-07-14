@@ -58,6 +58,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Weak models do not select their own workflow or authority. A deterministic launcher or explicit non-AI procedure must supply the role instruction, bounded authority-labelled read pack, output/evidence contract, and stop point.
 - Every weak-model-assisted gate must have an AI-disabled fallback, and reusable corporate findings must return to the external OpenSpec workflow rather than create an internal fork.
 - Treat the AI-disabled path as the reliability foundation, not the final automation ceiling: later AI automation must be introduced through accepted OpenSpec changes, remain bounded and evidence-backed, and continue to pass deterministic checks.
+- For parallel AI work, verify explicit task IDs, dependencies, owners, non-overlapping write scopes, isolated evidence paths, and one combined deterministic integration gate. Serialize shared canonical mutations or unresolved dependencies.
 - Do not require Gherkin for every QA artifact; require a testable scenario first, and require Gherkin only when the scenario is executable or exported to AT.
 
 ## Test And Evidence Check
@@ -71,7 +72,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - For SDD/OpenSpecs changes, run `openspec list`, `openspec list --specs`, and `openspec validate --all --strict`.
 - For every Delta Spec `MODIFIED` or `REMOVED` requirement, independently verify that the exact requirement heading exists in the accepted capability; for `MODIFIED`, compare the complete replacement block and preserved/replaced scenarios because OpenSpec CLI `1.4.1` validation does not detect every wrong target name.
 - For mutating CLI or integration behavior, verify dry-run behavior, idempotency, machine-readable JSON output, and audit logging whenever those contracts are in scope.
-- Before claiming Phase 2 release readiness, verify clean bootstrap, packaged minor/major/hotfix flow, configuration/package/OpenSpec compatibility, legacy migration, secret/private-data checks, update/rollback, AI-disabled operation, and actual Qwen-class plus DeepSeek-class analyst/developer/QA/Tech Lead certification with exact model/runtime evidence.
+- Before claiming Phase 2 release readiness, verify equivalent clean bootstrap and governed behavior on Windows, Linux, and macOS; packaged minor/major/hotfix flow; configuration/package/OpenSpec compatibility; legacy migration; traceable positive/negative coverage; secret/private-data checks; update/rollback; safe parallel execution; AI-disabled operation; and actual Qwen-class plus DeepSeek-class analyst/developer/QA/Tech Lead certification with exact model/runtime evidence.
 - Before claiming the `D-013` governance implementation complete, verify minor/major/hotfix fixtures, legacy migration preview/apply/idempotency/no-archive-rewrite, under-classification rejection, pseudo-hotfix rejection, DoR/DoD separation, Tech Lead authority limits, stop/resume, release-package, hotfix reconciliation, failed-run retention, pilot safety, AI-disabled execution, and Qwen/DeepSeek role evidence.
 - For starter-kit documentation changes, run the project-starter-kit bootstrap script with `--check`.
 - If a test or check cannot run, record the exact command and blocker.
