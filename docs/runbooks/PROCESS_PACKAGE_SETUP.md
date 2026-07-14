@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.3 are closed. Work item 2.4 is ready to consume the static schema-v2 and policy/config foundation for deterministic classification and bounded legacy migration.
+Status: work items 2.1-2.3 are closed. Work item 2.4 is active and consumes the static schema-v2 and policy/config foundation for deterministic classification and bounded legacy migration.
 
 ## Contract Sources
 

@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.3 closed the versioned package/config/schema foundation and canonical NIS policy catalogs; work item 2.4 is ready to implement deterministic classification and bounded legacy migration. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.3 closed the versioned package/config/schema foundation and canonical NIS policy catalogs; work item 2.4 is active for deterministic classification and bounded legacy migration. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 

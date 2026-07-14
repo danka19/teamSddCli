@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.3 are closed after all required gates; work item 2.4 is ready.
+Work items 2.1-2.3 are closed after all required gates; work item 2.4 is active.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -278,7 +278,7 @@ Exit criteria: one deterministic schema/policy foundation exists for all later c
 
 ### 2.4 Classification And Legacy Migration
 
-Status: ready.
+Status: active.
 
 Dependency status: sequential after 2.3.
 
