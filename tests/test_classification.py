@@ -4,14 +4,20 @@ from __future__ import annotations
 
 import copy
 import json
+from dataclasses import replace
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import yaml
 from jsonschema import Draft202012Validator
 
 from process.validators.classification import evaluate_classification
-from process.validators.policy_validation import PolicySnapshot, validate_policy_bundle
+from process.validators.policy_validation import (
+    EffectiveRule,
+    PolicySnapshot,
+    validate_policy_bundle,
+)
 from scripts.classify_change import main as classify_main
 
 
@@ -64,6 +70,136 @@ def _minor_facts(snapshot: PolicySnapshot) -> dict[str, bool | str]:
         identifier: True
         for identifier in snapshot.rules["classification.minor-conditions"].value
     }
+
+
+def _snapshot_with_rule(
+    snapshot: PolicySnapshot, identifier: str, value: Any
+) -> PolicySnapshot:
+    rules = dict(snapshot.rules)
+    retained = rules.get(identifier)
+    rules[identifier] = replace(retained, value=value) if retained else EffectiveRule(
+        value=value,
+        source="bundled-policy",
+        policy_id="classification",
+        policy_version=snapshot.policy_set_version,
+        pointer="/rules/test/value",
+    )
+    return replace(snapshot, rules=MappingProxyType(rules))
+
+
+def _snapshot_without_rule(
+    snapshot: PolicySnapshot, identifier: str
+) -> PolicySnapshot:
+    rules = dict(snapshot.rules)
+    rules.pop(identifier, None)
+    return replace(snapshot, rules=MappingProxyType(rules))
+
+
+def _policy_blocker_codes(report: Any) -> set[str]:
+    return {item["code"] for item in report.as_dict()["blockers"]}
+
+
+def test_classifier_fails_closed_when_required_policy_rule_is_missing_or_malformed() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    candidates = (
+        _snapshot_without_rule(snapshot, "classification.minor-conditions"),
+        _snapshot_with_rule(snapshot, "classification.minor-conditions", "local-change"),
+        _snapshot_without_rule(snapshot, "artifacts.minor-required"),
+    )
+
+    for candidate in candidates:
+        report = evaluate_classification(document, candidate)
+        assert report.exit_code == 1
+        assert report.as_dict()["selected_class"] is None
+        assert "classification.policy-contract-invalid" in _policy_blocker_codes(report)
+
+
+def test_classifier_fails_closed_on_changed_class_and_route_policy_relationships() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+    route_rule = {
+        "minor": ("major",),
+        "major": (),
+        "hotfix": ("major",),
+    }
+
+    candidates = (
+        _snapshot_with_rule(
+            snapshot,
+            "classification.allowed-classes",
+            ("minor", "major", "expedited"),
+        ),
+        _snapshot_with_rule(snapshot, "classification.no-downgrade", False),
+        _snapshot_without_rule(snapshot, "classification.allowed-stricter-routes"),
+        _snapshot_with_rule(
+            snapshot,
+            "classification.allowed-stricter-routes",
+            MappingProxyType({**route_rule, "minor": ("hotfix",)}),
+        ),
+    )
+
+    for candidate in candidates:
+        report = evaluate_classification(document, candidate)
+        assert report.exit_code == 1
+        assert "classification.policy-contract-invalid" in _policy_blocker_codes(report)
+
+
+def test_classifier_fails_closed_on_changed_obligation_or_reviewer_mapping() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    candidates = (
+        _snapshot_without_rule(snapshot, "classification.obligation-rules"),
+        _snapshot_with_rule(
+            snapshot,
+            "classification.obligation-rules",
+            MappingProxyType({"minor": ("artifacts.minor-required",)}),
+        ),
+        _snapshot_without_rule(snapshot, "classification.reviewer-slots"),
+        _snapshot_with_rule(
+            snapshot,
+            "classification.reviewer-slots",
+            MappingProxyType({
+                "minor": ("qa_owner",),
+                "major": ("tech_lead_owner", "qa_owner"),
+                "hotfix": ("tech_lead_owner", "qa_owner"),
+            }),
+        ),
+    )
+
+    for candidate in candidates:
+        report = evaluate_classification(document, candidate)
+        assert report.exit_code == 1
+        assert "classification.policy-contract-invalid" in _policy_blocker_codes(report)
+
+
+def test_classifier_reports_the_compiled_snapshot_policy_version() -> None:
+    snapshot = replace(_snapshot(), policy_set_version="2.7.3")
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    report = evaluate_classification(document, snapshot)
+
+    assert report.as_dict()["versions"]["policy_set"] == {
+        "id": "sdd-core",
+        "version": "2.7.3",
+    }
+
+
+def test_classifier_fails_closed_on_conflicting_required_rule_version() -> None:
+    snapshot = _snapshot()
+    rules = dict(snapshot.rules)
+    rules["classification.allowed-classes"] = replace(
+        rules["classification.allowed-classes"], policy_version="9.9.9"
+    )
+    candidate = replace(snapshot, rules=MappingProxyType(rules))
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    report = evaluate_classification(document, candidate)
+
+    assert report.exit_code == 1
+    assert "classification.policy-contract-invalid" in _policy_blocker_codes(report)
 
 
 def test_minor_requires_every_condition_and_reports_sources() -> None:

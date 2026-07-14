@@ -11,6 +11,12 @@ rules:
   - id: classification.no-downgrade
     override_mode: locked
     value: true
+  - id: classification.allowed-stricter-routes
+    override_mode: locked
+    value:
+      minor: [major]
+      major: []
+      hotfix: [major]
   - id: classification.no-automatic-hotfix-migration
     override_mode: locked
     value: true
@@ -79,3 +85,23 @@ rules:
     override_mode: additive
     value_type: id-list
     value: []
+  - id: classification.obligation-rules
+    override_mode: locked
+    refs:
+      - artifacts.additional-required-artifacts
+      - artifacts.minor-required
+      - artifacts.major-required
+      - artifacts.hotfix-entry-required
+      - artifacts.hotfix-reconciliation-required
+    value:
+      minor: [artifacts.additional-required-artifacts, artifacts.minor-required]
+      major: [artifacts.additional-required-artifacts, artifacts.minor-required, artifacts.major-required]
+      hotfix: [artifacts.additional-required-artifacts, artifacts.hotfix-entry-required, artifacts.hotfix-reconciliation-required]
+      major-impact-hotfix: [artifacts.major-required]
+      standard-major-from-hotfix: [artifacts.hotfix-entry-required, artifacts.hotfix-reconciliation-required]
+  - id: classification.reviewer-slots
+    override_mode: locked
+    value:
+      minor: [tech_lead_owner]
+      major: [tech_lead_owner, qa_owner]
+      hotfix: [tech_lead_owner, qa_owner]
