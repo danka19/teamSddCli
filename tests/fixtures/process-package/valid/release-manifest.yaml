@@ -7,15 +7,48 @@ config_schema_version: "1.0"
 openspec:
   cli_version: 1.4.1
 included_assets:
-  - process/package.yaml
-  - process/workflow.yaml
-  - process/schemas
+  - path: process/package.yaml
+    version: 0.1.0
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  - path: process/workflow.yaml
+    version: "1.0"
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  - path: process/schemas
+    version: "1.0"
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 compatibility:
-  python: "3.11+"
-  node: "20+"
-  git: "2.40+"
-evidence:
-  - tests/test_process_package.py
+  supported_hosts:
+    - windows
+    - linux
+    - macos
+  dependencies:
+    python: "3.11+"
+    node: "20+"
+    git: "2.40+"
+    mcp: provisioned
+    shells:
+      - powershell-7+
+      - bash-5+
+      - zsh-5+
+  assumptions:
+    - Synthetic compatibility metadata only; clean-host certification belongs to a later work item.
+verification:
+  commands:
+    - python -m pytest tests/test_process_package.py -q
+  normalized_evidence:
+    - path: tests/test_process_package.py
+      sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+raw_artifacts:
+  - reference: artifact:sample-release/raw/verification-output.txt
+    version: "0.1.0"
+    sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+weak_model_certification:
+  - model_family: qwen
+    reference: artifact:sample-release/certification/qwen.json
+    sha256: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  - model_family: deepseek
+    reference: artifact:sample-release/certification/deepseek.json
+    sha256: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 known_limitations:
-  - Sample evidence only; release generation belongs to a later work item.
+  - Sample references and checksums only; generation and acceptance belong to later work items.
 rollback_reference: docs/runbooks/PROCESS_PACKAGE_SETUP.md

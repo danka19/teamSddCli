@@ -7,6 +7,7 @@ belong to work item 2.2.
 
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
@@ -34,6 +35,7 @@ SCHEMA_FILES = {
     "projects": "projects.schema.json",
     "owners": "owners.schema.json",
     "adapter": "project-adapter.schema.json",
+    "reference": "reference.schema.json",
     "release": "release-manifest.schema.json",
 }
 
@@ -59,7 +61,16 @@ def load_schema(name: str) -> dict[str, Any]:
 
 
 def schema_errors(name: str, data: dict[str, Any]) -> list[ValidationError]:
-    return list(Draft202012Validator(load_schema(name)).iter_errors(data))
+    registry = Registry()
+    for schema_path in SCHEMA_ROOT.glob("*.json"):
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        registry = registry.with_resource(
+            schema_path.name,
+            Resource.from_contents(schema, default_specification=DRAFT202012),
+        )
+    return list(
+        Draft202012Validator(load_schema(name), registry=registry).iter_errors(data)
+    )
 
 
 def local_refs(value: Any) -> list[str]:
@@ -147,6 +158,111 @@ def test_fragment_only_reference_resolves_within_current_schema() -> None:
     assert_local_references_resolve("inline schema", schema)
 
 
+def test_workflow_contract_does_not_freeze_later_flow_or_classes() -> None:
+    workflow = load_yaml(PROCESS_ROOT / "workflow.yaml")["workflow"]
+
+    assert set(workflow) == {"id", "topology", "artifact_dependencies"}
+    assert workflow["artifact_dependencies"] == []
+    workflow_text = json.dumps(workflow).lower()
+    for frozen_term in ("stages", "proposal", "delta-spec", "tasks", "minor", "major", "hotfix"):
+        assert frozen_term not in workflow_text
+
+
+def test_repository_reference_shape_is_shared_and_accepts_supported_forms() -> None:
+    expected_ref = "reference.schema.json#/$defs/repositoryReference"
+    projects_schema = load_schema("projects")
+    adapter_schema = load_schema("adapter")
+    assert (
+        projects_schema["properties"]["projects"]["items"]["properties"]["repository"]
+        ["properties"]["reference"]["$ref"]
+        == expected_ref
+    )
+    assert (
+        adapter_schema["properties"]["team_specs"]["properties"]["reference"]["$ref"]
+        == expected_ref
+    )
+
+    references = load_yaml(FIXTURES / "valid" / "repository-references.yaml")["references"]
+    projects = load_yaml(TEAM_SPECS / "projects.yaml")
+    adapter = load_yaml(PROJECT_ADAPTER)
+    for reference in references:
+        candidate_projects = copy.deepcopy(projects)
+        candidate_projects["projects"][0]["repository"]["reference"] = reference
+        assert schema_errors("projects", candidate_projects) == []
+
+        candidate_adapter = copy.deepcopy(adapter)
+        candidate_adapter["team_specs"]["reference"] = reference
+        assert schema_errors("adapter", candidate_adapter) == []
+
+
+def test_unsafe_repository_reference_fixtures_fail_at_reference_field() -> None:
+    references = load_yaml(
+        FIXTURES / "invalid" / "unsafe-references" / "references.yaml"
+    )["references"]
+    projects = load_yaml(TEAM_SPECS / "projects.yaml")
+    adapter = load_yaml(PROJECT_ADAPTER)
+    for reference in references:
+        candidate_projects = copy.deepcopy(projects)
+        candidate_projects["projects"][0]["repository"]["reference"] = reference
+        project_errors = schema_errors("projects", candidate_projects)
+        assert any(
+            error.validator == "oneOf"
+            and list(error.absolute_path) == ["projects", 0, "repository", "reference"]
+            for error in project_errors
+        ), f"unsafe project reference unexpectedly validated: {reference}"
+
+        candidate_adapter = copy.deepcopy(adapter)
+        candidate_adapter["team_specs"]["reference"] = reference
+        adapter_errors = schema_errors("adapter", candidate_adapter)
+        assert any(
+            error.validator == "oneOf"
+            and list(error.absolute_path) == ["team_specs", "reference"]
+            for error in adapter_errors
+        ), f"unsafe adapter reference unexpectedly validated: {reference}"
+
+
+def test_release_manifest_base_contract_covers_accepted_transfer_evidence() -> None:
+    release = load_yaml(FIXTURES / "valid" / "release-manifest.yaml")
+    assert {
+        "included_assets",
+        "compatibility",
+        "verification",
+        "raw_artifacts",
+        "weak_model_certification",
+        "known_limitations",
+        "rollback_reference",
+    } <= set(release)
+    assert {"windows", "linux", "macos"} == set(release["compatibility"]["supported_hosts"])
+    assert {"python", "node", "git", "mcp", "shells"} == set(
+        release["compatibility"]["dependencies"]
+    )
+    for asset in release["included_assets"]:
+        assert {"path", "version", "sha256"} <= set(asset)
+        assert re.fullmatch(r"[0-9a-f]{64}", asset["sha256"])
+    assert release["verification"]["commands"]
+    assert release["verification"]["normalized_evidence"]
+    for artifact in release["raw_artifacts"]:
+        assert re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"])
+    assert {"qwen", "deepseek"} == {
+        certification["model_family"]
+        for certification in release["weak_model_certification"]
+    }
+
+
+def test_incomplete_release_manifest_fails_for_new_mandatory_sections() -> None:
+    fixture = load_yaml(
+        FIXTURES / "invalid" / "incomplete-release-manifest" / "release-manifest.yaml"
+    )
+    errors = schema_errors("release", fixture)
+    for field in ("verification", "raw_artifacts", "weak_model_certification"):
+        assert any(
+            error.validator == "required"
+            and list(error.absolute_path) == []
+            and f"'{field}' is a required property" == error.message
+            for error in errors
+        ), f"release manifest did not require {field}: {errors}"
+
+
 def test_synthetic_central_topology_is_coherent() -> None:
     package = load_yaml(PROCESS_ROOT / "package.yaml")
     workflow = load_yaml(PROCESS_ROOT / "workflow.yaml")
@@ -183,17 +299,19 @@ def test_synthetic_central_topology_is_coherent() -> None:
         assert (REPO_ROOT / source_path).is_file()
 
     repo_paths = {path.relative_to(REPO_ROOT).as_posix() for path in REPO_ROOT.rglob("*")}
-    manifest_paths = [
-        *release["included_assets"],
-        *release["evidence"],
-        release["rollback_reference"],
-    ]
+    manifest_paths = [asset["path"] for asset in release["included_assets"]]
+    manifest_paths.extend(
+        evidence["path"] for evidence in release["verification"]["normalized_evidence"]
+    )
+    manifest_paths.append(release["rollback_reference"])
     for manifest_path in manifest_paths:
         assert manifest_path in repo_paths, f"release manifest has unresolved path {manifest_path}"
 
-    stage_ids = {stage["id"] for stage in workflow["workflow"]["stages"]}
-    for stage in workflow["workflow"]["stages"]:
-        assert set(stage["requires"]) <= stage_ids
+    artifact_ids = {
+        artifact["id"] for artifact in workflow["workflow"]["artifact_dependencies"]
+    }
+    for artifact in workflow["workflow"]["artifact_dependencies"]:
+        assert set(artifact["requires"]) <= artifact_ids
 
     for registry_path in config["registries"].values():
         assert (TEAM_SPECS / registry_path).is_file()

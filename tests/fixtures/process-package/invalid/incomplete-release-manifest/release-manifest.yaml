@@ -1,0 +1,19 @@
+schema_version: "1.0"
+release_id: sample-release-0.1.0
+process_package:
+  id: sdd-process
+  version: 0.1.0
+config_schema_version: "1.0"
+openspec:
+  cli_version: 1.4.1
+included_assets:
+  - process/package.yaml
+compatibility:
+  python: "3.11+"
+  node: "20+"
+  git: "2.40+"
+evidence:
+  - tests/test_process_package.py
+known_limitations:
+  - Incomplete fixture intentionally omits accepted transfer evidence sections.
+rollback_reference: docs/runbooks/PROCESS_PACKAGE_SETUP.md

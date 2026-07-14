@@ -19,7 +19,7 @@
             "type": "object",
             "additionalProperties": false,
             "required": ["reference"],
-            "properties": {"reference": {"type": "string", "pattern": "^sibling:[a-z][a-z0-9-]*$"}}
+            "properties": {"reference": {"$ref": "reference.schema.json#/$defs/repositoryReference"}}
           },
           "adapter_allowed": {"type": "boolean"},
           "owner_zones": {

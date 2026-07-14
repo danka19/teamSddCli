@@ -1,0 +1,4 @@
+references:
+  - sibling:sample-app
+  - registry:sample-app
+  - path:repositories/sample-app

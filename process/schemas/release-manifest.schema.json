@@ -3,7 +3,7 @@
   "$id": "release-manifest.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "release_id", "process_package", "config_schema_version", "openspec", "included_assets", "compatibility", "evidence", "known_limitations", "rollback_reference"],
+  "required": ["schema_version", "release_id", "process_package", "config_schema_version", "openspec", "included_assets", "compatibility", "verification", "raw_artifacts", "weak_model_certification", "known_limitations", "rollback_reference"],
   "properties": {
     "schema_version": {"const": "1.0"},
     "release_id": {"type": "string", "pattern": "^[a-z][a-z0-9.-]*$"},
@@ -26,24 +26,115 @@
     "included_assets": {
       "type": "array",
       "minItems": 1,
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "version", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
     },
     "compatibility": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["python", "node", "git"],
+      "required": ["supported_hosts", "dependencies", "assumptions"],
       "properties": {
-        "python": {"type": "string", "minLength": 1},
-        "node": {"type": "string", "minLength": 1},
-        "git": {"type": "string", "minLength": 1}
+        "supported_hosts": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"enum": ["windows", "linux", "macos"]},
+          "allOf": [
+            {"contains": {"const": "windows"}},
+            {"contains": {"const": "linux"}},
+            {"contains": {"const": "macos"}}
+          ]
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["python", "node", "git", "mcp", "shells"],
+          "properties": {
+            "python": {"type": "string", "minLength": 1},
+            "node": {"type": "string", "minLength": 1},
+            "git": {"type": "string", "minLength": 1},
+            "mcp": {"type": "string", "minLength": 1},
+            "shells": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
       }
     },
-    "evidence": {
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commands", "normalized_evidence"],
+      "properties": {
+        "commands": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "normalized_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          }
+        }
+      }
+    },
+    "raw_artifacts": {
       "type": "array",
       "minItems": 1,
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reference", "version", "sha256"],
+        "properties": {
+          "reference": {"type": "string", "pattern": "^artifact:[a-z0-9._/-]+$"},
+          "version": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "weak_model_certification": {
+      "type": "array",
+      "minItems": 2,
+      "allOf": [
+        {"contains": {"type": "object", "properties": {"model_family": {"const": "qwen"}}, "required": ["model_family"]}},
+        {"contains": {"type": "object", "properties": {"model_family": {"const": "deepseek"}}, "required": ["model_family"]}}
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["model_family", "reference", "sha256"],
+        "properties": {
+          "model_family": {"enum": ["qwen", "deepseek"]},
+          "reference": {"type": "string", "pattern": "^artifact:[a-z0-9._/-]+$"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
     },
     "known_limitations": {
       "type": "array",

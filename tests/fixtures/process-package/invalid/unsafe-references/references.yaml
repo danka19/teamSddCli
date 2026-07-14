@@ -1,0 +1,9 @@
+references:
+  - https://example.invalid/team-specs.git
+  - path:C:\sample\team-specs
+  - path:/sample/team-specs
+  - path:configs/private/team-specs
+  - path:configs/production/team-specs
+  - path:configs/secret/team-specs
+  - sibling:production-app
+  - registry:private-team-specs

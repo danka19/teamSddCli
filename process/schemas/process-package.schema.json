@@ -25,7 +25,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "release_manifest"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -33,6 +33,7 @@
         "projects": {"type": "string", "minLength": 1},
         "owners": {"type": "string", "minLength": 1},
         "project_adapter": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
         "release_manifest": {"type": "string", "minLength": 1}
       }
     },

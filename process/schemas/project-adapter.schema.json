@@ -13,7 +13,7 @@
       "additionalProperties": false,
       "required": ["reference", "config_path"],
       "properties": {
-        "reference": {"const": "sibling:team-specs"},
+        "reference": {"$ref": "reference.schema.json#/$defs/repositoryReference"},
         "config_path": {"const": "sdd.config.yaml"}
       }
     },

@@ -25,8 +25,11 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 | Scenario family | Evidence |
 |---|---|
 | Package version and metadata agree | `test_synthetic_central_topology_is_coherent` |
-| Workflow, package, schema, config, and canonical-source references resolve locally | `test_package_schemas_are_valid_and_use_only_local_references`; `test_synthetic_central_topology_is_coherent` |
+| Workflow contract remains class/gate/flow-neutral while retaining the future artifact-dependency shape | `test_workflow_contract_does_not_freeze_later_flow_or_classes` |
+| Package, schema, config, and canonical-source references resolve locally | `test_package_schemas_are_valid_and_use_only_local_references`; `test_fragment_only_reference_resolves_within_current_schema`; `test_synthetic_central_topology_is_coherent` |
 | Synthetic central topology and optional adapter validate | `test_synthetic_central_topology_is_coherent` |
+| Sibling, registry, and safe relative path repository references share one local schema; unsafe forms fail | `test_repository_reference_shape_is_shared_and_accepts_supported_forms`; `test_unsafe_repository_reference_fixtures_fail_at_reference_field` |
+| Release manifest represents mandatory transfer-evidence sections and rejects incomplete base contracts | `test_release_manifest_base_contract_covers_accepted_transfer_evidence`; `test_incomplete_release_manifest_fails_for_new_mandatory_sections` |
 | Missing package/config version and invalid schema fail | `test_invalid_schema_fixtures_fail_stably` |
 | Invalid owner-zone/project/adapter reference fails | `test_invalid_cross_file_reference_fails_stably` |
 | Clean assets exclude sensitive values | `test_clean_templates_and_positive_fixtures_have_no_sensitive_values` |
@@ -38,12 +41,15 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 - Focused GREEN: `python -m pytest tests/test_process_package.py -q` -> 9 passed.
 - Self-review RED: the same focused command -> 1 failed because the optional adapter did not declare the consumed central config-schema version.
 - Self-review GREEN: the same focused command -> 9 passed after adding the explicit config-schema version contract.
-- Post-review-fix final focused test: `python -m pytest tests/test_process_package.py -q` -> 10 passed in 0.19s.
-- Post-review-fix complete test suite: `python -m pytest -q` -> 44 passed in 0.67s.
+- Earlier review-fix checkpoint: focused suite -> 10 passed; complete suite -> 44 passed.
+- Architecture-gate RED: `python -m pytest tests/test_process_package.py -q` -> 5 failed and 10 passed because the workflow froze later stages, repository references lacked the shared accepted shape, and the base release manifest omitted mandatory transfer-evidence sections.
+- Architecture-gate GREEN: the same focused command -> 15 passed after the scoped schema/fixture/workflow fixes.
+- Current final focused test: `python -m pytest tests/test_process_package.py -q` -> 15 passed in 0.25s.
+- Current complete test suite: `python -m pytest -q` -> 49 passed in 0.83s.
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - OpenSpec inventory: `openspec list` -> both active changes remain 0 tasks complete; `openspec list --specs` -> 8 accepted specs.
 - Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.
-- Whitespace check: `git diff --check` -> exit 0; Git reported only the existing Windows LF-to-CRLF conversion warning for `docs/00_FILE_STRUCTURE.md`.
+- Whitespace check: `git diff --check` -> exit 0; Git reported only non-blocking Windows LF-to-CRLF conversion warnings for touched files.
 
 ### Review State
 

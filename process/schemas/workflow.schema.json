@@ -9,13 +9,12 @@
     "workflow": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "topology", "stages"],
+      "required": ["id", "topology", "artifact_dependencies"],
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
         "topology": {"const": "central-team-specs"},
-        "stages": {
+        "artifact_dependencies": {
           "type": "array",
-          "minItems": 1,
           "items": {
             "type": "object",
             "additionalProperties": false,

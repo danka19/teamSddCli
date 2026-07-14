@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reference.schema.json",
+  "$defs": {
+    "repositoryReference": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^sibling:(?![a-z0-9-]*(?:secret|private|prod(?:uction)?|corp|internal))[a-z][a-z0-9-]*$"
+        },
+        {
+          "type": "string",
+          "pattern": "^registry:(?![a-z0-9-]*(?:secret|private|prod(?:uction)?|corp|internal))[a-z][a-z0-9-]*$"
+        },
+        {
+          "type": "string",
+          "pattern": "^path:(?![A-Za-z]:)(?![\\\\/])(?!.*\\.\\.)(?!.*(?:[Ss][Ee][Cc][Rr][Ee][Tt]|[Pp][Rr][Ii][Vv][Aa][Tt][Ee]|[Pp][Rr][Oo][Dd](?:[Uu][Cc][Tt][Ii][Oo][Nn])?|[Cc][Oo][Rr][Pp]|[Ii][Nn][Tt][Ee][Rr][Nn][Aa][Ll]))[A-Za-z0-9._/\\\\-]+$"
+        }
+      ]
+    }
+  }
+}
