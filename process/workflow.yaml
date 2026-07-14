@@ -1,0 +1,19 @@
+schema_version: "1.0"
+workflow:
+  id: central-sdd
+  topology: central-team-specs
+  stages:
+    - id: proposal
+      requires: []
+    - id: delta-spec
+      requires:
+        - proposal
+    - id: tasks
+      requires:
+        - delta-spec
+    - id: implementation-evidence
+      requires:
+        - tasks
+canonical_sources:
+  - openspec/specs/repo-topology-config/spec.md
+  - openspec/specs/documentation-governance/spec.md

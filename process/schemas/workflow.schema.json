@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workflow.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "workflow", "canonical_sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "topology", "stages"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "topology": {"const": "central-team-specs"},
+        "stages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "requires"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+              "requires": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "canonical_sources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

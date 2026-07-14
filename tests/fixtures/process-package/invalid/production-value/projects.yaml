@@ -1,0 +1,5 @@
+schema_version: "1.0"
+projects:
+  - id: sample-app
+    repository:
+      reference: https://git.production.example.invalid/sample/app.git

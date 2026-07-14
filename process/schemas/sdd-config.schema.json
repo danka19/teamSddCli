@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sdd-config.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["config_schema_version", "topology", "process_package", "openspec", "canonical_paths", "registries", "validation"],
+  "properties": {
+    "config_schema_version": {"const": "1.0"},
+    "topology": {"const": "central-team-specs"},
+    "process_package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "location"],
+      "properties": {
+        "id": {"const": "sdd-process"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "location": {"type": "string", "minLength": 1}
+      }
+    },
+    "openspec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cli_version"],
+      "properties": {"cli_version": {"const": "1.4.1"}}
+    },
+    "canonical_paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["changes", "specs", "analytics", "traceability", "waivers", "evidence", "publication"],
+      "properties": {
+        "changes": {"type": "string", "minLength": 1},
+        "specs": {"type": "string", "minLength": 1},
+        "analytics": {"type": "string", "minLength": 1},
+        "traceability": {"type": "string", "minLength": 1},
+        "waivers": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "publication": {"type": "string", "minLength": 1}
+      }
+    },
+    "registries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projects", "owners"],
+      "properties": {
+        "projects": {"type": "string", "minLength": 1},
+        "owners": {"type": "string", "minLength": 1}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strict", "placeholders_allowed"],
+      "properties": {
+        "strict": {"const": true},
+        "placeholders_allowed": {"const": false}
+      }
+    }
+  }
+}

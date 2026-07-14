@@ -1,0 +1,11 @@
+schema_version: "1.0"
+projects:
+  - id: sample-app
+    repository:
+      reference: sibling:sample-app
+    adapter_allowed: true
+    owner_zones:
+      - missing-owner-zone
+    local_paths:
+      code: src
+      tests: tests

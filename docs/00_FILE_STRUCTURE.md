@@ -12,6 +12,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `.gitignore` | Excludes secrets, local config, generated artifacts, and private data |
 | `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |
 | `pytest.ini` | Pytest configuration; uses a repository-local temp folder for this Windows workspace |
+| `requirements-test.txt` | Reproducible PyYAML and JSON Schema dependencies for process-package contract tests |
 | `docs/handoffs/` | Bounded task handoffs to Claude (global `handoff-to-claude` skill) |
 | `openspec/` | Project OpenSpec changes and accepted specs for teamSddCli behavior |
 | `templates/` | Copyable SDD process templates |
@@ -53,7 +54,9 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
 | `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | Ready Phase 2 plan for the external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
+| `docs/phases/PHASE_2_EVIDENCE_INDEX.md` | Phase 2 work-item source, implementation, verification, and independent-review evidence index |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
+| `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
 
 ## OpenSpec
 
@@ -79,17 +82,23 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
+| `process/VERSION` | Reusable process-package semantic version (`0.1.0` for the initial skeleton) |
+| `process/package.yaml` | Process-package metadata, OpenSpec pin, workflow reference, local schema inventory, and canonical source references |
+| `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
+| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, central registries/config, optional project adapter, and release manifest |
+| `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
+| `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
+| `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
+| `tests/test_process_package.py` | Test-only YAML/schema, local-reference, cross-file-integrity, and bounded sensitive-value harness |
 
 ## Planned Phase 2 Project Structure
 
-These paths are planned by the ready Phase 2 plan but do not exist yet in this folder:
+The base `process/`, central-topology templates, schemas, and fixtures now exist. The following later-work-item paths remain planned:
 
 | Path | Purpose |
 |---|---|
-| `process/` | Versioned reusable process-package source with metadata, workflow/classification/gate contracts, schemas, templates, validators, analyst/developer/QA/Tech Lead role instructions, adapters, and certification fixtures |
-| `templates/team-specs/` | Synthetic central topology bootstrap with placeholder-only `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, and canonical folders |
-| `templates/project-adapter/` | Optional `.sdd-project.yaml` adapter template for project repositories |
-| `docs/runbooks/` | Setup, classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks created during Phase 2 |
+| `process/templates/`, `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, role-kit, adapter, and certification assets |
+| Additional `docs/runbooks/` files | Classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |
 | `scripts/certify_process_release.py` | Planned AI-disabled and weak-model release certification entry point |

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "process-package.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package", "openspec", "workflow", "schemas", "canonical_sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"const": "sdd-process"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
+      }
+    },
+    "openspec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cli_version"],
+      "properties": {"cli_version": {"const": "1.4.1"}}
+    },
+    "workflow": {"type": "string", "minLength": 1},
+    "schemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "release_manifest"],
+      "properties": {
+        "process_package": {"type": "string", "minLength": 1},
+        "workflow": {"type": "string", "minLength": 1},
+        "sdd_config": {"type": "string", "minLength": 1},
+        "projects": {"type": "string", "minLength": 1},
+        "owners": {"type": "string", "minLength": 1},
+        "project_adapter": {"type": "string", "minLength": 1},
+        "release_manifest": {"type": "string", "minLength": 1}
+      }
+    },
+    "canonical_sources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

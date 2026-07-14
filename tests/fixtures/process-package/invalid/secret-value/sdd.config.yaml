@@ -1,0 +1,3 @@
+config_schema_version: "1.0"
+topology: central-team-specs
+api_key: sample-secret-value

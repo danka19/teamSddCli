@@ -1,0 +1,12 @@
+schema_version: "1.0"
+config_schema_version: "1.0"
+project_id: sample-app
+team_specs:
+  reference: sibling:team-specs
+  config_path: sdd.config.yaml
+process_package:
+  id: sdd-process
+  version: 0.1.0
+local_paths:
+  code: src
+  tests: tests

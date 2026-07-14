@@ -1,0 +1,22 @@
+config_schema_version: "1.0"
+topology: central-team-specs
+process_package:
+  id: sdd-process
+  version: 0.1.0
+  location: ../../process
+openspec:
+  cli_version: 1.4.1
+canonical_paths:
+  changes: openspec/changes
+  specs: openspec/specs
+  analytics: analytics
+  traceability: traceability
+  waivers: waivers
+  evidence: evidence
+  publication: publication
+registries:
+  projects: projects.yaml
+  owners: owners.yaml
+validation:
+  strict: true
+  placeholders_allowed: false

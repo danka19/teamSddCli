@@ -1,0 +1,18 @@
+schema_version: "1.0"
+package:
+  id: sdd-process
+  version: 0.1.0
+openspec:
+  cli_version: 1.4.1
+workflow: workflow.yaml
+schemas:
+  process_package: schemas/process-package.schema.json
+  workflow: schemas/workflow.schema.json
+  sdd_config: schemas/sdd-config.schema.json
+  projects: schemas/projects.schema.json
+  owners: schemas/owners.schema.json
+  project_adapter: schemas/project-adapter.schema.json
+  release_manifest: schemas/release-manifest.schema.json
+canonical_sources:
+  - openspec/specs/repo-topology-config/spec.md
+  - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md

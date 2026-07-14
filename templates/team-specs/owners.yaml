@@ -1,0 +1,15 @@
+schema_version: "1.0"
+owner_groups:
+  - id: sample-tech-leads
+    roles:
+      - tech_lead
+    members:
+      - sample-user
+zones:
+  - id: sample-app
+    paths:
+      - sample-app/**
+    owner_groups:
+      - sample-tech-leads
+default_owner_groups:
+  - sample-tech-leads
