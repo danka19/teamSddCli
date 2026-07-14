@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.6 are closed; work item 2.7 is active.
+Status: in_progress. Work items 2.1-2.7 are closed; work item 2.8 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -361,7 +361,7 @@ Status: closed after implementation, independent task review, architecture revie
 
 ## Work Item 2.7: Corporate Flow Controls, Safety, And Failed Runs
 
-Status: implementation worker complete; independent combined requirements/architecture/verification review and coordinator reconciliation are pending. NIS tasks 5.1-5.7 and 6.1-6.2 remain unchecked and work item 2.7 remains active.
+Status: closed after implementation, combined requirements/architecture/verification review, fix/re-review, and coordinator reconciliation. NIS tasks 5.1-5.7 and 6.1-6.2 are complete; work item 2.8 is ready.
 
 ### Implementation Evidence
 
@@ -388,3 +388,6 @@ Status: implementation worker complete; independent combined requirements/archit
 - Roadmap/OpenSpec governance: 0 errors, 0 warnings. Inventories remain transfer package 3/33 and NIS governance 22/43; tasks 5.1-5.7 and 6.1-6.2 remain unchecked. Strict OpenSpec validation: 10 passed, 0 failed.
 - `git diff --check` passed with only non-blocking Windows LF-to-CRLF notices.
 - Post-review hardening verification: 24 focused corporate-flow tests and 149 relevant corporate-flow/policy/package/config/owner/Tech Lead regression tests passed. The final serial suite passed 287 tests. Compilation, roadmap/OpenSpec governance, strict OpenSpec validation, and diff checks are recorded in the hardening commit handoff; OpenSpec task and work-item statuses remain unchanged for coordinator review.
+- Final WIP-expiry hardening `7f0f266` restricts `authorized-exception` to a scoped, source-linked, unexpired `exception` record with follow-up, shared evidence, and mapped product-owner authority; `human-decision` cannot bypass the limit. Focused 25/25, relevant regression 150/150, full serial 288/288, compilation and diff checks passed.
+- Combined reviewer final verdict: Approved. The original four P1 findings and the follow-up WIP-expiry finding have exact negative coverage; final targeted re-review passed 25 focused tests without modifying files.
+- Coordinator reconciliation marks NIS tasks 5.1-5.7 and 6.1-6.2 complete, moving the NIS inventory from 22/43 to 31/43 while the transfer-package change remains 3/33. Work item 2.7 is `closed`; work item 2.8 is `ready`.

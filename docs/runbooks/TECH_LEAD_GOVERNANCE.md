@@ -1,6 +1,6 @@
 # Tech Lead Governance Decision Support
 
-Status: Phase 2 work item 2.6 is closed after independent task review, architecture review, verification review, and coordinator reconciliation. OpenSpec tasks 4.1-4.6 are complete; work item 2.7 is active.
+Status: Phase 2 work items 2.6-2.7 are closed; Tech Lead checks feed the reviewed corporate-flow evaluator. Work item 2.8 is ready.
 
 ## Boundary
 

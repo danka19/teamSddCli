@@ -1,6 +1,6 @@
 # Corporate Flow Controls, Safety, And Failed Runs
 
-Status: Phase 2 work item 2.7 implementation worker complete; independent combined review and coordinator reconciliation are pending. OpenSpec tasks 5.1-5.7 and 6.1-6.2 remain unchecked until those gates pass.
+Status: Phase 2 work item 2.7 is closed after combined review, TDD hardening, targeted re-review, and coordinator reconciliation. OpenSpec tasks 5.1-5.7 and 6.1-6.2 are complete; work item 2.8 is ready.
 
 ## Boundary
 

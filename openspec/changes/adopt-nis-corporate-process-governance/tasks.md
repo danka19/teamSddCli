@@ -34,18 +34,18 @@
 
 ## 5. Corporate flow-control records
 
-- [ ] 5.1 Implement preliminary initiative triage and approved-input baseline records with proceed/hold/split/redirect/reject outcomes.
-- [ ] 5.2 Implement material scope-drift detection inputs and reassessment of classification, readiness, owners, regression, estimates, and approval.
-- [ ] 5.3 Implement class-aware quality-strategy and regression-matrix schemas, configured QA-owner sufficiency/result decisions, and deterministic coverage-gap reporting.
-- [ ] 5.4 Implement structured deviation, waiver, deferral, stop, hold, escalation, resume, human-decision, and AI-execution evidence records with expiry/follow-up behavior plus non-disableable canonical production stop triggers.
-- [ ] 5.5 Implement the versioned release/transfer-package manifest, tracker/Git/OpenSpec/PR/CI/artifact-repository evidence chain, and consumer acceptance/deviation record using synthetic external-contour fixtures.
-- [ ] 5.6 Implement the portable human role map and role-understanding walkthrough evidence for business/product, analyst, developer, QA, Tech Lead, release/support, and architecture/security when applicable; reject missing-owner AI substitution and checklist-only certification.
-- [ ] 5.7 Define the portfolio WIP and pilot-selection record, with explicit prioritization/hold behavior when an approved WIP limit is exceeded.
+- [x] 5.1 Implement preliminary initiative triage and approved-input baseline records with proceed/hold/split/redirect/reject outcomes.
+- [x] 5.2 Implement material scope-drift detection inputs and reassessment of classification, readiness, owners, regression, estimates, and approval.
+- [x] 5.3 Implement class-aware quality-strategy and regression-matrix schemas, configured QA-owner sufficiency/result decisions, and deterministic coverage-gap reporting.
+- [x] 5.4 Implement structured deviation, waiver, deferral, stop, hold, escalation, resume, human-decision, and AI-execution evidence records with expiry/follow-up behavior plus non-disableable canonical production stop triggers.
+- [x] 5.5 Implement the versioned release/transfer-package manifest, tracker/Git/OpenSpec/PR/CI/artifact-repository evidence chain, and consumer acceptance/deviation record using synthetic external-contour fixtures.
+- [x] 5.6 Implement the portable human role map and role-understanding walkthrough evidence for business/product, analyst, developer, QA, Tech Lead, release/support, and architecture/security when applicable; reject missing-owner AI substitution and checklist-only certification.
+- [x] 5.7 Define the portfolio WIP and pilot-selection record, with explicit prioritization/hold behavior when an approved WIP limit is exceeded.
 
 ## 6. Pilot safety and failed-run integrity
 
-- [ ] 6.1 Implement source-linked failed-run evidence for validation, AI, adapter, integration, and workflow attempts; prove that a successful retry cannot erase or overwrite the failed attempt.
-- [ ] 6.2 Build a monitored-pilot safety template and risk register covering data/privacy, secrets, access, accidental delivery, rollback/hold, adapters/MCPs, model/runtime, logging, dependencies, support, evidence corruption, and bypass risks.
+- [x] 6.1 Implement source-linked failed-run evidence for validation, AI, adapter, integration, and workflow attempts; prove that a successful retry cannot erase or overwrite the failed attempt.
+- [x] 6.2 Build a monitored-pilot safety template and risk register covering data/privacy, secrets, access, accidental delivery, rollback/hold, adapters/MCPs, model/runtime, logging, dependencies, support, evidence corruption, and bypass risks.
 
 ## 7. Traceability, publication, and integration boundaries
 
