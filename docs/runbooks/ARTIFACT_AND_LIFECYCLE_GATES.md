@@ -19,13 +19,15 @@ Both entry points accept YAML matching `process/schemas/gate-evaluation-input.sc
   approver and owner references resolve to the configured class-authorized owner groups;
 - explicit external delivered, deployed, and tracker-Done values, defaulted by the author to `unknown` rather than inferred.
 
-Unknown fields, duplicate evidence IDs, invalid dates, AI-owned or arbitrary-human
-approvals, malformed exceptions, and unsafe free-form record shapes fail before policy
-evaluation. Exception expiry is typed as either an ISO date or a canonical lifecycle
-state; date expiry is due on the recorded date, and a lifecycle expiry is due when that
-state is reached. An unreconciled due deferral and an expired waiver block the gate.
-`valid_through` is inclusive: evidence remains current on that date and is stale on the
-following date.
+Unknown fields, duplicate evidence IDs, invalid dates, AI-owned authority records,
+malformed exceptions, and unsafe free-form record shapes fail schema/input validation
+before policy evaluation; the CLI exits `3`. A well-shaped human authority record whose
+ID does not resolve to the configured class-authorized owner groups reaches policy
+evaluation but blocks the gate or transition; the CLI exits `1`. Exception expiry is
+typed as either an ISO date or a canonical lifecycle state; date expiry is due on the
+recorded date, and a lifecycle expiry is due when that state is reached. An unreconciled
+due deferral and an expired waiver block the gate. `valid_through` is inclusive:
+evidence remains current on that date and is stale on the following date.
 
 ## Evaluate Reports
 
