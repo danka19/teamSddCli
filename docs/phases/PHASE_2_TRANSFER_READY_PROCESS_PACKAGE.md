@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress. Work item 2.1 is closed after all required gates; work item 2.2 is active.
+Status: in_progress. Work items 2.1-2.2 are closed after all required gates; work item 2.3 is ready.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -31,7 +31,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work item 2.1 may start; later items remain planned until their dependencies close.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.2 are closed; work item 2.3 may start after its sequential dependency reconciliation.
 
 ## Planning Acceptance Gate
 
@@ -221,7 +221,7 @@ Exit criteria: the synthetic topology is reproducible, versioned, deterministic,
 
 ### 2.2 Configuration Discovery And Compatibility Validation
 
-Status: in_progress.
+Status: closed. Deterministic implementation, independent task review, architecture review, and fresh verification passed; evidence is recorded in `docs/phases/PHASE_2_EVIDENCE_INDEX.md`.
 
 Dependency status: sequential after 2.1.
 
@@ -241,7 +241,7 @@ Exit criteria: every gated command can prove compatible configuration before mut
 
 ### 2.3 Policy Schema V2 And Class Foundation
 
-Status: planned.
+Status: ready.
 
 Dependency status: sequential after 2.2.
 

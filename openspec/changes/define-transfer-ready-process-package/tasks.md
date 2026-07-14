@@ -2,7 +2,7 @@
 
 - [x] 1.1 Create the versioned `process/` package skeleton, metadata, workflow contract, and synthetic `team-specs` bootstrap template using the accepted central topology.
 - [x] 1.2 Add schemas and representative fixtures for `sdd.config.yaml`, `projects.yaml`, `owners.yaml`, optional `.sdd-project.yaml`, process-package metadata, and release manifest.
-- [ ] 1.3 Implement deterministic configuration discovery, schema validation, OpenSpec `1.4.1` pin checking, process-package compatibility checking, and secret/private-value rejection with focused negative tests.
+- [x] 1.3 Implement deterministic configuration discovery, schema validation, OpenSpec `1.4.1` pin checking, process-package compatibility checking, and secret/private-value rejection with focused negative tests.
 
 ## 2. Deterministic Class-Aware Flow Package
 

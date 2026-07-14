@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work item 2.1 is closed; work item 2.2 is active.
+Status: in_progress. Work items 2.1-2.2 are closed; work item 2.3 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -63,7 +63,7 @@ Status: in_progress. Work item 2.1 is closed; work item 2.2 is active.
 
 ## Work Item 2.2: Configuration Discovery And Compatibility Validation
 
-Status: implementation evidence recorded; work item remains `in_progress` until independent review, architecture, verification, and coordinator reconciliation complete. OpenSpec task 1.3 remains unchecked for coordinator ownership.
+Status: closed after independent task review, architecture review, fresh verification, and coordinator reconciliation. OpenSpec task 1.3 is complete.
 
 ### Sources And Implementation Evidence
 
@@ -116,7 +116,11 @@ Status: implementation evidence recorded; work item remains `in_progress` until 
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - Representative human CLI: `python scripts/validate_process_config.py <synthetic-central-root>` -> exit 0 and one safe `OK` line.
 - Representative JSON CLI: the same command with `--json` -> exit 0 and exactly one valid compatibility object with OpenSpec runtime `1.4.1`.
-- OpenSpec inventory remains 2/33 transfer tasks and 0/43 NIS tasks; task 1.3 was intentionally not checked by the worker. `openspec list --specs` reports 8 accepted specs.
+- Worker and fix-wave inventory remained 2/33 transfer tasks and 0/43 NIS tasks until coordinator reconciliation; task 1.3 is now checked, producing 3/33 and 0/43. `openspec list --specs` reports 8 accepted specs.
 - Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.
 - Whitespace check: `git diff --check` -> exit 0 with only non-blocking Windows LF-to-CRLF conversion warnings on touched documentation.
-- These worker results are implementation evidence only; they do not replace independent review, architecture, verification, or coordinator acceptance.
+- Independent task review approved the final range after all security, path, runtime, schema-graph, effective-base, parser, and local-report findings were corrected.
+- Independent architecture review approved the bounded discovery, pure-validation injection, local-only schema graph, thin CLI, read-only behavior, and scope boundaries.
+- Fresh verification at `6ff425f` passed 39 focused tests, 88 full tests, an 18-case selected negative matrix, compilation, legacy template validation, valid central and all three adapter modes, human/JSON usage and redaction contracts, OpenSpec inventory/spec listing, strict OpenSpec 10/10, range/commit whitespace checks, and Git inventory. Only the pre-existing untracked `.claude/` and `.vite/` directories remained; no `.superpowers` file was tracked.
+- Final reviewed implementation range: `597d78c..6ff425f`, restricted to nine work-item files. Unrelated presentation commits `affd105` and `597d78c` were preserved and excluded from work-item review by using commit-scoped packages.
+- Residual limitation: this work-item verification ran on Windows. Equivalent clean-host Windows/Linux/macOS release certification remains owned by work item 2.12.
