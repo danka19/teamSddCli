@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.7 are closed; work item 2.8 is active.
+Status: in_progress. Work items 2.1-2.8 are closed; work item 2.9 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -394,7 +394,7 @@ Status: closed after implementation, combined requirements/architecture/verifica
 
 ## Work Item 2.8: Packaged Deterministic Governed Flow
 
-Status: worker implementation complete; independent task review, architecture review, fresh verification, and coordinator reconciliation remain pending. OpenSpec task checkboxes and work-item status are intentionally unchanged at this checkpoint.
+Status: closed after implementation, combined requirements/architecture/verification review, hardening, targeted re-review, and coordinator reconciliation. Transfer tasks 2.1-2.5 and NIS tasks 7.1-7.4 are complete; work item 2.9 is ready.
 
 ### Worker Implementation Evidence
 
@@ -428,6 +428,8 @@ Status: worker implementation complete; independent task review, architecture re
 - Focused hardening/package/CLI/legacy suite: 74 passed. Relevant config/policy/classification/gate/owner/Tech Lead/corporate-flow/package regression: 264 passed. An initial regression command named a nonexistent `tests/test_tech_lead_control.py` and collected no tests; the corrected explicit suite passed and is the evidence of record.
 - Fresh full serial suite after all five fixes: 313 passed in 86.20 seconds. Compilation passed; direct legacy compatibility remained `OK`.
 - Roadmap/OpenSpec governance remained 0 errors and 0 warnings with inventories intentionally unchanged at transfer package 3/33 and NIS governance 31/43. Strict OpenSpec validation passed 10/10; `git diff --check` passed with only non-blocking Windows line-ending notices.
+- Combined reviewer final verdict: Approved for implementation `865bfe8` plus hardening `5c7c899`. All five P1 reproductions are closed; fresh targeted hardening/focused verification passed 74/74 without reviewer edits.
+- Coordinator reconciliation marks transfer tasks 2.1-2.5 and NIS tasks 7.1-7.4 complete, moving inventories from 3/33 to 8/33 and from 31/43 to 35/43. Work item 2.8 is `closed`; work item 2.9 is `ready`.
 
 ### Scope And Authority Boundary
 

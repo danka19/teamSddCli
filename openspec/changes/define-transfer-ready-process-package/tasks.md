@@ -6,11 +6,11 @@
 
 ## 2. Deterministic Class-Aware Flow Package
 
-- [ ] 2.1 Move the existing change template and validator into the versioned process package while preserving bounded legacy compatibility and consuming the schema/classification outcome of `adopt-nis-corporate-process-governance`.
-- [ ] 2.2 Add non-interactive bootstrap and change-creation entry points that copy only versioned templates, reject unsupported topology or destination state, and produce machine-readable evidence.
-- [ ] 2.3 Add Spec PR preparation and archive-support entry points that collect deterministic evidence without approving, merging, or archiving on behalf of a human.
-- [ ] 2.4 Add update, compatibility-check, and rollback entry points that preserve accepted OpenSpec history and restore the previously pinned package/config version on failure.
-- [ ] 2.5 Prove the packaged reference minor/major/hotfix flow, DoR/DoD, Tech Lead authority, and legacy migration with focused positive and negative tests plus AI-disabled walkthrough fixtures.
+- [x] 2.1 Move the existing change template and validator into the versioned process package while preserving bounded legacy compatibility and consuming the schema/classification outcome of `adopt-nis-corporate-process-governance`.
+- [x] 2.2 Add non-interactive bootstrap and change-creation entry points that copy only versioned templates, reject unsupported topology or destination state, and produce machine-readable evidence.
+- [x] 2.3 Add Spec PR preparation and archive-support entry points that collect deterministic evidence without approving, merging, or archiving on behalf of a human.
+- [x] 2.4 Add update, compatibility-check, and rollback entry points that preserve accepted OpenSpec history and restore the previously pinned package/config version on failure.
+- [x] 2.5 Prove the packaged reference minor/major/hotfix flow, DoR/DoD, Tech Lead authority, and legacy migration with focused positive and negative tests plus AI-disabled walkthrough fixtures.
 
 ## 3. Weak-Model Operating Kit
 

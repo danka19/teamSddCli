@@ -49,10 +49,10 @@
 
 ## 7. Traceability, publication, and integration boundaries
 
-- [ ] 7.1 Extend traceability schemas and validators to link classification confirmation/correction, DoR/DoD, stop/resume, release, waiver/deferral, and hotfix reconciliation evidence to requirements and scenarios.
-- [ ] 7.2 Update read packs, reports, role guides, and future Confluence views to display canonical record IDs and policy versions instead of duplicating normative rules.
-- [ ] 7.3 Implement validated external workflow mapping that keeps OpenSpec archive, release readiness, deployment, acceptance, and corporate tracker Done distinct and stops on unknown mappings.
-- [ ] 7.4 Document and test the manual, AI-disabled fallback for every core gate when Jira, Confluence, model runtime, MCP, or role inbox integration is unavailable.
+- [x] 7.1 Extend traceability schemas and validators to link classification confirmation/correction, DoR/DoD, stop/resume, release, waiver/deferral, and hotfix reconciliation evidence to requirements and scenarios.
+- [x] 7.2 Update read packs, reports, role guides, and future Confluence views to display canonical record IDs and policy versions instead of duplicating normative rules.
+- [x] 7.3 Implement validated external workflow mapping that keeps OpenSpec archive, release readiness, deployment, acceptance, and corporate tracker Done distinct and stops on unknown mappings.
+- [x] 7.4 Document and test the manual, AI-disabled fallback for every core gate when Jira, Confluence, model runtime, MCP, or role inbox integration is unavailable.
 
 ## 8. Certification, migration rehearsal, and release acceptance
 

@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.7 closed the versioned foundation through corporate flow controls, pilot safety, and failed-run retention; work item 2.8 is active for the packaged deterministic governed flow. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.8 closed the versioned foundation through the packaged deterministic governed flow; work item 2.9 is ready for the weak-model operating kit and safe parallel execution. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 
