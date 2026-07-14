@@ -31,3 +31,6 @@ rules:
   - id: failed-runs.successful-retry-preserves-failure
     override_mode: locked
     value: true
+  - id: failed-runs.retry-chain-fields
+    override_mode: locked
+    value: [run-id, attempt-kind, attempt-ordinal, input-refs, output-refs, retry-of, predecessor-digest]

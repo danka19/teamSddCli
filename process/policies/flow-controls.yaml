@@ -22,6 +22,26 @@ rules:
   - id: flow.rollback-or-hold-required
     override_mode: locked
     value: true
+  - id: flow.governance-record-types
+    override_mode: locked
+    value:
+      - initiative-triage
+      - approved-baseline
+      - scope-drift
+      - quality-strategy
+      - regression-row
+      - qa-decision
+      - exception
+      - human-decision
+      - ai-execution
+      - release-handoff
+      - consumer-acceptance
+      - role-map
+      - role-walkthrough
+      - portfolio-wip
+      - pilot-selection
+      - failed-run
+      - pilot-safety
   - id: flow.additional-stop-triggers
     override_mode: additive
     value_type: id-list

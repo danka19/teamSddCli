@@ -43,6 +43,7 @@ SCHEMA_FILES = {
     "gate_evaluation_input": "gate-evaluation-input.schema.json",
     "tech_lead_review_input": "tech-lead-review-input.schema.json",
     "tech_lead_control_record": "tech-lead-control-record.schema.json",
+    "corporate_flow_input": "corporate-flow-input.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

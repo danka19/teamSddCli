@@ -35,6 +35,12 @@ rules:
       - rollback-or-hold
       - operations-support-contacts
       - unresolved-follow-ups
+  - id: release.evidence-chain
+    override_mode: locked
+    value: [tracker, canonical-spec, implementation, ci-test, release, external-delivery]
+  - id: release.consumer-acceptance-separate
+    override_mode: locked
+    value: true
   - id: release.lifecycle-states
     override_mode: locked
     value: [draft, spec_review, approved, in_implementation, ready_to_archive, archived]

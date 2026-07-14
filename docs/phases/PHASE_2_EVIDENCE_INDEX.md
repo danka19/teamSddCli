@@ -358,3 +358,31 @@ Status: closed after implementation, independent task review, architecture revie
 - AI-disabled manual evidence preserved human/JSON parity, all 11 review views, all seven independent approvals as `still-required`, scheduled resume eligibility without clearing the active stop record, no mutation, stable CWD-independent usage diagnostics, and unchanged fixture/config hashes.
 - Residual limits remain explicit: Windows-only execution, synthetic rather than actual Qwen/DeepSeek certification, flow mutation/failed-run/release persistence deferred to 2.7, and full traceability deferred to 2.8.
 - Coordinator reconciliation marks NIS tasks 4.1-4.6 complete, moving the NIS inventory from 16/43 to 22/43 while the transfer-package change remains 3/33. Work item 2.6 is `closed`; work item 2.7 is `ready`.
+
+## Work Item 2.7: Corporate Flow Controls, Safety, And Failed Runs
+
+Status: implementation worker complete; independent combined requirements/architecture/verification review and coordinator reconciliation are pending. NIS tasks 5.1-5.7 and 6.1-6.2 remain unchecked and work item 2.7 remains active.
+
+### Implementation Evidence
+
+- Closed versioned bundle/envelope and all record-family payloads: `process/schemas/corporate-flow-input.schema.json`, registered in `process/package.yaml`.
+- Pure coordinator and immutable digest/retry checks: `process/validators/corporate_flow.py`; thin human/JSON entry point: `scripts/check_corporate_flow.py`.
+- Existing regression, flow-control, release, pilot-safety, failed-run, owner, expiry, secret-scan, policy snapshot, and Tech Lead control contracts are reused rather than forked.
+- Scenario-first synthetic evidence: `tests/test_corporate_flow.py`; operating boundary: `docs/runbooks/CORPORATE_FLOW_CONTROLS.md`.
+
+### TDD And Scope Evidence
+
+- Initial RED failed collection because `process.validators.corporate_flow` did not exist. GREEN added the common envelope, triage/baseline vertical slice, then the remaining eight acceptance families under one coordinator. A secret-scan RED and an append-only correction RED then proved missing redaction and ineffective supersession before their fixes; the focused suite reached 17 passing scenarios.
+- Package integration RED found the new schema missing from the exact schema inventory. The manifest regression was corrected before broader verification.
+- The implementation is check-only: `control_state_mutated`, `lifecycle_mutated`, and `external_state_mutated` are always false. Exit `0` is reserved for `may_continue`; any invalid authoritative record, active control, safety risk, unresolved retry-chain condition, missing QA authority, or incomplete release/role/WIP evidence blocks.
+- This worker did not implement work item 2.8 traceability graph/workflow mutation, real integrations or pilot, actual model certification, release-candidate manifest generation, cross-platform rehearsal, or metrics.
+
+### Worker Verification Record
+
+- Focused corporate-flow acceptance: 17 passed after the final append-only correction fix.
+- Policy/config/package/corporate-flow regression: 90 passed before the isolated supersession fix; the final 17-test focused suite and final full serial suite include that fix.
+- Final full serial suite: 280 passed.
+- Python compilation: `python -m compileall -q process scripts tests` -> exit 0. Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- AI-disabled CLI tests prove stable human/JSON parity, exits, explicit policy/cutoff provenance, false mutation flags, unchanged input bytes, and redacted secret diagnostics.
+- Roadmap/OpenSpec governance: 0 errors, 0 warnings. Inventories remain transfer package 3/33 and NIS governance 22/43; tasks 5.1-5.7 and 6.1-6.2 remain unchecked. Strict OpenSpec validation: 10 passed, 0 failed.
+- `git diff --check` passed with only non-blocking Windows LF-to-CRLF notices.

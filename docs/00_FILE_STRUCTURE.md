@@ -57,6 +57,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/phases/PHASE_2_EVIDENCE_INDEX.md` | Phase 2 work-item source, implementation, verification, and independent-review evidence index |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
+| `docs/runbooks/CORPORATE_FLOW_CONTROLS.md` | Check-only corporate-flow, release handoff, role/WIP/pilot safety, and immutable failed-run operating contract |
 
 ## OpenSpec
 
@@ -86,7 +87,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |
-| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate and Tech Lead review/control inputs, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
+| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate, Tech Lead, and corporate-flow inputs, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
 | `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema/policy loading, and final OpenSpec runtime probe |
 | `process/validators/config_validation.py` | Structured redacted diagnostics plus pure schema, compatibility, secret, and cross-registry integrity checks |
 | `process/validators/policy_validation.py` | Static policy identity/reference/override validation and immutable effective-value snapshots with provenance |

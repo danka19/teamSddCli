@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -41,7 +41,8 @@
         "policy_document": {"const": "schemas/policy-document.schema.json"},
         "gate_evaluation_input": {"const": "schemas/gate-evaluation-input.schema.json"},
         "tech_lead_review_input": {"const": "schemas/tech-lead-review-input.schema.json"},
-        "tech_lead_control_record": {"const": "schemas/tech-lead-control-record.schema.json"}
+        "tech_lead_control_record": {"const": "schemas/tech-lead-control-record.schema.json"},
+        "corporate_flow_input": {"const": "schemas/corporate-flow-input.schema.json"}
       }
     },
     "templates": {

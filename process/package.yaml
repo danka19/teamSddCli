@@ -21,6 +21,7 @@ schemas:
   gate_evaluation_input: schemas/gate-evaluation-input.schema.json
   tech_lead_review_input: schemas/tech-lead-review-input.schema.json
   tech_lead_control_record: schemas/tech-lead-control-record.schema.json
+  corporate_flow_input: schemas/corporate-flow-input.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
 examples:
@@ -37,3 +38,4 @@ canonical_sources:
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
