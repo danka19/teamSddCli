@@ -1,0 +1,20 @@
+schema_version: 2
+id: sample-hotfix-example
+title: Sample harm-based hotfix classification
+type: bugfix
+classification: hotfix
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads, sample-qa-owners]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - {id: delay-increases-harm, value: true, source: {kind: external-evidence, ref: evidence/incident.md}, rationale: Delay increases concrete harm.}
+  - {id: accelerated-route-required, value: true, source: {kind: human-decision, ref: decisions/classification.md}, rationale: The route must be accelerated.}
+  - {id: bounded-scope, value: true, source: {kind: design, ref: design.md}, rationale: Remediation scope is bounded.}
+  - {id: named-decision-owner, value: true, source: {kind: human-decision, ref: decisions/classification.md}, rationale: A human decision owner is named.}
+  - {id: security-impact, value: true, source: {kind: external-evidence, ref: evidence/security.md}, rationale: Major-impact obligations remain visible.}
+decision: {owner_type: human, owner_id: sample-tech-lead, state: confirmed, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+compatibility: {source: native-v2}

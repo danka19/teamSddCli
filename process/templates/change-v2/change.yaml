@@ -1,0 +1,32 @@
+schema_version: 2
+id: sample-change
+title: Sample bounded change
+type: config_ops
+classification: minor
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - {id: local-change, value: true, source: {kind: proposal, ref: proposal.md}, rationale: The change is local.}
+  - {id: small-scope, value: true, source: {kind: proposal, ref: proposal.md}, rationale: Scope is bounded.}
+  - {id: simple-rollback, value: true, source: {kind: design, ref: design.md}, rationale: Rollback is simple.}
+  - {id: no-user-scenario-impact, value: true, source: {kind: spec, ref: specs/sample/spec.md}, rationale: No scenario impact.}
+  - {id: no-sla-impact, value: true, source: {kind: design, ref: design.md}, rationale: No SLA impact.}
+  - {id: no-security-compliance-impact, value: true, source: {kind: design, ref: design.md}, rationale: No security or compliance impact.}
+  - {id: no-external-integration-impact, value: true, source: {kind: design, ref: design.md}, rationale: No external integration impact.}
+  - {id: no-data-model-impact, value: true, source: {kind: design, ref: design.md}, rationale: No data-model impact.}
+  - {id: no-component-interaction-impact, value: true, source: {kind: design, ref: design.md}, rationale: No component interaction impact.}
+  - {id: no-public-api-impact, value: true, source: {kind: design, ref: design.md}, rationale: No public API impact.}
+  - {id: no-cross-repository-impact, value: true, source: {kind: design, ref: design.md}, rationale: One repository only.}
+  - {id: no-reliability-impact, value: true, source: {kind: design, ref: design.md}, rationale: No reliability impact.}
+  - {id: no-performance-impact, value: true, source: {kind: design, ref: design.md}, rationale: No performance impact.}
+  - {id: no-operations-impact, value: true, source: {kind: design, ref: design.md}, rationale: No operations impact.}
+  - {id: no-governed-test-impact, value: true, source: {kind: spec, ref: specs/sample/spec.md}, rationale: No governed test impact.}
+  - {id: no-governed-documentation-impact, value: true, source: {kind: spec, ref: specs/sample/spec.md}, rationale: No governed documentation impact.}
+  - {id: no-architecture-decision-required, value: true, source: {kind: design, ref: design.md}, rationale: No architecture decision is required.}
+decision: {owner_type: human, owner_id: sample-tech-lead, state: pending, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+compatibility: {source: native-v2}

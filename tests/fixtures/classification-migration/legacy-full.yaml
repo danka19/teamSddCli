@@ -1,0 +1,19 @@
+id: sample-legacy-full
+title: Sample legacy full package
+mode: full
+type: new_feature
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads, sample-qa-owners]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - id: new-feature
+    value: true
+    source: {kind: proposal, ref: proposal.md}
+    rationale: Legacy source evidence is preserved.
+decision: {owner_type: human, owner_id: sample-tech-lead, state: confirmed, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+extensions:
+  sample-note: preserve-me

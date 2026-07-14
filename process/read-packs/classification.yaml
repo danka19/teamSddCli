@@ -1,0 +1,24 @@
+schema_version: "1.0"
+id: classification
+authority:
+  canonical:
+    - policies/classification.yaml
+    - policies/artifact-matrix.yaml
+    - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
+  supporting:
+    - templates/change-v2/change.yaml
+  generated_advisory:
+    - classification-report.json
+inputs:
+  - change.yaml
+  - sdd.config.yaml
+policy_rule_ids:
+  - classification.minor-conditions
+  - classification.major-triggers
+  - classification.hotfix-eligibility
+  - classification.no-downgrade
+output_classes: [minor, major, hotfix]
+human_authority:
+  confirmation_required: true
+  ai_advisory_only: true
+command: python scripts/classify_change.py CHANGE --config CONFIG --json

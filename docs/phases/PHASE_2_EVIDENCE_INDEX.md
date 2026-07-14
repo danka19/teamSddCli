@@ -174,3 +174,56 @@ Status: closed after independent task review, architecture review, fresh verific
 - Coordinator reconciliation changes the NIS-governance inventory from 0/43 to 4/43 by checking tasks 1.1-1.4; the transfer package remains 3/33.
 - Final implementation range: `e25bed7..c245565`. Presentation files and local `.superpowers`, `.claude`, and `.vite` paths are excluded; only the pre-existing untracked `.claude/` and `.vite/` directories remain.
 - Residual limitation: verification ran on Windows. Equivalent clean-host Windows/Linux/macOS release certification remains work item 2.12.
+
+## Work Item 2.4: Classification And Legacy Migration
+
+Status: implementation worker complete; independent task review, architecture review, fresh verification, and coordinator reconciliation remain pending. NIS-governance tasks 2.1-2.6 are intentionally not checked here.
+
+### Sources And Implementation Evidence
+
+- Proposed behavior: `openspec/changes/adopt-nis-corporate-process-governance/` tasks 2.1-2.6 and its `corporate-change-classification`, `change-package-foundation`, `repo-topology-config`, `tech-lead-workflow`, and `waiver-policy` deltas.
+- Policy-driven evaluator/report: `process/validators/classification.py`; thin entry point: `scripts/classify_change.py`.
+- Check/apply migration: `process/validators/classification_migration.py`; thin entry point: `scripts/migrate_change_classification.py`.
+- Current authoring/read surfaces: `process/templates/change-v2/`, `process/examples/classification/`, and `process/read-packs/classification.yaml`.
+- Scenario-first fixtures/tests: `tests/fixtures/classification-migration/`, `tests/test_classification.py`, and `tests/test_classification_migration.py`.
+- Operator procedure: `docs/runbooks/CLASSIFICATION_AND_MIGRATION.md`.
+
+### Scenario And Verification Mapping
+
+| Scenario family | Evidence |
+|---|---|
+| Minor all-conditions, unknown blockers, major any-trigger/all-trigger output, harm-based hotfix, pseudo-hotfix, and retained major-impact obligations | `test_minor_requires_every_condition_and_reports_sources`; `test_unknown_or_missing_minor_fact_blocks_minor`; `test_major_returns_every_trigger_and_rejects_minor_downgrade`; `test_pseudo_hotfix_is_rejected_without_increasing_harm`; `test_major_impact_hotfix_retains_major_and_hotfix_obligations` |
+| Stable source-linked human/JSON report, policy/tool versions, configured reviewers, and human state | `test_report_is_stable_and_includes_versions_reviewers_and_human_state`; `test_classifier_cli_consumes_policy_snapshot_and_emits_stable_json` |
+| Human-only confirmation, audited correction/recalculation, stricter route, and no waiver/Tech Lead/AI/free-text downgrade | `test_pending_or_ai_confirmation_never_confirms_classification`; `test_audited_correction_recalculates_source_fact`; `test_stricter_route_is_allowed_but_authority_text_cannot_downgrade_major`; `test_change_v2_schema_accepts_only_audited_human_corrections` |
+| Non-mutating conservative migration plan, deprecation result, conflict/ambiguity refusal, no hotfix mapping, exact-plan apply, metadata/comment preservation, backup/hold evidence, idempotency, and archive/spec exclusion | `test_check_is_non_mutating_stable_and_never_proposes_hotfix`; `test_conflict_and_ambiguous_legacy_metadata_are_refused`; `test_apply_requires_matching_valid_plan_and_preserves_metadata_and_comments`; `test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup`; `test_archived_or_accepted_history_is_reported_but_never_rewritten` |
+| Current target surfaces and stable CLI exit semantics | `test_target_template_examples_and_read_pack_offer_only_current_classes`; `test_migration_cli_has_stable_human_json_and_exit_semantics`; `test_both_clis_render_json_usage_errors_with_exit_two` |
+
+### TDD Record
+
+- Classifier RED: `python -m pytest tests/test_classification.py -q` failed during collection with `ModuleNotFoundError: process.validators.classification` before production code existed.
+- Classifier initial GREEN: the same focused suite reached 9 passed.
+- Migration/CLI RED: `python -m pytest tests/test_classification_migration.py -q` failed during collection with `ModuleNotFoundError: process.validators.classification_migration` before production migration code existed.
+- Combined classifier/migration initial GREEN: 16 passed.
+- Target-surface/schema RED: the two selected tests failed because audited corrections and package template/example records did not exist; GREEN added the bounded schema and registered target assets.
+- Self-review RED: three selected tests failed because blocked major reports omitted obligations, human rendering omitted required report sections, and JSON usage errors escaped through `argparse`; GREEN repaired all three contracts.
+- Compatibility-diagnostic RED: the selected migration check failed because a legacy-read deprecation diagnostic was absent; GREEN added the stable diagnostic.
+- Final stricter-route RED: the selected authority test failed because an unexplained `major` selection over a deterministic `minor` result was accepted; GREEN requires a recorded `stricter-route-reason` without allowing that free text to downgrade any major trigger.
+
+### Scope Boundary
+
+- The evaluator consumes the resolved versioned policy snapshot and canonical rule IDs; it does not duplicate a separate trigger table.
+- This work item does not evaluate DoR/DoD/release/archive gates, mutate lifecycle state, approve a class, clear a hold, rewrite accepted history, or remove the Phase 1 root compatibility template/validator.
+- Cross-platform release certification and compatibility-window removal remain later Phase 2 work.
+
+### Worker Verification Record
+
+- Focused classifier/migration suite: `python -m pytest tests/test_classification.py tests/test_classification_migration.py -q` -> 19 passed.
+- Policy/config/package regression: `python -m pytest tests/test_policy_schema_v2.py tests/test_validate_process_config.py tests/test_process_package.py -q` -> 74 passed.
+- Full serial suite: `python -m pytest -q` -> 127 passed.
+- One earlier orchestration attempt overlapped two pytest processes on the shared repository-local `.pytest-tmp`; it retained 125 passes and 2 setup errors caused by a Windows directory lock. No product assertion failed. After all Python processes exited, the required serial rerun passed 127/127.
+- Compilation: `python -m compileall -q process/validators scripts/classify_change.py scripts/migrate_change_classification.py` -> exit 0.
+- Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- Representative classifier human and JSON modes both selected `major`, returned `valid`, exposed two triggers, configured reviewers, artifacts, sources, versions, and human state.
+- Representative migration check returned `ready` with `thin -> minor`; digest-guarded apply returned `applied` with a backup; the second apply returned `already-current`.
+- Roadmap/OpenSpec governance JSON: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. OpenSpec inventory remains NIS 4/43 and transfer package 3/33; strict validation passed 10/10.
+- `git diff --check` passed with only Git's non-blocking LF-to-CRLF notices on existing Windows working-tree files.

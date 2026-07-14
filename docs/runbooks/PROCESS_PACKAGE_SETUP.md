@@ -35,9 +35,9 @@ Repository pointers use one shared local schema and may be synthetic `sibling:<i
 
 The production validator now resolves those forms without environment, home-directory, network, or name guessing. `sibling:<id>` resolves beside the repository declaring the reference; `path:<relative>` stays inside that declaring repository after canonicalization; `registry:<id>` requires an explicit repeatable `--registry ID=PATH` argument. A central package location may also use one of these explicit schemes; the existing schema-compatible plain relative package location is resolved from the central repository and remains bounded to that declared location.
 
-The package also pins one local `process/policies/manifest.yaml`. The validator loads the eight policy documents named there, checks local paths and schema/version agreement, unique IDs, references, acyclic requirements, required corporate values, and bounded overrides. `locked` values cannot be replaced, `additive` values cannot lose bundled minimums, and `stricter_only` values must be safely comparable and no weaker. Diagnostics retain the logical source and JSON pointer. Project adapters may provide only bounded overrides and cannot select alternate policy paths. The immutable resolved snapshot is validation input for later work items; work item 2.3 does not classify changes or evaluate gates.
+The package also pins one local `process/policies/manifest.yaml`. The validator loads the eight policy documents named there, checks local paths and schema/version agreement, unique IDs, references, acyclic requirements, required corporate values, and bounded overrides. `locked` values cannot be replaced, `additive` values cannot lose bundled minimums, and `stricter_only` values must be safely comparable and no weaker. Diagnostics retain the logical source and JSON pointer. Project adapters may provide only bounded overrides and cannot select alternate policy paths. Work item 2.4 now consumes the immutable resolved snapshot for classification; it does not evaluate lifecycle gates.
 
-The schema-v2 contract records `minor | major | hotfix` separately from work type and lifecycle status, retains source-linked `true | false | unknown` evidence and human decision ownership, and rejects legacy `mode` in v2 documents. Legacy `thin/full` is allowed only inside bounded compatibility metadata for later migration. The existing `templates/change/` and its validator remain the accepted Phase 1 legacy baseline until the dedicated migration/classification work item replaces them; this work item does not infer or apply migration.
+The schema-v2 contract records `minor | major | hotfix` separately from work type and lifecycle status, retains source-linked `true | false | unknown` evidence, audited human corrections, and human decision ownership, and rejects legacy authoring fields in v2 documents. The target template/examples/read pack live inside `process/`; the existing root `templates/change/` and its validator remain the accepted Phase 1 compatibility surface. Bounded legacy check/apply behavior and its no-archive-rewrite boundary are documented in `docs/runbooks/CLASSIFICATION_AND_MIGRATION.md`.
 
 All committed templates use `sample-*` identities and synthetic relative references. The separate committed-asset scanner and its negative fixtures reject secret/private and production-looking values without making those substrings illegal in real configured IDs. Replace template values only in an authorized environment-specific configuration; never place credentials, private specifications, real owner identities, production URLs, or secret values in the reusable package or templates.
 
@@ -82,6 +82,12 @@ Focused work item 2.3 verification:
 
 ```text
 python -m pytest tests/test_policy_schema_v2.py -q
+```
+
+Focused work item 2.4 verification:
+
+```text
+python -m pytest tests/test_classification.py tests/test_classification_migration.py -q
 ```
 
 Before integrating the work item, also run the complete command set recorded in `docs/phases/PHASE_2_EVIDENCE_INDEX.md`.

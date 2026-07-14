@@ -98,6 +98,14 @@ This document is the repository map for agents and humans. Keep it current whene
 | `tests/test_validate_process_config.py` | Focused central/adapter discovery, compatibility, integrity, secret-redaction, diagnostics, exit-code, and CWD-independence evidence |
 | `tests/fixtures/policy-v2/` | Synthetic minor/major/hotfix, decision-input, corporate-value, and override fixture families for work item 2.3 |
 | `tests/test_policy_schema_v2.py` | Scenario-first static schema-v2, policy manifest, integrity, override, provenance, and no-premature-verdict evidence |
+| `process/validators/classification.py` | Pure policy-snapshot-driven minor/major/hotfix classifier and stable human/JSON report model |
+| `process/validators/classification_migration.py` | Non-mutating legacy migration planning and plan-digest-guarded, backup-first idempotent apply behavior |
+| `scripts/classify_change.py` | Thin deterministic human/JSON classification entry point |
+| `scripts/migrate_change_classification.py` | Thin check/apply legacy classification migration entry point |
+| `process/templates/change-v2/`, `process/examples/classification/` | Current schema-v2 authoring surface and synthetic examples offering only minor/major/hotfix |
+| `process/read-packs/classification.yaml` | Authority-labelled bounded classifier read pack referencing canonical policy rule IDs |
+| `tests/test_classification.py`, `tests/test_classification_migration.py` | Scenario-first work item 2.4 classifier, authority, report, CLI, and migration safety evidence |
+| `docs/runbooks/CLASSIFICATION_AND_MIGRATION.md` | Operator procedure for classification, compatibility window, check-before-apply, rollback/hold, and historical exclusion |
 
 ## Planned Phase 2 Project Structure
 
@@ -105,8 +113,8 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| `process/templates/`, additional behavioral `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, classifier/gate behavior, role-kit, adapter, and certification assets; work items 2.2-2.3 provide config and static policy/schema validation only |
-| Additional `docs/runbooks/` files | Classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks |
+| Additional packaged-flow templates/validators, `process/roles/`, `process/adapters/`, `process/certification/` | Later lifecycle gates, role kit, adapters, and certification assets; classification/migration is implemented but lifecycle mutation remains later scope |
+| Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |
 | `scripts/certify_process_release.py` | Planned AI-disabled and weak-model release certification entry point |

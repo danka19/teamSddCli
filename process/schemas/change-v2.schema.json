@@ -29,6 +29,24 @@
         }
       }
     },
+    "classification_corrections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "previous_value", "corrected_value", "author_type", "author_id", "reason", "date", "reference"],
+        "properties": {
+          "evidence_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "previous_value": {"oneOf": [{"type": "boolean"}, {"const": "unknown"}]},
+          "corrected_value": {"oneOf": [{"type": "boolean"}, {"const": "unknown"}]},
+          "author_type": {"const": "human"},
+          "author_id": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "date": {"type": "string", "format": "date"},
+          "reference": {"type": "string", "minLength": 1}
+        }
+      }
+    },
     "decision": {"type": "object", "additionalProperties": false, "required": ["owner_type", "owner_id", "state", "evidence_ref"], "properties": {"owner_type": {"const": "human"}, "owner_id": {"type": "string", "minLength": 1}, "state": {"enum": ["pending", "confirmed", "corrected"]}, "evidence_ref": {"type": "string", "minLength": 1}}},
     "policy": {"type": "object", "additionalProperties": false, "required": ["id", "version"], "properties": {"id": {"const": "sdd-core"}, "version": {"const": "1.0.0"}}},
     "compatibility": {"type": "object", "additionalProperties": false, "required": ["source"], "properties": {"source": {"enum": ["native-v2", "legacy-read", "migrated"]}, "legacy_mode": {"enum": ["thin", "full"]}, "legacy_ref": {"type": "string", "minLength": 1}}, "allOf": [{"if": {"properties": {"source": {"const": "native-v2"}}}, "then": {"not": {"anyOf": [{"required": ["legacy_mode"]}, {"required": ["legacy_ref"]}]}}, "else": {"required": ["legacy_mode", "legacy_ref"]}}]},

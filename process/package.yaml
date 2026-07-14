@@ -18,6 +18,15 @@ schemas:
   change_v2: schemas/change-v2.schema.json
   policy_manifest: schemas/policy-manifest.schema.json
   policy_document: schemas/policy-document.schema.json
+templates:
+  change_v2: templates/change-v2/change.yaml
+examples:
+  classification:
+    - examples/classification/minor.yaml
+    - examples/classification/major.yaml
+    - examples/classification/hotfix.yaml
+read_packs:
+  classification: read-packs/classification.yaml
 canonical_sources:
   - openspec/specs/repo-topology-config/spec.md
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md

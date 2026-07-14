@@ -1,0 +1,303 @@
+"""Scenario-first tests for deterministic Phase 2 classification behavior."""
+
+from __future__ import annotations
+
+import copy
+import json
+from pathlib import Path
+from typing import Any
+
+import yaml
+from jsonschema import Draft202012Validator
+
+from process.validators.classification import evaluate_classification
+from process.validators.policy_validation import PolicySnapshot, validate_policy_bundle
+from scripts.classify_change import main as classify_main
+
+
+ROOT = Path(__file__).resolve().parents[1]
+POLICIES = ROOT / "process" / "policies"
+FIXTURES = ROOT / "tests" / "fixtures" / "policy-v2"
+
+
+def _yaml(path: Path) -> dict[str, Any]:
+    value = yaml.safe_load(path.read_text(encoding="utf-8"))
+    assert isinstance(value, dict)
+    return value
+
+
+def _snapshot() -> PolicySnapshot:
+    result = validate_policy_bundle(
+        ROOT / "process",
+        _yaml(POLICIES / "manifest.yaml"),
+        _yaml(FIXTURES / "config" / "valid-central.yaml"),
+        None,
+    )
+    assert result.diagnostics == []
+    assert result.snapshot is not None
+    return result.snapshot
+
+
+def _document(
+    *,
+    declared: str,
+    facts: dict[str, bool | str],
+    decision_state: str = "confirmed",
+) -> dict[str, Any]:
+    value = copy.deepcopy(_yaml(FIXTURES / "valid" / "minor.yaml"))
+    value["classification"] = declared
+    value["decision"]["state"] = decision_state
+    value["classification_evidence"] = [
+        {
+            "id": identifier,
+            "value": fact,
+            "source": {"kind": "design", "ref": f"evidence/{identifier}.md"},
+            "rationale": f"Synthetic evidence for {identifier}.",
+        }
+        for identifier, fact in facts.items()
+    ]
+    return value
+
+
+def _minor_facts(snapshot: PolicySnapshot) -> dict[str, bool | str]:
+    return {
+        identifier: True
+        for identifier in snapshot.rules["classification.minor-conditions"].value
+    }
+
+
+def test_minor_requires_every_condition_and_reports_sources() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    report = evaluate_classification(document, snapshot)
+
+    assert report.exit_code == 0
+    assert report.as_dict()["selected_class"] == "minor"
+    assert report.as_dict()["satisfied_conditions"] == sorted(_minor_facts(snapshot))
+    assert report.as_dict()["source_inputs"][0] == {
+        "id": "local-change",
+        "value": True,
+        "source": {"kind": "design", "ref": "evidence/local-change.md"},
+    }
+
+
+def test_unknown_or_missing_minor_fact_blocks_minor() -> None:
+    snapshot = _snapshot()
+    facts = _minor_facts(snapshot)
+    facts["simple-rollback"] = "unknown"
+    facts.pop("small-scope")
+
+    report = evaluate_classification(_document(declared="minor", facts=facts), snapshot)
+
+    assert report.exit_code == 1
+    assert report.as_dict()["selected_class"] is None
+    assert report.as_dict()["unknown_inputs"] == ["simple-rollback", "small-scope"]
+    assert {item["code"] for item in report.as_dict()["blockers"]} == {
+        "classification.minor-evidence-incomplete",
+        "classification.human-confirmation-invalid",
+    }
+
+
+def test_major_returns_every_trigger_and_rejects_minor_downgrade() -> None:
+    snapshot = _snapshot()
+    triggers = list(snapshot.rules["classification.major-triggers"].value)
+    facts = {identifier: True for identifier in triggers}
+
+    report = evaluate_classification(_document(declared="minor", facts=facts), snapshot)
+
+    assert report.exit_code == 1
+    assert report.as_dict()["proposed_class"] == "major"
+    assert report.as_dict()["triggered_rules"] == sorted(triggers)
+    assert "classification.under-classified" in {
+        item["code"] for item in report.as_dict()["blockers"]
+    }
+    assert set(snapshot.rules["artifacts.major-required"].value) <= set(
+        report.as_dict()["required_artifacts"]
+    )
+    assert report.as_dict()["required_reviewers"] == [
+        "sample-qa-owners", "sample-tech-leads"
+    ]
+
+
+def test_pseudo_hotfix_is_rejected_without_increasing_harm() -> None:
+    snapshot = _snapshot()
+    facts = {
+        "delay-increases-harm": False,
+        "accelerated-route-required": True,
+        "bounded-scope": True,
+        "named-decision-owner": True,
+    }
+
+    report = evaluate_classification(_document(declared="hotfix", facts=facts), snapshot)
+
+    assert report.exit_code == 1
+    assert report.as_dict()["proposed_class"] is None
+    assert "classification.hotfix-ineligible" in {
+        item["code"] for item in report.as_dict()["blockers"]
+    }
+
+
+def test_major_impact_hotfix_retains_major_and_hotfix_obligations() -> None:
+    snapshot = _snapshot()
+    facts = {
+        identifier: True
+        for identifier in snapshot.rules["classification.hotfix-eligibility"].value
+    }
+    facts.update({"security-impact": True, "public-api-impact": True})
+
+    report = evaluate_classification(_document(declared="hotfix", facts=facts), snapshot)
+    payload = report.as_dict()
+
+    assert report.exit_code == 0
+    assert payload["selected_class"] == "hotfix"
+    assert payload["triggered_rules"] == ["public-api-impact", "security-impact"]
+    assert set(snapshot.rules["artifacts.major-required"].value) <= set(
+        payload["required_artifacts"]
+    )
+    assert set(snapshot.rules["artifacts.hotfix-entry-required"].value) <= set(
+        payload["required_artifacts"]
+    )
+
+
+def test_report_is_stable_and_includes_versions_reviewers_and_human_state() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+
+    first = evaluate_classification(document, snapshot).as_dict()
+    second = evaluate_classification(copy.deepcopy(document), snapshot).as_dict()
+
+    assert first == second
+    assert first["versions"] == {
+        "report_schema": "1.0",
+        "tool": "0.2.0",
+        "policy_set": {"id": "sdd-core", "version": "1.0.0"},
+    }
+    assert first["required_reviewers"] == ["sample-tech-leads"]
+    assert first["human_decision"]["state"] == "confirmed"
+    human = evaluate_classification(document, snapshot).render_human()
+    for section in (
+        "Source inputs:", "Satisfied conditions:", "Triggered rules:",
+        "Unknown inputs:", "Required artifacts:", "Required reviewers:",
+        "Human decision:",
+    ):
+        assert section in human
+
+
+def test_pending_or_ai_confirmation_never_confirms_classification() -> None:
+    snapshot = _snapshot()
+    pending = _document(
+        declared="minor", facts=_minor_facts(snapshot), decision_state="pending"
+    )
+    ai = copy.deepcopy(pending)
+    ai["decision"].update({"owner_type": "ai", "state": "confirmed"})
+
+    for document in (pending, ai):
+        report = evaluate_classification(document, snapshot)
+        assert report.exit_code == 1
+        assert "classification.human-confirmation-required" in {
+            item["code"] for item in report.as_dict()["blockers"]
+        }
+
+
+def test_audited_correction_recalculates_source_fact() -> None:
+    snapshot = _snapshot()
+    facts = _minor_facts(snapshot)
+    facts["security-impact"] = True
+    document = _document(declared="minor", facts=facts, decision_state="corrected")
+    document["classification_corrections"] = [{
+        "evidence_id": "security-impact",
+        "previous_value": True,
+        "corrected_value": False,
+        "author_type": "human",
+        "author_id": "sample-tech-lead",
+        "reason": "The linked threat review proves there is no security impact.",
+        "date": "2026-07-14",
+        "reference": "evidence/security-review.md",
+    }]
+
+    report = evaluate_classification(document, snapshot)
+
+    assert report.exit_code == 0
+    assert report.as_dict()["selected_class"] == "minor"
+    assert report.as_dict()["corrections"][0]["evidence_id"] == "security-impact"
+
+
+def test_stricter_route_is_allowed_but_authority_text_cannot_downgrade_major() -> None:
+    snapshot = _snapshot()
+    stricter = _document(declared="major", facts=_minor_facts(snapshot))
+    stricter["extensions"] = {"stricter-route-reason": "Local policy requires major."}
+    major = _document(declared="minor", facts={"security-impact": True})
+
+    assert evaluate_classification(stricter, snapshot).exit_code == 0
+    assert evaluate_classification(stricter, snapshot).as_dict()["selected_class"] == "major"
+
+    unjustified = copy.deepcopy(stricter)
+    unjustified.pop("extensions")
+    unjustified_report = evaluate_classification(unjustified, snapshot)
+    assert unjustified_report.exit_code == 1
+    assert "classification.stricter-route-reason-required" in {
+        item["code"] for item in unjustified_report.as_dict()["blockers"]
+    }
+
+    for attempted_override in (
+        {"waiver": "allow minor"},
+        {"tech-lead-decision": "approve minor"},
+        {"ai-recommendation": "minor"},
+        {"free-text": "risk accepted"},
+    ):
+        candidate = copy.deepcopy(major)
+        candidate["extensions"] = attempted_override
+        report = evaluate_classification(candidate, snapshot)
+        assert report.exit_code == 1
+        assert report.as_dict()["proposed_class"] == "major"
+
+
+def test_change_v2_schema_accepts_only_audited_human_corrections() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+    correction = {
+        "evidence_id": "local-change",
+        "previous_value": False,
+        "corrected_value": True,
+        "author_type": "human",
+        "author_id": "sample-tech-lead",
+        "reason": "The reviewed source evidence corrected the recorded fact.",
+        "date": "2026-07-14",
+        "reference": "evidence/correction.md",
+    }
+    document["classification_corrections"] = [correction]
+    schema = json.loads(
+        (ROOT / "process" / "schemas" / "change-v2.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert list(Draft202012Validator(schema).iter_errors(document)) == []
+    document["classification_corrections"][0]["author_type"] = "ai"
+    assert list(Draft202012Validator(schema).iter_errors(document))
+
+
+def test_target_template_examples_and_read_pack_offer_only_current_classes(capsys) -> None:
+    package = _yaml(ROOT / "process" / "package.yaml")
+    paths = [package["templates"]["change_v2"], *package["examples"]["classification"]]
+    seen: set[str] = set()
+    for relative in paths:
+        path = ROOT / "process" / relative
+        text = path.read_text(encoding="utf-8")
+        document = _yaml(path)
+        assert "mode:" not in text
+        assert document["classification"] in {"minor", "major", "hotfix"}
+        assert document["schema_version"] == 2
+        seen.add(document["classification"])
+    assert seen == {"minor", "major", "hotfix"}
+
+    read_pack = ROOT / "process" / package["read_packs"]["classification"]
+    read_pack_text = read_pack.read_text(encoding="utf-8")
+    assert "minor" in read_pack_text and "major" in read_pack_text and "hotfix" in read_pack_text
+    assert "thin" not in read_pack_text and "full" not in read_pack_text
+
+    assert classify_main(["--help"]) == 0
+    help_text = capsys.readouterr().out
+    assert "minor" in help_text and "major" in help_text and "hotfix" in help_text
+    assert "thin" not in help_text and "full" not in help_text

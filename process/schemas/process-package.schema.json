@@ -3,7 +3,7 @@
   "$id": "process-package.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "canonical_sources"],
+  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "canonical_sources"],
   "properties": {
     "schema_version": {"const": "1.1"},
     "package": {
@@ -40,6 +40,31 @@
         "policy_manifest": {"const": "schemas/policy-manifest.schema.json"},
         "policy_document": {"const": "schemas/policy-document.schema.json"}
       }
+    },
+    "templates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["change_v2"],
+      "properties": {"change_v2": {"const": "templates/change-v2/change.yaml"}}
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification"],
+      "properties": {
+        "classification": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "read_packs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification"],
+      "properties": {"classification": {"const": "read-packs/classification.yaml"}}
     },
     "canonical_sources": {
       "type": "array",
