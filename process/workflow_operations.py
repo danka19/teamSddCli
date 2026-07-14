@@ -7,27 +7,36 @@ approval, mutates lifecycle state, calls an integration, or infers authority.
 from __future__ import annotations
 
 import hashlib
+import json
+import os
 import re
 import shutil
+import stat
 import tempfile
 from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator
+
+from .validators.config_discovery import (
+    BUNDLED_SCHEMA_ROOT,
+    load_schema_resources,
+    validate_package_schemas,
+)
+from .validators.config_validation import (
+    ValidationResult,
+    config_compatibility,
+    package_compatibility,
+    schema_diagnostics,
+)
+from .validators.policy_validation import validate_policy_bundle
 
 
 CHANGE_ID = re.compile(r"^[a-z][a-z0-9-]*$")
 CLASSIFICATIONS = {"minor", "major", "hotfix"}
 CHANGE_TYPES = {
     "new_feature", "behavior_change", "bugfix", "refactor", "docs_only", "config_ops"
-}
-TRACEABILITY_FIELDS = {
-    "classification_refs",
-    "gate_refs",
-    "control_refs",
-    "release_refs",
-    "waiver_deferral_refs",
-    "hotfix_reconciliation_refs",
 }
 EXTERNAL_STATES = {
     "openspec_archive": "archived",
@@ -48,23 +57,32 @@ FALLBACK_COMMANDS = {
 class OperationError(ValueError):
     """Stable operator-safe workflow error."""
 
-    def __init__(self, code: str, message: str) -> None:
+    def __init__(self, code: str, message: str, *, exit_code: int = 1) -> None:
         super().__init__(f"{code}: {message}")
         self.code = code
+        self.exit_code = exit_code
+
+
+def load_yaml_input(path: Path) -> dict[str, Any]:
+    """Load one CLI input mapping with stable operational-failure semantics."""
+    try:
+        value = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, yaml.YAMLError) as error:
+        raise OperationError("input-invalid", "required input is missing or malformed", exit_code=3) from error
+    if not isinstance(value, dict):
+        raise OperationError("input-invalid", "required input root must be a mapping", exit_code=3)
+    return value
 
 
 def bootstrap_team_specs(
     package_root: Path, team_template: Path, destination: Path
 ) -> dict[str, Any]:
     """Create one synthetic central workspace from immutable package sources."""
-    package_root = package_root.resolve()
-    team_template = team_template.resolve()
-    destination = destination.resolve()
-    package = _load_yaml(package_root / "package.yaml")
-    if package.get("package", {}).get("id") != "sdd-process":
-        raise OperationError("package-invalid", "expected the sdd-process package")
-    if not (package_root / "VERSION").is_file():
-        raise OperationError("package-invalid", "VERSION is missing")
+    package_root = _safe_root(package_root, "package-source")
+    team_template = _safe_root(team_template, "team-template")
+    destination = _absolute(destination)
+    template_config = _load_yaml(team_template / "sdd.config.yaml")
+    package = _validate_standalone_package(package_root, template_config)["package"]
     if destination.exists() and any(destination.iterdir()):
         raise OperationError("destination-not-empty", "bootstrap destination must be empty")
     if not team_template.is_dir():
@@ -109,8 +127,9 @@ def create_change(
     change_type: str,
 ) -> dict[str, Any]:
     """Create a draft package from the versioned template without approving it."""
-    package_root = package_root.resolve()
-    changes_root = changes_root.resolve()
+    package_root = _safe_root(package_root, "package-source")
+    _validate_standalone_package(package_root)
+    changes_root = _absolute(changes_root)
     if not CHANGE_ID.fullmatch(change_id):
         raise OperationError("change-id-invalid", "change id must be portable lower kebab-case")
     if classification not in CLASSIFICATIONS:
@@ -190,45 +209,59 @@ def prepare_archive(package_root: Path, change_root: Path) -> dict[str, Any]:
 
 def validate_traceability(document: dict[str, Any]) -> dict[str, Any]:
     """Validate canonical governance links and return a derived ID-only view."""
-    if document.get("schema_version") != "2.0":
-        raise OperationError("traceability-schema-invalid", "schema_version must be 2.0")
+    schema = json.loads((BUNDLED_SCHEMA_ROOT / "traceability-v2.schema.json").read_text(encoding="utf-8"))
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(document),
+        key=lambda error: (list(error.absolute_path), error.validator),
+    )
+    if errors:
+        raise OperationError("traceability-schema-invalid", "traceability does not satisfy the trusted schema")
     classification = document.get("classification")
     lifecycle_state = document.get("lifecycle_state")
-    if classification not in CLASSIFICATIONS or lifecycle_state not in {
-        "draft", "spec_review", "approved", "in_implementation", "ready_to_archive", "archived"
-    }:
-        raise OperationError("traceability-context-invalid", "class and lifecycle context are required")
     policy = document.get("policy")
-    if policy != {"id": "sdd-core", "version": "1.0.0"}:
-        raise OperationError("traceability-policy-invalid", "canonical policy identity is required")
     links = document.get("links")
-    if not isinstance(links, list) or not links:
-        raise OperationError("traceability-links-missing", "at least one link is required")
     identifiers: list[str] = []
+    evidence_identifiers: list[str] = []
+    derived_evidence: list[dict[str, str]] = []
     for link in links:
-        if not isinstance(link, dict) or not CHANGE_ID.fullmatch(str(link.get("record_id", ""))):
-            raise OperationError("traceability-id-invalid", "each link requires a canonical record id")
-        if not _nonempty_strings(link.get("requirement_refs")) or not _nonempty_strings(link.get("scenario_refs")):
-            raise OperationError("traceability-source-missing", "requirement and scenario references are required")
-        if not _nonempty_strings(link.get("classification_refs")) or not _nonempty_strings(link.get("gate_refs")):
-            raise OperationError(
-                "traceability-link-incomplete",
-                "classification and gate links are required",
-            )
-        if lifecycle_state in {"ready_to_archive", "archived"} and not _nonempty_strings(link.get("release_refs")):
-            raise OperationError("traceability-link-incomplete", "release evidence is required at archive readiness")
-        if classification == "hotfix" and lifecycle_state in {"ready_to_archive", "archived"} and not _nonempty_strings(link.get("hotfix_reconciliation_refs")):
-            raise OperationError("traceability-link-incomplete", "hotfix reconciliation is required at archive readiness")
-        for field in TRACEABILITY_FIELDS | {"requirement_refs", "scenario_refs", "task_refs"}:
-            references = link.get(field)
-            if not isinstance(references, list) or any(not isinstance(item, str) or not item for item in references):
-                raise OperationError("traceability-reference-invalid", "reference collections must contain strings")
-            for reference in references:
+        identifiers.append(str(link["record_id"]))
+        for field in ("requirement_refs", "scenario_refs", "task_refs"):
+            for reference in link[field]:
                 if not _local_reference(reference):
                     raise OperationError("traceability-reference-invalid", "references must be bounded local IDs or paths")
-        identifiers.append(str(link["record_id"]))
+        evidence_links = link["evidence_links"]
+        kinds = [str(row["kind"]) for row in evidence_links]
+        local_ids = [str(row["record_id"]) for row in evidence_links]
+        if len(set(kinds)) != len(kinds) or len(set(local_ids)) != len(local_ids):
+            raise OperationError("traceability-evidence-duplicate", "evidence kinds and ids must be unique per link")
+        for row in evidence_links:
+            if not _local_reference(row["source_ref"]) or any(not _local_reference(ref) for ref in row["evidence_refs"]):
+                raise OperationError("traceability-reference-invalid", "evidence references must be bounded local IDs or paths")
+            evidence_identifiers.append(str(row["record_id"]))
+            derived_evidence.append({
+                "record_id": str(row["record_id"]),
+                "kind": str(row["kind"]),
+                "status": str(row["status"]),
+                "policy_version": str(row["policy_version"]),
+            })
+        if lifecycle_state in {"ready_to_archive", "archived"}:
+            if any(row["status"] == "pending" for row in evidence_links):
+                raise OperationError("traceability-archive-pending", "pending traceability blocks archive readiness")
+            by_kind = {str(row["kind"]): str(row["status"]) for row in evidence_links}
+            concrete = {"classification", "dor", "dod", "implementation", "qa", "regression", "approval"}
+            if any(by_kind.get(kind) != "concrete" for kind in concrete):
+                raise OperationError("traceability-archive-incomplete", "required archive evidence is incomplete")
+            resolved = {"release"}
+            if classification == "major":
+                resolved |= {"automation", "architecture"}
+            if any(by_kind.get(kind) not in {"concrete", "not-applicable"} for kind in resolved):
+                raise OperationError("traceability-archive-incomplete", "class-applicable archive evidence is unresolved")
+            if classification == "hotfix" and by_kind.get("hotfix-reconciliation") != "concrete":
+                raise OperationError("traceability-archive-incomplete", "hotfix reconciliation is incomplete")
     if len(set(identifiers)) != len(identifiers):
         raise OperationError("traceability-id-duplicate", "record ids must be unique")
+    if len(set(evidence_identifiers)) != len(evidence_identifiers):
+        raise OperationError("traceability-evidence-duplicate", "evidence record ids must be globally unique")
     return {
         "schema_version": "1.0",
         "status": "valid",
@@ -236,6 +269,7 @@ def validate_traceability(document: dict[str, Any]) -> dict[str, Any]:
         "classification": classification,
         "lifecycle_state": lifecycle_state,
         "record_ids": sorted(identifiers),
+        "evidence_links": sorted(derived_evidence, key=lambda row: row["record_id"]),
         "canonical_source": "openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md",
     }
 
@@ -294,31 +328,47 @@ def update_process_package(
     backup_root: Path,
 ) -> dict[str, Any]:
     """Install a compatible package transactionally while retaining rollback state."""
-    installed_root = installed_root.resolve()
-    candidate_root = candidate_root.resolve()
-    config_path = config_path.resolve()
-    backup_root = backup_root.resolve()
-    installed = _package_identity(installed_root)
-    candidate = _package_identity(candidate_root)
+    installed_root = _safe_root(installed_root, "installed-package")
+    candidate_root = _safe_root(candidate_root, "candidate-package")
+    config_path = _absolute(config_path)
+    backup_root = _absolute(backup_root)
     config = _load_yaml(config_path)
+    installed_snapshot = _validate_standalone_package(installed_root, config)
+    candidate_snapshot = _validate_standalone_package(candidate_root, config, require_config_version=False)
+    installed = installed_snapshot["identity"]
+    candidate = candidate_snapshot["identity"]
     _assert_config_pin(config, installed, installed_root, config_path.parent)
     if candidate["id"] != installed["id"]:
         raise OperationError("package-id-mismatch", "candidate package id differs")
     if candidate["version"] == installed["version"]:
         raise OperationError("package-version-unchanged", "candidate version is already installed")
+    if _semver(candidate["version"]) <= _semver(installed["version"]):
+        raise OperationError("package-downgrade-forbidden", "normal update requires a forward semantic version")
+    _assert_non_overlapping(installed_root, backup_root)
+    _assert_non_overlapping(candidate_root, backup_root)
     backup = backup_root / installed["version"]
+    backup_staging = backup_root / f".{installed['version']}.snapshot"
+    proof = backup_root / f"{installed['version']}.rollback.yaml"
     if backup.exists():
         raise OperationError("rollback-exists", "rollback snapshot already exists")
     backup_root.mkdir(parents=True, exist_ok=True)
-    _copy_versioned_tree(installed_root, backup)
     original_config = config_path.read_bytes()
     displaced = installed_root.with_name(f".{installed_root.name}.previous")
     staged = installed_root.with_name(f".{installed_root.name}.candidate")
-    if displaced.exists() or staged.exists():
-        shutil.rmtree(backup)
+    if displaced.exists() or staged.exists() or backup_staging.exists() or proof.exists():
         raise OperationError("staging-exists", "update staging path already exists")
     try:
+        _copy_versioned_tree(installed_root, backup_staging)
+        _validate_standalone_package(backup_staging, config)
+        shutil.move(str(backup_staging), str(backup))
+        _write_yaml_atomic(proof, {
+            "schema_version": "1.0",
+            "from_version": installed["version"],
+            "to_version": candidate["version"],
+            "snapshot_sha256": _snapshot_digest(backup),
+        })
         _copy_versioned_tree(candidate_root, staged)
+        _validate_standalone_package(staged, config, require_config_version=False)
         shutil.move(str(installed_root), str(displaced))
         shutil.move(str(staged), str(installed_root))
         config["process_package"]["version"] = candidate["version"]
@@ -327,6 +377,8 @@ def update_process_package(
     except Exception:
         if staged.exists():
             shutil.rmtree(staged)
+        if backup_staging.exists():
+            shutil.rmtree(backup_staging)
         if installed_root.exists() and displaced.exists():
             shutil.rmtree(installed_root)
         if displaced.exists():
@@ -334,6 +386,8 @@ def update_process_package(
         config_path.write_bytes(original_config)
         if backup.exists():
             shutil.rmtree(backup)
+        if proof.exists():
+            proof.unlink()
         raise
     return {
         "schema_version": "1.0",
@@ -351,13 +405,17 @@ def check_package_compatibility(
     installed_root: Path, candidate_root: Path, config_path: Path
 ) -> dict[str, Any]:
     """Check update inputs without writing package, config, or history."""
-    installed_root = installed_root.resolve()
-    installed = _package_identity(installed_root)
-    candidate = _package_identity(candidate_root.resolve())
-    config = _load_yaml(config_path.resolve())
-    _assert_config_pin(config, installed, installed_root, config_path.resolve().parent)
+    installed_root = _safe_root(installed_root, "installed-package")
+    candidate_root = _safe_root(candidate_root, "candidate-package")
+    config_path = _absolute(config_path)
+    config = _load_yaml(config_path)
+    installed = _validate_standalone_package(installed_root, config)["identity"]
+    candidate = _validate_standalone_package(candidate_root, config, require_config_version=False)["identity"]
+    _assert_config_pin(config, installed, installed_root, config_path.parent)
     if installed["id"] != candidate["id"]:
         raise OperationError("package-id-mismatch", "candidate package id differs")
+    if _semver(candidate["version"]) <= _semver(installed["version"]):
+        raise OperationError("package-downgrade-forbidden", "normal update requires a forward semantic version")
     return {
         "schema_version": "1.0",
         "operation": "check-package-compatibility",
@@ -375,12 +433,26 @@ def rollback_process_package(
     installed_root: Path, backup_root: Path, config_path: Path
 ) -> dict[str, Any]:
     """Restore a retained compatible package/config pin transactionally."""
-    installed_root = installed_root.resolve()
-    backup_root = backup_root.resolve()
-    config_path = config_path.resolve()
-    current = _package_identity(installed_root)
-    target = _package_identity(backup_root)
+    installed_root = _safe_root(installed_root, "installed-package")
+    backup_root = _safe_root(backup_root, "rollback-package")
+    config_path = _absolute(config_path)
     config = _load_yaml(config_path)
+    current = _validate_standalone_package(installed_root, config)["identity"]
+    target = _validate_standalone_package(backup_root, config, require_config_version=False)["identity"]
+    proof = backup_root.parent / f"{backup_root.name}.rollback.yaml"
+    if not proof.is_file():
+        raise OperationError("rollback-proof-invalid", "rollback snapshot proof is missing or invalid")
+    try:
+        proof_data = _load_yaml(proof)
+    except OperationError as error:
+        raise OperationError("rollback-proof-invalid", "rollback snapshot proof is missing or invalid") from error
+    if (
+        proof_data.get("schema_version") != "1.0"
+        or proof_data.get("from_version") != target["version"]
+        or proof_data.get("to_version") != current["version"]
+        or proof_data.get("snapshot_sha256") != _snapshot_digest(backup_root)
+    ):
+        raise OperationError("rollback-proof-invalid", "rollback snapshot proof is missing or invalid")
     _assert_config_pin(config, current, installed_root, config_path.parent)
     original_config = config_path.read_bytes()
     displaced = installed_root.with_name(f".{installed_root.name}.rollback-current")
@@ -460,10 +532,6 @@ def _write_yaml_atomic(path: Path, value: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def _nonempty_strings(value: Any) -> bool:
-    return isinstance(value, list) and bool(value) and all(isinstance(item, str) and item for item in value)
-
-
 def _local_reference(value: Any) -> bool:
     if not isinstance(value, str) or not value or "://" in value or value.startswith(("/", "\\")):
         return False
@@ -471,20 +539,232 @@ def _local_reference(value: Any) -> bool:
 
 
 def _copy_versioned_tree(source: Path, destination: Path) -> None:
-    shutil.copytree(
-        source,
-        destination,
-        ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"),
+    source = _safe_root(source, "copy-source")
+    destination = _absolute(destination)
+    _assert_non_overlapping(source, destination)
+    package_path = source / "package.yaml"
+    if package_path.is_file():
+        package = _load_yaml(package_path)
+        distribution = package.get("distribution")
+        if not isinstance(distribution, dict):
+            raise OperationError("package-contract-invalid", "distribution manifest is missing")
+        destination.mkdir(parents=True)
+        for relative in distribution.get("files", []):
+            source_file = _declared_file(source, relative)
+            shutil.copy2(source_file, destination / relative)
+        for relative in distribution.get("roots", []):
+            source_root = _declared_directory(source, relative)
+            shutil.copytree(
+                source_root, destination / relative,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"),
+            )
+        return
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"))
+
+
+def _validate_standalone_package(
+    root: Path,
+    config: dict[str, Any] | None = None,
+    *,
+    require_config_version: bool = True,
+) -> dict[str, Any]:
+    """Validate one package snapshot without discovery, runtime, or mutation."""
+    root = _safe_root(root, "package")
+    resources = load_schema_resources(BUNDLED_SCHEMA_ROOT)
+    package = _load_yaml(root / "package.yaml")
+    diagnostics = schema_diagnostics(
+        "process-package.schema.json", package, "process-package", stage=1,
+        schema_resources=resources,
     )
+    if diagnostics:
+        raise OperationError("package-contract-invalid", "package manifest does not satisfy the trusted schema")
+    identity = _package_identity(root)
+
+    workflow_path = _declared_file(root, package.get("workflow"))
+    workflow = _load_yaml(workflow_path)
+    if schema_diagnostics(
+        "workflow.schema.json", workflow, "process-workflow", stage=1,
+        schema_resources=resources,
+    ):
+        raise OperationError("package-workflow-invalid", "declared workflow is invalid")
+
+    schemas = package.get("schemas")
+    if not isinstance(schemas, dict):
+        raise OperationError("package-contract-invalid", "schema declarations are missing")
+    for relative in schemas.values():
+        _declared_file(root, relative)
+    schema_result = ValidationResult()
+    validate_package_schemas(root, schemas, schema_result)
+    if schema_result.diagnostics:
+        raise OperationError("package-schema-invalid", "a declared package schema is invalid")
+
+    templates = package.get("templates")
+    if not isinstance(templates, dict):
+        raise OperationError("package-contract-invalid", "template declarations are missing")
+    for relative in templates.values():
+        _declared_file(root, relative)
+
+    distribution = package.get("distribution")
+    if not isinstance(distribution, dict):
+        raise OperationError("package-contract-invalid", "distribution manifest is missing")
+    declared_files = set(distribution.get("files", []))
+    declared_roots = set(distribution.get("roots", []))
+    for relative in declared_files:
+        _declared_file(root, relative)
+    for relative in declared_roots:
+        _declared_directory(root, relative)
+    for child in root.iterdir():
+        if child.name in {"__pycache__", ".DS_Store"}:
+            continue
+        if child.is_file() and child.name not in declared_files:
+            raise OperationError("package-asset-undeclared", "package root contains an undeclared file")
+        if child.is_dir() and child.name not in declared_roots:
+            raise OperationError("package-asset-undeclared", "package root contains an undeclared directory")
+
+    policy_manifest_path = _declared_file(root, package.get("policies"))
+    manifest = _load_yaml(policy_manifest_path)
+    if schema_diagnostics(
+        "policy-manifest.schema.json", manifest, "policy-manifest", stage=1,
+        schema_resources=resources,
+    ):
+        raise OperationError("package-policy-invalid", "policy manifest is invalid")
+    policy_config = config or {
+        "policy_set": {
+            "id": "sdd-core", "version": "1.0.0",
+            "corporate_values": {
+                "tech_lead_owner": "sample-tech-leads",
+                "qa_owner": "sample-qa-owners",
+                "escalation_route": "sample-tech-leads",
+                "evidence_retention_days": 30,
+            },
+            "overrides": [],
+        }
+    }
+    policy_result = validate_policy_bundle(root, manifest, policy_config, None)
+    if policy_result.snapshot is None or policy_result.diagnostics:
+        raise OperationError("package-policy-invalid", "declared policies are incomplete or incompatible")
+
+    for relative in package.get("canonical_sources", []):
+        if not _local_reference(relative):
+            raise OperationError("package-reference-invalid", "canonical source reference is unsafe")
+
+    if config is not None:
+        config_schema_errors = schema_diagnostics(
+            "sdd-config.schema.json", config, "central-config", stage=1,
+            schema_resources=resources,
+        )
+        config_compatibility_errors = [
+            item for item in config_compatibility(config)
+            if item.code != "compat.package-version"
+        ]
+        if config_schema_errors or config_compatibility_errors:
+            raise OperationError("config-contract-invalid", "configuration is invalid or incompatible")
+        compatibility = package_compatibility(
+            config, package, workflow, identity["version"], None
+        )
+        trusted_compatibility = [
+            item for item in compatibility if item.code != "compat.package-version"
+        ]
+        if require_config_version and trusted_compatibility:
+            raise OperationError("package-compatibility-invalid", "package and configuration are incompatible")
+        if not require_config_version:
+            non_version = [
+                item for item in compatibility
+                if item.code not in {"compat.package-version", "compat.config-package-version"}
+            ]
+            if non_version:
+                raise OperationError("package-compatibility-invalid", "candidate package is incompatible")
+    return {"package": package, "workflow": workflow, "identity": identity}
+
+
+def _declared_file(root: Path, relative: Any) -> Path:
+    if not isinstance(relative, str) or not _local_reference(relative):
+        raise OperationError("package-reference-invalid", "declared package path is unsafe")
+    path = _absolute(root / Path(*relative.replace("\\", "/").split("/")))
+    try:
+        path.relative_to(root)
+    except ValueError as error:
+        raise OperationError("package-reference-invalid", "declared package path escapes the package") from error
+    if not path.is_file():
+        raise OperationError("package-asset-missing", "a declared package asset is missing")
+    return path
+
+
+def _declared_directory(root: Path, relative: Any) -> Path:
+    if not isinstance(relative, str) or not _local_reference(relative):
+        raise OperationError("package-reference-invalid", "declared package directory is unsafe")
+    path = _absolute(root / Path(*relative.replace("\\", "/").split("/")))
+    try:
+        path.relative_to(root)
+    except ValueError as error:
+        raise OperationError("package-reference-invalid", "declared package directory escapes the package") from error
+    if not path.is_dir():
+        raise OperationError("package-asset-missing", "a declared package directory is missing")
+    return path
+
+
+def _absolute(path: Path) -> Path:
+    return Path(os.path.abspath(os.fspath(path)))
+
+
+def _safe_root(path: Path, label: str) -> Path:
+    root = _absolute(path)
+    if not root.is_dir():
+        raise OperationError("input-invalid", f"{label} is not a directory", exit_code=3)
+    _assert_safe_tree(root)
+    return root
+
+
+def _assert_safe_tree(root: Path) -> None:
+    for current, directories, files in os.walk(root, topdown=True, followlinks=False):
+        for name in [*directories, *files]:
+            path = Path(current) / name
+            info = path.lstat()
+            attributes = getattr(info, "st_file_attributes", 0)
+            if stat.S_ISLNK(info.st_mode) or attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400):
+                raise OperationError("filesystem-link-forbidden", "links and reparse points are forbidden")
+
+
+def _assert_non_overlapping(source: Path, destination: Path) -> None:
+    if _is_relative_to(destination, source):
+        raise OperationError("filesystem-overlap-forbidden", "copy destination overlaps its source")
+    if _is_relative_to(source, destination):
+        raise OperationError("filesystem-overlap-forbidden", "copy source overlaps its destination")
+
+
+def _is_relative_to(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
+
+
+def _semver(value: str) -> tuple[int, int, int]:
+    match = re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", value)
+    if match is None:
+        raise OperationError("package-version-invalid", "package version must be semantic x.y.z")
+    return tuple(int(part) for part in match.groups())
+
+
+def _snapshot_digest(root: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted((item for item in root.rglob("*") if item.is_file()), key=lambda item: item.as_posix()):
+        if "__pycache__" in path.parts or path.suffix == ".pyc":
+            continue
+        digest.update(path.relative_to(root).as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.hexdigest()
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
     try:
         value = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, yaml.YAMLError) as error:
-        raise OperationError("input-invalid", "required YAML is missing or malformed") from error
+        raise OperationError("input-invalid", "required YAML is missing or malformed", exit_code=3) from error
     if not isinstance(value, dict):
-        raise OperationError("input-invalid", "required YAML root must be a mapping")
+        raise OperationError("input-invalid", "required YAML root must be a mapping", exit_code=3)
     return value
 
 

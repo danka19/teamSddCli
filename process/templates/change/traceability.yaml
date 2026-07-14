@@ -7,9 +7,22 @@ links:
     requirement_refs: [REQ-SAMPLE-001]
     scenario_refs: [SCN-SAMPLE-001]
     task_refs: [TASK-SAMPLE-001]
-    classification_refs: [classification/sample.yaml]
-    gate_refs: []
-    control_refs: []
-    release_refs: []
-    waiver_deferral_refs: []
-    hotfix_reconciliation_refs: []
+    evidence_links:
+      - record_id: evidence-classification-001
+        kind: classification
+        status: pending
+        source_ref: decisions/classification.md
+        evidence_refs: [EV-CLASSIFICATION-001]
+        policy_version: 1.0.0
+      - record_id: evidence-dor-001
+        kind: dor
+        status: pending
+        source_ref: evidence/dor.md
+        evidence_refs: [EV-DOR-001]
+        policy_version: 1.0.0
+      - record_id: evidence-dod-001
+        kind: dod
+        status: pending
+        source_ref: evidence/dod.md
+        evidence_refs: [EV-DOD-001]
+        policy_version: 1.0.0

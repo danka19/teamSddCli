@@ -37,6 +37,22 @@ read_packs:
   classification: read-packs/classification.yaml
 role_instructions:
   tech_lead: roles/tech-lead.md
+distribution:
+  files:
+    - VERSION
+    - __init__.py
+    - operation_cli.py
+    - package.yaml
+    - workflow.yaml
+    - workflow_operations.py
+  roots:
+    - examples
+    - policies
+    - read-packs
+    - roles
+    - schemas
+    - templates
+    - validators
 canonical_sources:
   - openspec/specs/repo-topology-config/spec.md
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md

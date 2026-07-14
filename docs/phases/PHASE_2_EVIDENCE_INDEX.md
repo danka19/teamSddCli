@@ -418,6 +418,17 @@ Status: worker implementation complete; independent task review, architecture re
 - `git diff --check` passed with only non-blocking Windows LF-to-CRLF notices. The full suite includes the committed synthetic-asset secret/private-value scan and byte-for-byte accepted-history preservation during update/rollback.
 - These worker checks do not close the work item without independent task review, architecture review, fresh verification, and coordinator reconciliation.
 
+### Review Hardening Checkpoint
+
+- Five confirmed P1 review findings were reproduced before changes: incomplete packages passed identity-only checks; recursive link/reparse and overlapping backup destinations were unsafe; downgrade and unverified rollback were accepted; traceability manual checks diverged from the schema and lacked explicit conditional evidence state; malformed CLI roots and unexpected exceptions could return the wrong exit or traceback; external mapping and fallback lacked thin entry points.
+- The common standalone package validator now applies trusted package/workflow/config/schema/policy contracts and complete declared-asset references before mutation. `process/package.yaml` owns an exact root-level distribution manifest; package copying is bounded to those files/roots rather than an unrestricted tree copy.
+- Bootstrap, create, check, update, and rollback recursively reject symlinks, junctions, reparse points, source/destination overlap, and package-root undeclared assets. Update is forward-semver only, validates staged package and backup snapshots before rename, records a digest-bound rollback proof, and removes partial snapshot/proof/staging state on failure. Rollback requires that verified proof.
+- Traceability now validates against the trusted JSON Schema before relational checks. Each conditional evidence link records canonical ID, kind, `concrete | pending | not-applicable` state, local source, non-empty evidence IDs, and policy version. Duplicate/unknown/empty data fail; archive readiness requires concrete implementation/QA/regression/approval evidence, resolved release plus major automation/architecture evidence where applicable, no pending links, and concrete hotfix reconciliation.
+- Every new file-based CLI returns stable redacted JSON/human operational error exit `3` for missing/malformed roots and unexpected exceptions without traceback. `validate_external_mapping.py` and `manual_fallback.py` are CWD-independent thin entry points with real runbook commands.
+- Focused hardening/package/CLI/legacy suite: 74 passed. Relevant config/policy/classification/gate/owner/Tech Lead/corporate-flow/package regression: 264 passed. An initial regression command named a nonexistent `tests/test_tech_lead_control.py` and collected no tests; the corrected explicit suite passed and is the evidence of record.
+- Fresh full serial suite after all five fixes: 313 passed in 86.20 seconds. Compilation passed; direct legacy compatibility remained `OK`.
+- Roadmap/OpenSpec governance remained 0 errors and 0 warnings with inventories intentionally unchanged at transfer package 3/33 and NIS governance 31/43. Strict OpenSpec validation passed 10/10; `git diff --check` passed with only non-blocking Windows line-ending notices.
+
 ### Scope And Authority Boundary
 
 - Bootstrap/create copy only versioned deterministic assets; existing or unsafe destinations fail before mutation.

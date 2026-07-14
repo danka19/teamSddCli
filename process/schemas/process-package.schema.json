@@ -3,7 +3,7 @@
   "$id": "process-package.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "role_instructions", "canonical_sources"],
+  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "role_instructions", "distribution", "canonical_sources"],
   "properties": {
     "schema_version": {"const": "1.1"},
     "package": {
@@ -81,6 +81,19 @@
       "additionalProperties": false,
       "required": ["tech_lead"],
       "properties": {"tech_lead": {"const": "roles/tech-lead.md"}}
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files", "roots"],
+      "properties": {
+        "files": {
+          "const": ["VERSION", "__init__.py", "operation_cli.py", "package.yaml", "workflow.yaml", "workflow_operations.py"]
+        },
+        "roots": {
+          "const": ["examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
+        }
+      }
     },
     "canonical_sources": {
       "type": "array",

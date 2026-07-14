@@ -13,17 +13,19 @@ def execute(operation: Callable[[], dict[str, Any]], json_output: bool) -> int:
     try:
         payload = operation()
     except OperationError as error:
+        operational = error.exit_code == 3
         payload = {
             "schema_version": "1.0",
-            "status": "error",
+            "status": "operational-error" if operational else "error",
             "diagnostics": [{
                 "code": error.code,
-                "message": "The operation could not be completed safely.",
+                "message": "A required local operation failed." if operational else "The operation could not be completed safely.",
             }],
         }
-        print(json.dumps(payload, sort_keys=True) if json_output else f"ERROR [{error.code}] The operation could not be completed safely.")
-        return 1
-    except (OSError, UnicodeError, ValueError):
+        rendered = "A required local operation failed." if operational else "The operation could not be completed safely."
+        print(json.dumps(payload, sort_keys=True) if json_output else f"ERROR [{error.code}] {rendered}")
+        return error.exit_code
+    except Exception:
         payload = {
             "schema_version": "1.0",
             "status": "operational-error",

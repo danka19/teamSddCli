@@ -3,11 +3,19 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from scripts.bootstrap_team_specs import main as bootstrap_main
 from scripts.create_change import main as create_main
 from scripts.prepare_spec_pr import main as spec_pr_main
+from scripts.prepare_archive import main as archive_main
+from scripts.update_process_package import main as update_main
+from scripts.validate_traceability import main as traceability_main
+from scripts.validate_external_mapping import main as external_mapping_main
+from scripts.manual_fallback import main as fallback_main
+from process.operation_cli import execute
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,3 +73,90 @@ def test_json_entry_points_return_stable_operator_error_without_traceback(
     }]
     assert captured.err == ""
     assert (occupied / "human.txt").read_text(encoding="utf-8") == "keep"
+
+
+def test_malformed_root_and_unexpected_failure_are_redacted_exit3(
+    tmp_path: Path, capsys,
+) -> None:
+    malformed = tmp_path / "malformed.yaml"
+    malformed.write_text("- not\n- a-mapping\n", encoding="utf-8")
+
+    assert traceability_main([str(malformed), "--json"]) == 3
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+    assert payload["status"] == "operational-error"
+    assert payload["diagnostics"] == [{
+        "code": "input-invalid",
+        "message": "A required local operation failed.",
+    }]
+    assert captured.err == ""
+
+    def unexpected() -> dict:
+        raise RuntimeError("C:/private/secret should never render")
+
+    assert execute(unexpected, True) == 3
+    captured = capsys.readouterr()
+    assert "private" not in captured.out
+    assert "secret" not in captured.out
+    assert captured.err == ""
+
+
+def test_external_mapping_and_manual_fallback_thin_clis_are_stable_and_cwd_independent(
+    tmp_path: Path,
+) -> None:
+    mapping = tmp_path / "mapping.yaml"
+    mapping.write_text(
+        "schema_version: '1.0'\npolicy: {id: sdd-core, version: 1.0.0}\nstates:\n"
+        "  openspec_archive: archived\n  release_readiness: release-ready\n"
+        "  deployment: deployed\n  consumer_acceptance: accepted\n  tracker_done: done\n",
+        encoding="utf-8",
+    )
+    mapping_script = ROOT / "scripts" / "validate_external_mapping.py"
+    fallback_script = ROOT / "scripts" / "manual_fallback.py"
+
+    mapped = subprocess.run(
+        [sys.executable, str(mapping_script), str(mapping), "--json"],
+        cwd=tmp_path, capture_output=True, text=True, check=False,
+    )
+    assert mapped.returncode == 0
+    assert json.loads(mapped.stdout)["states"]["tracker_done"] == "done"
+    assert mapped.stderr == ""
+
+    fallback = subprocess.run(
+        [sys.executable, str(fallback_script), "--unavailable", "jira", "--unavailable", "mcp", "--json"],
+        cwd=tmp_path, capture_output=True, text=True, check=False,
+    )
+    assert fallback.returncode == 0
+    assert json.loads(fallback.stdout)["unavailable"] == ["jira", "mcp"]
+    assert fallback.stderr == ""
+
+    unknown = subprocess.run(
+        [sys.executable, str(fallback_script), "--unavailable", "unknown", "--json"],
+        cwd=tmp_path, capture_output=True, text=True, check=False,
+    )
+    assert unknown.returncode == 1
+    assert json.loads(unknown.stdout)["diagnostics"][0]["code"] == "integration-unknown"
+    assert unknown.stderr == ""
+
+
+def test_every_file_based_entry_point_uses_exit3_for_missing_or_malformed_root(
+    tmp_path: Path, capsys,
+) -> None:
+    missing = tmp_path / "missing"
+    malformed = tmp_path / "malformed.yaml"
+    malformed.write_text("[]\n", encoding="utf-8")
+    cases = [
+        (bootstrap_main, [str(tmp_path / "workspace"), "--package-root", str(missing), "--team-template", str(TEAM_TEMPLATE), "--json"]),
+        (create_main, ["sample-change-001", "--title", "Sample", "--classification", "minor", "--type", "behavior_change", "--changes-root", str(tmp_path / "changes"), "--package-root", str(missing), "--json"]),
+        (spec_pr_main, [str(missing), "--package-root", str(PROCESS), "--json"]),
+        (archive_main, [str(missing), "--package-root", str(PROCESS), "--json"]),
+        (update_main, ["check", str(missing), str(missing), str(malformed), "--json"]),
+        (traceability_main, [str(malformed), "--json"]),
+        (external_mapping_main, [str(malformed), "--json"]),
+    ]
+    for main, args in cases:
+        assert main(args) == 3
+        captured = capsys.readouterr()
+        payload = json.loads(captured.out)
+        assert payload["status"] == "operational-error"
+        assert captured.err == ""

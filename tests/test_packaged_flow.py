@@ -186,12 +186,10 @@ def test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids() 
             "requirement_refs": ["REQ-SAMPLE-001"],
             "scenario_refs": ["SCN-SAMPLE-001"],
             "task_refs": ["TASK-SAMPLE-001"],
-            "classification_refs": ["classification/decision-001.yaml"],
-            "gate_refs": ["gates/dor-001.yaml", "gates/dod-001.yaml"],
-            "control_refs": ["controls/stop-001.yaml", "controls/resume-001.yaml"],
-            "release_refs": ["release/package-001.yaml"],
-            "waiver_deferral_refs": ["waivers/waiver-001.yaml"],
-            "hotfix_reconciliation_refs": ["reconciliation/hotfix-001.yaml"],
+            "evidence_links": [
+                {"record_id": f"evidence-{kind}-001", "kind": kind, "status": "concrete", "source_ref": f"evidence/{kind}-001.yaml", "evidence_refs": [f"EV-{kind.upper()}-001"], "policy_version": "1.0.0"}
+                for kind in ("classification", "dor", "dod", "implementation", "qa", "regression", "release", "approval", "hotfix-reconciliation")
+            ],
         }],
     }
     view = validate_traceability(traceability)
@@ -200,8 +198,11 @@ def test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids() 
     assert "rules" not in view
 
     incomplete = json.loads(json.dumps(traceability))
-    incomplete["links"][0]["hotfix_reconciliation_refs"] = []
-    with pytest.raises(OperationError, match="traceability-link-incomplete"):
+    incomplete["links"][0]["evidence_links"] = [
+        row for row in incomplete["links"][0]["evidence_links"]
+        if row["kind"] != "hotfix-reconciliation"
+    ]
+    with pytest.raises(OperationError, match="traceability-archive-incomplete"):
         validate_traceability(incomplete)
 
     mapping = {
@@ -234,12 +235,11 @@ def test_traceability_allows_conditional_links_pending_before_archive() -> None:
             "requirement_refs": ["REQ-MINOR-001"],
             "scenario_refs": ["SCN-MINOR-001"],
             "task_refs": ["TASK-MINOR-001"],
-            "classification_refs": ["classification/decision-001.yaml"],
-            "gate_refs": ["gates/review-ready-001.yaml"],
-            "control_refs": [],
-            "release_refs": [],
-            "waiver_deferral_refs": [],
-            "hotfix_reconciliation_refs": [],
+            "evidence_links": [
+                {"record_id": "evidence-classification-001", "kind": "classification", "status": "concrete", "source_ref": "classification/decision-001.yaml", "evidence_refs": ["EV-CLASS-001"], "policy_version": "1.0.0"},
+                {"record_id": "evidence-dor-001", "kind": "dor", "status": "pending", "source_ref": "gates/dor-001.yaml", "evidence_refs": ["EV-DOR-001"], "policy_version": "1.0.0"},
+                {"record_id": "evidence-dod-001", "kind": "dod", "status": "pending", "source_ref": "gates/dod-001.yaml", "evidence_refs": ["EV-DOD-001"], "policy_version": "1.0.0"},
+            ],
         }],
     }
 
