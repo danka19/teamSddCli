@@ -479,7 +479,7 @@ def _wip_exception_valid(
     owners: Mapping[str, Any],
     as_of: str,
 ) -> bool:
-    if decision is None or decision.get("record_type") not in {"exception", "human-decision"}:
+    if decision is None or decision.get("record_type") != "exception":
         return False
     actor = decision.get("accountable_decision", {})
     decision_owner = str(wip.get("payload", {}).get("decision_owner", ""))
@@ -490,24 +490,18 @@ def _wip_exception_valid(
     ):
         return False
     payload = decision.get("payload", {})
-    if decision.get("record_type") == "exception":
-        try:
-            unexpired = date.fromisoformat(str(payload.get("expires_on"))) >= date.fromisoformat(as_of)
-        except ValueError:
-            return False
-        return (
-            payload.get("kind") in {"deviation", "waiver"}
-            and payload.get("decision") == "approved"
-            and "portfolio-wip" in _strings(payload.get("affected_obligations"))
-            and bool(payload.get("follow_up"))
-            and unexpired
-        )
+    try:
+        unexpired = date.fromisoformat(str(payload.get("expires_on"))) >= date.fromisoformat(as_of)
+    except ValueError:
+        return False
     return (
-        payload.get("decision_type") == "wip-authorized-exception"
+        payload.get("kind") in {"deviation", "waiver"}
         and payload.get("decision") == "approved"
-        and payload.get("subject_record_ref") == wip.get("record_id")
-        and bool(set(_strings(payload.get("source_evidence"))) & set(_strings(wip.get("evidence_refs"))))
+        and "portfolio-wip" in _strings(payload.get("affected_obligations"))
         and bool(payload.get("follow_up"))
+        and _local_ref(decision.get("source_ref"))
+        and bool(set(_strings(decision.get("evidence_refs"))) & set(_strings(wip.get("evidence_refs"))))
+        and unexpired
     )
 
 

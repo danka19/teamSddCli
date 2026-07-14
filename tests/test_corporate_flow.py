@@ -451,6 +451,30 @@ def test_wip_authorized_exception_requires_active_scoped_human_authority() -> No
         row["code"] for row in _evaluate(bundle).as_dict()["findings"]
     }
 
+
+def test_wip_authorized_exception_rejects_human_decision_substitute() -> None:
+    bundle = valid_bundle()
+    wip = next(row for row in bundle["records"] if row["record_type"] == "portfolio-wip")
+    wip["payload"].update({
+        "active_change_ids": ["sample-change", "change-2", "change-3"],
+        "decision": "authorized-exception", "decision_owner": "sample-product",
+        "decision_record_ref": "wip-human-decision-1",
+    })
+    decision = _record("wip-human-decision-1", "human-decision", {
+        "decision_type": "wip-authorized-exception",
+        "source_evidence": ["ev-source"], "decision": "approved",
+        "follow_up": "Return below the approved WIP limit.",
+        "subject_record_ref": "wip-1",
+    }, minute=21)
+    decision["accountable_decision"].update({
+        "actor_id": "sample-product", "role": "product",
+    })
+    bundle["records"].append(decision)
+
+    codes = {row["code"] for row in _evaluate(bundle).as_dict()["findings"]}
+
+    assert "portfolio.wip-authority-invalid" in codes
+
     exception = _record("wip-exception-1", "exception", {
         "kind": "deviation", "affected_obligations": ["portfolio-wip"],
         "reason": "Prioritized bounded overlap.", "substitute_controls": ["daily-review"],
