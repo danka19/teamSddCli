@@ -57,6 +57,22 @@ def _satisfy(report: Any) -> list[dict[str, Any]]:
     return [_evidence(identifier) for identifier in sorted(_required_ids(report))]
 
 
+def _history(*states: str) -> dict[str, Any]:
+    return {
+        "schema_version": "1.0",
+        "reached_states": [
+            {
+                "id": f"reached-{state}-{index}",
+                "state": state,
+                "reached_at": f"2026-07-14T{index:02d}:00:00Z",
+                "source_ref": f"decisions/reached-{state}-{index}.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            }
+            for index, state in enumerate(states, start=1)
+        ],
+    }
+
+
 def _gate(
     gate: str,
     classification: str,
@@ -66,6 +82,7 @@ def _gate(
     status: str = "spec_review",
     evaluation_date: str = "2026-07-14",
     approvals: list[dict[str, Any]] | None = None,
+    lifecycle_history: dict[str, Any] | None = None,
 ) -> Any:
     return evaluate_gate(
         {
@@ -76,6 +93,10 @@ def _gate(
             "major_impact_hotfix": major_impact_hotfix,
             "evidence": evidence or [],
             "approvals": approvals or [],
+            **(
+                {"lifecycle_history": lifecycle_history}
+                if lifecycle_history is not None else {}
+            ),
         },
         _snapshot(),
         gate,
@@ -228,7 +249,13 @@ def test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done() -> None:
     }
     allowed_id = "expanded-design-impact-analysis"
     allowed = [{"id": allowed_id, **deferral} if row["id"] == allowed_id else row for row in evidence]
-    report = _gate("definition-of-ready", "hotfix", allowed, major_impact_hotfix=True)
+    report = _gate(
+        "definition-of-ready",
+        "hotfix",
+        allowed,
+        major_impact_hotfix=True,
+        lifecycle_history=_history("spec_review"),
+    )
     assert not any(gap["id"] == allowed_id for gap in report.as_dict()["blocking_gaps"])
 
     arbitrary = copy.deepcopy(allowed)
@@ -257,6 +284,107 @@ def test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done() -> None:
     assert any(
         row["code"] == "gate.hotfix-reconciliation-required"
         for row in done.as_dict()["blocking_gaps"]
+    )
+
+
+def test_lifecycle_expiry_remains_due_after_canonical_rework() -> None:
+    initial = _gate(
+        "definition-of-ready", "hotfix", major_impact_hotfix=True,
+    )
+    evidence = _satisfy(initial)
+    target_id = "expanded-design-impact-analysis"
+    deferred = _evidence(
+        target_id,
+        state="deferred",
+        content="Immediate substitute review completed.",
+        source_ref="deferrals/D-9.yaml",
+        deferral={
+            "substitute_evidence": "reviews/urgent-design.md",
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
+            "residual_risk": "Detailed design follows implementation.",
+            "follow_up": "Complete when archive readiness is reached.",
+            "expiry": {
+                "type": "lifecycle_state",
+                "lifecycle_state": "ready_to_archive",
+            },
+            "reconciled": False,
+        },
+    )
+    candidate = [
+        deferred if row["id"] == target_id else row for row in evidence
+    ]
+    history = {
+        "schema_version": "1.0",
+        "reached_states": [
+            {
+                "id": "reached-ready-to-archive-1",
+                "state": "ready_to_archive",
+                "reached_at": "2026-07-14T08:00:00Z",
+                "source_ref": "decisions/ready-to-archive-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+            {
+                "id": "rework-in-implementation-1",
+                "state": "in_implementation",
+                "reached_at": "2026-07-14T09:00:00Z",
+                "source_ref": "decisions/rework-in-implementation-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+        ],
+    }
+
+    payload = _gate(
+        "definition-of-ready",
+        "hotfix",
+        candidate,
+        major_impact_hotfix=True,
+        status="in_implementation",
+        lifecycle_history=history,
+    ).as_dict()
+
+    assert any(row["code"] == "gate.deferral-due" for row in payload["blocking_gaps"])
+
+
+def test_lifecycle_expiry_fails_closed_when_prior_reach_cannot_be_determined() -> None:
+    initial = _gate(
+        "definition-of-ready", "hotfix", major_impact_hotfix=True,
+    )
+    evidence = _satisfy(initial)
+    target_id = "expanded-design-impact-analysis"
+    deferred = _evidence(
+        target_id,
+        state="deferred",
+        content="Immediate substitute review completed.",
+        source_ref="deferrals/D-10.yaml",
+        deferral={
+            "substitute_evidence": "reviews/urgent-design.md",
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
+            "residual_risk": "Detailed design follows implementation.",
+            "follow_up": "Complete when archive readiness is reached.",
+            "expiry": {
+                "type": "lifecycle_state",
+                "lifecycle_state": "ready_to_archive",
+            },
+            "reconciled": False,
+        },
+    )
+    candidate = [
+        deferred if row["id"] == target_id else row for row in evidence
+    ]
+
+    payload = _gate(
+        "definition-of-ready",
+        "hotfix",
+        candidate,
+        major_impact_hotfix=True,
+        status="in_implementation",
+    ).as_dict()
+
+    assert any(
+        row["id"] == target_id and row["code"] == "gate.deferral-invalid"
+        for row in payload["blocking_gaps"]
     )
 
 

@@ -29,6 +29,38 @@ recorded date, and a lifecycle expiry is due when that state is reached. An unre
 due deferral and an expired waiver block the gate. `valid_through` is inclusive:
 evidence remains current on that date and is stale on the following date.
 
+When a lifecycle expiry may have become due before a canonical rework loop, add the
+optional `lifecycle_history` contract:
+
+```yaml
+lifecycle_history:
+  schema_version: "1.0"
+  reached_states:
+    - id: reached-ready-to-archive-1
+      state: ready_to_archive
+      reached_at: 2026-07-14T08:00:00Z
+      source_ref: decisions/ready-to-archive-1.yaml
+      recorded_by:
+        type: human
+        id: sample-tech-leads
+    - id: rework-in-implementation-1
+      state: in_implementation
+      reached_at: 2026-07-14T09:00:00Z
+      source_ref: decisions/rework-in-implementation-1.yaml
+      recorded_by:
+        type: human
+        id: sample-tech-leads
+```
+
+Records are immutable evidence assertions: IDs are unique, timestamps are strictly
+increasing and not later than `evaluation_date`, states follow only canonical
+transitions, and the last state equals the current `status`. State and timestamp
+formats are schema-checked, every record is source-linked, and AI cannot be the
+recording authority. If the current state has reached the expiry target, the exception
+is due directly. If the current state is lower, valid history preserves a previously
+reached target; absent or inconsistent history fails closed rather than resetting the
+expiry. This bounded contract does not replace the later end-to-end traceability work.
+
 ## Evaluate Reports
 
 Evaluate all six reports:

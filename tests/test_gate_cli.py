@@ -203,3 +203,161 @@ def test_exception_expiry_schema_rejects_free_text_and_accepts_typed_conditions(
 
     document["evidence"][0]["deferral"]["expiry"] = "ready_to_archive"
     assert validate_gate_input(document, PROCESS)[0]["code"] == "gate.input-schema-invalid"
+
+
+def test_lifecycle_history_contract_is_versioned_source_linked_and_human_recorded() -> None:
+    document = _input()
+    document["status"] = "in_implementation"
+    document["lifecycle_history"] = {
+        "schema_version": "1.0",
+        "reached_states": [
+            {
+                "id": "reached-ready-to-archive-1",
+                "state": "ready_to_archive",
+                "reached_at": "2026-07-14T08:00:00Z",
+                "source_ref": "decisions/ready-to-archive-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+            {
+                "id": "rework-in-implementation-1",
+                "state": "in_implementation",
+                "reached_at": "2026-07-14T09:00:00Z",
+                "source_ref": "decisions/rework-in-implementation-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+        ],
+    }
+
+    assert validate_gate_input(document, PROCESS) == []
+
+    ai_recorded = copy.deepcopy(document)
+    ai_recorded["lifecycle_history"]["reached_states"][0]["recorded_by"] = {
+        "type": "ai", "id": "assistant"
+    }
+    assert any(
+        item["code"] == "gate.input-schema-invalid"
+        for item in validate_gate_input(ai_recorded, PROCESS)
+    )
+
+    for field, value, expected_code in (
+        ("state", "done", "gate.input-schema-invalid"),
+        ("reached_at", "2026-07-14", "gate.lifecycle-history-inconsistent"),
+    ):
+        malformed = copy.deepcopy(document)
+        malformed["lifecycle_history"]["reached_states"][0][field] = value
+        assert any(
+            item["code"] == expected_code
+            for item in validate_gate_input(malformed, PROCESS)
+        )
+
+
+def test_lifecycle_history_rejects_duplicate_or_inconsistent_records() -> None:
+    document = _input()
+    document["status"] = "in_implementation"
+    document["lifecycle_history"] = {
+        "schema_version": "1.0",
+        "reached_states": [
+            {
+                "id": "reached-ready-to-archive-1",
+                "state": "ready_to_archive",
+                "reached_at": "2026-07-14T08:00:00Z",
+                "source_ref": "decisions/ready-to-archive-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+            {
+                "id": "rework-in-implementation-1",
+                "state": "in_implementation",
+                "reached_at": "2026-07-14T09:00:00Z",
+                "source_ref": "decisions/rework-in-implementation-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+        ],
+    }
+
+    duplicate = copy.deepcopy(document)
+    duplicate["lifecycle_history"]["reached_states"][1]["id"] = (
+        "reached-ready-to-archive-1"
+    )
+    assert any(
+        item["code"] == "gate.lifecycle-history-id-duplicate"
+        for item in validate_gate_input(duplicate, PROCESS)
+    )
+
+    out_of_order = copy.deepcopy(document)
+    out_of_order["lifecycle_history"]["reached_states"][1]["reached_at"] = (
+        "2026-07-14T07:00:00Z"
+    )
+    assert any(
+        item["code"] == "gate.lifecycle-history-inconsistent"
+        for item in validate_gate_input(out_of_order, PROCESS)
+    )
+
+    wrong_current = copy.deepcopy(document)
+    wrong_current["status"] = "approved"
+    assert any(
+        item["code"] == "gate.lifecycle-history-inconsistent"
+        for item in validate_gate_input(wrong_current, PROCESS)
+    )
+
+
+def test_cli_keeps_lifecycle_deferral_due_after_rework(
+    tmp_path: Path, capsys: Any,
+) -> None:
+    change = tmp_path / "reworked.yaml"
+    document = _input()
+    document["classification"] = "hotfix"
+    document["major_impact_hotfix"] = True
+    document["status"] = "in_implementation"
+    document["lifecycle_history"] = {
+        "schema_version": "1.0",
+        "reached_states": [
+            {
+                "id": "reached-ready-to-archive-1",
+                "state": "ready_to_archive",
+                "reached_at": "2026-07-14T08:00:00Z",
+                "source_ref": "decisions/ready-to-archive-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+            {
+                "id": "rework-in-implementation-1",
+                "state": "in_implementation",
+                "reached_at": "2026-07-14T09:00:00Z",
+                "source_ref": "decisions/rework-in-implementation-1.yaml",
+                "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+            },
+        ],
+    }
+    document["evidence"].append({
+        "id": "expanded-design-impact-analysis",
+        "state": "deferred",
+        "content": "Immediate substitute review completed.",
+        "source_ref": "deferrals/D-9.yaml",
+        "fresh": True,
+        "deferral": {
+            "substitute_evidence": "reviews/urgent-design.md",
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
+            "residual_risk": "Detailed design follows implementation.",
+            "follow_up": "Complete when archive readiness is reached.",
+            "expiry": {
+                "type": "lifecycle_state",
+                "lifecycle_state": "ready_to_archive",
+            },
+            "reconciled": False,
+        },
+    })
+    _write(change, document)
+
+    assert gate_main([
+        str(change),
+        "--gate", "definition-of-ready",
+        "--config", str(CONFIG),
+        "--json",
+    ]) == 1
+    payload = json.loads(capsys.readouterr().out)
+
+    assert any(
+        item["code"] == "gate.deferral-due"
+        for item in payload["reports"][0]["blocking_gaps"]
+    )
+    assert _yaml(change) == document

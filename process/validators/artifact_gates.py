@@ -8,6 +8,7 @@ from datetime import date
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from .gate_input import lifecycle_state_was_reached
 from .policy_validation import EffectiveRule, PolicySnapshot
 
 
@@ -148,6 +149,7 @@ def evaluate_gate(
             gate=gate,
             evaluation_date=document.get("evaluation_date"),
             lifecycle_state=document.get("status"),
+            lifecycle_history=document.get("lifecycle_history"),
         )
         obligations.append(result)
         if gap is not None:
@@ -245,6 +247,7 @@ def _evaluate_obligation(
     gate: str,
     evaluation_date: Any,
     lifecycle_state: Any,
+    lifecycle_history: Any,
 ) -> tuple[dict[str, Any], dict[str, str] | None]:
     if not isinstance(row, dict):
         return (
@@ -298,7 +301,7 @@ def _evaluate_obligation(
             )
         expiry_due = _expiry_due(
             waiver.get("expiry"), evaluation_date, lifecycle_state,
-            policy.lifecycle_states,
+            policy.lifecycle_states, lifecycle_history,
         )
         if expiry_due is None:
             return base, _gap(
@@ -326,7 +329,7 @@ def _evaluate_obligation(
             )
         expiry_due = _expiry_due(
             deferral.get("expiry"), evaluation_date, lifecycle_state,
-            policy.lifecycle_states,
+            policy.lifecycle_states, lifecycle_history,
         )
         if expiry_due is None:
             return base, _gap(
@@ -443,6 +446,7 @@ def _expiry_due(
     evaluation_date: Any,
     lifecycle_state: Any,
     lifecycle_states: tuple[str, ...],
+    lifecycle_history: Any,
 ) -> bool | None:
     if not isinstance(value, dict) or value.get("type") not in {
         "date", "lifecycle_state"
@@ -460,9 +464,13 @@ def _expiry_due(
     if set(value) != {"type", "lifecycle_state"}:
         return None
     due_state = value.get("lifecycle_state")
-    if lifecycle_state not in lifecycle_states or due_state not in lifecycle_states:
-        return None
-    return lifecycle_states.index(lifecycle_state) >= lifecycle_states.index(due_state)
+    return lifecycle_state_was_reached(
+        lifecycle_state,
+        lifecycle_history,
+        evaluation_date,
+        due_state,
+        lifecycle_states,
+    )
 
 
 def _normalized_marker(value: str) -> str:

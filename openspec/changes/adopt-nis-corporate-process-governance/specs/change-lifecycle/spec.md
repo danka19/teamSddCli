@@ -75,6 +75,10 @@ The SDD process SHALL define deterministic checks for lifecycle transitions and 
 - **WHEN** any change attempts to move to `archived`
 - **THEN** deterministic validation or review rejects the transition unless the current state is `ready_to_archive`, final archive checks pass, and explicit human archive approval is recorded
 
+#### Scenario: Lifecycle expiry remains due after rework
+- **WHEN** a waiver or deferral became due at a reached lifecycle state and the change later follows an allowed rework transition to a lower state
+- **THEN** versioned source-linked human-recorded reached-state evidence keeps the expiry due, while missing or inconsistent history fails closed when the current state alone cannot determine prior reach
+
 ### Requirement: MVP boundary for lifecycle automation
 The next lifecycle implementation SHALL support the deterministic minor, major, and hotfix foundation before deferred corporate integrations become mandatory.
 
