@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.8 are closed after all required gates; work item 2.9 is ready.
+Work items 2.1-2.8 are closed after all required gates; work item 2.9 is active.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.8 are closed; work item 2.9 is ready after its sequential dependency reconciliation.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.8 are closed; work item 2.9 is active after its sequential dependency reconciliation.
 
 ## Planning Acceptance Gate
 
@@ -391,7 +391,7 @@ Exit criteria: the complete core flow is usable from the versioned package and r
 
 ### 2.9 Weak-Model Role Kit And Safe Parallel Execution
 
-Status: ready.
+Status: active.
 
 Dependency status: sequential after 2.8.
 
@@ -578,7 +578,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-No current design or planning decision blocks ready work item 2.9.
+No current design or planning decision blocks active work item 2.9.
 
 Mandatory later evidence, not design decisions:
 
