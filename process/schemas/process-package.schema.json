@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -46,6 +46,7 @@
         "traceability_v2": {"const": "schemas/traceability-v2.schema.json"},
         "external_mapping": {"const": "schemas/external-mapping.schema.json"},
         "operation_evidence": {"const": "schemas/operation-evidence.schema.json"},
+        "read_pack_request": {"const": "schemas/read-pack-request.schema.json"},
         "task_launch": {"const": "schemas/task-launch.schema.json"},
         "read_pack": {"const": "schemas/read-pack.schema.json"},
         "weak_model_operation_evidence": {"const": "schemas/weak-model-operation-evidence.schema.json"},

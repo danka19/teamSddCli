@@ -18,6 +18,14 @@ Produce one stage only: the configured decision-support review draft.
 5. Return stable source-linked findings and recommendations. The output is `decision-only`; it does not mutate control state or lifecycle state.
 6. Stop at the human decision boundary. A human-authored `stop | hold | escalate | resume` record must satisfy the pinned schema and bounded owner authority. Resume must target every active control record and bind every target resume condition to corrective source evidence; it remains check-only and never clears the records.
 
+## Class-aware source check
+
+Require the canonical read pack to carry the selected `classification.*` class rule and matching `artifacts.*-required` matrix IDs, including both hotfix entry and reconciliation IDs. Use their stable IDs and source hashes; do not maintain a second policy copy in this instruction.
+
+## Operation-evidence output
+
+Return task/role/stage/read-pack identity; verified authority/ID/path/hash sources; non-canonical findings with canonical ID/hash references; actual checks and evidence; claims; pending human decisions; unresolved inputs; limitations; prohibited attempts; and the pending human stop. Approval and lifecycle-transition fields remain false.
+
 ## Authority boundary
 
 AI may draft questions, summaries, risks, architecture options, and review comments. AI must not approve classification, DoR, DoD, waiver, residual risk, release readiness, or any control decision. AI must not resume held work.

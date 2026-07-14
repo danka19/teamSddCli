@@ -6,6 +6,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator
 
 
 AUTHORITIES = {"canonical", "supporting", "generated-advisory", "evidence"}
@@ -18,6 +19,9 @@ ROLE_FILES = {
     "tech_lead": "roles/tech-lead.md",
 }
 REQUIRED_COMBINED_CHECKS = {"integration", "traceability", "review", "conflict"}
+MAX_SOURCES = 16
+MAX_SOURCE_BYTES = 65_536
+MAX_PACK_BYTES = 262_144
 
 
 class ContractError(ValueError):
@@ -27,6 +31,48 @@ class ContractError(ValueError):
 def _digest(value: Any) -> str:
     encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
+def _schema_errors(process_root: Path, name: str, document: Any) -> list[str]:
+    try:
+        schema = json.loads((process_root / "schemas" / name).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return ["schema-unavailable"]
+    return sorted(error.json_path for error in Draft202012Validator(schema).iter_errors(document))
+
+
+def _without_identity(document: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in document.items() if key != "identity"}
+
+
+def _extract_sections(text: str, requested: list[str]) -> str | None:
+    if not requested:
+        return text
+    lines = text.splitlines()
+    chunks: list[str] = []
+    for wanted in requested:
+        start = None
+        level = None
+        for index, line in enumerate(lines):
+            stripped = line.lstrip()
+            if stripped.startswith("#"):
+                hashes = len(stripped) - len(stripped.lstrip("#"))
+                title = stripped[hashes:].strip()
+                if title.casefold() == wanted.casefold():
+                    start, level = index, hashes
+                    break
+        if start is None or level is None:
+            return None
+        end = len(lines)
+        for index in range(start + 1, len(lines)):
+            stripped = lines[index].lstrip()
+            if stripped.startswith("#"):
+                hashes = len(stripped) - len(stripped.lstrip("#"))
+                if hashes <= level:
+                    end = index
+                    break
+        chunks.append("\n".join(lines[start:end]).strip())
+    return "\n\n".join(chunks) + "\n"
 
 
 def _safe_file(root: Path, relative: str) -> Path | None:
@@ -43,6 +89,26 @@ def _safe_file(root: Path, relative: str) -> Path | None:
 
 def build_read_pack(repository_root: Path, process_root: Path, request: dict[str, Any]) -> dict[str, Any]:
     problems: list[dict[str, str]] = []
+    request_errors = _schema_errors(process_root, "read-pack-request.schema.json", request)
+    for location in request_errors:
+        problems.append({"code": "read-pack.request-schema", "detail": location})
+    if request_errors:
+        blocked = {
+            "schema_version": "1.0",
+            "task_id": request.get("task_id"),
+            "role": request.get("role"),
+            "change_class": request.get("change_class"),
+            "stage": request.get("stage"),
+            "status": "blocked",
+            "sources": [],
+            "known_traps": [],
+            "unresolved_inputs": [],
+            "missing_or_invalid_context": problems,
+            "authority_order": ["canonical", "supporting", "evidence", "generated-advisory"],
+            "resolver": "repository-relative-verified-content",
+        }
+        blocked["identity"] = _digest(blocked)
+        return blocked
     role = request.get("role")
     change_class = request.get("change_class")
     if role not in ROLES:
@@ -52,10 +118,17 @@ def build_read_pack(repository_root: Path, process_root: Path, request: dict[str
 
     package = yaml.safe_load((process_root / "package.yaml").read_text(encoding="utf-8"))
     canonical_allowlist = set(package.get("canonical_sources", []))
+    if not request.get("sources"):
+        problems.append({"code": "read-pack.empty-context", "detail": "at least one source is required"})
+    if not any(source.get("authority") == "canonical" for source in request.get("sources", []) if isinstance(source, dict)):
+        problems.append({"code": "read-pack.missing-canonical-context", "detail": "at least one canonical source is required"})
+    if len(request.get("sources", [])) > MAX_SOURCES:
+        problems.append({"code": "read-pack.source-limit", "detail": str(MAX_SOURCES)})
     seen_ids: set[str] = set()
     seen_paths: set[str] = set()
     sources: list[dict[str, Any]] = []
-    for source in request.get("sources", []):
+    total_bytes = 0
+    for source in request.get("sources", [])[:MAX_SOURCES]:
         authority = source.get("authority")
         stable_id = source.get("stable_id")
         relative = source.get("path")
@@ -82,13 +155,31 @@ def build_read_pack(repository_root: Path, process_root: Path, request: dict[str
                 problems.append({"code": "read-pack.missing-required-source", "detail": relative})
             continue
         raw = path.read_bytes()
+        if len(raw) > MAX_SOURCE_BYTES:
+            problems.append({"code": "read-pack.source-too-large", "detail": relative})
+            continue
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            problems.append({"code": "read-pack.source-not-utf8", "detail": relative})
+            continue
+        content = _extract_sections(text, list(source.get("sections", [])))
+        if content is None or not content.strip():
+            problems.append({"code": "read-pack.missing-section", "detail": relative})
+            continue
+        content_bytes = content.encode("utf-8")
+        total_bytes += len(content_bytes)
+        if total_bytes > MAX_PACK_BYTES:
+            problems.append({"code": "read-pack.pack-too-large", "detail": str(MAX_PACK_BYTES)})
+            continue
         sources.append(
             {
                 "authority": authority,
                 "stable_id": stable_id,
                 "path": relative,
-                "sha256": hashlib.sha256(raw).hexdigest(),
+                "sha256": hashlib.sha256(content_bytes).hexdigest(),
                 "sections": list(source.get("sections", [])),
+                "content": content,
             }
         )
 
@@ -107,21 +198,52 @@ def build_read_pack(repository_root: Path, process_root: Path, request: dict[str
         "unresolved_inputs": unresolved,
         "missing_or_invalid_context": problems,
         "authority_order": ["canonical", "supporting", "evidence", "generated-advisory"],
+        "resolver": "repository-relative-verified-content",
     }
     body["identity"] = _digest(body)
     return body
 
 
-def build_role_launch(process_root: Path, read_pack: dict[str, Any], evidence_path: str) -> dict[str, Any]:
+def build_role_launch(
+    repository_root: Path,
+    process_root: Path,
+    read_pack: dict[str, Any],
+    read_pack_path: str,
+    evidence_path: str,
+) -> dict[str, Any]:
+    if _schema_errors(process_root, "read-pack.schema.json", read_pack):
+        raise ContractError("read pack schema is invalid")
+    if read_pack.get("identity") != _digest(_without_identity(read_pack)):
+        raise ContractError("read pack identity does not match its content")
     if read_pack.get("status") != "ready":
         raise ContractError("read pack is blocked; resolve every missing or invalid context item")
     role = read_pack.get("role")
     instruction = ROLE_FILES.get(role)
     if instruction is None or not (process_root / instruction).is_file():
         raise ContractError(f"unsupported or missing role instruction: {role}")
-    evidence = _safe_file(Path("."), evidence_path)
-    if evidence is None:
-        raise ContractError("evidence path must be repository-relative and bounded")
+    for label, relative in (("read pack", read_pack_path), ("evidence", evidence_path)):
+        if _safe_file(repository_root, relative) is None:
+            raise ContractError(f"{label} path must be repository-relative and bounded")
+    package = yaml.safe_load((process_root / "package.yaml").read_text(encoding="utf-8"))
+    canonical_allowlist = set(package.get("canonical_sources", []))
+    manifest: list[dict[str, str]] = []
+    for source in read_pack.get("sources", []):
+        path = _safe_file(repository_root, source["path"])
+        if path is None or not path.is_file():
+            raise ContractError("read pack source path is missing or unsafe")
+        if source["authority"] == "canonical" and source["path"] not in canonical_allowlist:
+            raise ContractError("read pack canonical source is not allowlisted")
+        content_hash = hashlib.sha256(source["content"].encode("utf-8")).hexdigest()
+        if content_hash != source["sha256"]:
+            raise ContractError("read pack source content hash does not match")
+        try:
+            actual_text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as error:
+            raise ContractError("read pack canonical source bytes are unavailable") from error
+        actual_content = _extract_sections(actual_text, list(source.get("sections", [])))
+        if actual_content != source["content"]:
+            raise ContractError("read pack canonical source bytes do not match embedded content")
+        manifest.append({key: source[key] for key in ("authority", "stable_id", "path", "sha256")})
     launch = {
         "schema_version": "1.0",
         "task_id": read_pack.get("task_id"),
@@ -129,7 +251,9 @@ def build_role_launch(process_root: Path, read_pack: dict[str, Any], evidence_pa
         "change_class": read_pack.get("change_class"),
         "stage_boundary": read_pack.get("stage"),
         "instruction_path": instruction,
+        "read_pack_path": read_pack_path,
         "read_pack_identity": read_pack.get("identity"),
+        "verified_source_manifest": manifest,
         "output_contract": "schemas/weak-model-operation-evidence.schema.json",
         "evidence_path": evidence_path,
         "model_authority": "advisory-only",
@@ -138,17 +262,47 @@ def build_role_launch(process_root: Path, read_pack: dict[str, Any], evidence_pa
         "next_action": "run deterministic checks and obtain the named human review",
     }
     launch["identity"] = _digest(launch)
+    if _schema_errors(process_root, "task-launch.schema.json", launch):
+        raise ContractError("generated task launch is invalid")
     return launch
 
 
-def validate_operation_evidence(evidence: dict[str, Any]) -> list[dict[str, str]]:
+def validate_operation_evidence(
+    evidence: dict[str, Any], launch: dict[str, Any], read_pack: dict[str, Any], process_root: Path | None = None
+) -> list[dict[str, str]]:
     diagnostics: list[dict[str, str]] = []
+    process_root = process_root or Path(__file__).resolve().parent
+    for location in _schema_errors(process_root, "weak-model-operation-evidence.schema.json", evidence):
+        diagnostics.append({"code": "evidence.schema", "detail": location})
+    if _schema_errors(process_root, "task-launch.schema.json", launch) or launch.get("identity") != _digest(_without_identity(launch)):
+        diagnostics.append({"code": "evidence.invalid-launch", "detail": "launch contract or identity is invalid"})
+    if _schema_errors(process_root, "read-pack.schema.json", read_pack) or read_pack.get("identity") != _digest(_without_identity(read_pack)):
+        diagnostics.append({"code": "evidence.invalid-read-pack", "detail": "read-pack contract or identity is invalid"})
+    for field, launch_field in (("task_id", "task_id"), ("role", "role"), ("stage", "stage_boundary"), ("read_pack_identity", "read_pack_identity")):
+        if evidence.get(field) != launch.get(launch_field):
+            diagnostics.append({"code": "evidence.launch-mismatch", "detail": field})
     if evidence.get("approval_claimed") is not False:
         diagnostics.append({"code": "evidence.forbidden-authority", "detail": "AI approval claims are not evidence"})
     if evidence.get("lifecycle_transition_requested") is not False:
         diagnostics.append({"code": "evidence.forbidden-transition", "detail": "AI cannot request or perform lifecycle transitions"})
     if evidence.get("status") not in {"draft-complete", "blocked", "failed"}:
         diagnostics.append({"code": "evidence.unsupported-completion", "detail": str(evidence.get("status"))})
+    if evidence.get("prohibited_actions_attempted"):
+        diagnostics.append({"code": "evidence.prohibited-action", "detail": "a prohibited action was attempted"})
+    if evidence.get("human_stop_reached") is not True or evidence.get("human_review_status") != "pending":
+        diagnostics.append({"code": "evidence.human-stop-missing", "detail": "human stop must remain pending"})
+    forbidden_claims = {"approval", "waiver", "transition", "merge", "release", "archive", "resume", "gate-green"}
+    if any(claim.get("kind") in forbidden_claims for claim in evidence.get("claims", []) if isinstance(claim, dict)):
+        diagnostics.append({"code": "evidence.forbidden-authority", "detail": "claim kind is human-authority only"})
+
+    verified_sources = {
+        (source["stable_id"], source["path"], source["sha256"], source["authority"])
+        for source in read_pack.get("sources", [])
+    }
+    for source in evidence.get("sources_read", []):
+        key = tuple(source.get(name) for name in ("stable_id", "path", "sha256", "authority"))
+        if key not in verified_sources:
+            diagnostics.append({"code": "evidence.unverified-source", "detail": str(source.get("stable_id"))})
 
     check_evidence = {
         check.get("evidence")
@@ -159,12 +313,13 @@ def validate_operation_evidence(evidence: dict[str, Any]) -> list[dict[str, str]
         if claim.get("kind") in {"validation", "test", "integration", "file-state"} and claim.get("evidence") not in check_evidence:
             diagnostics.append({"code": "evidence.unsupported-claim", "detail": str(claim.get("value"))})
 
-    source_ids = {source.get("stable_id") for source in evidence.get("sources_read", [])}
+    source_refs = {(source.get("stable_id"), source.get("sha256")) for source in evidence.get("sources_read", [])}
     for artifact in evidence.get("artifacts_drafted", []):
         references = artifact.get("canonical_references", [])
         if artifact.get("canonical") is True:
             diagnostics.append({"code": "evidence.canonical-draft-forbidden", "detail": str(artifact.get("path"))})
-        if not references or not set(references) <= source_ids:
+        reference_keys = {(item.get("stable_id"), item.get("sha256")) for item in references if isinstance(item, dict)}
+        if not reference_keys or not reference_keys <= source_refs:
             diagnostics.append({"code": "evidence.missing-canonical-reference", "detail": str(artifact.get("path"))})
     return diagnostics
 
@@ -182,9 +337,15 @@ def _overlap(left: tuple[str, ...], right: tuple[str, ...]) -> bool:
 
 def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
     diagnostics: list[dict[str, str]] = []
+    process_root = Path(__file__).resolve().parent
+    for location in _schema_errors(process_root, "parallel-plan.schema.json", plan):
+        diagnostics.append({"code": "parallel.schema", "detail": location})
     tasks = plan.get("tasks", [])
-    task_ids = {task.get("task_id") for task in tasks}
-    evidence_paths: set[str] = set()
+    raw_task_ids = [task.get("task_id") for task in tasks if isinstance(task, dict)]
+    task_ids = set(raw_task_ids)
+    if len(raw_task_ids) != len(task_ids):
+        diagnostics.append({"code": "parallel.duplicate-task-id", "detail": "task IDs must be unique"})
+    evidence_paths: set[tuple[str, ...]] = set()
     scopes: list[tuple[str, tuple[str, ...]]] = []
     for task in tasks:
         task_id = str(task.get("task_id"))
@@ -195,9 +356,11 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
             diagnostics.append({"code": "parallel.unknown-dependency", "detail": task_id})
         if task.get("policy_or_lifecycle_decision") is not False:
             diagnostics.append({"code": "parallel.authority-decision", "detail": task_id})
-        evidence_path = task.get("evidence_path")
-        if not evidence_path or evidence_path in evidence_paths:
-            diagnostics.append({"code": "parallel.shared-evidence", "detail": str(evidence_path)})
+        evidence_path = _normalized_scope(str(task.get("evidence_path", "")))
+        if not evidence_path:
+            diagnostics.append({"code": "parallel.unsafe-evidence-path", "detail": task_id})
+        elif evidence_path in evidence_paths:
+            diagnostics.append({"code": "parallel.shared-evidence", "detail": task_id})
         evidence_paths.add(evidence_path)
         if not task.get("owner") or not task.get("stop_condition") or not task.get("focused_checks"):
             diagnostics.append({"code": "parallel.incomplete-task-boundary", "detail": task_id})
@@ -210,7 +373,8 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
                 if _overlap(scope, other_scope):
                     diagnostics.append({"code": "parallel.overlapping-scope", "detail": f"{other_id} <-> {task_id}"})
             scopes.append((task_id, scope))
-    missing_checks = REQUIRED_COMBINED_CHECKS - set(plan.get("combined_checks", []))
+    combined = [row for row in plan.get("combined_checks", []) if isinstance(row, dict)]
+    missing_checks = REQUIRED_COMBINED_CHECKS - {row.get("kind") for row in combined}
     if missing_checks:
         diagnostics.append({"code": "parallel.missing-combined-gate", "detail": ",".join(sorted(missing_checks))})
     if not plan.get("integration_owner"):
@@ -219,4 +383,36 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
     status = "parallel-safe"
     if diagnostics:
         status = "serialize" if any(item["code"] in serialize_codes for item in diagnostics) else "blocked"
-    return {"schema_version": "1.0", "plan_id": plan.get("plan_id"), "status": status, "diagnostics": diagnostics}
+    promotion_allowed = False
+    if plan.get("promotion_requested") is True:
+        evidence = plan.get("promotion_evidence")
+        if not isinstance(evidence, dict):
+            diagnostics.append({"code": "parallel.missing-promotion-evidence", "detail": "structured results required"})
+        else:
+            task_results = {row.get("task_id"): row for row in evidence.get("task_results", []) if isinstance(row, dict)}
+            for task in tasks:
+                expected = {row.get("check_id") for row in task.get("focused_checks", []) if isinstance(row, dict)}
+                actual_rows = task_results.get(task.get("task_id"), {}).get("checks", [])
+                passed = {
+                    row.get("check_id") for row in actual_rows
+                    if isinstance(row, dict) and row.get("result") == "passed" and row.get("evidence")
+                }
+                if not expected or not expected <= passed:
+                    diagnostics.append({"code": "parallel.focused-evidence-incomplete", "detail": str(task.get("task_id"))})
+            combined_results = {
+                row.get("check_id"): row for row in evidence.get("combined_results", []) if isinstance(row, dict)
+            }
+            for check in combined:
+                result = combined_results.get(check.get("check_id"), {})
+                if result.get("result") != "passed" or not result.get("evidence"):
+                    diagnostics.append({"code": "parallel.combined-evidence-incomplete", "detail": str(check.get("check_id"))})
+        promotion_allowed = not diagnostics
+    if diagnostics and status == "parallel-safe":
+        status = "blocked"
+    return {
+        "schema_version": "1.0",
+        "plan_id": plan.get("plan_id"),
+        "status": status,
+        "promotion_allowed": promotion_allowed,
+        "diagnostics": diagnostics,
+    }

@@ -15,16 +15,25 @@ if __package__ in {None, ""}:
 from process.weak_model_kit import validate_parallel_plan
 
 
+class UsageError(ValueError):
+    pass
+
+
+class ContractParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise UsageError(message)
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser()
+    parser = ContractParser(add_help=False)
     parser.add_argument("plan")
-    args = parser.parse_args(argv)
     try:
+        args = parser.parse_args(argv)
         plan = yaml.safe_load(Path(args.plan).read_text(encoding="utf-8"))
         if not isinstance(plan, dict):
             raise ValueError("plan must be a mapping")
-    except (OSError, UnicodeError, yaml.YAMLError, ValueError) as error:
-        print(json.dumps({"status": "usage", "diagnostics": [{"code": "parallel.usage", "detail": str(error)}]}, sort_keys=True))
+    except (OSError, UnicodeError, yaml.YAMLError, ValueError, TypeError, KeyError, UsageError):
+        print(json.dumps({"status": "usage", "diagnostics": [{"code": "parallel.usage"}]}, sort_keys=True))
         return 2
     report = validate_parallel_plan(plan)
     print(json.dumps(report, sort_keys=True))

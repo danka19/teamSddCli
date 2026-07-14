@@ -3,7 +3,7 @@
   "$id": "read-pack.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "task_id", "role", "change_class", "stage", "status", "sources", "known_traps", "unresolved_inputs", "missing_or_invalid_context", "authority_order", "identity"],
+  "required": ["schema_version", "task_id", "role", "change_class", "stage", "status", "sources", "known_traps", "unresolved_inputs", "missing_or_invalid_context", "authority_order", "resolver", "identity"],
   "properties": {
     "schema_version": {"const": "1.0"},
     "task_id": {"type": "string", "minLength": 1},
@@ -11,11 +11,13 @@
     "change_class": {"enum": ["minor", "major", "hotfix"]},
     "stage": {"type": "string", "minLength": 1},
     "status": {"enum": ["ready", "blocked"]},
-    "sources": {"type": "array", "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["authority", "stable_id", "path", "sha256", "sections"], "properties": {"authority": {"enum": ["canonical", "supporting", "generated-advisory", "evidence"]}, "stable_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "sections": {"type": "array", "items": {"type": "string"}}}}},
+    "sources": {"type": "array", "maxItems": 16, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["authority", "stable_id", "path", "sha256", "sections", "content"], "properties": {"authority": {"enum": ["canonical", "supporting", "generated-advisory", "evidence"]}, "stable_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "sections": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "content": {"type": "string", "minLength": 1, "maxLength": 65536}}}},
     "known_traps": {"type": "array", "items": {"type": "string"}},
     "unresolved_inputs": {"type": "array", "items": {"type": "string"}},
-    "missing_or_invalid_context": {"type": "array", "items": {"type": "object", "required": ["code", "detail"]}},
+    "missing_or_invalid_context": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["code", "detail"], "properties": {"code": {"type": "string", "minLength": 1}, "detail": {"type": "string"}}}},
     "authority_order": {"const": ["canonical", "supporting", "evidence", "generated-advisory"]},
+    "resolver": {"const": "repository-relative-verified-content"},
     "identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
-  }
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "ready"}}}, "then": {"properties": {"sources": {"minItems": 1}}}}]
 }

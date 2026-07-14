@@ -466,3 +466,12 @@ Status: worker implementation complete; transfer tasks 3.1-3.6 intentionally rem
 - Full serial after package-inventory correction: `python -m pytest -q` -> 340 passed in 89.11 seconds.
 - Python compilation passed. Roadmap/OpenSpec governance remained 0 errors and 0 warnings; strict OpenSpec validation passed 10/10. `git diff --check` passed with only non-blocking Windows line-ending notices.
 - Transfer tasks 3.1-3.6 remain unchecked and work item 2.9 remains active for independent gates.
+
+### Review Hardening Checkpoint
+
+- Adversarial RED expanded the focused suite from 27 to 40 cases and reproduced forged-ready read packs, tampered embedded content with recomputed hashes/identity, missing sufficient context/sections, launch mismatch, fabricated authority hidden in claims, prohibited actions hidden behind false booleans, unverified canonical references, duplicate task IDs, Windows/POSIX-equivalent write/evidence paths, and promotion without concrete focused/combined results.
+- The read-pack request and generated pack now pass closed schemas. Ready packs embed bounded UTF-8 source content or requested Markdown sections, repository-relative resolver metadata, authority/stable path/ID, and content hashes. The launcher revalidates schema, pack identity, repository-bounded paths, canonical allowlist, embedded content against current source bytes, and the verified source manifest before selecting an instruction.
+- Weak-model evidence is schema-first and binds task, role, stage, pack identity, sources, canonical ID/hash references, checks, and pending human stop to the concrete launch/read pack. Approval/transition claim kinds and prohibited attempts fail even when boolean fields falsely deny authority use.
+- Parallel plans normalize Windows/POSIX case/separators, require unique task/evidence/write boundaries, and distinguish safe launch from promotion. Promotion requires passed structured evidence for every declared focused check and all integration, traceability, review, and conflict checks.
+- All four CLIs use closed nested schemas, repository/CWD-independent defaults, stable usage/contract exits, redacted diagnostics, and no traceback. Role instructions now require the applicable canonical class/matrix IDs and exact operation-evidence fields without copying policy rules.
+- Focused plus packaged-flow/package regression: 79 passed. Final focused adversarial suite: 39 passed. Fresh full serial suite on the exact final tree: 352 passed in 87.52 seconds. No transfer task or work-item status changed at this hardening checkpoint.

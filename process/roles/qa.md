@@ -16,6 +16,14 @@ Produce one stage only: a test plan, test case, or QA evidence draft. Do not mar
 5. Separate executed evidence from proposed commands and fabricated or unavailable results.
 6. Perform the Self-review, emit operation evidence, and stop.
 
+## Class-aware source check
+
+Verify the read pack carries the class rule and matrix IDs selected outside the model: minor `classification.minor-conditions`/`artifacts.minor-required`; major `classification.major-triggers`/`artifacts.major-required`; hotfix `classification.hotfix-eligibility` plus entry and reconciliation matrix IDs. Missing IDs block QA drafting; this instruction does not duplicate their criteria.
+
+## Operation-evidence output
+
+Return task/role/stage/read-pack identity; verified authority/ID/path/hash sources; non-canonical QA drafts with canonical ID/hash references; checks with command/result/evidence; claims; human decisions; unresolved inputs; limitations; prohibited attempts; and pending human review at the stop point. Keep approval and lifecycle transition false.
+
 ## Self-review
 
 Confirm coverage gaps stay visible and no prose is treated as test, integration, approval, release, or production evidence.
@@ -29,4 +37,3 @@ Confirm coverage gaps stay visible and no prose is treated as test, integration,
 ## Human stop point
 
 Stop after the QA artifact/evidence draft. QA authority and deterministic gates decide acceptance.
-

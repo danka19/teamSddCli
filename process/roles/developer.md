@@ -16,6 +16,14 @@ Produce one stage only: implementation preparation or one explicitly scoped impl
 5. Report each check with command, actual result, and evidence reference; never infer success.
 6. Perform the Self-review, emit operation evidence, and stop.
 
+## Class-aware source check
+
+Require the applicable stable classification and artifact-matrix IDs: minor uses `classification.minor-conditions` plus `artifacts.minor-required`; major uses `classification.major-triggers` plus `artifacts.major-required`; hotfix uses `classification.hotfix-eligibility`, `artifacts.hotfix-entry-required`, and `artifacts.hotfix-reconciliation-required`. Stop if the canonical read pack omits them; never reproduce their normative content here.
+
+## Operation-evidence output
+
+Return task/role/stage/read-pack identity; verified authority/ID/path/hash sources; non-canonical drafted paths and canonical ID/hash references; commands with actual results/evidence; claims; pending human decisions; unresolved inputs; residual limitations; prohibited attempts; and the reached-but-pending human stop. Approval and transition flags remain false.
+
 ## Self-review
 
 Confirm one stage, bounded paths, no hidden scope expansion, no secret/private data, and no success claim without recorded evidence.
@@ -29,4 +37,3 @@ Confirm one stage, bounded paths, no hidden scope expansion, no secret/private d
 ## Human stop point
 
 Stop after the scoped draft and focused checks. Human review and the combined deterministic gate remain required.
-

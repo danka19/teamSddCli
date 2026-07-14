@@ -3,7 +3,7 @@
   "$id": "task-launch.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "task_id", "role", "change_class", "stage_boundary", "instruction_path", "read_pack_identity", "output_contract", "evidence_path", "model_authority", "canonical_mutation_allowed", "human_stop_required", "next_action", "identity"],
+  "required": ["schema_version", "task_id", "role", "change_class", "stage_boundary", "instruction_path", "read_pack_path", "read_pack_identity", "verified_source_manifest", "output_contract", "evidence_path", "model_authority", "canonical_mutation_allowed", "human_stop_required", "next_action", "identity"],
   "properties": {
     "schema_version": {"const": "1.0"},
     "task_id": {"type": "string", "minLength": 1},
@@ -11,7 +11,9 @@
     "change_class": {"enum": ["minor", "major", "hotfix"]},
     "stage_boundary": {"type": "string", "minLength": 1},
     "instruction_path": {"type": "string", "pattern": "^roles/[^/]+\\.md$"},
+    "read_pack_path": {"type": "string", "minLength": 1},
     "read_pack_identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "verified_source_manifest": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["authority", "stable_id", "path", "sha256"], "properties": {"authority": {"enum": ["canonical", "supporting", "generated-advisory", "evidence"]}, "stable_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
     "output_contract": {"const": "schemas/weak-model-operation-evidence.schema.json"},
     "evidence_path": {"type": "string", "minLength": 1},
     "model_authority": {"const": "advisory-only"},

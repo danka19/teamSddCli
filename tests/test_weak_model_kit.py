@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import copy
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -53,7 +55,8 @@ def test_build_read_pack_is_authority_labelled_bounded_and_stable() -> None:
     assert pack["identity"].startswith("sha256:")
     assert [source["authority"] for source in pack["sources"]] == ["canonical", "supporting"]
     assert all(source["stable_id"] and source["path"] and source["sha256"] for source in pack["sources"])
-    assert "content" not in pack["sources"][0]
+    assert "weak-model" in pack["sources"][0]["content"].lower()
+    assert pack["resolver"] == "repository-relative-verified-content"
 
 
 @pytest.mark.parametrize("mutation", ["missing", "escape", "duplicate", "unknown-canonical"])
@@ -74,13 +77,17 @@ def test_build_read_pack_blocks_missing_unsafe_or_ambiguous_context(mutation: st
 
 def test_launcher_selects_instruction_and_stop_point_outside_model(tmp_path: Path) -> None:
     pack = build_read_pack(ROOT, PROCESS, request())
-    launch = build_role_launch(PROCESS, pack, "evidence/TASK-2.9-ANALYST.yaml")
+    launch = build_role_launch(ROOT, PROCESS, pack, "scratch/read-pack.json", "evidence/TASK-2.9-ANALYST.yaml")
     assert launch["role"] == "analyst"
     assert launch["instruction_path"] == "roles/analyst.md"
     assert launch["stage_boundary"] == "proposal"
     assert launch["model_authority"] == "advisory-only"
     assert launch["canonical_mutation_allowed"] is False
     assert launch["human_stop_required"] is True
+    assert launch["verified_source_manifest"] == [
+        {key: source[key] for key in ("authority", "stable_id", "path", "sha256")}
+        for source in pack["sources"]
+    ]
 
 
 def test_launcher_blocks_incomplete_read_pack() -> None:
@@ -89,7 +96,39 @@ def test_launcher_blocks_incomplete_read_pack() -> None:
     pack = build_read_pack(ROOT, PROCESS, data)
     assert pack["status"] == "blocked"
     with pytest.raises(ContractError, match="read pack is blocked"):
-        build_role_launch(PROCESS, pack, "evidence/x.yaml")
+        build_role_launch(ROOT, PROCESS, pack, "scratch/read-pack.json", "evidence/x.yaml")
+
+
+def test_launcher_rejects_forged_ready_pack_and_tampered_source() -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    forged = copy.deepcopy(pack)
+    forged["identity"] = "sha256:" + "0" * 64
+    with pytest.raises(ContractError, match="identity"):
+        build_role_launch(ROOT, PROCESS, forged, "scratch/read-pack.json", "evidence/x.yaml")
+    forged = copy.deepcopy(pack)
+    forged["sources"][0]["content"] += "forged"
+    forged["identity"] = _pack_identity(forged)
+    with pytest.raises(ContractError, match="source content hash"):
+        build_role_launch(ROOT, PROCESS, forged, "scratch/read-pack.json", "evidence/x.yaml")
+    forged = copy.deepcopy(pack)
+    forged["sources"][0]["content"] = "fabricated canonical contract\n"
+    import hashlib
+    forged["sources"][0]["sha256"] = hashlib.sha256(forged["sources"][0]["content"].encode()).hexdigest()
+    forged["identity"] = _pack_identity(forged)
+    with pytest.raises(ContractError, match="canonical source bytes"):
+        build_role_launch(ROOT, PROCESS, forged, "scratch/read-pack.json", "evidence/x.yaml")
+
+
+def test_read_pack_request_rejects_empty_or_unbounded_context() -> None:
+    data = request()
+    data["sources"] = []
+    assert build_read_pack(ROOT, PROCESS, data)["status"] == "blocked"
+    data = request()
+    data["sources"][0]["sections"] = ["missing heading"]
+    assert build_read_pack(ROOT, PROCESS, data)["status"] == "blocked"
+    data = request()
+    data["sources"] = [data["sources"][1]]
+    assert build_read_pack(ROOT, PROCESS, data)["status"] == "blocked"
 
 
 def valid_evidence() -> dict:
@@ -110,13 +149,39 @@ def valid_evidence() -> dict:
         "unresolved_inputs": [],
         "residual_limitations": ["No model certification performed"],
         "prohibited_actions_attempted": [],
+        "human_stop_reached": True,
+        "human_review_status": "pending",
         "lifecycle_transition_requested": False,
         "approval_claimed": False,
     }
 
 
+def evidence_context() -> tuple[dict, dict]:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    launch = build_role_launch(ROOT, PROCESS, pack, "scratch/read-pack.json", "evidence/TASK.yaml")
+    evidence = valid_evidence()
+    evidence["read_pack_identity"] = pack["identity"]
+    evidence["sources_read"] = [
+        {key: source[key] for key in ("authority", "stable_id", "path", "sha256")}
+        for source in pack["sources"]
+    ]
+    evidence["artifacts_drafted"][0]["canonical_references"] = [
+        {key: pack["sources"][0][key] for key in ("stable_id", "sha256")}
+    ]
+    return evidence, launch, pack
+
+
+def _pack_identity(pack: dict) -> str:
+    import hashlib
+
+    payload = {key: value for key, value in pack.items() if key != "identity"}
+    raw = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
 def test_operation_evidence_accepts_supported_advisory_completion() -> None:
-    assert validate_operation_evidence(valid_evidence()) == []
+    evidence, launch, pack = evidence_context()
+    assert validate_operation_evidence(evidence, launch, pack) == []
 
 
 @pytest.mark.parametrize(
@@ -129,16 +194,32 @@ def test_operation_evidence_accepts_supported_advisory_completion() -> None:
     ],
 )
 def test_operation_evidence_rejects_authority_and_unsupported_claims(change: dict, code: str) -> None:
-    evidence = valid_evidence()
+    evidence, launch, pack = evidence_context()
     evidence.update(change)
-    assert code in {item["code"] for item in validate_operation_evidence(evidence)}
+    assert code in {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
 
 
 def test_operation_evidence_rejects_derived_canonical_artifact_without_source_reference() -> None:
-    evidence = valid_evidence()
+    evidence, launch, pack = evidence_context()
     evidence["artifacts_drafted"][0] = {"path": "openspec/spec.md", "canonical": True, "canonical_references": []}
-    codes = {item["code"] for item in validate_operation_evidence(evidence)}
+    codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
     assert {"evidence.canonical-draft-forbidden", "evidence.missing-canonical-reference"} <= codes
+
+
+def test_evidence_rejects_lie_in_claims_forbidden_actions_or_wrong_launch_binding() -> None:
+    evidence, launch, pack = evidence_context()
+    evidence["claims"].append({"kind": "approval", "value": "approved", "evidence": "log:check-1"})
+    evidence["prohibited_actions_attempted"] = ["archive"]
+    evidence["task_id"] = "OTHER"
+    codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
+    assert {"evidence.forbidden-authority", "evidence.prohibited-action", "evidence.launch-mismatch"} <= codes
+
+
+def test_evidence_rejects_unverified_source_reference_even_when_id_matches() -> None:
+    evidence, launch, pack = evidence_context()
+    evidence["sources_read"][0]["sha256"] = "0" * 64
+    codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
+    assert "evidence.unverified-source" in codes
 
 
 def valid_parallel_plan() -> dict:
@@ -154,7 +235,7 @@ def valid_parallel_plan() -> dict:
                 "write_scopes": ["docs/a"],
                 "evidence_path": "evidence/a.yaml",
                 "stop_condition": "proposal drafted",
-                "focused_checks": ["python check-a.py"],
+                "focused_checks": [{"check_id": "focused-a", "command": "python check-a.py"}],
                 "policy_or_lifecycle_decision": False,
             },
             {
@@ -164,11 +245,16 @@ def valid_parallel_plan() -> dict:
                 "write_scopes": ["src/b"],
                 "evidence_path": "evidence/b.yaml",
                 "stop_condition": "implementation draft complete",
-                "focused_checks": ["python check-b.py"],
+                "focused_checks": [{"check_id": "focused-b", "command": "python check-b.py"}],
                 "policy_or_lifecycle_decision": False,
             },
         ],
-        "combined_checks": ["integration", "traceability", "review", "conflict"],
+        "combined_checks": [
+            {"check_id": kind, "kind": kind, "command": f"python check-{kind}.py"}
+            for kind in ("integration", "traceability", "review", "conflict")
+        ],
+        "promotion_requested": False,
+        "promotion_evidence": None,
     }
 
 
@@ -176,6 +262,7 @@ def test_parallel_plan_allows_only_independent_scopes_with_complete_gates() -> N
     report = validate_parallel_plan(valid_parallel_plan())
     assert report["status"] == "parallel-safe"
     assert report["diagnostics"] == []
+    assert report["promotion_allowed"] is False
 
 
 @pytest.mark.parametrize("mutation", ["overlap", "dependency", "evidence", "combined", "decision"])
@@ -188,12 +275,42 @@ def test_parallel_plan_serializes_or_blocks_unsafe_work(mutation: str) -> None:
     elif mutation == "evidence":
         plan["tasks"][1]["evidence_path"] = "evidence/a.yaml"
     elif mutation == "combined":
-        plan["combined_checks"].remove("conflict")
+        plan["combined_checks"] = [row for row in plan["combined_checks"] if row["kind"] != "conflict"]
     else:
         plan["tasks"][0]["policy_or_lifecycle_decision"] = True
     report = validate_parallel_plan(plan)
     assert report["status"] in {"serialize", "blocked"}
     assert report["diagnostics"]
+
+
+def test_parallel_plan_rejects_duplicate_ids_windows_equivalent_paths_and_promotion_without_results() -> None:
+    plan = valid_parallel_plan()
+    plan["tasks"][1]["task_id"] = "TASK-A"
+    plan["tasks"][1]["write_scopes"] = ["DOCS\\A\\child"]
+    plan["tasks"][1]["evidence_path"] = "evidence\\a.yaml"
+    plan["promotion_requested"] = True
+    report = validate_parallel_plan(plan)
+    codes = {item["code"] for item in report["diagnostics"]}
+    assert {"parallel.duplicate-task-id", "parallel.overlapping-scope", "parallel.shared-evidence", "parallel.missing-promotion-evidence"} <= codes
+    assert report["promotion_allowed"] is False
+
+
+def test_parallel_promotion_requires_each_focused_and_combined_pass_evidence() -> None:
+    plan = valid_parallel_plan()
+    plan["promotion_requested"] = True
+    plan["promotion_evidence"] = {
+        "task_results": [
+            {"task_id": task["task_id"], "checks": [{"check_id": task["focused_checks"][0]["check_id"], "result": "passed", "evidence": f"log:{task['task_id']}"}]}
+            for task in plan["tasks"]
+        ],
+        "combined_results": [
+            {"check_id": row["check_id"], "result": "passed", "evidence": f"log:{row['kind']}"}
+            for row in plan["combined_checks"]
+        ],
+    }
+    assert validate_parallel_plan(plan)["promotion_allowed"] is True
+    plan["promotion_evidence"]["combined_results"][0]["result"] = "failed"
+    assert validate_parallel_plan(plan)["promotion_allowed"] is False
 
 
 def test_package_exposes_all_role_instructions_adapters_and_contract_schemas() -> None:
@@ -202,7 +319,7 @@ def test_package_exposes_all_role_instructions_adapters_and_contract_schemas() -
     assert list(Draft202012Validator(schema).iter_errors(package)) == []
     assert set(package["role_instructions"]) == {"analyst", "developer", "qa", "tech_lead"}
     assert set(package["adapters"]) == {"qwen_class", "deepseek_class", "gigacode_class"}
-    assert {"task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"} <= set(package["schemas"])
+    assert {"read_pack_request", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"} <= set(package["schemas"])
 
 
 @pytest.mark.parametrize("role", ["analyst", "developer", "qa", "tech-lead"])
@@ -220,3 +337,71 @@ def test_adapter_templates_are_thin_and_cannot_own_process_rules(adapter: str) -
     assert data["authority"] == "none"
     assert data["canonical_write"] is False
     assert "policy" not in data and "transition" not in data
+
+
+def test_clis_reject_malformed_nested_documents_without_traceback_from_other_cwd(tmp_path: Path) -> None:
+    malformed = tmp_path / "malformed.yaml"
+    malformed.write_text("schema_version: '1.0'\ntask_id: x\nsources: [{authority: canonical, extra: secret}]\n", encoding="utf-8")
+    for script, extra in (
+        ("build_read_pack.py", []),
+        ("check_parallel_plan.py", []),
+    ):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / script), str(malformed), *extra],
+            cwd=tmp_path,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode in {2, 3}
+        assert "Traceback" not in result.stderr + result.stdout
+        assert "secret" not in result.stdout
+
+
+def test_launch_and_evidence_clis_bind_concrete_documents_with_stable_errors(tmp_path: Path) -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    pack_path = tmp_path / "read-pack.json"
+    pack_path.write_text(json.dumps(pack), encoding="utf-8")
+    relative_pack = pack_path.resolve().relative_to(ROOT.resolve()).as_posix()
+    launch = build_role_launch(ROOT, PROCESS, pack, relative_pack, "evidence/TASK.yaml")
+    launch_path = tmp_path / "launch.json"
+    launch_path.write_text(json.dumps(launch), encoding="utf-8")
+    evidence, _, _ = evidence_context()
+    evidence_path = tmp_path / "evidence.json"
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/check_weak_model_evidence.py"), str(evidence_path), "--launch", str(launch_path), "--read-pack", str(pack_path)],
+        cwd=tmp_path, capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["status"] == "accepted-draft"
+
+    malformed = tmp_path / "secret-malformed.yaml"
+    malformed.write_text("schema_version: '1.0'\nextra: secret-value\n", encoding="utf-8")
+    for script, args in (
+        ("launch_role_task.py", [str(malformed), "--repository-root", str(ROOT), "--evidence", "evidence/x.yaml"]),
+        ("check_weak_model_evidence.py", [str(malformed), "--launch", str(malformed), "--read-pack", str(malformed)]),
+    ):
+        failed = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / script), *args], cwd=tmp_path,
+            capture_output=True, text=True, check=False,
+        )
+        assert failed.returncode in {2, 3}
+        assert "Traceback" not in failed.stdout + failed.stderr
+        assert "secret-value" not in failed.stdout
+
+
+@pytest.mark.parametrize(
+    "script",
+    ["build_read_pack.py", "launch_role_task.py", "check_weak_model_evidence.py", "check_parallel_plan.py"],
+)
+def test_weak_model_clis_have_stable_redacted_usage_exit(script: str, tmp_path: Path) -> None:
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / script)], cwd=tmp_path,
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 2
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "usage" or payload["status"] == "blocked"
+    assert "Traceback" not in result.stderr + result.stdout

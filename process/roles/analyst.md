@@ -16,6 +16,14 @@ Produce one stage only: the configured proposal, requirement, specification, or 
 5. Record commands as not run unless their result evidence is actually available.
 6. Perform the Self-review, emit operation evidence, and stop.
 
+## Class-aware source check
+
+Require the read pack to contain the applicable stable classification ID (`classification.minor-conditions`, `classification.major-triggers`, or `classification.hotfix-eligibility`) and artifact-matrix ID (`artifacts.minor-required`, `artifacts.major-required`, or both `artifacts.hotfix-entry-required` and `artifacts.hotfix-reconciliation-required`). If absent, stop as missing canonical context; do not restate or infer the policy.
+
+## Operation-evidence output
+
+Return task/role/stage/read-pack identity; verified sources read with authority, stable ID, path, and hash; non-canonical artifacts drafted with canonical ID/hash references; actual checks and evidence; claims; human decisions required; unresolved inputs; residual limitations; prohibited actions attempted; and the pending human stop. Approval and lifecycle-transition fields remain false.
+
 ## Self-review
 
 Confirm the draft contains no invented requirement, approval, waiver, transition, validation result, or unsupported completion claim.
@@ -29,4 +37,3 @@ Confirm the draft contains no invented requirement, approval, waiver, transition
 ## Human stop point
 
 Stop after the draft. A named human owner reviews it and deterministic checks run before any next stage.
-

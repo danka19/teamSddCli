@@ -25,6 +25,7 @@ schemas:
   traceability_v2: schemas/traceability-v2.schema.json
   external_mapping: schemas/external-mapping.schema.json
   operation_evidence: schemas/operation-evidence.schema.json
+  read_pack_request: schemas/read-pack-request.schema.json
   task_launch: schemas/task-launch.schema.json
   read_pack: schemas/read-pack.schema.json
   weak_model_operation_evidence: schemas/weak-model-operation-evidence.schema.json

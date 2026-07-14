@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "read-pack-request.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "role", "change_class", "stage", "sources", "known_traps", "unresolved_inputs"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "role": {"enum": ["analyst", "developer", "qa", "tech_lead"]},
+    "change_class": {"enum": ["minor", "major", "hotfix"]},
+    "stage": {"type": "string", "minLength": 1},
+    "sources": {"type": "array", "minItems": 1, "maxItems": 16, "items": {"type": "object", "additionalProperties": false, "required": ["authority", "stable_id", "path", "required"], "properties": {"authority": {"enum": ["canonical", "supporting", "generated-advisory", "evidence"]}, "stable_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "required": {"type": "boolean"}, "sections": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}},
+    "known_traps": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "unresolved_inputs": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}
