@@ -16,12 +16,12 @@
 
 ## 3. Artifact matrices and business gates
 
-- [ ] 3.1 Implement the minor, major, and hotfix artifact/evidence matrices with substantive-content checks, conditional not-applicable results, waiver eligibility, and restricted hotfix deferrals.
-- [ ] 3.2 Implement review-ready and common/class-specific Definition of Ready reports, including blocking versus advisory gaps and required human approvals.
-- [ ] 3.3 Implement implementation-complete and common/class-specific Definition of Done reports without treating an AI completion statement as evidence.
-- [ ] 3.4 Implement separate release/transfer readiness and archive-readiness reports, including not-applicable rationale and external delivered/Done distinction.
-- [ ] 3.5 Update lifecycle transition validation so DoR guards `spec_review -> approved`, DoD plus applicable release evidence guards `in_implementation -> ready_to_archive`, and archive remains explicitly human-approved.
-- [ ] 3.6 Add negative tests for skipped states, placeholder artifacts, unresolved hotfix reconciliation, invalid waivers, stale evidence, and attempts to infer Jira Done or deployment from archive.
+- [x] 3.1 Implement the minor, major, and hotfix artifact/evidence matrices with substantive-content checks, conditional not-applicable results, waiver eligibility, and restricted hotfix deferrals.
+- [x] 3.2 Implement review-ready and common/class-specific Definition of Ready reports, including blocking versus advisory gaps and required human approvals.
+- [x] 3.3 Implement implementation-complete and common/class-specific Definition of Done reports without treating an AI completion statement as evidence.
+- [x] 3.4 Implement separate release/transfer readiness and archive-readiness reports, including not-applicable rationale and external delivered/Done distinction.
+- [x] 3.5 Update lifecycle transition validation so DoR guards `spec_review -> approved`, DoD plus applicable release evidence guards `in_implementation -> ready_to_archive`, and archive remains explicitly human-approved.
+- [x] 3.6 Add negative tests for skipped states, placeholder artifacts, unresolved hotfix reconciliation, invalid waivers, stale evidence, and attempts to infer Jira Done or deployment from archive.
 
 ## 4. Tech lead workflow support
 

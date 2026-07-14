@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.4 are closed; work item 2.5 implementation is worker-complete and pending independent task, architecture, and verification review.
+Status: in_progress. Work items 2.1-2.5 are closed; work item 2.6 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -239,7 +239,7 @@ Status: closed after implementation, independent task review, architecture revie
 
 ## Work Item 2.5: Artifact Matrices And Lifecycle Gates
 
-Status: implementation-worker complete; pending independent task review, architecture review, fresh verification, coordinator reconciliation, and human acceptance where required. NIS-governance tasks 3.1-3.6 remain unchecked and work item 2.5 is not closed.
+Status: closed after implementation, independent task review, architecture review, fresh verification, and coordinator reconciliation. NIS-governance tasks 3.1-3.6 are complete.
 
 ### Sources And Implementation Evidence
 
@@ -295,3 +295,12 @@ Status: implementation-worker complete; pending independent task review, archite
 - `git diff --check` passed with only Git's non-blocking Windows LF-to-CRLF notices.
 - Post-review verification: 54 focused, 74 policy/config/package, 26 CLI/lifecycle/legacy-migration, and 163 full serial tests passed; compilation, the legacy template validator, roadmap/OpenSpec governance 0/0, strict OpenSpec 10/10, and diff checks also passed.
 - Architecture-fix verification on top of `53c7be8`: 44 focused artifact/lifecycle/CLI/policy-schema tests, 14 selected CLI/lifecycle/legacy-migration tests, and 168 full serial tests passed; compilation and the legacy template validator passed; roadmap/OpenSpec governance reported 0 errors/0 warnings; strict OpenSpec validation passed 10/10; Git diff checks passed. Work item and OpenSpec task statuses remain unchanged for coordinator review.
+
+### Independent Review, Architecture, And Verification
+
+- Implementation commits: `ad9a5e0` (policy-driven matrices, reports, schema-bound CLIs, lifecycle checks), `f3473d5` (role-authorized exceptions, typed expiry, approval blocking, canonical rework), `53c7be8` (authority-validation runbook clarification), `3811241` (monotonic lifecycle expiry through bounded source-linked history), and `3efc808` (malformed-history fail-closed parser guard). Unrelated `7c27d1a` is excluded.
+- Independent task review reproduced four High findings: arbitrary exception authority, expired hotfix deferrals passing readiness, pending human approval reported as ready, and rejected canonical rework transitions. Fixes passed 54 focused and 163 full tests. Final re-review found only one Minor runbook wording issue; `53c7be8` closed it and the final task verdict was Approved.
+- Independent architecture review required lifecycle expiry to remain due after a canonical rework loop and later found one malformed-history hash crash. Commits `3811241` and `3efc808` added the narrow lifecycle-history v1.0 contract and fail-closed schema-before-semantics ordering. Final architecture verdict: Approved with 8/8 targeted tests.
+- Independent final verification on reviewed range `b40845d..3efc808`: PASS. Focused artifact/lifecycle/CLI/policy/schema 45 passed; policy/config/package regression 74 passed; full serial suite 169 passed; six report matrix, five forward and two rework transitions, authority/waiver/N/A/expiry/hotfix/stale/placeholder/AI/external-state/malformed-history negative matrices, compilation, package/schema/manifest validation, Phase 1 legacy validator, governance 0/0, and OpenSpec strict 10/10 passed. Commands remained non-mutating and no 2.6/2.8 behavior appeared.
+- Coordinator reconciliation marks NIS tasks 3.1-3.6 complete, moving the NIS inventory from 10/43 to 16/43 while the transfer-package change remains 3/33. Work item 2.5 is `closed`; work item 2.6 is `ready`.
+- Residual risk remains later scope: verification ran on Windows only; full Tech Lead owner-zone/delegate/conflict governance is work item 2.6; broader traceability is 2.8; cross-platform and Qwen/DeepSeek/AI-disabled certification remain later Phase 2 work.

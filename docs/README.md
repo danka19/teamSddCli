@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.4 closed the versioned package/config/schema and policy foundation plus deterministic classification and bounded legacy migration; work item 2.5 is active for class-aware artifact matrices and lifecycle gates. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.5 closed the versioned foundation, deterministic classification/migration, class-aware artifact matrices, gate reports, and guarded lifecycle transitions; work item 2.6 is ready for Tech Lead governance. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 
