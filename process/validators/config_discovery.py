@@ -6,7 +6,7 @@ import json
 import re
 import shutil
 import subprocess
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, Callable
 
 import yaml
@@ -76,8 +76,7 @@ def default_runtime_probe() -> str:
     result = subprocess.run(
         [executable, "--version"], capture_output=True, text=True, check=True
     )
-    match = re.search(r"\d+\.\d+\.\d+", result.stdout)
-    return match.group(0) if match else result.stdout.strip()
+    return result.stdout.strip()
 
 
 def load_yaml(path: Path, source: str, result: ValidationResult, stage: int = 2) -> Any | None:
@@ -247,8 +246,7 @@ def validate_configuration(
             hint="Install the pinned OpenSpec CLI and make it available to this process.",
         ))
         return result
-    match = re.search(r"\d+\.\d+\.\d+", result.runtime_version)
-    result.runtime_version = match.group(0) if match else result.runtime_version.strip()
+    result.runtime_version = result.runtime_version.strip()
     if result.runtime_version != OPENSPEC_VERSION:
         result.add(Diagnostic(
             "compat.openspec-runtime", "compatibility",
@@ -339,7 +337,13 @@ def resolve_package_location(value: Any, central_root: Path, registry: dict[str,
             value, central_root, registry, result,
             source="central-config", pointer="/process_package/location",
         )
-    if not isinstance(value, str) or not value or Path(value).is_absolute() or "\x00" in value:
+    if (
+        not isinstance(value, str)
+        or not value
+        or PurePosixPath(value).is_absolute()
+        or bool(PureWindowsPath(value).anchor)
+        or "\x00" in value
+    ):
         result.add(Diagnostic(
             "package.location-invalid", "reference", "Process package location is not a safe declared path.", 5,
             source="central-config", pointer="/process_package/location",
@@ -410,7 +414,11 @@ def validate_package_schemas(root: Path, schemas: Any, result: ValidationResult)
 
 def collect_refs(value: Any) -> list[str]:
     if isinstance(value, dict):
-        found = [value["$ref"]] if isinstance(value.get("$ref"), str) else []
+        found = [
+            value[keyword]
+            for keyword in ("$ref", "$dynamicRef")
+            if isinstance(value.get(keyword), str)
+        ]
         return found + [item for child in value.values() for item in collect_refs(child)]
     if isinstance(value, list):
         return [item for child in value for item in collect_refs(child)]
@@ -425,6 +433,14 @@ def safe_registry_path(root: Path, value: Any, result: ValidationResult, pointer
         ))
         return None
     candidate = (root / Path(*value.split("/"))).resolve()
+    try:
+        candidate.relative_to(root.resolve())
+    except ValueError:
+        result.add(Diagnostic(
+            "registry.path-unsafe", "security", "Registry path must stay within the central repository.", 8,
+            source="central-config", pointer=pointer,
+        ))
+        return None
     if not candidate.is_file():
         result.add(Diagnostic(
             "registry.missing", "reference", "A declared registry file is missing.", 8,

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -241,6 +242,53 @@ def test_missing_registry_and_unsafe_reference_are_stable(tmp_path: Path) -> Non
     assert "reference.invalid" in diagnostic_codes(stdout)
 
 
+def test_windows_rooted_package_location_is_rejected_before_resolution(
+    tmp_path: Path,
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    _set_yaml(
+        root / "sdd.config.yaml",
+        ("process_package", "location"),
+        r"\Users\private-account\process",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["package.location-invalid"]
+
+
+def test_registry_symlink_cannot_escape_central_root(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+    outside_directory = tmp_path / "outside"
+    outside_directory.mkdir()
+    shutil.copyfile(root / "projects.yaml", outside_directory / "projects.yaml")
+    linked_directory = root / "linked"
+    try:
+        linked_directory.symlink_to(outside_directory, target_is_directory=True)
+    except OSError as error:
+        if os.name != "nt":
+            pytest.skip(f"directory symlink creation is unavailable: {error}")
+        completed = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(linked_directory), str(outside_directory)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            pytest.skip("directory symlink/junction creation is unavailable")
+    _set_yaml(
+        root / "sdd.config.yaml",
+        ("registries", "projects"),
+        "linked/projects.yaml",
+    )
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["registry.path-unsafe"]
+
+
 def test_adapter_rejects_ambiguous_resolved_central_root(tmp_path: Path) -> None:
     project, _ = build_adapter_layout(tmp_path, "sibling")
     central = tmp_path / "team-specs"
@@ -376,6 +424,37 @@ def test_runtime_is_checked_last_and_has_distinct_exit_codes(tmp_path: Path) -> 
     assert diagnostic_codes(stdout) == ["runtime.openspec-unavailable"]
 
 
+@pytest.mark.parametrize("runtime", ["1.4.1-beta.1", "1.4.1+corporate"])
+def test_runtime_requires_exact_stable_openspec_version(
+    tmp_path: Path, runtime: str
+) -> None:
+    root = build_central_layout(tmp_path / runtime.replace("+", "-"))
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: runtime)
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["compat.openspec-runtime"]
+    assert json.loads(stdout)["compatibility"]["openspec"]["runtime"] == runtime
+
+
+@pytest.mark.parametrize("reference_keyword", ["$ref", "$dynamicRef"])
+def test_package_schemas_reject_remote_reference_keywords(
+    tmp_path: Path, reference_keyword: str
+) -> None:
+    root = build_central_layout(tmp_path / reference_keyword.removeprefix("$"))
+    schema_path = root / "process" / "schemas" / "workflow.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    schema["$defs"] = {
+        "remote": {reference_keyword: "https://example.invalid/remote.schema.json"}
+    }
+    schema_path.write_text(json.dumps(schema), encoding="utf-8")
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["package.schema-invalid"]
+
+
 def test_secret_diagnostics_are_redacted_and_human_json_codes_match(tmp_path: Path) -> None:
     token = "ghp_abcdefghijklmnopqrstuvwxyz1234567890"
     root = build_central_layout(tmp_path / "central")
@@ -485,3 +564,20 @@ def test_nonexistent_start_directory_is_usage_error(tmp_path: Path) -> None:
         [str(tmp_path / "missing"), "--json"], lambda: "1.4.1"
     )
     assert code == 2
+
+
+def test_malformed_registry_has_human_json_usage_parity(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+
+    json_code, json_stdout, json_stderr = run_cli(
+        [str(root), "--registry", "malformed", "--json"], lambda: "1.4.1"
+    )
+    human_code, human_stdout, human_stderr = run_cli(
+        [str(root), "--registry", "malformed"], lambda: "1.4.1"
+    )
+
+    assert json_code == human_code == 2
+    assert json_stderr == human_stdout == ""
+    assert diagnostic_codes(json_stdout) == ["usage.registry"]
+    assert json.loads(json_stdout)["status"] == "invalid"
+    assert "[usage.registry]" in human_stderr

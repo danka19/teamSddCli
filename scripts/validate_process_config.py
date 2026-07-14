@@ -36,10 +36,19 @@ def main(
 ) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
     error_output = stderr or (lambda message: print(message, file=sys.stderr))
-    mappings = parse_registry(args.registry)
     start = Path(args.start)
     usage_error = False
-    if not start.is_dir():
+    try:
+        mappings = parse_registry(args.registry)
+    except ValueError:
+        usage_error = True
+        result = ValidationResult()
+        result.add(Diagnostic(
+            "usage.registry", "usage",
+            "A registry mapping is malformed or duplicates an identifier.", 0,
+            hint="Pass each mapping once as --registry ID=PATH.",
+        ))
+    if not usage_error and not start.is_dir():
         usage_error = True
         result = ValidationResult()
         result.add(Diagnostic(
@@ -47,7 +56,7 @@ def main(
             "The explicit start directory does not exist or is not a directory.", 0,
             hint="Pass an existing repository directory.",
         ))
-    else:
+    elif not usage_error:
         try:
             result = validate_configuration(
                 start.resolve(), mappings, runtime_probe or default_runtime_probe
@@ -89,7 +98,7 @@ def parse_registry(values: list[str]) -> dict[str, Path]:
             or not identifier[0].islower()
             or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-" for character in identifier)
         ):
-            raise SystemExit(2)
+            raise ValueError("invalid registry mapping")
         mappings[identifier] = Path(path).resolve()
     return mappings
 
