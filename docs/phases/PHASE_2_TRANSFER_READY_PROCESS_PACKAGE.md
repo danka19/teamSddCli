@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.5 are closed after all required gates; work item 2.6 is ready.
+Work items 2.1-2.5 are closed after all required gates; work item 2.6 is active.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.5 are closed; work item 2.6 may start after its sequential dependency reconciliation.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.5 are closed; work item 2.6 is active after its sequential dependency reconciliation.
 
 ## Planning Acceptance Gate
 
@@ -318,7 +318,7 @@ Exit criteria: every transition reports exact blocking/advisory evidence and kee
 
 ### 2.6 Tech Lead Governance
 
-Status: ready.
+Status: active.
 
 Dependency status: sequential after 2.5.
 

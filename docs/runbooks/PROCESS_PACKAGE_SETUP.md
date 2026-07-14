@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.5 are closed. Work item 2.6 is ready to consume the classification, gate, lifecycle, owner, and policy foundation for Tech Lead governance.
+Status: work items 2.1-2.5 are closed. Work item 2.6 is active and consumes the classification, gate, lifecycle, owner, and policy foundation for Tech Lead governance.
 
 ## Contract Sources
 
