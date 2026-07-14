@@ -1,9 +1,9 @@
 ## 1. Policy and schema foundation
 
-- [ ] 1.1 Define schema-version-2 `change.yaml` fields for `classification`, separate work `type`, lifecycle `status`, classification evidence, decision ownership, and compatibility metadata; validate against `corporate-change-classification` and `change-package-foundation` scenarios.
-- [ ] 1.2 Define canonical, versioned policy schemas for classification rules, class artifact matrices, readiness/completion gates, regression rules, stop/escalation records, release packages, pilot safety, and failed-run evidence.
-- [ ] 1.3 Add synthetic valid and invalid minor, major, and hotfix fixtures, including unknown inputs, conflicting legacy metadata, under-classification, major-impact hotfix, and non-urgent pseudo-hotfix cases.
-- [ ] 1.4 Add deterministic policy/config discovery from the central process package and project adapter, including clear failure for missing corporate values and attempts to weaken non-configurable minimums.
+- [x] 1.1 Define schema-version-2 `change.yaml` fields for `classification`, separate work `type`, lifecycle `status`, classification evidence, decision ownership, and compatibility metadata; validate against `corporate-change-classification` and `change-package-foundation` scenarios.
+- [x] 1.2 Define canonical, versioned policy schemas for classification rules, class artifact matrices, readiness/completion gates, regression rules, stop/escalation records, release packages, pilot safety, and failed-run evidence.
+- [x] 1.3 Add synthetic valid and invalid minor, major, and hotfix fixtures, including unknown inputs, conflicting legacy metadata, under-classification, major-impact hotfix, and non-urgent pseudo-hotfix cases.
+- [x] 1.4 Add deterministic policy/config discovery from the central process package and project adapter, including clear failure for missing corporate values and attempts to weaken non-configurable minimums.
 
 ## 2. Classification and legacy migration
 

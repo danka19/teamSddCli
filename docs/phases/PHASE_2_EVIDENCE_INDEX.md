@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.2 are closed; work item 2.3 is active.
+Status: in_progress. Work items 2.1-2.3 are closed; work item 2.4 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -127,7 +127,7 @@ Status: closed after independent task review, architecture review, fresh verific
 
 ## Work Item 2.3: Policy Schema V2 And Class Foundation
 
-Status: implementation evidence recorded; independent worker review, architecture review, fresh verification, and coordinator reconciliation remain pending.
+Status: closed after independent task review, architecture review, fresh verification, and coordinator reconciliation. NIS-governance tasks 1.1-1.4 are complete.
 
 ### Sources And Implementation Evidence
 
@@ -169,3 +169,8 @@ Status: implementation evidence recorded; independent worker review, architectur
 - OpenSpec inventory -> transfer package 3/33, NIS governance 0/43; accepted specs 8. Strict validation -> 10 passed, 0 failed.
 - `git diff --check` -> exit 0 with only non-blocking Windows line-ending warnings.
 - This evidence does not claim classification calculation, migration, gate evaluation, artifact enforcement, workflow mutation, release/pilot approval, or failed-run persistence; those remain assigned to later work items.
+- Independent task re-review approved the final five review fixes; independent architecture recheck approved the canonical work-type vocabulary, all eight complete static policy catalogs, typed additive overrides, and the foundation-only boundary.
+- Fresh verification at `c245565` passed 14 focused tests, 74 policy/config/package tests, 108 full tests, an 11-case selected negative matrix, compilation, legacy template validation, representative human/JSON CLI with package `0.2.0`/config `1.1`/policy set `1.0.0`, governance 0/0, strict OpenSpec 10/10, per-commit/range diff checks, and Git inventory.
+- Coordinator reconciliation changes the NIS-governance inventory from 0/43 to 4/43 by checking tasks 1.1-1.4; the transfer package remains 3/33.
+- Final implementation range: `e25bed7..c245565`. Presentation files and local `.superpowers`, `.claude`, and `.vite` paths are excluded; only the pre-existing untracked `.claude/` and `.vite/` directories remain.
+- Residual limitation: verification ran on Windows. Equivalent clean-host Windows/Linux/macOS release certification remains work item 2.12.
