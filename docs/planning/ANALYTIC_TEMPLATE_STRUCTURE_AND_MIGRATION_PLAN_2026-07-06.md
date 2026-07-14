@@ -1,6 +1,6 @@
 # Corporate Analytics Template: Structure Analysis And SDD Migration Plan
 
-Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Updated with 2026-07-09 human decisions: the existing Confluence analytics corpus is a read-only archive for the first pilot, accepted diagrams/assets use Git-managed source or source+export with stable IDs, and approval readiness stays minimal/validator-backed until a later full-package contract. Not an accepted OpenSpec contract yet. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
+Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Updated with 2026-07-09 human decisions: the existing Confluence analytics corpus is a read-only archive for the first pilot, accepted diagrams/assets use Git-managed source or source+export with stable IDs, and approval readiness stays minimal/validator-backed until a later full-package contract. Updated on 2026-07-14 with the deferred upstream business-analysis-to-system-analysis flow described in section 8. Not an accepted OpenSpec contract yet. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
 
 Source: the human owner photographed the corporate Confluence template and two example pages into the local-only folder `arch-screenshots/analytic-template/` (moved from the earlier local `analytic-template/` location; photos reviewed in full). That folder contains corporate URLs, internal system names, and employee names, so it is git-ignored and must never be committed; this document deliberately abstracts all corporate identifiers.
 
@@ -222,3 +222,37 @@ Deterministic assembly uses only fixed names and the ID grammar — no AI in the
 - Whether typed YAML artifacts enter the artifact-contract proposal as one follow-up change or an extension of `define-change-artifact-contracts` (decide at work item 1.4/1.9 planning; keep the proposal count from growing past the planned set).
 - Diagram/asset storage conventions (already an open decision in the Phase 1 plan).
 - How much of section 5 (architecture/API tables) is analyst-owned versus developer-owned in our process — affects who fills which artifact; route to the role-guide planning input.
+
+## 8. Deferred Upstream Business-To-System Analysis Flow
+
+Human direction on 2026-07-14 clarifies the future process before a specification becomes ready for implementation planning. This section is planning input only: it does not change the active Phase 2 scope, current validators, active OpenSpec changes, or the first transfer-ready release candidate. Phase 3 may observe and document the real corporate handoffs during the monitored pilot; if this flow is promoted into normative behavior or automation, its primary roadmap owner should be Phase 4 and it requires a dedicated reviewed OpenSpec change.
+
+The intended end-to-end sequence is:
+
+1. **Business-requirements intake:** preserve the received business requirements, source, accountable business/product owner, expected value, constraints, assumptions, and open questions. Received business requirements are input evidence, not a ready engineering specification.
+2. **Business analysis — analyst-owned:** clarify ambiguity, reconcile stakeholders, define scope and exclusions, business rules, terminology, priorities, process or journey models, user stories or use cases, acceptance direction, and applicable diagrams or corporate-template sections. AI may draft structured artifacts, diagrams, user stories, scenarios, or populated template views, but the analyst reviews and corrects them and remains accountable for meaning and completeness. The analyst's non-template work includes elicitation, conflict resolution, domain judgment, prioritization, discovering missing cases, and recording human decisions; it must not be reduced to AI template filling.
+3. **System analysis — system-analyst-owned:** translate the reviewed business analysis into affected-system boundaries, functional and non-functional requirements, interfaces, data and status models, error and degraded flows, dependencies, security and operational constraints, technical scenarios, and traceable acceptance criteria. The system analyst involves the Tech Lead, architecture, security, QA, or other owners where their authority applies and sends unresolved business gaps back to the analyst or product owner instead of guessing.
+4. **Specification assembly and readiness:** assemble or refine the change package, including `proposal.md`, `design.md`, Delta Specs, draft task decomposition, and traceability. The package may be opened earlier as a working container, but its existence does not mean that the specification is ready. The specification becomes implementation-ready only after the required business and system analysis is complete, blocking questions are resolved or explicitly dispositioned, Spec Review and class-aware Definition of Ready pass, and the accountable humans approve the transition.
+5. **Jira planning and task creation:** only an implementation-ready specification may be used to create or commit Jira implementation tasks. Jira tasks reference stable change, requirement, and scenario IDs; Jira remains the workflow/status system and does not become the source of requirement meaning. Draft decomposition may exist inside the change package before approval, but it must not be represented as approved Jira work. Manual task creation remains a valid fallback; automation is a later layer.
+
+This direction is compatible with the existing documentation but was not previously stated as one explicit flow:
+
+- section 4 already maps business requirements to `proposal.md` and user scenarios to Delta Spec scenarios;
+- the accepted lifecycle already requires Spec Review, class-aware Definition of Ready, human approval, and source-linked traceability;
+- current architecture already limits AI to proposal/draft work and keeps Jira as workflow/status rather than requirement truth;
+- the missing part was an explicit business-analysis-to-system-analysis ownership and handoff model, including the rule that ready specs and committed Jira work come only after both analysis layers.
+
+Future OpenSpec design must define the exact entry/exit evidence for both analysis stages, artifact ownership, rework loops, class-aware exceptions such as hotfix entry, and deterministic checks. It must include negative scenarios for AI-authored artifacts treated as approved, unresolved business ambiguity passed into system analysis, incomplete system analysis marked ready, and Jira tasks created from an unapproved specification.
+
+```text
+Idea: Make the upstream path explicit: business requirements -> analyst-owned business artifacts and judgment -> system analysis -> ready specification -> Jira implementation work.
+Source: Human process clarification on 2026-07-14.
+Type: scope_refinement, documentation_change
+Decision: defer
+Reason: The direction fills a real process gap, but implementing or normatively enforcing it would expand the active Phase 2 release-candidate scope and requires new artifact, handoff, readiness, and verification contracts.
+Affected specs: None now; a future change will likely refine change-artifact-contracts, readiness-completion-gates, corporate-flow-controls, and traceability-contract.
+Affected architecture: Adds an explicit upstream authoring and review flow before implementation-ready Delta Specs and Jira work while preserving Git/OpenSpec and Jira ownership boundaries.
+Data contract impact: None now; future work must define business-analysis and system-analysis handoff evidence without creating a second requirement source.
+Verification impact: Future positive and negative scenarios must prove role ownership, AI proposal-only behavior, handoff completeness, readiness gating, and rejection of premature Jira task creation.
+Status: Recorded as deferred planning input; Phase 2 remains unchanged. Candidate primary roadmap owner is Phase 4 after Phase 3 pilot evidence.
+```
