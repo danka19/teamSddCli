@@ -1,0 +1,15 @@
+schema_version: "2.0"
+classification: minor
+lifecycle_state: draft
+policy: {id: sdd-core, version: 1.0.0}
+links:
+  - record_id: trace-sample-001
+    requirement_refs: [REQ-SAMPLE-001]
+    scenario_refs: [SCN-SAMPLE-001]
+    task_refs: [TASK-SAMPLE-001]
+    classification_refs: [classification/sample.yaml]
+    gate_refs: []
+    control_refs: []
+    release_refs: []
+    waiver_deferral_refs: []
+    hotfix_reconciliation_refs: []

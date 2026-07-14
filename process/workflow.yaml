@@ -2,7 +2,24 @@ schema_version: "1.0"
 workflow:
   id: central-sdd
   topology: central-team-specs
-  artifact_dependencies: []
+  artifact_dependencies:
+    - id: change
+      requires: []
+    - id: classification
+      requires: [change]
+    - id: spec-pr-preparation
+      requires: [classification]
+    - id: readiness-gates
+      requires: [spec-pr-preparation]
+    - id: control-evidence
+      requires: [readiness-gates]
+    - id: release-evidence
+      requires: [control-evidence]
+    - id: traceability
+      requires: [classification, readiness-gates, control-evidence, release-evidence]
+    - id: archive-preparation
+      requires: [traceability, release-evidence]
 canonical_sources:
   - openspec/specs/repo-topology-config/spec.md
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md

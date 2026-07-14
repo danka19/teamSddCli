@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "traceability-v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "classification", "lifecycle_state", "policy", "links"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "classification": {"enum": ["minor", "major", "hotfix"]},
+    "lifecycle_state": {"enum": ["draft", "spec_review", "approved", "in_implementation", "ready_to_archive", "archived"]},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {"id": {"const": "sdd-core"}, "version": {"const": "1.0.0"}}
+    },
+    "links": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["record_id", "requirement_refs", "scenario_refs", "task_refs", "classification_refs", "gate_refs", "control_refs", "release_refs", "waiver_deferral_refs", "hotfix_reconciliation_refs"],
+        "properties": {
+          "record_id": {"$ref": "#/$defs/id"},
+          "requirement_refs": {"$ref": "#/$defs/nonemptyRefs"},
+          "scenario_refs": {"$ref": "#/$defs/nonemptyRefs"},
+          "task_refs": {"$ref": "#/$defs/nonemptyRefs"},
+          "classification_refs": {"$ref": "#/$defs/nonemptyRefs"},
+          "gate_refs": {"$ref": "#/$defs/nonemptyRefs"},
+          "control_refs": {"$ref": "#/$defs/refs"},
+          "release_refs": {"$ref": "#/$defs/refs"},
+          "waiver_deferral_refs": {"$ref": "#/$defs/refs"},
+          "hotfix_reconciliation_refs": {"$ref": "#/$defs/refs"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "nonemptyRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

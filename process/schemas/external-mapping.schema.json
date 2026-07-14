@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "external-mapping.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy", "states"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {"id": {"const": "sdd-core"}, "version": {"const": "1.0.0"}}
+    },
+    "states": {
+      "type": "object", "additionalProperties": false,
+      "required": ["openspec_archive", "release_readiness", "deployment", "consumer_acceptance", "tracker_done"],
+      "properties": {
+        "openspec_archive": {"const": "archived"},
+        "release_readiness": {"const": "release-ready"},
+        "deployment": {"const": "deployed"},
+        "consumer_acceptance": {"const": "accepted"},
+        "tracker_done": {"const": "done"}
+      }
+    }
+  }
+}

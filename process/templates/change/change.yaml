@@ -1,0 +1,29 @@
+schema_version: 2
+id: sample-change
+title: Sample governed change
+type: behavior_change
+classification: minor
+status: draft
+systems: [sample-app]
+quality:
+  strategy_ref: evidence/quality.md
+  regression_ref: evidence/regression.md
+review:
+  owner_refs: [sample-tech-leads]
+publication:
+  required: false
+spec_change:
+  required: true
+  delta_paths: [specs/sample/spec.md]
+classification_evidence:
+  - id: local-change
+    value: unknown
+    source: {kind: proposal, ref: proposal.md}
+    rationale: Human confirmation is required.
+decision:
+  owner_type: human
+  owner_id: sample-tech-lead
+  state: pending
+  evidence_ref: decisions/classification.md
+policy: {id: sdd-core, version: 1.0.0}
+compatibility: {source: native-v2}

@@ -1,0 +1,13 @@
+schema_version: "1.0"
+id: sample-change
+classification: minor
+status: draft
+evaluation_date: "2026-07-14"
+major_impact_hotfix: false
+evidence: []
+approvals: []
+transition_approvals: []
+external_state:
+  delivered: unknown
+  deployed: unknown
+  tracker_done: unknown

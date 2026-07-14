@@ -44,6 +44,9 @@ SCHEMA_FILES = {
     "tech_lead_review_input": "tech-lead-review-input.schema.json",
     "tech_lead_control_record": "tech-lead-control-record.schema.json",
     "corporate_flow_input": "corporate-flow-input.schema.json",
+    "traceability_v2": "traceability-v2.schema.json",
+    "external_mapping": "external-mapping.schema.json",
+    "operation_evidence": "operation-evidence.schema.json",
 }
 
 SENSITIVE_PATTERNS = {
@@ -165,13 +168,26 @@ def test_fragment_only_reference_resolves_within_current_schema() -> None:
     assert_local_references_resolve("inline schema", schema)
 
 
-def test_workflow_contract_does_not_freeze_later_flow_or_classes() -> None:
+def test_workflow_contract_declares_packaged_flow_dependencies_without_owning_policy() -> None:
     workflow = load_yaml(PROCESS_ROOT / "workflow.yaml")["workflow"]
 
     assert set(workflow) == {"id", "topology", "artifact_dependencies"}
-    assert workflow["artifact_dependencies"] == []
+    dependencies = {
+        row["id"]: set(row["requires"])
+        for row in workflow["artifact_dependencies"]
+    }
+    assert dependencies == {
+        "change": set(),
+        "classification": {"change"},
+        "spec-pr-preparation": {"classification"},
+        "readiness-gates": {"spec-pr-preparation"},
+        "control-evidence": {"readiness-gates"},
+        "release-evidence": {"control-evidence"},
+        "traceability": {"classification", "readiness-gates", "control-evidence", "release-evidence"},
+        "archive-preparation": {"traceability", "release-evidence"},
+    }
     workflow_text = json.dumps(workflow).lower()
-    for frozen_term in ("stages", "proposal", "delta-spec", "tasks", "minor", "major", "hotfix"):
+    for frozen_term in ("stages", "minor", "major", "hotfix", "approval", "threshold"):
         assert frozen_term not in workflow_text
 
 

@@ -391,3 +391,37 @@ Status: closed after implementation, combined requirements/architecture/verifica
 - Final WIP-expiry hardening `7f0f266` restricts `authorized-exception` to a scoped, source-linked, unexpired `exception` record with follow-up, shared evidence, and mapped product-owner authority; `human-decision` cannot bypass the limit. Focused 25/25, relevant regression 150/150, full serial 288/288, compilation and diff checks passed.
 - Combined reviewer final verdict: Approved. The original four P1 findings and the follow-up WIP-expiry finding have exact negative coverage; final targeted re-review passed 25 focused tests without modifying files.
 - Coordinator reconciliation marks NIS tasks 5.1-5.7 and 6.1-6.2 complete, moving the NIS inventory from 22/43 to 31/43 while the transfer-package change remains 3/33. Work item 2.7 is `closed`; work item 2.8 is `ready`.
+
+## Work Item 2.8: Packaged Deterministic Governed Flow
+
+Status: worker implementation complete; independent task review, architecture review, fresh verification, and coordinator reconciliation remain pending. OpenSpec task checkboxes and work-item status are intentionally unchanged at this checkpoint.
+
+### Worker Implementation Evidence
+
+- Current versioned template and bounded legacy validator: `process/templates/change/`, `process/validators/legacy_change.py`, and thin `scripts/validate_change.py` compatibility wrapper.
+- Transactional deterministic operations: `process/workflow_operations.py`; stable CLI output boundary: `process/operation_cli.py`.
+- Non-interactive entry points: `scripts/bootstrap_team_specs.py`, `scripts/create_change.py`, `scripts/prepare_spec_pr.py`, `scripts/prepare_archive.py`, and `scripts/update_process_package.py`.
+- Governed traceability and external mapping contracts: `process/schemas/traceability-v2.schema.json`, `process/schemas/external-mapping.schema.json`, and `process/schemas/operation-evidence.schema.json`, registered in `process/package.yaml`.
+- Packaged artifact dependency graph: `process/workflow.yaml`; operator boundary and AI-disabled fallback: `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`.
+- Scenario-first verification: `tests/test_packaged_flow.py` and `tests/test_packaged_flow_cli.py`, plus package and legacy compatibility suites.
+
+### TDD And Verification Record
+
+- First RED: focused collection failed because `process.workflow_operations` did not exist. Bootstrap/create GREEN reached 2 passing tests with versioned-only copy, destination safety, class-aware draft creation, hashes, and no human-authority substitution.
+- Second RED: focused collection failed on the missing preparation/traceability/mapping/fallback/update operations. GREEN reached 9 tests covering non-mutating Spec PR/archive preparation, all three classes, canonical IDs/policy versions, unknown external mapping rejection, AI-disabled unavailable-integration fallback, transactional update/rollback, pin restoration, and preserved accepted OpenSpec history.
+- CLI RED: focused collection failed because the non-interactive entry points did not exist. GREEN added stable JSON evidence and redacted operator errors without traceback or overwrite.
+- Workflow RED: the package dependency graph was still empty after the operations existed. GREEN declared eight evidence dependencies while keeping thresholds, classes, approvals, and lifecycle policy out of the workflow graph.
+- Final worker focused cycle: `python -m pytest tests/test_packaged_flow.py tests/test_packaged_flow_cli.py tests/test_process_package.py tests/test_validate_change.py -q` -> 61 passed.
+- Fresh full serial suite: `python -m pytest -q` -> 300 passed in 73.66 seconds.
+- Python compilation: `python -m compileall -q process scripts tests` -> exit 0. Direct legacy compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- Roadmap/OpenSpec governance: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. Inventories intentionally remain transfer package 3/33 and NIS governance 31/43 at this worker checkpoint. Strict OpenSpec validation passed 10/10.
+- `git diff --check` passed with only non-blocking Windows LF-to-CRLF notices. The full suite includes the committed synthetic-asset secret/private-value scan and byte-for-byte accepted-history preservation during update/rollback.
+- These worker checks do not close the work item without independent task review, architecture review, fresh verification, and coordinator reconciliation.
+
+### Scope And Authority Boundary
+
+- Bootstrap/create copy only versioned deterministic assets; existing or unsafe destinations fail before mutation.
+- Spec PR and archive preparation only assemble local evidence. They do not create/approve/merge a remote PR, approve readiness, mutate lifecycle, archive, deploy, publish, or set tracker Done.
+- Update/rollback touches only the declared package directory and config pin. Accepted `team-specs/openspec/` history remains outside the mutation boundary and is regression-tested byte-for-byte.
+- Traceability distinguishes required source/gate links from conditional downstream evidence and requires release plus applicable hotfix reconciliation at archive readiness. External mapping keeps archive, release, deployment, acceptance, and tracker Done distinct and fails unknown mappings.
+- Jira, Confluence, model runtime, MCP, and role inbox unavailability route to explicit manual AI-disabled steps; no integration, certification run, role/read-pack kit, release candidate, or pilot was implemented in this work item.

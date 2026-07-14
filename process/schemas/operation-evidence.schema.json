@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "operation-evidence.schema.json",
+  "type": "object",
+  "required": ["schema_version", "operation", "status", "ai_disabled", "human_authority_substituted"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "operation": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "ai_disabled": {"const": true},
+    "human_authority_substituted": {"const": false},
+    "lifecycle_mutated": {"const": false},
+    "external_state_mutated": {"const": false},
+    "approved": {"const": false},
+    "merged": {"const": false},
+    "archived": {"const": false}
+  }
+}

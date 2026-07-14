@@ -22,8 +22,12 @@ schemas:
   tech_lead_review_input: schemas/tech-lead-review-input.schema.json
   tech_lead_control_record: schemas/tech-lead-control-record.schema.json
   corporate_flow_input: schemas/corporate-flow-input.schema.json
+  traceability_v2: schemas/traceability-v2.schema.json
+  external_mapping: schemas/external-mapping.schema.json
+  operation_evidence: schemas/operation-evidence.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
+  change_package: templates/change/change.yaml
 examples:
   classification:
     - examples/classification/minor.yaml
