@@ -209,7 +209,9 @@ def test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it() -> None:
 
     ai_resume = copy.deepcopy(_control("resume", actor_type="ai", at="2026-07-14T09:00:00Z"))
     invalid = check_control_state([*records, ai_resume], _owners(), projects(), _snapshot())
-    assert invalid.state == "stopped"
+    assert invalid.state == "invalid"
+    assert invalid.resume_eligible is False
+    assert invalid.active_record_ids == (records[0]["id"],)
     assert "tech-lead.control-ai-authority-forbidden" in {item.code for item in invalid.diagnostics}
 
     incomplete = _control("resume", at="2026-07-14T09:00:00Z")

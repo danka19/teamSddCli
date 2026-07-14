@@ -40,6 +40,18 @@ FINDING_FIELDS = (
     "code", "severity", "blocking", "source_ref", "zone", "role", "action",
     "policy_snapshot",
 )
+INVALIDATING_CONTROL_DIAGNOSTICS = frozenset({
+    "tech-lead.control-record-future",
+    "tech-lead.control-recorded-at-invalid",
+    "tech-lead.control-action-unknown",
+    "tech-lead.control-severity-unknown",
+    "tech-lead.control-trigger-unknown",
+    "tech-lead.policy-snapshot-mismatch",
+    "tech-lead.control-ai-authority-forbidden",
+    "tech-lead.control-authority-forbidden",
+    "tech-lead.control-ai-approval-forbidden",
+    "tech-lead.control-escalation-conflict",
+})
 
 
 class TechLeadPolicyError(ValueError):
@@ -529,7 +541,14 @@ def check_control_state(
                     ))
                 state = _active_control_state(active)
             # Check-only: active records deliberately remain active until work item 2.7.
-    if state == "clear" and diagnostics:
+    if any(
+        item.code in INVALIDATING_CONTROL_DIAGNOSTICS
+        or item.code.startswith("owners.")
+        for item in diagnostics
+    ):
+        state = "invalid"
+        eligible = False
+    elif state == "clear" and diagnostics:
         state = "invalid"
     return ControlState(
         state=state,

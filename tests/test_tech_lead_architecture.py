@@ -161,3 +161,66 @@ def test_locked_finding_fields_are_compiled_and_tampering_fails_closed() -> None
 
     with pytest.raises(TechLeadPolicyError, match="tech-lead.finding-fields"):
         compile_tech_lead_policy(tampered)
+
+
+@pytest.mark.parametrize("position", ["before", "between", "after"])
+@pytest.mark.parametrize(
+    ("mutate", "expected_code"),
+    [
+        (
+            lambda row: row["policy_snapshot"].update({"digest": "0" * 64}),
+            "tech-lead.policy-snapshot-mismatch",
+        ),
+        (
+            lambda row: row.update({"trigger": "self-asserted-trigger"}),
+            "tech-lead.control-trigger-unknown",
+        ),
+        (
+            lambda row: row["accountable_actor"].update({"id": "self-appointed"}),
+            "tech-lead.control-authority-forbidden",
+        ),
+        (
+            lambda row: row.update({"affected_work": ["sample-app:unowned/file.py"]}),
+            "owners.affected-path-uncovered",
+        ),
+        (
+            lambda row: row.update({"escalation_route": "self-appointed"}),
+            "tech-lead.control-escalation-conflict",
+        ),
+        (
+            lambda row: row.update({"recorded_at": "2026-07-15T08:00:00Z"}),
+            "tech-lead.control-record-future",
+        ),
+    ],
+)
+def test_bad_authoritative_record_invalidates_eligible_sequence_in_any_position(
+    position: str, mutate, expected_code: str,
+) -> None:
+    stop = _control("stop", at="2026-07-14T08:00:00Z")
+    resume = _control("resume", at="2026-07-14T09:00:00Z")
+    bad_times = {
+        "before": "2026-07-14T07:00:00Z",
+        "between": "2026-07-14T08:30:00Z",
+        "after": "2026-07-14T10:00:00Z",
+    }
+    bad = _control("stop", at=bad_times[position])
+    bad["id"] = "control-bad-1"
+    bad["source_ref"] = "controls/bad-1.yaml"
+    mutate(bad)
+    records = {
+        "before": [bad, stop, resume],
+        "between": [stop, bad, resume],
+        "after": [stop, resume, bad],
+    }[position]
+
+    result = check_control_state(
+        records, _owners(), projects(), _snapshot(), as_of="2026-07-14"
+    )
+
+    assert result.state == "invalid"
+    assert result.resume_eligible is False
+    assert result.exit_code == 1
+    assert result.active_record_ids == (stop["id"],)
+    assert expected_code in {item.code for item in result.diagnostics}
+    assert result.control_state_mutated is False
+    assert result.lifecycle_mutated is False
