@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -38,7 +38,8 @@
         "release_manifest": {"type": "string", "minLength": 1},
         "change_v2": {"const": "schemas/change-v2.schema.json"},
         "policy_manifest": {"const": "schemas/policy-manifest.schema.json"},
-        "policy_document": {"const": "schemas/policy-document.schema.json"}
+        "policy_document": {"const": "schemas/policy-document.schema.json"},
+        "gate_evaluation_input": {"const": "schemas/gate-evaluation-input.schema.json"}
       }
     },
     "templates": {

@@ -40,6 +40,7 @@ SCHEMA_FILES = {
     "change_v2": "change-v2.schema.json",
     "policy_manifest": "policy-manifest.schema.json",
     "policy_document": "policy-document.schema.json",
+    "gate_evaluation_input": "gate-evaluation-input.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

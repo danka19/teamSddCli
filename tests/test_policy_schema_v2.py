@@ -227,10 +227,32 @@ def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> 
                 "release-transfer-package-when-applicable",
                 "completed-reconciliation-follow-up",
             },
+            "artifacts.conditional-not-applicable": {
+                "openspec-delta-when-behavior-changes",
+                "architecture-decision-or-not-required",
+                "migration-evidence-when-applicable",
+                "rollback-evidence-when-applicable",
+                "release-transfer-package-or-not-applicable",
+                "release-transfer-evidence-when-applicable",
+            },
+            "artifacts.waiver-eligible": {
+                "qa-test-plan-or-valid-waiver",
+                "automation-plan-or-valid-waiver",
+            },
+            "artifacts.hotfix-deferrable": {
+                "expanded-design-impact-analysis",
+                "architecture-decision-or-not-required",
+                "owner-dependency-map", "quality-strategy",
+                "qa-test-plan-or-valid-waiver",
+                "automation-plan-or-valid-waiver", "broad-regression-matrix",
+                "migration-evidence-when-applicable",
+                "release-transfer-package-or-not-applicable",
+            },
         },
         "gates": {
             "gates.named-catalog": {
-                "review-ready", "definition-of-ready", "implementation-complete",
+                "review-ready", "definition-of-ready",
+                "implementation-start-approval", "implementation-complete",
                 "definition-of-done", "release-transfer-readiness",
                 "archive-readiness", "archive-approval",
             },
@@ -259,6 +281,15 @@ def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> 
                 "definition-of-done", "release-transfer-evidence-when-applicable",
                 "traceability", "waiver-disposition", "follow-up-disposition",
                 "current-policy-compatibility",
+            },
+            "gates.review-ready": {
+                "proposal-intent", "openspec-delta-when-behavior-changes",
+                "testable-scenarios", "classification-rationale",
+                "basic-traceability",
+            },
+            "gates.implementation-complete": {
+                "implementation-evidence", "required-tests",
+                "required-checks-complete", "verification-evidence",
             },
         },
         "regression": {
@@ -295,6 +326,13 @@ def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> 
                 "configuration-assumptions", "installation-transfer-steps",
                 "rollback-or-hold", "operations-support-contacts",
                 "unresolved-follow-ups",
+            },
+            "release.lifecycle-states": {
+                "draft", "spec_review", "approved", "in_implementation",
+                "ready_to_archive", "archived",
+            },
+            "release.external-state-non-inference": {
+                "delivered", "deployed", "tracker-done",
             },
         },
         "pilot-safety": {

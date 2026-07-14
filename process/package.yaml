@@ -18,6 +18,7 @@ schemas:
   change_v2: schemas/change-v2.schema.json
   policy_manifest: schemas/policy-manifest.schema.json
   policy_document: schemas/policy-document.schema.json
+  gate_evaluation_input: schemas/gate-evaluation-input.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
 examples:

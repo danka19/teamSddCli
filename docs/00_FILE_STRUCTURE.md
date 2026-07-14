@@ -85,11 +85,13 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/VERSION` | Reusable process-package semantic version (`0.2.0` for the policy/schema-v2 foundation) |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
-| `process/policies/` | Manifest-driven `sdd-core` policy set with eight versioned static policy catalogs; later work items consume these records to implement behavior |
-| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
+| `process/policies/` | Manifest-driven `sdd-core` policy set with eight versioned static catalogs; work item 2.5 consumes the artifact/gate/release/classification rules without maintaining a second matrix in code |
+| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate-evaluation input, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
 | `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema/policy loading, and final OpenSpec runtime probe |
 | `process/validators/config_validation.py` | Structured redacted diagnostics plus pure schema, compatibility, secret, and cross-registry integrity checks |
 | `process/validators/policy_validation.py` | Static policy identity/reference/override validation and immutable effective-value snapshots with provenance |
+| `process/validators/artifact_gates.py`, `process/validators/lifecycle.py` | Pure immutable-snapshot class-aware report evaluation and read-only six-state forward-transition decisions |
+| `process/validators/gate_input.py` | Versioned gate-input schema boundary with stable redacted diagnostics and duplicate-evidence rejection |
 | `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
 | `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
 | `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
@@ -106,6 +108,9 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/read-packs/classification.yaml` | Authority-labelled bounded classifier read pack referencing canonical policy rule IDs |
 | `tests/test_classification.py`, `tests/test_classification_migration.py` | Scenario-first work item 2.4 classifier, authority, report, CLI, and migration safety evidence |
 | `docs/runbooks/CLASSIFICATION_AND_MIGRATION.md` | Operator procedure for classification, compatibility window, check-before-apply, rollback/hold, and historical exclusion |
+| `scripts/evaluate_change_gates.py`, `scripts/check_lifecycle_transition.py` | Thin non-mutating human/JSON entry points for six gate reports and forward-adjacent lifecycle decisions |
+| `tests/test_artifact_gates.py`, `tests/test_lifecycle_gates.py`, `tests/test_gate_cli.py` | Scenario-first artifact, gate, lifecycle, authority, freshness, schema-boundary, CLI, and non-mutation evidence |
+| `docs/runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md` | Operator input contract, commands, exit codes, authority boundary, and manual decision guidance for work item 2.5 |
 
 ## Planned Phase 2 Project Structure
 
@@ -113,7 +118,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| Additional packaged-flow templates/validators, `process/roles/`, `process/adapters/`, `process/certification/` | Later lifecycle gates, role kit, adapters, and certification assets; classification/migration is implemented but lifecycle mutation remains later scope |
+| Additional packaged-flow templates/validators, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged mutation/orchestration, role kit, adapters, and certification assets; work item 2.5 reports and transition checks remain read-only |
 | Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |

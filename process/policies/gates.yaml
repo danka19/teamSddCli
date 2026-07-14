@@ -16,6 +16,7 @@ rules:
     value:
       - review-ready
       - definition-of-ready
+      - implementation-start-approval
       - implementation-complete
       - definition-of-done
       - release-transfer-readiness
@@ -76,3 +77,36 @@ rules:
     override_mode: additive
     value_type: id-list
     value: []
+  - id: gates.review-ready
+    override_mode: locked
+    value:
+      - proposal-intent
+      - openspec-delta-when-behavior-changes
+      - testable-scenarios
+      - classification-rationale
+      - basic-traceability
+  - id: gates.implementation-complete
+    override_mode: locked
+    value:
+      - implementation-evidence
+      - required-tests
+      - required-checks-complete
+      - verification-evidence
+  - id: gates.report-rule-relationships
+    override_mode: locked
+    refs:
+      - gates.review-ready
+      - gates.common-definition-of-ready
+      - gates.implementation-complete
+      - gates.definition-of-done
+      - gates.release-transfer-readiness
+      - gates.archive-readiness
+      - classification.obligation-rules
+      - release.package-minimums
+    value:
+      review-ready: [gates.review-ready]
+      definition-of-ready: [gates.common-definition-of-ready, classification.obligation-rules]
+      implementation-complete: [gates.implementation-complete]
+      definition-of-done: [gates.definition-of-done, classification.obligation-rules]
+      release-transfer-readiness: [gates.release-transfer-readiness, release.package-minimums]
+      archive-readiness: [gates.archive-readiness]

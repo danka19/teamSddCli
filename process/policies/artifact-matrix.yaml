@@ -65,3 +65,48 @@ rules:
     override_mode: additive
     value_type: id-list
     value: []
+  - id: artifacts.conditional-not-applicable
+    override_mode: locked
+    value:
+      - openspec-delta-when-behavior-changes
+      - architecture-decision-or-not-required
+      - migration-evidence-when-applicable
+      - rollback-evidence-when-applicable
+      - release-transfer-package-or-not-applicable
+      - release-transfer-evidence-when-applicable
+  - id: artifacts.not-applicable-required-fields
+    override_mode: locked
+    value: [rationale, approver, source-ref]
+  - id: artifacts.waiver-eligible
+    override_mode: locked
+    value:
+      - qa-test-plan-or-valid-waiver
+      - automation-plan-or-valid-waiver
+  - id: artifacts.waiver-required-fields
+    override_mode: locked
+    value: [reason, substitute-evidence, approver, residual-risk, follow-up, expired]
+  - id: artifacts.hotfix-deferrable
+    override_mode: locked
+    value:
+      - expanded-design-impact-analysis
+      - architecture-decision-or-not-required
+      - owner-dependency-map
+      - quality-strategy
+      - qa-test-plan-or-valid-waiver
+      - automation-plan-or-valid-waiver
+      - broad-regression-matrix
+      - migration-evidence-when-applicable
+      - release-transfer-package-or-not-applicable
+  - id: artifacts.hotfix-deferral-required-fields
+    override_mode: locked
+    value:
+      - substitute-evidence
+      - owner
+      - approver
+      - residual-risk
+      - follow-up
+      - expiry
+      - reconciled
+  - id: artifacts.placeholder-markers
+    override_mode: locked
+    value: [todo, tbd, n-a, placeholder, coming-soon, not-needed, ellipsis]

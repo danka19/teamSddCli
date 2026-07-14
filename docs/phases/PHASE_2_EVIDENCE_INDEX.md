@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.4 are closed; work item 2.5 is active.
+Status: in_progress. Work items 2.1-2.4 are closed; work item 2.5 implementation is worker-complete and pending independent task, architecture, and verification review.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -236,3 +236,56 @@ Status: closed after implementation, independent task review, architecture revie
 - Independent verification on the reviewed head: PASS. Focused classification/migration 30 passed; policy/config/package/root regression 108 passed; representative classifier matrix 8 passed; migration safety matrix 7 passed; full serial suite 138 passed; compilation exit 0; Phase 1 root validator `OK`; governance 0 errors/0 warnings; OpenSpec strict 10/10; current target surfaces contained no `thin/full` authoring options and no work item 2.5 behavior.
 - Coordinator reconciliation marks NIS-governance tasks 2.1-2.6 complete, moving the inventory from 4/43 to 10/43 while the transfer-package change remains 3/33. Work item 2.4 is `closed`; work item 2.5 is `ready`.
 - Residual risk remains intentionally later scope: independent verification ran on Windows only; cross-platform equivalence is work item 2.12, and actual Qwen/DeepSeek plus AI-disabled certification remains later Phase 2 work.
+
+## Work Item 2.5: Artifact Matrices And Lifecycle Gates
+
+Status: implementation-worker complete; pending independent task review, architecture review, fresh verification, coordinator reconciliation, and human acceptance where required. NIS-governance tasks 3.1-3.6 remain unchecked and work item 2.5 is not closed.
+
+### Sources And Implementation Evidence
+
+- Proposed behavior: `openspec/changes/adopt-nis-corporate-process-governance/` tasks 3.1-3.6 and the artifact, readiness/completion, lifecycle, waiver, and classification deltas.
+- Canonical rule sources: `process/policies/artifact-matrix.yaml`, `process/policies/gates.yaml`, `process/policies/release.yaml`, and `process/policies/classification.yaml`, validated by the typed policy schema and resolved into one immutable provenance-bearing contract.
+- Versioned operational evidence boundary: `process/schemas/gate-evaluation-input.schema.json`, registered in `process/package.yaml`; it remains separate from canonical `change-v2` metadata.
+- Pure decision support: `process/validators/artifact_gates.py`, `process/validators/lifecycle.py`, and `process/validators/gate_input.py`.
+- Thin non-mutating entry points: `scripts/evaluate_change_gates.py` and `scripts/check_lifecycle_transition.py`.
+- Scenario-first evidence: `tests/test_artifact_gates.py`, `tests/test_lifecycle_gates.py`, `tests/test_gate_cli.py`, plus policy/package regression coverage.
+- Operator procedure: `docs/runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md`.
+
+### Scenario And Verification Mapping
+
+| Scenario family | Evidence |
+|---|---|
+| Minor/major/hotfix common and class-specific obligations, including retained major-impact hotfix duties | `test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations` |
+| Missing, placeholder, source-less, stale, invalid-date, and AI-statement evidence | `test_required_artifact_must_be_substantive_current_and_source_linked`; `test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day`; `test_ai_completion_text_is_never_implementation_evidence` |
+| Structured N/A, eligible human-approved waiver, restricted hotfix deferral, and mandatory reconciliation | `test_conditional_not_applicable_requires_structured_human_rationale`; `test_only_eligible_artifact_accepts_a_current_human_approved_waiver`; `test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done` |
+| Stable six-report human/JSON decision model with blockers/advisories, required humans, tool/policy versions, sources, and distinct external states | `test_all_named_reports_are_stable_and_keep_required_human_approval_explicit`; `test_release_not_applicable_is_approved_and_does_not_infer_external_done`; `tests/test_gate_cli.py` |
+| Fail-closed missing, malformed, changed, or wrong-provenance policy rules | `test_evaluator_fails_closed_on_missing_or_wrong_policy_provenance`; `test_evaluator_fails_closed_when_canonical_gate_semantics_are_missing_or_changed`; policy schema tests |
+| Exactly six accepted states and five forward-adjacent read-only transitions with the configured gate mapping | `test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship`; `test_skipped_backward_same_and_unknown_transitions_are_rejected` |
+| Human-only DoR/start/archive approvals, hotfix reconciliation, and no archive-to-delivery inference | `test_dor_start_and_archive_require_transition_specific_human_approval`; `test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up`; `test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive` |
+| Schema-bound production CLI input, stable exits, deterministic output, redacted policy failure, path-bounded local schema, and non-mutation | `tests/test_gate_cli.py`; `test_transition_cli_has_stable_human_json_and_exit_contract`; package/schema regression tests |
+
+### TDD Record
+
+- Initial report RED: focused artifact tests failed collection because `process.validators.artifact_gates` did not exist; the first evaluator increment reached 9 passed.
+- Lifecycle RED: combined focused tests failed collection because `process.validators.lifecycle` did not exist. Subsequent RED cases exposed a required boolean-field check and an incomplete major-impact hotfix fixture; the second increment reached 30 passed.
+- Production-boundary RED: standalone CLI tests failed collection because `scripts.evaluate_change_gates` did not exist. Package integration then exposed the unregistered schema key, and freshness coverage exposed a misplaced test block; both were corrected before documentation.
+
+### Scope And Residual Risk
+
+- These commands never mutate canonical lifecycle state. They do not approve classification, waivers, residual risk, implementation start, release, archive, tracker transitions, deployment, or external delivery.
+- Human identity is structurally required for N/A, waiver, deferral, and transition decisions. Full owner-zone/delegate/authority resolution is work item 2.6 and remains a required independent-review focus; work item 2.5 does not impersonate that future control.
+- `valid_through` uses deterministic inclusive calendar-date semantics against explicit `evaluation_date`; no wall-clock or timezone inference occurs.
+- Tech Lead scheduled/control reports, flow-control automation, traceability expansion, integrations, deploy, cross-platform release certification, and Qwen/DeepSeek certification remain later work items.
+
+### Worker Verification Record
+
+- Focused artifact/lifecycle/CLI/policy/package suite: 50 passed.
+- Policy/config/package regression: 74 passed.
+- Full serial suite: 159 passed.
+- Lifecycle matrix: 6 tests passed, exercising all five forward transitions plus skipped, reverse, same-state, unknown-state, AI-approval, unresolved-hotfix, and external-state negative cases.
+- Python compilation: `python -m compileall -q process/validators scripts/evaluate_change_gates.py scripts/check_lifecycle_transition.py` -> exit 0.
+- Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- Representative human and JSON `review-ready` reports both returned exit 0 and `ready`, listed the configured human approver, returned one report, and stated `lifecycle_mutated: false`.
+- Package/schema/policy manifest consistency passed in the package and policy regression sets; the package remains `0.2.0`, gate-input schema is version `1.0`, and policy set remains `sdd-core` `1.0.0` during the active unreleased Phase 2 package line.
+- Roadmap/OpenSpec governance validator: 0 errors, 0 warnings. OpenSpec inventory remained transfer package 3/33 and NIS governance 10/43; no task was checked. Strict OpenSpec validation: 10 passed, 0 failed.
+- `git diff --check` passed with only Git's non-blocking Windows LF-to-CRLF notices.
