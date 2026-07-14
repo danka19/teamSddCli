@@ -25,6 +25,10 @@ schemas:
   traceability_v2: schemas/traceability-v2.schema.json
   external_mapping: schemas/external-mapping.schema.json
   operation_evidence: schemas/operation-evidence.schema.json
+  task_launch: schemas/task-launch.schema.json
+  read_pack: schemas/read-pack.schema.json
+  weak_model_operation_evidence: schemas/weak-model-operation-evidence.schema.json
+  parallel_plan: schemas/parallel-plan.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
   change_package: templates/change/change.yaml
@@ -36,16 +40,25 @@ examples:
 read_packs:
   classification: read-packs/classification.yaml
 role_instructions:
+  analyst: roles/analyst.md
+  developer: roles/developer.md
+  qa: roles/qa.md
   tech_lead: roles/tech-lead.md
+adapters:
+  qwen_class: adapters/qwen-class.yaml
+  deepseek_class: adapters/deepseek-class.yaml
+  gigacode_class: adapters/gigacode-class.yaml
 distribution:
   files:
     - VERSION
     - __init__.py
     - operation_cli.py
     - package.yaml
+    - weak_model_kit.py
     - workflow.yaml
     - workflow_operations.py
   roots:
+    - adapters
     - examples
     - policies
     - read-packs
@@ -56,6 +69,7 @@ distribution:
 canonical_sources:
   - openspec/specs/repo-topology-config/spec.md
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md
+  - openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md

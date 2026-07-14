@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "weak-model-operation-evidence.schema.json",
+  "type": "object",
+  "required": ["schema_version", "task_id", "role", "stage", "status", "read_pack_identity", "sources_read", "artifacts_drafted", "checks", "claims", "human_decisions_required", "unresolved_inputs", "residual_limitations", "prohibited_actions_attempted", "lifecycle_transition_requested", "approval_claimed"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "role": {"enum": ["analyst", "developer", "qa", "tech_lead"]},
+    "stage": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft-complete", "blocked", "failed"]},
+    "read_pack_identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "sources_read": {"type": "array", "items": {"type": "object", "required": ["stable_id", "path"]}},
+    "artifacts_drafted": {"type": "array", "items": {"type": "object", "required": ["path", "canonical", "canonical_references"]}},
+    "checks": {"type": "array", "items": {"type": "object", "required": ["command", "result", "evidence"]}},
+    "claims": {"type": "array"},
+    "human_decisions_required": {"type": "array", "items": {"type": "string"}},
+    "unresolved_inputs": {"type": "array", "items": {"type": "string"}},
+    "residual_limitations": {"type": "array", "items": {"type": "string"}},
+    "prohibited_actions_attempted": {"type": "array"},
+    "lifecycle_transition_requested": {"const": false},
+    "approval_claimed": {"const": false}
+  }
+}

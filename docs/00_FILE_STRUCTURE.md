@@ -94,7 +94,12 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/validators/artifact_gates.py`, `process/validators/lifecycle.py` | Pure immutable-snapshot class-aware report evaluation and read-only six-state forward-transition decisions |
 | `process/validators/gate_input.py` | Versioned gate-input schema boundary with stable redacted diagnostics and duplicate-evidence rejection |
 | `process/validators/owners.py`, `process/validators/tech_lead.py` | Versioned owner/delegate/zone authority resolution plus immutable-snapshot, check-only Tech Lead views and control-state evaluation |
-| `process/roles/tech-lead.md` | Bounded current Tech Lead role instruction with source, AI-disabled, authority, and human stop-point rules |
+| `process/roles/*.md` | Bounded analyst, developer, QA, and Tech Lead one-stage instructions with canonical references, negative examples, self-review, and human stop points |
+| `process/adapters/*.yaml` | Thin Qwen/DeepSeek/GigaCode-class packaging templates with no policy, transition, canonical-write, or human authority |
+| `process/weak_model_kit.py` | Pure authority-labelled read-pack, deterministic launch, operation-evidence, and safe-parallel contract logic |
+| `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
+| `tests/test_weak_model_kit.py` | Scenario-first launch, missing context, authority, derived-output, adapter, role, and parallel-safety evidence |
+| `docs/runbooks/WEAK_MODEL_OPERATING_KIT.md` | Operator launch, evidence, adapter-failure, AI-disabled, and safe-parallel procedure |
 | `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
 | `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
 | `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
@@ -123,10 +128,9 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| Additional packaged-flow templates/validators, analyst/developer/QA roles, `process/adapters/`, and `process/certification/` | Later mutation/orchestration, broader role kit, adapters, and actual certification assets; current Tech Lead reports/control checks remain read-only |
+| `process/certification/` | Later actual Qwen/DeepSeek certification assets; current role-kit fixtures prove deterministic contracts only |
 | Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
-| `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |
 | `scripts/certify_process_release.py` | Planned AI-disabled and weak-model release certification entry point |
 
 ## Skills

@@ -1,0 +1,8 @@
+schema_version: "1.0"
+adapter_family: deepseek-class
+inputs: [instruction_path, read_pack_path]
+output: scratch_operation_evidence
+authority: none
+canonical_write: false
+failure_behavior: preserve-canonical-and-report-scratch
+

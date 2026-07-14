@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "parallel-plan.schema.json",
+  "type": "object",
+  "required": ["schema_version", "plan_id", "integration_owner", "tasks", "combined_checks"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "plan_id": {"type": "string", "minLength": 1},
+    "integration_owner": {"type": "string", "minLength": 1},
+    "tasks": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["task_id", "owner", "dependencies", "write_scopes", "evidence_path", "stop_condition", "focused_checks", "policy_or_lifecycle_decision"]}},
+    "combined_checks": {"type": "array", "allOf": [{"contains": {"const": "integration"}}, {"contains": {"const": "traceability"}}, {"contains": {"const": "review"}}, {"contains": {"const": "conflict"}}]}
+  }
+}

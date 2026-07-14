@@ -438,3 +438,31 @@ Status: closed after implementation, combined requirements/architecture/verifica
 - Update/rollback touches only the declared package directory and config pin. Accepted `team-specs/openspec/` history remains outside the mutation boundary and is regression-tested byte-for-byte.
 - Traceability distinguishes required source/gate links from conditional downstream evidence and requires release plus applicable hotfix reconciliation at archive readiness. External mapping keeps archive, release, deployment, acceptance, and tracker Done distinct and fails unknown mappings.
 - Jira, Confluence, model runtime, MCP, and role inbox unavailability route to explicit manual AI-disabled steps; no integration, certification run, role/read-pack kit, release candidate, or pilot was implemented in this work item.
+
+## Work Item 2.9: Weak-Model Role Kit And Safe Parallel Execution
+
+Status: worker implementation complete; transfer tasks 3.1-3.6 intentionally remain unchecked until independent task review, architecture review, final verification, and coordinator reconciliation.
+
+### Worker Implementation Evidence
+
+- Pure deterministic contract logic: `process/weak_model_kit.py`; registered schemas: `task-launch.schema.json`, `read-pack.schema.json`, `weak-model-operation-evidence.schema.json`, and `parallel-plan.schema.json`.
+- Tool-agnostic one-stage instructions: `process/roles/analyst.md`, `developer.md`, `qa.md`, and `tech-lead.md`; every role has numbered steps, canonical references, self-review, negative examples, and a human stop point.
+- Thin non-authoritative packaging templates: `process/adapters/qwen-class.yaml`, `deepseek-class.yaml`, and `gigacode-class.yaml`. They receive only the selected instruction and read pack, cannot write canonical state, and contain no policy or transition rule.
+- AI-disabled entry points: `scripts/build_read_pack.py`, `launch_role_task.py`, `check_weak_model_evidence.py`, and `check_parallel_plan.py`; operating procedure: `docs/runbooks/WEAK_MODEL_OPERATING_KIT.md`.
+- Scenario-first evidence: `tests/test_weak_model_kit.py` covers bounded authority-labelled context, stable identity, missing/unsafe/duplicate/unconfigured sources, unresolved inputs, deterministic role/stage selection, forbidden authority/transitions, unsupported evidence, derived-output references, all roles/adapters, scope overlap, dependencies, isolated evidence, and combined integration gates.
+
+### TDD And Scope Evidence
+
+- First RED: focused collection failed because `process.weak_model_kit` did not exist. The vertical GREEN implemented deterministic read-pack construction and role launch, then evidence and safe-parallel checks reached 27 passing focused tests.
+- The first full run reached 325 passing tests and exposed 15 package regressions from one inventory omission: the new module/adapters directory and four schemas were not fully declared in the strict distribution/test inventories. Declaring the assets closed all 15 failures; the fresh full serial suite passed 340 tests.
+- Missing canonical source/path/ID or any unresolved input makes the pack `blocked`; the launcher refuses it. Canonical sources must be package-configured and repository-bounded; every included source carries authority, stable ID/path, and content hash.
+- Completion remains advisory: approval, lifecycle transition, unsupported validation/file/integration claims, canonical draft claims, and derived artifacts without inspected canonical references are rejected deterministically.
+- Parallel launch is allowed only for tasks without unresolved dependencies, overlapping parent/child/equal write scopes, shared evidence, or policy/lifecycle decisions. Each task has focused checks and a separate evidence path; the integration owner must run integration, traceability, review, and conflict gates.
+- No model was run or certified. No real corporate adapter, Jira/Confluence/MCP integration, release candidate, cross-platform certification, environment inventory, or pilot was implemented. Those remain work items 2.10-2.14 or Phase 3.
+
+### Worker Verification Record
+
+- Focused: `python -m pytest tests/test_weak_model_kit.py -q` -> 27 passed.
+- Full serial after package-inventory correction: `python -m pytest -q` -> 340 passed in 89.11 seconds.
+- Python compilation passed. Roadmap/OpenSpec governance remained 0 errors and 0 warnings; strict OpenSpec validation passed 10/10. `git diff --check` passed with only non-blocking Windows line-ending notices.
+- Transfer tasks 3.1-3.6 remain unchecked and work item 2.9 remains active for independent gates.

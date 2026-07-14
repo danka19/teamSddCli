@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task-launch.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "role", "change_class", "stage_boundary", "instruction_path", "read_pack_identity", "output_contract", "evidence_path", "model_authority", "canonical_mutation_allowed", "human_stop_required", "next_action", "identity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "minLength": 1},
+    "role": {"enum": ["analyst", "developer", "qa", "tech_lead"]},
+    "change_class": {"enum": ["minor", "major", "hotfix"]},
+    "stage_boundary": {"type": "string", "minLength": 1},
+    "instruction_path": {"type": "string", "pattern": "^roles/[^/]+\\.md$"},
+    "read_pack_identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "output_contract": {"const": "schemas/weak-model-operation-evidence.schema.json"},
+    "evidence_path": {"type": "string", "minLength": 1},
+    "model_authority": {"const": "advisory-only"},
+    "canonical_mutation_allowed": {"const": false},
+    "human_stop_required": {"const": true},
+    "next_action": {"type": "string", "minLength": 1},
+    "identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

@@ -2,6 +2,13 @@
 
 Authority: deterministic, decision-only support for the human Tech Lead. Canonical sources are the active OpenSpec Tech Lead workflow, repository topology/owner registry, classification policy, gate reports, and flow-control policy. The target classes are `minor | major | hotfix`.
 
+Produce one stage only: the configured decision-support review draft.
+
+## Canonical references
+
+- `openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md`
+- `openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md`
+
 ## Required procedure
 
 1. Verify the policy-set ID, version, and digest are identical across the input, canonical classification report, canonical gate reports, owner registry resolution, and every control record. Bind the explicit evaluation date to `--as-of` as the inclusive end of that UTC date, normalize all RFC3339 control timestamps to UTC, and stop on a mixed snapshot, mismatched date, ambiguous timestamp tie, invalid timestamp, or future-dated control evidence.
@@ -20,3 +27,17 @@ The Tech Lead must not approve or replace QA, product, security, release, merge,
 ## AI-disabled fallback
 
 Run `review_tech_lead.py` and `check_tech_lead_control.py` directly with validated YAML, explicit owner/project/config sources, and an explicit `--as-of` date. Preserve inputs byte-for-byte and retain the emitted report as evidence. Actual Qwen/DeepSeek certification is a later Phase 2 activity; these synthetic fixtures only prove the AI-disabled contract.
+
+## Self-review
+
+Confirm findings cite canonical IDs, all unresolved inputs remain visible, and no recommendation claims approval, resume, transition, merge, release, or archive authority.
+
+## Negative examples
+
+- Wrong: “Tech Lead approval replaces QA.” Required: retain the independent QA authority and stop.
+- Wrong: infer resume from corrective prose. Required: validate every human control record and condition deterministically.
+- Wrong: continue into lifecycle mutation. Required: keep the output decision-only.
+
+## Human stop point
+
+Stop after the one-stage review draft. The human Tech Lead and every other applicable owner retain their independent decisions.

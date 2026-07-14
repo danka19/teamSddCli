@@ -3,7 +3,7 @@
   "$id": "process-package.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "role_instructions", "distribution", "canonical_sources"],
+  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "role_instructions", "adapters", "distribution", "canonical_sources"],
   "properties": {
     "schema_version": {"const": "1.1"},
     "package": {
@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -45,7 +45,11 @@
         "corporate_flow_input": {"const": "schemas/corporate-flow-input.schema.json"},
         "traceability_v2": {"const": "schemas/traceability-v2.schema.json"},
         "external_mapping": {"const": "schemas/external-mapping.schema.json"},
-        "operation_evidence": {"const": "schemas/operation-evidence.schema.json"}
+        "operation_evidence": {"const": "schemas/operation-evidence.schema.json"},
+        "task_launch": {"const": "schemas/task-launch.schema.json"},
+        "read_pack": {"const": "schemas/read-pack.schema.json"},
+        "weak_model_operation_evidence": {"const": "schemas/weak-model-operation-evidence.schema.json"},
+        "parallel_plan": {"const": "schemas/parallel-plan.schema.json"}
       }
     },
     "templates": {
@@ -79,8 +83,23 @@
     "role_instructions": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tech_lead"],
-      "properties": {"tech_lead": {"const": "roles/tech-lead.md"}}
+      "required": ["analyst", "developer", "qa", "tech_lead"],
+      "properties": {
+        "analyst": {"const": "roles/analyst.md"},
+        "developer": {"const": "roles/developer.md"},
+        "qa": {"const": "roles/qa.md"},
+        "tech_lead": {"const": "roles/tech-lead.md"}
+      }
+    },
+    "adapters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["qwen_class", "deepseek_class", "gigacode_class"],
+      "properties": {
+        "qwen_class": {"const": "adapters/qwen-class.yaml"},
+        "deepseek_class": {"const": "adapters/deepseek-class.yaml"},
+        "gigacode_class": {"const": "adapters/gigacode-class.yaml"}
+      }
     },
     "distribution": {
       "type": "object",
@@ -88,10 +107,10 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "operation_cli.py", "package.yaml", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
-          "const": ["examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
+          "const": ["adapters", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
         }
       }
     },

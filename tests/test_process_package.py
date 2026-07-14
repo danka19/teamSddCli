@@ -47,6 +47,10 @@ SCHEMA_FILES = {
     "traceability_v2": "traceability-v2.schema.json",
     "external_mapping": "external-mapping.schema.json",
     "operation_evidence": "operation-evidence.schema.json",
+    "task_launch": "task-launch.schema.json",
+    "read_pack": "read-pack.schema.json",
+    "weak_model_operation_evidence": "weak-model-operation-evidence.schema.json",
+    "parallel_plan": "parallel-plan.schema.json",
 }
 
 SENSITIVE_PATTERNS = {
