@@ -101,6 +101,23 @@
           "zones": {"items": {"not": {"required": ["tech_lead"]}}}
         }
       }
+    },
+    {
+      "if": {"properties": {"schema_version": {"const": "2.0"}}},
+      "then": {
+        "properties": {
+          "zones": {
+            "items": {
+              "required": ["tech_lead"],
+              "properties": {
+                "tech_lead": {
+                  "required": ["primary", "authority", "delegates", "escalation_route"]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

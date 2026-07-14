@@ -90,6 +90,13 @@ def owner_registry_diagnostics(
     for zone_index, zone in enumerate(owners.get("zones", [])):
         if not isinstance(zone, Mapping):
             continue
+        for group in zone.get("owner_groups", []):
+            if not isinstance(group, str) or group not in groups:
+                diagnostics.append(_diag(
+                    "owners.zone-group-unresolved",
+                    "An owner zone references an absent owner group.",
+                    f"/zones/{zone_index}/owner_groups",
+                ))
         base = f"/zones/{zone_index}/tech_lead"
         governance = zone.get("tech_lead")
         if not isinstance(governance, Mapping):
@@ -124,20 +131,41 @@ def owner_registry_diagnostics(
                     f"{base}/primary",
                 ))
 
-        authority = _authority_set(governance.get("authority"))
-        if not authority <= TECH_LEAD_AUTHORITIES:
+        authority_value = governance.get("authority")
+        authority_valid = _valid_string_list(authority_value)
+        authority = _authority_set(authority_value)
+        if not authority_valid:
+            diagnostics.append(_diag(
+                "owners.authority-invalid",
+                "Tech Lead authority must be a non-empty unique list of authority identifiers.",
+                f"{base}/authority",
+            ))
+        elif not authority <= TECH_LEAD_AUTHORITIES:
             diagnostics.append(_diag(
                 "owners.authority-forbidden",
                 "Tech Lead authority includes a decision reserved for another human role.",
                 f"{base}/authority",
             ))
 
-        for delegate_index, delegate in enumerate(governance.get("delegates", [])):
+        delegates_value = governance.get("delegates")
+        if not isinstance(delegates_value, list):
+            diagnostics.append(_diag(
+                "owners.delegates-invalid",
+                "Tech Lead delegates must be an explicit list.",
+                f"{base}/delegates",
+            ))
+            delegates_value = []
+        for delegate_index, delegate in enumerate(delegates_value):
             if not isinstance(delegate, Mapping):
+                diagnostics.append(_diag(
+                    "owners.delegate-invalid",
+                    "A Tech Lead delegate grant must be a mapping.",
+                    f"{base}/delegates/{delegate_index}",
+                ))
                 continue
             delegate_base = f"{base}/delegates/{delegate_index}"
             owner = delegate.get("owner")
-            if isinstance(owner, str):
+            if isinstance(owner, str) and owner:
                 state = _reference_state(owner, "tech_lead", groups, member_roles)
                 if state != "valid":
                     diagnostics.append(_diag(
@@ -145,14 +173,28 @@ def owner_registry_diagnostics(
                         "A delegate reference is absent or has the wrong role.",
                         f"{delegate_base}/owner",
                     ))
-            delegated = _authority_set(delegate.get("authority"))
-            if not delegated <= TECH_LEAD_AUTHORITIES:
+            else:
+                diagnostics.append(_diag(
+                    "owners.delegate-unresolved",
+                    "A delegate reference is absent or has the wrong role.",
+                    f"{delegate_base}/owner",
+                ))
+            delegated_value = delegate.get("authority")
+            delegated_valid = _valid_string_list(delegated_value)
+            delegated = _authority_set(delegated_value)
+            if not delegated_valid:
+                diagnostics.append(_diag(
+                    "owners.delegate-authority-invalid",
+                    "Delegate authority must be a non-empty unique list.",
+                    f"{delegate_base}/authority",
+                ))
+            elif not delegated <= TECH_LEAD_AUTHORITIES:
                 diagnostics.append(_diag(
                     "owners.authority-forbidden",
                     "Delegate authority includes a decision reserved for another role.",
                     f"{delegate_base}/authority",
                 ))
-            elif not delegated <= authority:
+            elif authority_valid and not delegated <= authority:
                 diagnostics.append(_diag(
                     "owners.delegate-authority-broader",
                     "A delegate cannot receive broader authority than the primary Tech Lead.",
@@ -160,7 +202,7 @@ def owner_registry_diagnostics(
                 ))
 
         escalation = governance.get("escalation_route")
-        if isinstance(escalation, str):
+        if isinstance(escalation, str) and escalation:
             state = _reference_state(
                 escalation, ("process_owner", "tech_lead"), groups, member_roles
             )
@@ -178,6 +220,12 @@ def owner_registry_diagnostics(
                     "The escalation route conflicts with the immutable configured route.",
                     f"{base}/escalation_route",
                 ))
+        else:
+            diagnostics.append(_diag(
+                "owners.escalation-invalid",
+                "A governance owner zone must declare one escalation route reference.",
+                f"{base}/escalation_route",
+            ))
     return diagnostics
 
 
@@ -281,6 +329,47 @@ def resolve_tech_lead_ownership(
             ),),
         )
 
+    delegate_grants = {
+        tuple(sorted(
+            (
+                str(delegate["owner"]),
+                tuple(sorted(str(item) for item in delegate["authority"])),
+            )
+            for delegate in zone["tech_lead"].get("delegates", [])
+        ))
+        for zone in matched
+    }
+    if len(delegate_grants) != 1:
+        return TechLeadResolution(
+            primary=next(iter(primaries)),
+            zones=tuple(matched_ids),
+            authority=next(iter(authorities)),
+            policy_set=policy_set,
+            diagnostics=(_diag(
+                "owners.delegate-conflict",
+                "Overlapping affected zones declare incompatible Tech Lead delegate grants.",
+                "/affected",
+                source="affected-scope",
+            ),),
+        )
+
+    escalation_routes = {
+        str(zone["tech_lead"]["escalation_route"]) for zone in matched
+    }
+    if len(escalation_routes) != 1:
+        return TechLeadResolution(
+            primary=next(iter(primaries)),
+            zones=tuple(matched_ids),
+            authority=next(iter(authorities)),
+            policy_set=policy_set,
+            diagnostics=(_diag(
+                "owners.escalation-conflict",
+                "Overlapping affected zones declare incompatible Tech Lead escalation routes.",
+                "/affected",
+                source="affected-scope",
+            ),),
+        )
+
     governance = matched[0]["tech_lead"]
     delegates = tuple(
         DelegateGrant(
@@ -352,6 +441,15 @@ def _authority_set(value: Any) -> frozenset[str]:
     if not isinstance(value, list):
         return frozenset()
     return frozenset(item for item in value if isinstance(item, str))
+
+
+def _valid_string_list(value: Any) -> bool:
+    return (
+        isinstance(value, list)
+        and bool(value)
+        and all(isinstance(item, str) and item for item in value)
+        and len(value) == len(set(value))
+    )
 
 
 def _zone_matches(zone: Mapping[str, Any], repository: str, path: str) -> bool:

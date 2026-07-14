@@ -16,6 +16,8 @@ It does not mutate control or lifecycle state. It does not implement the broader
 - One validated `sdd-core` `1.0.0` snapshot. Input, classification report, gate reports, and every control record must use the same ID, version, and digest.
 - Explicit `--as-of YYYY-MM-DD`. There is no wall-clock, daemon, calendar, inbox, or due-date inference.
 
+Owner registry v2 requires a primary Tech Lead, bounded authority list, explicit delegate grants, and an escalation route for every zone. Schema and semantic failures stop both CLI entry points with exit `3` before owner resolution; diagnostics never echo input values or private paths. When zones overlap, primary, authority, complete delegate grants, and escalation route must all agree. Registry v1 compatibility remains unchanged but cannot satisfy a Tech Lead governance resolution.
+
 ## Review command
 
 ```text
@@ -31,6 +33,8 @@ Exit `0` means the deterministic report is reviewable, not human-approved. Exit 
 
 Every report emits under-classification, missing-context, architecture, owner/dependency, scope-drift, control-state, completion/DoD, release-recommendation, waiver-expiry, hotfix-follow-up, and configured-checkpoint views. Findings carry stable code, severity, blocking state, source, zone, role, action, and policy snapshot.
 
+Classification and gate-report statuses use closed enums. A blocked or invalid classification report, review-ready report, Definition of Ready, Definition of Done, or release/transfer-readiness report blocks Tech Lead review and forces `do-not-recommend`; free-text status claims fail schema validation.
+
 ## Control-state command
 
 ```text
@@ -42,7 +46,9 @@ python scripts/check_tech_lead_control.py REVIEW.yaml \
   --json
 ```
 
-Records must be unique and source-chronological. Stop, hold, and escalation remain active in the check result. A later resume can become `resume-eligible` only when the same policy snapshot, bounded human authority, configured escalation route, corrective evidence, and human approvals validate. The command never clears the active record or changes canonical state.
+Records must be unique and source-chronological. Stop, hold, and escalation remain active in the check result. A resume record must explicitly list every targeted active control-record ID and bind every resume condition from every target to corrective source evidence. A standalone resume, an inactive target, unrelated evidence, an uncovered condition, or any unaddressed active record keeps resume ineligible. A later resume can become `resume-eligible` only when all active records are addressed and the same policy snapshot, bounded human authority, configured escalation route, condition-bound corrective evidence, and human approvals validate. The command never clears an active record or changes canonical state.
+
+The cutoff is part of validation and provenance: JSON output includes `as_of`, the input `evaluation_date`, and the policy `snapshot_digest`. A mismatch between `--as-of` and `evaluation_date` blocks review. Control records dated after the cutoff are diagnosed and excluded before control-state derivation.
 
 All outputs state:
 

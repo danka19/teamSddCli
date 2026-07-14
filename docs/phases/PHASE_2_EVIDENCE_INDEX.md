@@ -323,21 +323,26 @@ Status: implementation-worker-complete; independent task review, architecture re
 - Owner RED failed collection because `process.validators.owners` did not exist; immutable configured-slot RED then proved policy escape was not rejected. The first GREEN reached 8 owner scenarios and preserved 74 config/policy/package regressions.
 - Review/control RED failed collection because `process.validators.tech_lead` did not exist. Subsequent behavior and registration RED runs exposed missing persistent control checks, owner-policy fixture mismatch, and unregistered ninth-policy/two-schema package surfaces before GREEN.
 - Final adversarial RED: 8 failures after 24 passes exposed missing duplicate/order/action/severity/trigger/AI-approval/incomplete-resume checks plus absent role/certification fixtures. The focused owner/review/control/certification GREEN reached 32 tests.
+- Independent-review hardening RED: 16 failures after 3 passes exposed open classification/gate status strings, standalone or unbound resume eligibility, list-order-dependent overlap resolution, malformed owner-v2 crashes/late failures, and an unbound evaluation cutoff. The hardening GREEN reached 20/20 adversarial tests without changing work-item or OpenSpec task status.
 
 ### Scope And Residual Risk
 
 - Every output is decision-only and records `control_state_mutated: false` and `lifecycle_mutated: false`. A `resume-eligible` result does not clear a hold or resume work.
 - Tech Lead recommendations never satisfy QA, product, security, release, merge, archive, or tracker approvals. AI cannot create or approve a control decision.
 - Scheduled/event-driven support means explicit configured checkpoint/event input plus deterministic `--as-of`; no daemon, calendar, role inbox, inferred due date, or integration was added.
+- `--as-of`, input `evaluation_date`, and the policy snapshot digest are explicit report provenance. Future control records are diagnosed and filtered before state derivation; an evaluation-date mismatch blocks review.
+- Resume eligibility requires explicit active-record targets and source evidence bound to every target resume condition. Standalone resume and partially addressed multi-record control state fail closed while the check-only output retains every active record.
 - Actual flow mutation/enforcement, failed-run retention, and release-handoff persistence remain 2.7; full traceability remains 2.8. Actual Qwen/DeepSeek certification and cross-platform release certification remain later Phase 2 work.
 
 ### Worker Verification Record
 
 - Focused owner/review/control/certification: 32 passed.
+- Review-hardening adversarial suite: 20 passed; existing owner/review/control/certification regression: 34 passed.
 - Policy/config/package/gate regression: 97 passed.
-- Final focused owner/review/control/CLI/policy/package suite: 63 passed. Policy/config/package regression: 74 passed. Full serial suite: 203 passed.
+- Final focused owner/review/control/CLI/policy/package suite: 63 passed. Policy/config/package regression: 74 passed. Independent-review hardening full serial suite: 223 passed.
 - Python compilation: `python -m compileall -q process scripts tests` -> exit 0. Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - Representative AI-disabled review: human and JSON event-driven commands returned exit 0, `reviewable`, all 11 views, zero findings, `recommend`, every independent approval `still-required`, and both mutation flags false. Representative scheduled stop/resume commands returned exit 0 and `resume-eligible` while retaining `control-stop-1` active and both mutation flags false.
+- Standalone control evaluation with `--as-of 2026-07-15` against input `evaluation_date: 2026-07-14` returned exit 1, state `invalid`, exact `tech-lead.evaluation-date-mismatch`, unchanged input SHA-256, and `control_state_mutated: false`.
 - Forbidden AI resume direct-process check returned exact exit 3, empty stderr, no traceback, and stable `tech-lead.input-schema-invalid` at `/control_records/0/accountable_actor/type`. Direct entry points from an unrelated working directory returned exact exit 2, stable redacted JSON-only usage diagnostics, empty stderr, and no traceback.
 - Roadmap/OpenSpec governance: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. Inventories remained transfer package 3/33 and NIS governance 16/43; tasks 4.1-4.6 were not checked. `openspec validate --all --strict` passed 10/10.
 - Package/policy/schema/manifest consistency passed with process package `0.2.0`, package schema `1.1`, `sdd-core` `1.0.0`, nine pinned policy documents, owners governance v2.0 with explicit v1.0 compatibility, and Tech Lead review/control schemas v1.0. Git diff checks passed before the worker commit. These results do not close work item 2.6 or imply reviewer/coordinator acceptance.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
@@ -81,6 +81,9 @@ class ControlState:
     resume_eligible: bool
     active_record_ids: tuple[str, ...]
     diagnostics: tuple[Diagnostic, ...]
+    as_of: str | None = None
+    evaluation_date: str | None = None
+    snapshot_digest: str | None = None
     decision_only: bool = True
     control_state_mutated: bool = False
     lifecycle_mutated: bool = False
@@ -97,6 +100,9 @@ class ControlState:
             "resume_eligible": self.resume_eligible,
             "active_record_ids": list(self.active_record_ids),
             "diagnostics": [item.as_dict() for item in self.diagnostics],
+            "as_of": self.as_of,
+            "evaluation_date": self.evaluation_date,
+            "snapshot_digest": self.snapshot_digest,
             "decision_only": self.decision_only,
             "control_state_mutated": self.control_state_mutated,
             "lifecycle_mutated": self.lifecycle_mutated,
@@ -181,11 +187,38 @@ def validate_tech_lead_input(document: Any, process_root: Any) -> list[dict[str,
     } for item in diagnostics]
 
 
+def validate_owner_registry_input(document: Any, process_root: Any) -> list[dict[str, str]]:
+    resources = load_schema_resources(process_root / "schemas")
+    diagnostics = schema_diagnostics(
+        "owners.schema.json",
+        document,
+        "owners-registry",
+        stage=8,
+        schema_resources=resources,
+    )
+    return [{
+        "code": "owners.schema-invalid",
+        "pointer": item.pointer or "/",
+        "message": "Owner registry does not satisfy the pinned schema.",
+    } for item in diagnostics]
+
+
+def validate_evaluation_cutoff(as_of: Any) -> list[dict[str, str]]:
+    try:
+        date.fromisoformat(as_of)
+    except (TypeError, ValueError):
+        return [{"code": "tech-lead.as-of-invalid"}]
+    return []
+
+
 def check_control_state(
     records: Sequence[Mapping[str, Any]],
     owners: Mapping[str, Any],
     projects: Mapping[str, Any],
     snapshot: PolicySnapshot,
+    *,
+    as_of: str | None = None,
+    evaluation_date: str | None = None,
 ) -> ControlState:
     try:
         policy = compile_tech_lead_policy(snapshot)
@@ -193,29 +226,66 @@ def check_control_state(
         return ControlState(
             state="invalid", resume_eligible=False, active_record_ids=(),
             diagnostics=(_diag("tech-lead.policy-contract-invalid", str(error)),),
+            as_of=as_of, evaluation_date=evaluation_date,
+            snapshot_digest=policy_snapshot_digest(snapshot),
         )
     diagnostics: list[Diagnostic] = []
-    ids = [json.dumps(row.get("id"), sort_keys=True, default=str) for row in records]
+    if as_of is not None:
+        try:
+            date.fromisoformat(as_of)
+        except (TypeError, ValueError):
+            return ControlState(
+                state="invalid", resume_eligible=False, active_record_ids=(),
+                diagnostics=(_diag(
+                    "tech-lead.as-of-invalid",
+                    "The evaluation cutoff must be an ISO calendar date.",
+                ),),
+                as_of=as_of, evaluation_date=evaluation_date,
+                snapshot_digest=policy.snapshot_digest,
+            )
+        if evaluation_date is not None and evaluation_date != as_of:
+            return ControlState(
+                state="invalid", resume_eligible=False, active_record_ids=(),
+                diagnostics=(_diag(
+                    "tech-lead.evaluation-date-mismatch",
+                    "The input evaluation date does not match the requested cutoff.",
+                ),),
+                as_of=as_of, evaluation_date=evaluation_date,
+                snapshot_digest=policy.snapshot_digest,
+            )
+    current_records: list[Mapping[str, Any]] = []
+    for record in records:
+        if as_of is not None and _record_date(record.get("recorded_at")) > date.fromisoformat(as_of):
+            diagnostics.append(_diag(
+                "tech-lead.control-record-future",
+                "A future control record was excluded before state derivation.",
+                source=str(record.get("source_ref", "control-record")),
+            ))
+            continue
+        current_records.append(record)
+    ids = [json.dumps(row.get("id"), sort_keys=True, default=str) for row in current_records]
     if len(ids) != len(set(ids)):
         diagnostics.append(_diag(
             "tech-lead.control-id-duplicate",
             "Control record identifiers must be unique.",
         ))
-    times = [str(row.get("recorded_at", "")) for row in records]
+    times = [str(row.get("recorded_at", "")) for row in current_records]
     if times != sorted(times):
         diagnostics.append(_diag(
             "tech-lead.control-order-invalid",
             "Control records must be supplied in source chronological order.",
         ))
-    if diagnostics:
+    if any(item.code in {"tech-lead.control-id-duplicate", "tech-lead.control-order-invalid"} for item in diagnostics):
         return ControlState(
             state="invalid", resume_eligible=False, active_record_ids=(),
             diagnostics=tuple(diagnostics),
+            as_of=as_of, evaluation_date=evaluation_date,
+            snapshot_digest=policy.snapshot_digest,
         )
     active: list[Mapping[str, Any]] = []
     state = "clear"
     eligible = False
-    for record in records:
+    for record in current_records:
         action = record.get("action")
         if action not in policy.allowed_actions:
             diagnostics.append(_diag(
@@ -277,7 +347,16 @@ def check_control_state(
             active.append(record)
             state = {"stop": "stopped", "hold": "held", "escalate": "escalated"}[action]
             eligible = False
-        elif action == "resume" and active:
+        elif action == "resume":
+            if not active:
+                diagnostics.append(_diag(
+                    "tech-lead.resume-without-active-control",
+                    "A resume record must reference an earlier active stop, hold, or escalation.",
+                    source=str(record.get("source_ref", "control-record")),
+                ))
+                state = "invalid"
+                eligible = False
+                continue
             approvals = record.get("approvals", [])
             if any(row.get("type") != "human" for row in approvals if isinstance(row, Mapping)):
                 diagnostics.append(_diag(
@@ -286,21 +365,82 @@ def check_control_state(
                     source=str(record.get("source_ref", "control-record")),
                 ))
                 continue
-            eligible = bool(record.get("corrective_evidence")) and bool(approvals)
+            active_ids = {str(row.get("id")) for row in active}
+            target_ids = {
+                value for value in record.get("target_active_record_ids", [])
+                if isinstance(value, str)
+            }
+            unknown_targets = target_ids - active_ids
+            if unknown_targets:
+                diagnostics.append(_diag(
+                    "tech-lead.resume-target-inactive",
+                    "A resume target is not an active control record.",
+                    source=str(record.get("source_ref", "control-record")),
+                ))
+            unaddressed = active_ids - target_ids
+            if unaddressed:
+                diagnostics.append(_diag(
+                    "tech-lead.resume-active-records-unaddressed",
+                    "Every active control record must be explicitly addressed before resume is eligible.",
+                    source=str(record.get("source_ref", "control-record")),
+                ))
+            condition_sources: dict[str, set[str]] = {}
+            for row in record.get("condition_evidence", []):
+                if not isinstance(row, Mapping) or not isinstance(row.get("condition"), str):
+                    continue
+                condition_sources.setdefault(row["condition"], set()).update(
+                    source for source in row.get("source_evidence", [])
+                    if isinstance(source, str) and source
+                )
+            corrective = {
+                source for source in record.get("corrective_evidence", [])
+                if isinstance(source, str) and source
+            }
+            required_conditions = {
+                condition
+                for active_record in active
+                if str(active_record.get("id")) in target_ids
+                for condition in active_record.get("resume_conditions", [])
+                if isinstance(condition, str)
+            }
+            evidence_complete = all(
+                condition_sources.get(condition)
+                and condition_sources[condition] <= corrective
+                for condition in required_conditions
+            )
+            if not evidence_complete:
+                diagnostics.append(_diag(
+                    "tech-lead.resume-condition-evidence-incomplete",
+                    "Every resume condition must be bound to corrective source evidence.",
+                    source=str(record.get("source_ref", "control-record")),
+                ))
+            eligible = (
+                bool(corrective) and bool(approvals) and bool(target_ids)
+                and not unknown_targets and not unaddressed and evidence_complete
+            )
             if eligible:
                 state = "resume-eligible"
             else:
-                diagnostics.append(_diag(
-                    "tech-lead.resume-evidence-incomplete",
-                    "Resume remains ineligible until corrective evidence and human approvals exist.",
-                    source=str(record.get("source_ref", "control-record")),
-                ))
+                if not corrective or not approvals:
+                    diagnostics.append(_diag(
+                        "tech-lead.resume-evidence-incomplete",
+                        "Resume remains ineligible until corrective evidence and human approvals exist.",
+                        source=str(record.get("source_ref", "control-record")),
+                    ))
+                state = _active_control_state(active)
             # Check-only: active records deliberately remain active until work item 2.7.
+    if state == "clear" and any(
+        item.code == "tech-lead.control-record-future" for item in diagnostics
+    ):
+        state = "invalid"
     return ControlState(
         state=state,
         resume_eligible=eligible,
         active_record_ids=tuple(str(row.get("id")) for row in active),
         diagnostics=tuple(diagnostics),
+        as_of=as_of,
+        evaluation_date=evaluation_date or as_of,
+        snapshot_digest=policy.snapshot_digest,
     )
 
 
@@ -320,9 +460,24 @@ def evaluate_tech_lead_review(
             "tech_lead", "Restore the immutable Tech Lead policy.",
             {"id": snapshot.policy_set_id, "version": snapshot.policy_set_version,
              "digest": policy_snapshot_digest(snapshot)},
-        )], {})
+        )], {}, as_of=as_of)
     policy_ref = {"id": policy.policy_set[0], "version": policy.policy_set[1], "digest": policy.snapshot_digest}
     views: dict[str, list[dict[str, Any]]] = {name: [] for name in TECH_LEAD_VIEWS}
+
+    try:
+        today = date.fromisoformat(as_of)
+    except (TypeError, ValueError):
+        today = date.min
+        views["missing-canonical-context"].append(_finding(
+            "tech-lead.as-of-invalid", True, "as-of", "global", "tech_lead",
+            "Supply an ISO calendar date evaluation cutoff.", policy_ref,
+        ))
+    if document.get("evaluation_date") != as_of:
+        views["missing-canonical-context"].append(_finding(
+            "tech-lead.evaluation-date-mismatch", True, "evaluation_date", "global",
+            "tech_lead", "Regenerate the review input for the requested evaluation cutoff.",
+            policy_ref,
+        ))
 
     for source_name in ("policy_snapshot", "classification_report", "gate_reports"):
         candidate = document.get(source_name)
@@ -337,6 +492,17 @@ def evaluate_tech_lead_review(
         views["under-classification"].append(_finding(
             "tech-lead.under-classification", True, "reports/classification.json", "global",
             "tech_lead", "Reject minor and recalculate or select the stricter route.", policy_ref,
+        ))
+    classification_report = document.get("classification_report", {})
+    classification_status = classification_report.get("status")
+    if classification_status not in {"valid", "human-confirmed"}:
+        suffix = "invalid" if classification_status == "invalid" else "blocked"
+        views["under-classification"].append(_finding(
+            f"tech-lead.classification-{suffix}", True,
+            str(classification_report.get("source_ref", "classification-report")),
+            "global", "tech_lead",
+            "Resolve the canonical classification report before Tech Lead review.",
+            policy_ref,
         ))
     for key in ("requirements", "scenarios", "affected"):
         if not document.get(key):
@@ -373,7 +539,10 @@ def evaluate_tech_lead_review(
             str(scope.get("reassessment", {}).get("source_ref", "scope")), "global",
             "tech_lead", "Reassess classification, gates, owners, regression, and approval.", policy_ref,
         ))
-    control = check_control_state(document.get("control_records", []), owners, projects, snapshot)
+    control = check_control_state(
+        document.get("control_records", []), owners, projects, snapshot,
+        as_of=as_of, evaluation_date=str(document.get("evaluation_date", "")),
+    )
     for item in control.diagnostics:
         views["control-state"].append(_finding(
             item.code, True, item.source or "control-record", "global", "tech_lead",
@@ -385,17 +554,22 @@ def evaluate_tech_lead_review(
             "Keep work held until an authorized resume is eligible.", policy_ref,
         ))
     gates = document.get("gate_reports", {})
-    if gates.get("definition_of_done") != "ready":
-        views["completion-dod"].append(_finding(
-            "tech-lead.dod-blocked", True, str(gates.get("source_ref", "gates")), "global",
-            "tech_lead", "Resolve the canonical DoD report blockers.", policy_ref,
+    gate_checks = (
+        ("review_ready", "review-ready", "missing-canonical-context"),
+        ("definition_of_ready", "dor", "missing-canonical-context"),
+        ("definition_of_done", "dod", "completion-dod"),
+        ("release_transfer_readiness", "release", "release-recommendation"),
+    )
+    for field, label, view in gate_checks:
+        status = gates.get(field)
+        if status == "ready":
+            continue
+        suffix = "invalid" if status == "invalid" else "blocked"
+        views[view].append(_finding(
+            f"tech-lead.{label}-{suffix}", True,
+            str(gates.get("source_ref", "gates")), "global", "tech_lead",
+            f"Resolve the canonical {label} report before Tech Lead review.", policy_ref,
         ))
-    if gates.get("release_transfer_readiness") != "ready":
-        views["release-recommendation"].append(_finding(
-            "tech-lead.release-not-ready", True, str(gates.get("source_ref", "gates")), "global",
-            "tech_lead", "Do not recommend release until canonical readiness is ready.", policy_ref,
-        ))
-    today = date.fromisoformat(as_of)
     for waiver in document.get("waivers", []):
         try:
             expired = date.fromisoformat(str(waiver.get("expires_on"))) < today
@@ -421,12 +595,13 @@ def evaluate_tech_lead_review(
             "global", "tech_lead", "Supply a configured scheduled/event-driven checkpoint.", policy_ref,
         ))
     findings = [item for name in TECH_LEAD_VIEWS for item in views[name]]
-    return _report(document, policy, findings, views)
+    return _report(document, policy, findings, views, as_of=as_of)
 
 
 def _report(
     document: Mapping[str, Any], policy: CompiledTechLeadPolicy | None,
     findings: list[dict[str, Any]], views: Mapping[str, Any],
+    *, as_of: str,
 ) -> TechLeadReport:
     blocked = any(item["blocking"] for item in findings)
     gates = document.get("gate_reports", {})
@@ -437,6 +612,11 @@ def _report(
         "release_recommendation": release,
         "independent_approvals": {role: "still-required" for role in INDEPENDENT_APPROVALS},
         "decision_only": True, "control_state_mutated": False, "lifecycle_mutated": False,
+        "as_of": as_of,
+        "evaluation_date": document.get("evaluation_date"),
+        "snapshot_digest": (
+            policy.snapshot_digest if policy else document.get("policy_snapshot", {}).get("digest")
+        ),
         "policy_snapshot": ({"id": policy.policy_set[0], "version": policy.policy_set[1],
                              "digest": policy.snapshot_digest} if policy else None),
     }
@@ -459,6 +639,21 @@ def _snapshot_matches(value: Any, policy: CompiledTechLeadPolicy) -> bool:
         "id": policy.policy_set[0], "version": policy.policy_set[1],
         "digest": policy.snapshot_digest,
     }
+
+
+def _record_date(value: Any) -> date:
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00")).date()
+    except (TypeError, ValueError):
+        return date.max
+
+
+def _active_control_state(active: Sequence[Mapping[str, Any]]) -> str:
+    if not active:
+        return "clear"
+    return {
+        "stop": "stopped", "hold": "held", "escalate": "escalated",
+    }.get(str(active[-1].get("action")), "invalid")
 
 
 def _affected_from_record(record: Mapping[str, Any]) -> list[AffectedPath]:

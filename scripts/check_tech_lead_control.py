@@ -14,7 +14,13 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from process.validators.policy_validation import validate_policy_bundle
-from process.validators.tech_lead import check_control_state, validate_tech_lead_input
+from process.validators.owners import owner_registry_diagnostics
+from process.validators.tech_lead import (
+    check_control_state,
+    validate_evaluation_cutoff,
+    validate_owner_registry_input,
+    validate_tech_lead_input,
+)
 
 
 DEFAULT_PROCESS = Path(__file__).resolve().parents[1] / "process"
@@ -55,13 +61,23 @@ def main(argv: list[str] | None = None) -> int:
     diagnostics = validate_tech_lead_input(document, process_root)
     if diagnostics:
         return _error(diagnostics, args.json)
+    diagnostics = validate_owner_registry_input(owners, process_root)
+    if diagnostics:
+        return _error(diagnostics, args.json)
+    diagnostics = validate_evaluation_cutoff(args.as_of)
+    if diagnostics:
+        return _error(diagnostics, args.json)
     policy = validate_policy_bundle(
         process_root, _load(process_root / "policies" / "manifest.yaml"), config, None
     )
     if policy.snapshot is None:
         return _error([{"code": "tech-lead.policy-contract-invalid"}], args.json)
+    owner_diagnostics = owner_registry_diagnostics(owners, projects, policy.snapshot)
+    if owner_diagnostics:
+        return _error([item.as_dict() for item in owner_diagnostics], args.json)
     state = check_control_state(
-        document.get("control_records", []), owners, projects, policy.snapshot
+        document.get("control_records", []), owners, projects, policy.snapshot,
+        as_of=args.as_of, evaluation_date=str(document.get("evaluation_date", "")),
     )
     payload = state.as_dict()
     print(json.dumps(payload, sort_keys=True) if args.json else f"Tech Lead control: {state.state}")

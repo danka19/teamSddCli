@@ -64,7 +64,7 @@ def _owners() -> dict[str, object]:
 
 
 def _control(action: str, *, actor_type: str = "human", at: str = "2026-07-14T08:00:00Z") -> dict[str, object]:
-    return {
+    record = {
         "schema_version": "1.0",
         "id": f"control-{action}-1",
         "action": action,
@@ -92,6 +92,13 @@ def _control(action: str, *, actor_type: str = "human", at: str = "2026-07-14T08
         "source_ref": f"controls/{action}-1.yaml",
         "policy_snapshot": _policy_ref(),
     }
+    if action == "resume":
+        record["target_active_record_ids"] = ["control-stop-1"]
+        record["condition_evidence"] = [{
+            "condition": "canonical-context-restored",
+            "source_evidence": ["evidence/context-restored.json"],
+        }]
+    return record
 
 
 def review_input() -> dict[str, object]:
@@ -111,6 +118,7 @@ def review_input() -> dict[str, object]:
         "gate_reports": {
             "source_ref": "reports/gates.json",
             "policy_snapshot": _policy_ref(),
+            "review_ready": "ready",
             "definition_of_ready": "ready",
             "definition_of_done": "ready",
             "release_transfer_readiness": "ready",
@@ -212,8 +220,11 @@ def test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it() -> None:
 
 
 def test_authorized_resume_is_eligible_but_remains_check_only() -> None:
+    hold = _control("hold")
+    resume = _control("resume", at="2026-07-14T09:00:00Z")
+    resume["target_active_record_ids"] = [hold["id"]]
     result = check_control_state(
-        [_control("hold"), _control("resume", at="2026-07-14T09:00:00Z")],
+        [hold, resume],
         _owners(), projects(), _snapshot(),
     )
 

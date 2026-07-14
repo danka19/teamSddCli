@@ -4,12 +4,12 @@ Authority: deterministic, decision-only support for the human Tech Lead. Canonic
 
 ## Required procedure
 
-1. Verify the policy-set ID, version, and digest are identical across the input, canonical classification report, canonical gate reports, owner registry resolution, and every control record. Stop on a mixed snapshot.
+1. Verify the policy-set ID, version, and digest are identical across the input, canonical classification report, canonical gate reports, owner registry resolution, and every control record. Bind the explicit evaluation date to `--as-of`, and stop on a mixed snapshot, mismatched date, or future-dated control evidence.
 2. Review source-linked requirements, scenarios, design decisions, affected repositories/paths/zones, dependencies, risks, baseline/current scope, architecture disposition, waivers, deferrals, and human control records.
 3. Run every deterministic view: under-classification, missing canonical context, architecture disposition, owner/dependency, scope drift, control state, completion/DoD, release recommendation, waiver expiry, hotfix follow-up, and configured checkpoint summary.
 4. Treat scheduled/event-driven review as an explicit configured checkpoint plus `--as-of`. Do not create a daemon, calendar job, task inbox, or inferred due date.
 5. Return stable source-linked findings and recommendations. The output is `decision-only`; it does not mutate control state or lifecycle state.
-6. Stop at the human decision boundary. A human-authored `stop | hold | escalate | resume` record must satisfy the pinned schema and bounded owner authority.
+6. Stop at the human decision boundary. A human-authored `stop | hold | escalate | resume` record must satisfy the pinned schema and bounded owner authority. Resume must target every active control record and bind every target resume condition to corrective source evidence; it remains check-only and never clears the records.
 
 ## Authority boundary
 

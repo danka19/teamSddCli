@@ -5,7 +5,7 @@ status: in_implementation
 evaluation_date: "2026-07-14"
 policy_snapshot: &policy {id: sdd-core, version: 1.0.0, digest: c3aa34da5d1a3e593705b90840c456314ca4fc3dda7e98a252e019c622a0e8ff}
 classification_report: {source_ref: reports/classification.json, policy_snapshot: *policy, status: human-confirmed, triggered_major: false}
-gate_reports: {source_ref: reports/gates.json, policy_snapshot: *policy, definition_of_ready: ready, definition_of_done: ready, release_transfer_readiness: ready}
+gate_reports: {source_ref: reports/gates.json, policy_snapshot: *policy, review_ready: ready, definition_of_ready: ready, definition_of_done: ready, release_transfer_readiness: ready}
 requirements: [{id: REQ-1, source_ref: specs/sample/spec.md}]
 scenarios: [{id: SC-1, source_ref: specs/sample/spec.md}]
 design_decisions: [{id: ADR-1, state: accepted, source_ref: decisions/adr-1.md}]

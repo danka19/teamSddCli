@@ -18,6 +18,8 @@
     "response_expectation": {"type": "string", "minLength": 1},
     "resume_conditions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "corrective_evidence": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "target_active_record_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}},
+    "condition_evidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["condition", "source_evidence"], "properties": {"condition": {"type": "string", "minLength": 1}, "source_evidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}},
     "residual_risk": {"type": "string", "minLength": 1},
     "approvals": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["type", "id", "role", "source_ref"], "properties": {"type": {"const": "human"}, "id": {"type": "string", "minLength": 1}, "role": {"type": "string", "minLength": 1}, "source_ref": {"type": "string", "minLength": 1}}}},
     "follow_up": {"type": "string", "minLength": 1},
@@ -25,6 +27,9 @@
     "source_ref": {"type": "string", "minLength": 1},
     "policy_snapshot": {"$ref": "#/$defs/policySnapshot"}
   },
+  "allOf": [
+    {"if": {"properties": {"action": {"const": "resume"}}}, "then": {"required": ["target_active_record_ids", "condition_evidence"]}}
+  ],
   "$defs": {
     "policySnapshot": {"type": "object", "additionalProperties": false, "required": ["id", "version", "digest"], "properties": {"id": {"type": "string", "minLength": 1}, "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}}
   }
