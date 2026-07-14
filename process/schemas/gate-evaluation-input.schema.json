@@ -60,24 +60,29 @@
       "additionalProperties": false,
       "required": ["transition", "owner_type", "owner_id", "state", "evidence_ref"],
       "properties": {
-        "transition": {"type": "string", "pattern": "^(draft->spec_review|spec_review->approved|approved->in_implementation|in_implementation->ready_to_archive|ready_to_archive->archived)$"},
+        "transition": {"type": "string", "pattern": "^(draft->spec_review|spec_review->draft|spec_review->approved|approved->in_implementation|in_implementation->ready_to_archive|ready_to_archive->in_implementation|ready_to_archive->archived)$"},
         "owner_type": {"const": "human"},
         "owner_id": {"type": "string", "minLength": 1},
         "state": {"const": "approved"},
-        "evidence_ref": {"type": "string", "minLength": 1}
-      }
+        "evidence_ref": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 8}
+      },
+      "allOf": [{
+        "if": {"properties": {"transition": {"enum": ["spec_review->draft", "ready_to_archive->in_implementation"]}}},
+        "then": {"required": ["reason"]}
+      }]
     },
     "waiver": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["reason", "substitute_evidence", "approver", "residual_risk", "follow_up", "expired"],
+      "required": ["reason", "substitute_evidence", "approver", "residual_risk", "follow_up", "expiry"],
       "properties": {
         "reason": {"type": "string", "minLength": 1},
         "substitute_evidence": {"type": "string", "minLength": 1},
         "approver": {"$ref": "#/$defs/humanApprover"},
         "residual_risk": {"type": "string", "minLength": 1},
         "follow_up": {"type": "string", "minLength": 1},
-        "expired": {"type": "boolean"}
+        "expiry": {"$ref": "#/$defs/expiry"}
       }
     },
     "deferral": {
@@ -90,9 +95,31 @@
         "approver": {"$ref": "#/$defs/humanApprover"},
         "residual_risk": {"type": "string", "minLength": 1},
         "follow_up": {"type": "string", "minLength": 1},
-        "expiry": {"type": "string", "minLength": 1},
+        "expiry": {"$ref": "#/$defs/expiry"},
         "reconciled": {"type": "boolean"}
       }
+    },
+    "expiry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "date"],
+          "properties": {
+            "type": {"const": "date"},
+            "date": {"type": "string", "format": "date"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "lifecycle_state"],
+          "properties": {
+            "type": {"const": "lifecycle_state"},
+            "lifecycle_state": {"enum": ["draft", "spec_review", "approved", "in_implementation", "ready_to_archive", "archived"]}
+          }
+        }
+      ]
     },
     "evidence": {
       "type": "object",

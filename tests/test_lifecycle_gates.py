@@ -76,10 +76,15 @@ def _document(status: str, classification: str = "minor") -> dict[str, Any]:
                 "owner_id": "sample-tech-leads",
                 "state": "approved",
                 "evidence_ref": f"decisions/{transition.replace('->', '-')}.yaml",
+                **({"reason": "Review requires a documented rework loop."} if transition in {
+                    "spec_review->draft", "ready_to_archive->in_implementation"
+                } else {}),
             }
             for transition in (
+                "spec_review->draft",
                 "spec_review->approved",
                 "approved->in_implementation",
+                "ready_to_archive->in_implementation",
                 "ready_to_archive->archived",
             )
         ],
@@ -131,10 +136,56 @@ def test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship()
         assert report.as_dict()["lifecycle_mutated"] is False
 
 
-def test_skipped_backward_same_and_unknown_transitions_are_rejected() -> None:
+def test_canonical_rework_transitions_require_reason_authority_and_evidence() -> None:
+    for current, target in (
+        ("spec_review", "draft"),
+        ("ready_to_archive", "in_implementation"),
+    ):
+        document = _document(current)
+        record = next(
+            row for row in document["transition_approvals"]
+            if row["transition"] == f"{current}->{target}"
+        )
+        record["reason"] = "Review found specific evidence that requires rework."
+        before = copy.deepcopy(document)
+
+        report = check_transition(document, target, _snapshot())
+
+        assert report.exit_code == 0, report.as_dict()
+        assert report.as_dict()["allowed"] is True
+        assert report.as_dict()["human_approval"] == {
+            "required": True,
+            "recorded": True,
+        }
+        assert document == before
+
+        for missing in ("reason", "evidence_ref"):
+            invalid = copy.deepcopy(document)
+            invalid_record = next(
+                row for row in invalid["transition_approvals"]
+                if row["transition"] == f"{current}->{target}"
+            )
+            invalid_record.pop(missing)
+            blocked = check_transition(invalid, target, _snapshot())
+            assert blocked.exit_code == 1
+            assert any(
+                item["code"] == "lifecycle.rework-authorization-required"
+                for item in blocked.as_dict()["blockers"]
+            )
+
+        unauthorized = copy.deepcopy(document)
+        unauthorized_record = next(
+            row for row in unauthorized["transition_approvals"]
+            if row["transition"] == f"{current}->{target}"
+        )
+        unauthorized_record["owner_id"] = "arbitrary-human"
+        assert check_transition(unauthorized, target, _snapshot()).exit_code == 1
+
+
+def test_other_skipped_backward_same_and_unknown_transitions_are_rejected() -> None:
     for current, target in (
         ("draft", "approved"),
-        ("spec_review", "draft"),
+        ("approved", "spec_review"),
         ("approved", "approved"),
         ("archived", "ready_to_archive"),
         ("unknown", "draft"),
@@ -182,11 +233,11 @@ def test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up(
         "source_ref": "deferrals/D-2.yaml",
         "deferral": {
             "substitute_evidence": "reviews/urgent-design.md",
-            "owner": "sample-tech-lead",
-            "approver": {"type": "human", "id": "sample-tech-lead"},
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
             "residual_risk": "Detailed design follows implementation.",
             "follow_up": "Complete before archive readiness.",
-            "expiry": "ready_to_archive",
+            "expiry": {"type": "lifecycle_state", "lifecycle_state": "ready_to_archive"},
             "reconciled": False,
         },
     })
@@ -240,3 +291,23 @@ def test_transition_cli_has_stable_human_json_and_exit_contract(tmp_path: Path, 
         str(missing), "--to", "spec_review", "--config", str(config), "--json"
     ]) == 3
     assert json.loads(capsys.readouterr().out)["status"] == "error"
+
+
+def test_transition_blocks_when_gate_evidence_is_valid_but_approval_is_pending() -> None:
+    document = _document("draft")
+    document["approvals"] = []
+
+    report = check_transition(document, "spec_review", _snapshot())
+
+    assert report.exit_code == 1
+    gate_report = report.as_dict()["gate_reports"][0]
+    assert gate_report["blocking_gaps"] == []
+    assert gate_report["status"] == "awaiting_human_approval"
+    assert report.as_dict()["human_approval"] == {
+        "required": True,
+        "recorded": False,
+    }
+    assert any(
+        item["code"] == "lifecycle.human-approval-required"
+        for item in report.as_dict()["blockers"]
+    )

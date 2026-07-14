@@ -83,7 +83,7 @@ def check_transition(
             [],
             [_blocker(
                 "lifecycle.transition-not-allowed",
-                "Only the configured forward-adjacent transition is allowed.",
+                "Only a configured canonical lifecycle transition is allowed.",
             )],
             snapshot,
             policy=policy,
@@ -98,20 +98,50 @@ def check_transition(
         report = evaluate_gate(document, snapshot, gate)
         gate_reports.append(report)
         blockers.extend(report.as_dict()["blocking_gaps"])
+        if report.as_dict()["status"] == "awaiting_human_approval":
+            blockers.append(_blocker(
+                "lifecycle.human-approval-required",
+                "Valid gate evidence does not replace the configured human approval.",
+            ))
 
-    approval_required = transition in {
+    transition_approval_required = transition in {
+        "spec_review->draft",
         "spec_review->approved",
         "approved->in_implementation",
+        "ready_to_archive->in_implementation",
         "ready_to_archive->archived",
     }
-    approval_recorded = _transition_approval_recorded(
-        document, transition, _authorized_approvers(policy, document)
+    transition_approval_recorded = (
+        not transition_approval_required
+        or _transition_approval_recorded(
+            document,
+            transition,
+            _authorized_approvers(policy, document),
+            require_reason=transition in {
+                "spec_review->draft", "ready_to_archive->in_implementation"
+            },
+        )
     )
-    if approval_required and not approval_recorded:
+    if transition_approval_required and not transition_approval_recorded:
+        rework = transition in {
+            "spec_review->draft", "ready_to_archive->in_implementation"
+        }
         blockers.append(_blocker(
-            "lifecycle.human-approval-required",
+            "lifecycle.rework-authorization-required" if rework
+            else "lifecycle.human-approval-required",
+            "Rework requires an authorized source-linked human reason."
+            if rework else
             "This transition requires an authorized source-linked human decision; AI cannot approve it.",
         ))
+
+    gate_approval_rows = [
+        report.as_dict()["human_approval"] for report in gate_reports
+        if report.as_dict()["human_approval"]["required"]
+    ]
+    approval_required = transition_approval_required or bool(gate_approval_rows)
+    approval_recorded = transition_approval_recorded and all(
+        row["recorded"] for row in gate_approval_rows
+    )
 
     return _report(
         document,
@@ -137,7 +167,11 @@ def _authorized_approvers(policy: Any, document: Mapping[str, Any]) -> tuple[str
 
 
 def _transition_approval_recorded(
-    document: Mapping[str, Any], transition: str, authorized: tuple[str, ...]
+    document: Mapping[str, Any],
+    transition: str,
+    authorized: tuple[str, ...],
+    *,
+    require_reason: bool = False,
 ) -> bool:
     rows = document.get("transition_approvals")
     if not isinstance(rows, list) or not authorized:
@@ -149,6 +183,7 @@ def _transition_approval_recorded(
         and row.get("owner_id") in authorized
         and row.get("state") == "approved"
         and bool(row.get("evidence_ref"))
+        and (not require_reason or bool(row.get("reason")))
         for row in rows
     )
 

@@ -69,7 +69,7 @@ class GateReport:
 
     @property
     def exit_code(self) -> int:
-        return 1 if self.payload["status"] == "blocked" else 0
+        return 0 if self.payload["status"] == "ready" else 1
 
     def as_dict(self) -> dict[str, Any]:
         return self.payload
@@ -131,7 +131,7 @@ def evaluate_gate(
         gate == "release-transfer-readiness"
         and isinstance(gate_na, dict)
         and gate_na.get("state") == "not_applicable"
-        and _valid_not_applicable(gate_na, policy)
+        and _valid_not_applicable(gate_na, policy, classification)
     )
     if release_not_applicable:
         required = ()
@@ -147,6 +147,7 @@ def evaluate_gate(
             classification=classification,
             gate=gate,
             evaluation_date=document.get("evaluation_date"),
+            lifecycle_state=document.get("status"),
         )
         obligations.append(result)
         if gap is not None:
@@ -243,6 +244,7 @@ def _evaluate_obligation(
     classification: str,
     gate: str,
     evaluation_date: Any,
+    lifecycle_state: Any,
 ) -> tuple[dict[str, Any], dict[str, str] | None]:
     if not isinstance(row, dict):
         return (
@@ -275,7 +277,7 @@ def _evaluate_obligation(
                 "gate.not-applicable-ineligible", identifier,
                 "This obligation is not conditionally applicable.",
             )
-        if not _valid_not_applicable(row, policy):
+        if not _valid_not_applicable(row, policy, classification):
             return base, _gap(
                 "gate.not-applicable-invalid", identifier,
                 "Not-applicable evidence requires a rationale and human approval.",
@@ -288,10 +290,25 @@ def _evaluate_obligation(
                 "gate.waiver-ineligible", identifier,
                 "This corporate minimum cannot be waived.",
             )
-        if not _valid_waiver(row.get("waiver"), policy):
+        waiver = row.get("waiver")
+        if not _valid_waiver(waiver, policy, classification):
             return base, _gap(
                 "gate.waiver-invalid", identifier,
                 "The waiver is missing current role-authorized evidence.",
+            )
+        expiry_due = _expiry_due(
+            waiver.get("expiry"), evaluation_date, lifecycle_state,
+            policy.lifecycle_states,
+        )
+        if expiry_due is None:
+            return base, _gap(
+                "gate.waiver-invalid", identifier,
+                "The waiver expiry condition is malformed.",
+            )
+        if expiry_due:
+            return base, _gap(
+                "gate.waiver-expired", identifier,
+                "The waiver is no longer valid at the evaluation date or lifecycle state.",
             )
         return base, None
 
@@ -301,10 +318,25 @@ def _evaluate_obligation(
                 "gate.deferral-ineligible", identifier,
                 "Only explicitly permitted non-safety hotfix evidence may be deferred.",
             )
-        if not _valid_deferral(row.get("deferral"), policy):
+        deferral = row.get("deferral")
+        if not _valid_deferral(deferral, policy, classification):
             return base, _gap(
                 "gate.deferral-invalid", identifier,
                 "The hotfix deferral lacks owner, approval, risk, follow-up, or expiry.",
+            )
+        expiry_due = _expiry_due(
+            deferral.get("expiry"), evaluation_date, lifecycle_state,
+            policy.lifecycle_states,
+        )
+        if expiry_due is None:
+            return base, _gap(
+                "gate.deferral-invalid", identifier,
+                "The hotfix deferral expiry condition is malformed.",
+            )
+        if deferral.get("reconciled") is not True and expiry_due:
+            return base, _gap(
+                "gate.deferral-due", identifier,
+                "The hotfix deferral is due and has not been reconciled.",
             )
         if gate in {"definition-of-done", "archive-readiness"}:
             return base, _gap(
@@ -337,33 +369,38 @@ def _evaluate_obligation(
 
 
 def _valid_not_applicable(
-    row: Mapping[str, Any], policy: CompiledGatePolicy
+    row: Mapping[str, Any], policy: CompiledGatePolicy, classification: str
 ) -> bool:
     return _required_record_fields(
         row,
         policy.not_applicable_required_fields,
+        authorized_owners=_required_approvers(policy, classification),
         placeholder_markers=policy.placeholder_markers,
     )
 
 
-def _valid_waiver(value: Any, policy: CompiledGatePolicy) -> bool:
+def _valid_waiver(
+    value: Any, policy: CompiledGatePolicy, classification: str
+) -> bool:
     return (
         isinstance(value, dict)
-        and value.get("expired") is False
         and _required_record_fields(
             value,
             policy.waiver_required_fields,
-            allow_false=("expired",),
+            authorized_owners=_required_approvers(policy, classification),
             placeholder_markers=policy.placeholder_markers,
         )
     )
 
 
-def _valid_deferral(value: Any, policy: CompiledGatePolicy) -> bool:
+def _valid_deferral(
+    value: Any, policy: CompiledGatePolicy, classification: str
+) -> bool:
     return isinstance(value, dict) and _required_record_fields(
         value,
         policy.hotfix_deferral_required_fields,
         allow_false=("reconciled",),
+        authorized_owners=_required_approvers(policy, classification),
         placeholder_markers=policy.placeholder_markers,
     )
 
@@ -373,6 +410,7 @@ def _required_record_fields(
     fields: tuple[str, ...],
     *,
     allow_false: tuple[str, ...] = (),
+    authorized_owners: tuple[str, ...] = (),
     placeholder_markers: tuple[str, ...] = (),
 ) -> bool:
     for field in fields:
@@ -384,8 +422,11 @@ def _required_record_fields(
             if not (
                 isinstance(item, dict)
                 and item.get("type") == "human"
-                and bool(item.get("id"))
+                and item.get("id") in authorized_owners
             ):
+                return False
+        elif field == "owner":
+            if item not in authorized_owners:
                 return False
         elif key in allow_false:
             if item not in (True, False):
@@ -395,6 +436,33 @@ def _required_record_fields(
         ):
             return False
     return True
+
+
+def _expiry_due(
+    value: Any,
+    evaluation_date: Any,
+    lifecycle_state: Any,
+    lifecycle_states: tuple[str, ...],
+) -> bool | None:
+    if not isinstance(value, dict) or value.get("type") not in {
+        "date", "lifecycle_state"
+    }:
+        return None
+    if value["type"] == "date":
+        if set(value) != {"type", "date"}:
+            return None
+        try:
+            evaluated = date.fromisoformat(evaluation_date)
+            expires = date.fromisoformat(value["date"])
+        except (TypeError, ValueError):
+            return None
+        return evaluated >= expires
+    if set(value) != {"type", "lifecycle_state"}:
+        return None
+    due_state = value.get("lifecycle_state")
+    if lifecycle_state not in lifecycle_states or due_state not in lifecycle_states:
+        return None
+    return lifecycle_states.index(lifecycle_state) >= lifecycle_states.index(due_state)
 
 
 def _normalized_marker(value: str) -> str:
@@ -602,17 +670,22 @@ def compile_gate_policy(snapshot: PolicySnapshot) -> CompiledGatePolicy:
         snapshot, "release.forward-transitions", "release"
     )
     expected_forward = {
-        state: (() if index == len(lifecycle_states) - 1 else (lifecycle_states[index + 1],))
-        for index, state in enumerate(lifecycle_states)
+        "draft": ("spec_review",),
+        "spec_review": ("draft", "approved"),
+        "approved": ("in_implementation",),
+        "in_implementation": ("ready_to_archive",),
+        "ready_to_archive": ("in_implementation", "archived"),
+        "archived": (),
     }
     if dict(forward_transitions) != expected_forward:
-        raise _PolicyContractError("Lifecycle transitions are not forward-adjacent.")
+        raise _PolicyContractError("Lifecycle transitions do not match the canonical flow.")
     transition_gates = _string_tuple_mapping(
         snapshot, "release.transition-gates", "release"
     )
     expected_transition_ids = {
-        f"{state}->{targets[0]}"
-        for state, targets in forward_transitions.items() if targets
+        f"{state}->{target}"
+        for state, targets in forward_transitions.items()
+        for target in targets
     }
     if set(transition_gates) != expected_transition_ids or any(
         gate_id not in named

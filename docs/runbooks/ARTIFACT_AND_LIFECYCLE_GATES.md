@@ -15,10 +15,17 @@ Both entry points accept YAML matching `process/schemas/gate-evaluation-input.sc
 - one canonical `minor | major | hotfix` classification and one of the six lifecycle states;
 - an explicit ISO `evaluation_date` used for deterministic freshness checks;
 - unique typed evidence records with source references and freshness state;
-- structured human approvals, N/A decisions, waivers, and hotfix deferrals;
+- structured human approvals, N/A decisions, waivers, and hotfix deferrals whose
+  approver and owner references resolve to the configured class-authorized owner groups;
 - explicit external delivered, deployed, and tracker-Done values, defaulted by the author to `unknown` rather than inferred.
 
-Unknown fields, duplicate evidence IDs, invalid dates, AI-owned approvals, malformed exceptions, and unsafe free-form record shapes fail before policy evaluation. `valid_through` is inclusive: evidence remains current on that date and is stale on the following date.
+Unknown fields, duplicate evidence IDs, invalid dates, AI-owned or arbitrary-human
+approvals, malformed exceptions, and unsafe free-form record shapes fail before policy
+evaluation. Exception expiry is typed as either an ISO date or a canonical lifecycle
+state; date expiry is due on the recorded date, and a lifecycle expiry is due when that
+state is reached. An unreconciled due deferral and an expired waiver block the gate.
+`valid_through` is inclusive: evidence remains current on that date and is stale on the
+following date.
 
 ## Evaluate Reports
 
@@ -35,7 +42,7 @@ Evaluate one or more reports with repeatable `--gate`:
 python scripts/evaluate_change_gates.py C:/work/gate-input.yaml --gate definition-of-ready --gate definition-of-done --config C:/work/team-specs/sdd.config.yaml --json
 ```
 
-Reports cover review-ready, Definition of Ready, implementation-complete, Definition of Done, release/transfer readiness, and archive readiness. Deterministic green checks may still return `awaiting_human_approval` inside a report; this is not an approval or lifecycle mutation.
+Reports cover review-ready, Definition of Ready, implementation-complete, Definition of Done, release/transfer readiness, and archive readiness. Evidence-complete checks may return `awaiting_human_approval`; the report and CLI remain nonzero until every configured class approver has recorded a source-linked decision. This distinguishes valid evidence from completed approval and never mutates lifecycle state.
 
 ## Check A Transition
 
@@ -44,14 +51,20 @@ python scripts/check_lifecycle_transition.py C:/work/gate-input.yaml --to spec_r
 python scripts/check_lifecycle_transition.py C:/work/gate-input.yaml --to ready_to_archive --config C:/work/team-specs/sdd.config.yaml --json
 ```
 
-Only the policy-defined forward-adjacent transitions are evaluated. The checker rejects skipped, reverse, same-state, and unknown transitions. Approval, implementation start, and archive transitions require the corresponding source-linked human decision. The command reports a decision and leaves the input byte-for-byte unchanged.
+The checker evaluates the five forward-adjacent transitions plus the two canonical
+rework transitions `spec_review -> draft` and
+`ready_to_archive -> in_implementation`. Rework requires a substantive reason,
+source-linked evidence, and a configured class-authorized human owner reference.
+Other skipped, backward, same-state, and unknown transitions are rejected. Gate and
+transition approvals remain separate requirements. The command reports a decision and
+leaves the input byte-for-byte unchanged.
 
 ## Exit Codes
 
 | Code | Meaning |
 |---|---|
 | `0` | Selected reports are deterministically ready, or the transition is allowed by current evidence. |
-| `1` | Evidence or a gate blocks readiness/transition. |
+| `1` | Evidence, pending required approval, or a gate blocks readiness/transition. |
 | `2` | Command usage is invalid. |
 | `3` | Input schema, local input, or resolved policy contract is missing, invalid, or incompatible. |
 

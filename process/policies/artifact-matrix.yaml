@@ -84,7 +84,7 @@ rules:
       - automation-plan-or-valid-waiver
   - id: artifacts.waiver-required-fields
     override_mode: locked
-    value: [reason, substitute-evidence, approver, residual-risk, follow-up, expired]
+    value: [reason, substitute-evidence, approver, residual-risk, follow-up, expiry]
   - id: artifacts.hotfix-deferrable
     override_mode: locked
     value:

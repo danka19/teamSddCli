@@ -63,13 +63,19 @@ def _gate(
     evidence: list[dict[str, Any]] | None = None,
     *,
     major_impact_hotfix: bool = False,
+    status: str = "spec_review",
+    evaluation_date: str = "2026-07-14",
+    approvals: list[dict[str, Any]] | None = None,
 ) -> Any:
     return evaluate_gate(
         {
             "id": "sample-change",
             "classification": classification,
+            "status": status,
+            "evaluation_date": evaluation_date,
             "major_impact_hotfix": major_impact_hotfix,
             "evidence": evidence or [],
+            "approvals": approvals or [],
         },
         _snapshot(),
         gate,
@@ -124,11 +130,14 @@ def test_conditional_not_applicable_requires_structured_human_rationale() -> Non
     candidate = [invalid if row["id"] == target_id else row for row in evidence]
     assert _gate("definition-of-ready", "major", candidate).exit_code == 1
 
-    invalid["approver"] = {"type": "human", "id": "sample-tech-lead"}
+    invalid["approver"] = {"type": "human", "id": "arbitrary-human"}
+    assert _gate("definition-of-ready", "major", candidate).exit_code == 1
+
+    invalid["approver"] = {"type": "human", "id": "sample-tech-leads"}
     report = _gate("definition-of-ready", "major", candidate)
-    assert report.exit_code == 0
     row = next(row for row in report.as_dict()["obligations"] if row["id"] == target_id)
     assert row["state"] == "not_applicable"
+    assert not any(gap["id"] == target_id for gap in report.as_dict()["blocking_gaps"])
 
 
 def test_only_eligible_artifact_accepts_a_current_human_approved_waiver() -> None:
@@ -142,16 +151,31 @@ def test_only_eligible_artifact_accepts_a_current_human_approved_waiver() -> Non
         "waiver": {
             "reason": "No new automation surface.",
             "substitute_evidence": "runs/regression-17.json",
-            "approver": {"type": "human", "id": "sample-qa-owner"},
+            "approver": {"type": "human", "id": "sample-qa-owners"},
             "residual_risk": "Manual coverage remains.",
             "follow_up": "Review after release.",
-            "expired": False,
+            "expiry": {"type": "date", "date": "2026-07-15"},
         },
     }
 
     eligible_id = "automation-plan-or-valid-waiver"
     valid = [{"id": eligible_id, **waiver} if row["id"] == eligible_id else row for row in evidence]
-    assert _gate("definition-of-ready", "major", valid).exit_code == 0
+    report = _gate("definition-of-ready", "major", valid)
+    assert not any(gap["id"] == eligible_id for gap in report.as_dict()["blocking_gaps"])
+
+    arbitrary = copy.deepcopy(valid)
+    next(row for row in arbitrary if row["id"] == eligible_id)["waiver"]["approver"] = {
+        "type": "human", "id": "arbitrary-human"
+    }
+    assert any(
+        row["code"] == "gate.waiver-invalid"
+        for row in _gate("definition-of-ready", "major", arbitrary).as_dict()["blocking_gaps"]
+    )
+
+    expired = _gate(
+        "definition-of-ready", "major", valid, evaluation_date="2026-07-15"
+    ).as_dict()
+    assert any(row["code"] == "gate.waiver-expired" for row in expired["blocking_gaps"])
 
     stale = [
         {**row, "fresh": False} if row["id"] == eligible_id else row
@@ -194,17 +218,35 @@ def test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done() -> None:
         "fresh": True,
         "deferral": {
             "substitute_evidence": "reviews/urgent-design.md",
-            "owner": "sample-tech-lead",
-            "approver": {"type": "human", "id": "sample-tech-lead"},
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
             "residual_risk": "Detailed design follows implementation.",
             "follow_up": "Complete before archive readiness.",
-            "expiry": "ready_to_archive",
+            "expiry": {"type": "lifecycle_state", "lifecycle_state": "ready_to_archive"},
             "reconciled": False,
         },
     }
     allowed_id = "expanded-design-impact-analysis"
     allowed = [{"id": allowed_id, **deferral} if row["id"] == allowed_id else row for row in evidence]
-    assert _gate("definition-of-ready", "hotfix", allowed, major_impact_hotfix=True).exit_code == 0
+    report = _gate("definition-of-ready", "hotfix", allowed, major_impact_hotfix=True)
+    assert not any(gap["id"] == allowed_id for gap in report.as_dict()["blocking_gaps"])
+
+    arbitrary = copy.deepcopy(allowed)
+    invalid_deferral = next(row for row in arbitrary if row["id"] == allowed_id)["deferral"]
+    invalid_deferral["owner"] = "arbitrary-human"
+    invalid_deferral["approver"] = {"type": "human", "id": "arbitrary-human"}
+    assert any(
+        row["code"] == "gate.deferral-invalid"
+        for row in _gate(
+            "definition-of-ready", "hotfix", arbitrary, major_impact_hotfix=True
+        ).as_dict()["blocking_gaps"]
+    )
+
+    due = _gate(
+        "definition-of-ready", "hotfix", allowed,
+        major_impact_hotfix=True, status="ready_to_archive",
+    ).as_dict()
+    assert any(row["code"] == "gate.deferral-due" for row in due["blocking_gaps"])
 
     safety_id = "minimum-safety-regression-evidence"
     rejected = [{"id": safety_id, **deferral} if row["id"] == safety_id else row for row in evidence]
@@ -242,6 +284,7 @@ def test_all_named_reports_are_stable_and_keep_required_human_approval_explicit(
         assert first["human_approval"]["required"] is True
         assert first["human_approval"]["recorded"] is False
         assert first["status"] == "awaiting_human_approval"
+        assert _gate(gate, "minor", evidence).exit_code == 1
 
 
 def test_ai_completion_text_is_never_implementation_evidence() -> None:
@@ -272,7 +315,7 @@ def test_release_not_applicable_is_approved_and_does_not_infer_external_done() -
         "source_ref": "decisions/release-na.yaml",
         "fresh": True,
         "rationale": "Documentation-only internal correction.",
-        "approver": {"type": "human", "id": "sample-tech-lead"},
+        "approver": {"type": "human", "id": "sample-tech-leads"},
     })
 
     payload = _gate("release-transfer-readiness", "minor", evidence).as_dict()

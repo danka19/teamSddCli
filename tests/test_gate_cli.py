@@ -11,6 +11,7 @@ from typing import Any
 import yaml
 
 from process.validators.artifact_gates import evaluate_gate
+from process.validators.gate_input import validate_gate_input
 from process.validators.policy_validation import validate_policy_bundle
 from scripts.evaluate_change_gates import main as gate_main
 
@@ -157,3 +158,48 @@ def test_cli_returns_policy_contract_error_without_exposing_local_paths(
     assert payload["status"] == "policy-contract-error"
     rendered = json.dumps(payload)
     assert str(tmp_path) not in rendered
+
+
+def test_cli_blocks_when_evidence_is_valid_but_authorized_approval_is_pending(
+    tmp_path: Path, capsys: Any,
+) -> None:
+    change = tmp_path / "pending.yaml"
+    document = _input()
+    document["approvals"] = []
+    _write(change, document)
+
+    assert gate_main([
+        str(change), "--gate", "review-ready", "--config", str(CONFIG), "--json"
+    ]) == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "blocked"
+    assert payload["reports"][0]["status"] == "awaiting_human_approval"
+    assert payload["reports"][0]["blocking_gaps"] == []
+
+
+def test_exception_expiry_schema_rejects_free_text_and_accepts_typed_conditions() -> None:
+    document = _input()
+    document["classification"] = "hotfix"
+    document["evidence"][0] = {
+        "id": document["evidence"][0]["id"],
+        "state": "deferred",
+        "content": "Substitute evidence is source linked.",
+        "source_ref": "deferrals/D-4.yaml",
+        "fresh": True,
+        "deferral": {
+            "substitute_evidence": "reviews/substitute.md",
+            "owner": "sample-tech-leads",
+            "approver": {"type": "human", "id": "sample-tech-leads"},
+            "residual_risk": "Bounded residual risk remains.",
+            "follow_up": "Reconcile before archive readiness.",
+            "expiry": {
+                "type": "lifecycle_state",
+                "lifecycle_state": "ready_to_archive",
+            },
+            "reconciled": False,
+        },
+    }
+    assert validate_gate_input(document, PROCESS) == []
+
+    document["evidence"][0]["deferral"]["expiry"] = "ready_to_archive"
+    assert validate_gate_input(document, PROCESS)[0]["code"] == "gate.input-schema-invalid"
