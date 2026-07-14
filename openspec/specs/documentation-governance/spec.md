@@ -1,5 +1,10 @@
 # documentation-governance Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P0, P2, P3, P4
+
 ## Purpose
 Define the accepted documentation governance rules for durable updates, AI verification evidence, scenario-first verification, human feedback memory, canonical language, docs/OpenSpec responsibility, and source ownership.
 ## Requirements

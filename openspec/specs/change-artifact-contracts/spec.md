@@ -1,5 +1,10 @@
 # change-artifact-contracts Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P2, P3
+
 ## Purpose
 Define the accepted thin/full change artifact contracts, waiver eligibility, artifact matrix baseline, future journey/screen artifact boundaries, legacy baseline mode, Delta Spec operation vocabulary, and artifact-height rules.
 ## Requirements

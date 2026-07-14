@@ -1,5 +1,10 @@
 # waiver-policy Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P2, P3
+
 ## Purpose
 Define the accepted waiver record, human approval ownership, negative cases, and baseline status for SDD artifact and verification exceptions.
 ## Requirements

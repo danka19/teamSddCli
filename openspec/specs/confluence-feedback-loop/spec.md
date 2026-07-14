@@ -1,5 +1,10 @@
 # confluence-feedback-loop Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P3, P4
+
 ## Purpose
 Define the accepted Confluence generated-publication/read-model contract, feedback disposition rules, unresolved feedback handling, generated asset source rules, and evidence-backed status display boundaries.
 ## Requirements

@@ -1,5 +1,10 @@
 # change-package-foundation Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P2, P3
+
 ## Purpose
 Define the accepted deterministic change-package template, local validation behavior, pre-commit entrypoint, and placeholder-validation mode for the first SDD workflow.
 ## Requirements

@@ -1,3 +1,9 @@
+## Roadmap
+
+- Execution phase: P2
+- Related phases: P3
+- Lifecycle status: in_progress
+
 ## Why
 
 The accepted Phase 1 baseline proves the core change-package contracts and local validator, but it does not yet provide a reusable release candidate that another team can install and configure. The process must be substantially complete and proven with Qwen/DeepSeek-class assistants before transfer so the corporate environment is used only for real configuration, integration adaptation, and a controlled pilot.

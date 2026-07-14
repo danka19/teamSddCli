@@ -1,5 +1,10 @@
 # repo-topology-config Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P0, P2, P3
+
 ## Purpose
 Define the accepted first supported repository topology, content split, developer/agent workflow, process configuration, package distribution, OpenSpec version pin/upgrade policy, and owner registry contract.
 ## Requirements

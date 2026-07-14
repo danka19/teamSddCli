@@ -1,5 +1,10 @@
 # change-lifecycle Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P2, P3
+
 ## Purpose
 Define the accepted SDD change lifecycle states, transition gates, human approval boundaries, MVP automation boundary, generated status display rules, and archive history convention.
 ## Requirements

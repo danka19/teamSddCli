@@ -1,6 +1,8 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress. Work items 2.1-2.2 are closed after all required gates; work item 2.3 is ready.
+Status: in_progress.
+
+Work items 2.1-2.2 are closed after all required gates; work item 2.3 is ready.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -193,6 +195,19 @@ Affected architecture: Concurrent workers use separate task IDs, scopes, evidenc
 Data contract impact: Parallel task plan/evidence records and requirement/scenario coverage report.
 Verification impact: Focused tests per output plus deterministic combined integration checks; uncovered scenarios remain visible with risk and owner.
 Status: accepted. This does not reintroduce the process-effectiveness measurement program excluded by D-013.
+```
+
+```text
+Idea: Repair the pre-existing machine-readable roadmap/OpenSpec ownership contract exposed by the mandatory Phase 2 status audit.
+Source: phase-status-audit after work item 2.2 reconciliation.
+Type: documentation_change, verification_change
+Decision: adopt_now
+Reason: The status gate requires zero roadmap/OpenSpec governance-validator errors before sequential Phase 2 execution continues; the repair changes metadata and consumer syntax only.
+Affected specs: Metadata only for all eight accepted capability specs and both active proposals.
+Affected architecture: None.
+Data contract impact: None.
+Verification impact: Preserve the 33-error RED baseline, require zero governance-validator errors, run native strict OpenSpec validation, verify status consistency, and run the Git diff check.
+Status: accepted for bounded repair. Product behavior, acceptance criteria, implementation tasks, lifecycle states, phase scope, and work-item states remain unchanged.
 ```
 
 ## Work Items

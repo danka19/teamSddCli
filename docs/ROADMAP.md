@@ -69,7 +69,9 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress. Work items 2.1-2.2 are closed; work item 2.3 is ready under the worker/reviewer/architecture/verification workflow.
+Status: in_progress.
+
+Work items 2.1-2.2 are closed; work item 2.3 is ready under the worker/reviewer/architecture/verification workflow.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -100,7 +102,9 @@ Phase gate:
 
 ## Phase 3. Corporate Adaptation And Real Governed-Change Pilot
 
-Status: planned. A detailed phase plan has not been accepted yet.
+Status: planned.
+
+A detailed phase plan has not been accepted yet.
 
 Goal: install the accepted Phase 2 release candidate in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real minor, major, or hotfix pilot selected through the approved pilot criteria.
 
@@ -130,7 +134,9 @@ Explicitly deferred from the first MVP:
 
 ## Phase 4. Post-Pilot Hardening And Expansion
 
-Status: planned. A detailed phase plan has not been accepted yet.
+Status: planned.
+
+A detailed phase plan has not been accepted yet.
 
 Goal: harden the accepted real workflow using operational findings and add later layers only through new accepted changes.
 
@@ -151,6 +157,26 @@ Likely scope:
 - Read-only MCP exploration only after the deterministic and standard-tool flow is working.
 - Progressive AI automation after the deterministic flow and monitored pilot are accepted: source-linked evidence assembly, workflow routing, bounded monitoring, role assistance, supported tool coordination, and permitted transition preparation through new OpenSpec changes.
 - Deterministic fallback and verification remain supported as AI automation expands; human authority changes only through explicit accepted decisions.
+
+## Capability Spec Ownership
+
+| Capability spec | Roadmap phase | Related phases |
+|---|---|---|
+| `change-artifact-contracts` | P1 | P2, P3 |
+| `change-lifecycle` | P1 | P2, P3 |
+| `change-package-foundation` | P1 | P2, P3 |
+| `confluence-feedback-loop` | P1 | P3, P4 |
+| `documentation-governance` | P1 | P0, P2, P3, P4 |
+| `repo-topology-config` | P1 | P0, P2, P3 |
+| `traceability-contract` | P1 | P2, P3 |
+| `waiver-policy` | P1 | P2, P3 |
+
+## Active Change Execution
+
+| Active change | Execution phase | Related phases | Lifecycle status |
+|---|---|---|---|
+| `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
+| `define-transfer-ready-process-package` | P2 | P3 | in_progress |
 
 ## Phase Planning Rule
 

@@ -1,5 +1,10 @@
 # traceability-contract Specification
 
+## Roadmap
+
+- Roadmap phase: P1
+- Related phases: P2, P3
+
 ## Purpose
 Define the accepted traceability contract for review readiness, archive readiness, waived links, AI advisory suggestions, future journey/screen traceability, and legacy baseline gaps.
 ## Requirements

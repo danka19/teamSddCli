@@ -1,3 +1,9 @@
+## Roadmap
+
+- Execution phase: P2
+- Related phases: P3
+- Lifecycle status: in_progress
+
 ## Why
 
 The accepted SDD baseline uses internal `thin` / `full` terminology and does not yet encode several real corporate delivery controls documented by the approved NIS v1.6 reference package: `minor` / `major` / `hotfix` classification, readiness and completion gates, tech-lead governance, stop/escalation rules, regression and release-package expectations, pilot safety, and failed-run retention. The human owner has decided that these corporate processes must become first-class project behavior before the real corporate pilot rather than remain research input.
