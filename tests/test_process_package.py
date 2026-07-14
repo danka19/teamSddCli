@@ -15,6 +15,9 @@ from typing import Any
 import pytest
 import yaml
 from jsonschema import Draft202012Validator
+from jsonschema.exceptions import ValidationError
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT202012
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -55,8 +58,8 @@ def load_schema(name: str) -> dict[str, Any]:
     return json.loads((SCHEMA_ROOT / SCHEMA_FILES[name]).read_text(encoding="utf-8"))
 
 
-def schema_errors(name: str, data: dict[str, Any]) -> list[str]:
-    return [error.message for error in Draft202012Validator(load_schema(name)).iter_errors(data)]
+def schema_errors(name: str, data: dict[str, Any]) -> list[ValidationError]:
+    return list(Draft202012Validator(load_schema(name)).iter_errors(data))
 
 
 def local_refs(value: Any) -> list[str]:
@@ -66,6 +69,23 @@ def local_refs(value: Any) -> list[str]:
     if isinstance(value, list):
         return [ref for child in value for ref in local_refs(child)]
     return []
+
+
+def assert_local_references_resolve(filename: str, schema: dict[str, Any]) -> None:
+    for reference in local_refs(schema):
+        assert "://" not in reference, f"{filename} has network reference {reference}"
+        relative_path, separator, fragment = reference.partition("#")
+        target_schema = schema
+        if relative_path:
+            target = (SCHEMA_ROOT / relative_path).resolve()
+            assert target.is_file(), f"{filename} has unresolved local reference {reference}"
+            target_schema = json.loads(target.read_text(encoding="utf-8"))
+        if separator:
+            resource = Resource.from_contents(
+                target_schema,
+                default_specification=DRAFT202012,
+            )
+            Registry().resolver_with_root(resource).lookup(f"#{fragment}")
 
 
 def referential_errors(
@@ -118,10 +138,13 @@ def test_package_schemas_are_valid_and_use_only_local_references() -> None:
     for schema_name, filename in SCHEMA_FILES.items():
         schema = load_schema(schema_name)
         Draft202012Validator.check_schema(schema)
-        for reference in local_refs(schema):
-            assert "://" not in reference, f"{filename} has network reference {reference}"
-            target = (SCHEMA_ROOT / reference.split("#", 1)[0]).resolve()
-            assert target.is_file(), f"{filename} has unresolved local reference {reference}"
+        assert_local_references_resolve(filename, schema)
+
+
+def test_fragment_only_reference_resolves_within_current_schema() -> None:
+    schema = {"$defs": {"identifier": {"type": "string"}}, "$ref": "#/$defs/identifier"}
+    Draft202012Validator.check_schema(schema)
+    assert_local_references_resolve("inline schema", schema)
 
 
 def test_synthetic_central_topology_is_coherent() -> None:
@@ -159,6 +182,15 @@ def test_synthetic_central_topology_is_coherent() -> None:
     for source_path in workflow["canonical_sources"]:
         assert (REPO_ROOT / source_path).is_file()
 
+    repo_paths = {path.relative_to(REPO_ROOT).as_posix() for path in REPO_ROOT.rglob("*")}
+    manifest_paths = [
+        *release["included_assets"],
+        *release["evidence"],
+        release["rollback_reference"],
+    ]
+    for manifest_path in manifest_paths:
+        assert manifest_path in repo_paths, f"release manifest has unresolved path {manifest_path}"
+
     stage_ids = {stage["id"] for stage in workflow["workflow"]["stages"]}
     for stage in workflow["workflow"]["stages"]:
         assert set(stage["requires"]) <= stage_ids
@@ -185,16 +217,25 @@ def test_clean_templates_and_positive_fixtures_have_no_sensitive_values() -> Non
 
 
 @pytest.mark.parametrize(
-    ("schema_name", "relative_path"),
+    ("schema_name", "relative_path", "expected_validator", "expected_path"),
     [
-        ("package", "missing-package-version/package.yaml"),
-        ("config", "missing-config-version/sdd.config.yaml"),
-        ("projects", "invalid-schema/projects.yaml"),
+        ("package", "missing-package-version/package.yaml", "required", ["package"]),
+        ("config", "missing-config-version/sdd.config.yaml", "required", []),
+        ("projects", "invalid-schema/projects.yaml", "type", ["projects"]),
     ],
 )
-def test_invalid_schema_fixtures_fail_stably(schema_name: str, relative_path: str) -> None:
+def test_invalid_schema_fixtures_fail_stably(
+    schema_name: str,
+    relative_path: str,
+    expected_validator: str,
+    expected_path: list[str],
+) -> None:
     fixture = load_yaml(FIXTURES / "invalid" / relative_path)
-    assert schema_errors(schema_name, fixture), f"schema: {relative_path} unexpectedly validated"
+    errors = schema_errors(schema_name, fixture)
+    assert any(
+        error.validator == expected_validator and list(error.absolute_path) == expected_path
+        for error in errors
+    ), f"schema: {relative_path} did not fail with {expected_validator} at {expected_path}: {errors}"
 
 
 def test_invalid_cross_file_reference_fails_stably() -> None:

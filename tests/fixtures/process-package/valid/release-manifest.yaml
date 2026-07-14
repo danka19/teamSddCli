@@ -18,4 +18,4 @@ evidence:
   - tests/test_process_package.py
 known_limitations:
   - Sample evidence only; release generation belongs to a later work item.
-rollback_reference: docs/runbooks/process-package-setup.md
+rollback_reference: docs/runbooks/PROCESS_PACKAGE_SETUP.md
