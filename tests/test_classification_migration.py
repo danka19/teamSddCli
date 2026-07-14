@@ -104,6 +104,52 @@ def test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation(
         assert not list(path.parent.glob(".*classification-v2*.tmp"))
 
 
+def test_migration_refuses_structurally_valid_legacy_metadata_at_unsupported_targets(
+    tmp_path: Path,
+) -> None:
+    for relative in (Path("settings.yaml"), Path("nested") / "change.yml"):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(FIXTURES / "legacy-thin.yaml", target)
+        before = target.read_bytes()
+
+        result = plan_migration(target)
+
+        assert result.exit_code == 1
+        assert result.as_dict()["status"] == "blocked"
+        assert result.as_dict()["ambiguities"] == ["unsupported-metadata-target"]
+        assert result.as_dict()["validation_result"] == "invalid"
+        assert target.read_bytes() == before
+        assert not target.with_name(target.name + ".pre-classification-v2.bak").exists()
+
+
+def test_plan_digest_is_bound_to_canonical_resolved_change_target(
+    tmp_path: Path,
+) -> None:
+    first = _copy("legacy-thin.yaml", tmp_path / "a")
+    second = _copy("legacy-thin.yaml", tmp_path / "b")
+    second_before = second.read_bytes()
+
+    first_plan = plan_migration(first)
+    second_plan = plan_migration(second)
+
+    assert first_plan.as_dict()["affected_files"] == second_plan.as_dict()["affected_files"]
+    assert first_plan.as_dict()["source_sha256"] == second_plan.as_dict()["source_sha256"]
+    assert first_plan.as_dict()["plan_digest"] != second_plan.as_dict()["plan_digest"]
+    assert str(first.parent.resolve()) not in json.dumps(first_plan.as_dict())
+    assert str(second.parent.resolve()) not in json.dumps(second_plan.as_dict())
+
+    refused = apply_migration(
+        second, expected_plan_digest=first_plan.as_dict()["plan_digest"]
+    )
+
+    assert refused.exit_code == 1
+    assert refused.as_dict()["status"] == "blocked"
+    assert refused.as_dict()["hold_evidence"]["reasons"] == ["plan-digest-mismatch"]
+    assert second.read_bytes() == second_before
+    assert not second.with_name(second.name + ".pre-classification-v2.bak").exists()
+
+
 def test_apply_requires_matching_valid_plan_and_preserves_metadata_and_comments(tmp_path: Path) -> None:
     path = _copy("legacy-thin.yaml", tmp_path)
     before = _load(path)

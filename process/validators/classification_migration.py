@@ -83,6 +83,9 @@ def plan_migration(path: str | Path) -> MigrationResult:
     source = target.read_bytes()
     source_sha = hashlib.sha256(source).hexdigest()
     ambiguities: list[str] = []
+    supported_target = target.name == "change.yaml"
+    if not supported_target:
+        ambiguities.append("unsupported-metadata-target")
     try:
         document = yaml.load(source.decode("utf-8"), Loader=_UniqueKeyLoader)
     except (UnicodeError, yaml.YAMLError, ValueError):
@@ -95,7 +98,9 @@ def plan_migration(path: str | Path) -> MigrationResult:
 
     mode = document.get("mode")
     classification = document.get("classification")
-    excluded = _historical_path(target) or document.get("status") == "archived"
+    excluded = supported_target and (
+        _historical_path(target) or document.get("status") == "archived"
+    )
     validation_errors: list[str] = []
     if mode is not None and classification is not None:
         ambiguities.append(
@@ -179,7 +184,7 @@ def plan_migration(path: str | Path) -> MigrationResult:
             "reasons": sorted(set(ambiguities)),
         },
     }
-    base["plan_digest"] = _plan_digest(base)
+    base["plan_digest"] = _plan_digest(base, target)
     return MigrationResult(base)
 
 
@@ -289,8 +294,12 @@ def _historical_path(path: Path) -> bool:
     )
 
 
-def _plan_digest(payload: dict[str, Any]) -> str:
-    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+def _plan_digest(payload: dict[str, Any], target: Path) -> str:
+    digest_input = {
+        "plan": payload,
+        "target_identity": os.path.normcase(str(target.resolve())).replace("\\", "/"),
+    }
+    canonical = json.dumps(digest_input, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
