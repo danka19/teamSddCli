@@ -8,10 +8,10 @@ Last status reconciliation: 2026-07-14.
 
 - Phase 0 is `closed`: its repository-foundation gate is satisfied, and its former Phase 1 decision items were resolved or explicitly deferred by the accepted Phase 1 package.
 - Phase 1 is `closed`: all 11 work items are reconciled, the human Option A decision supplies acceptance evidence, and eight changes were archived into accepted specs on 2026-07-09.
-- Phase 2 is `in_progress`: work item 2.1 is `closed` after worker, reviewer, architecture, and verification gates; work item 2.2 is `ready`.
+- Phase 2 is `in_progress`: work item 2.1 is `closed`; work item 2.2 is active under the worker/reviewer/verification workflow.
 - Phases 3-4 are `planned`: Phase 3 depends on human acceptance of the Phase 2 external release candidate; Phase 4 depends on real pilot evidence.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 2/33 tasks complete (1.1-1.2) and 31 remaining; `adopt-nis-corporate-process-governance` remains 0/43. Task 7.5 and NIS task 8.8 remain Phase 3 work. `openspec/changes/archive/` retains the accepted Phase 1 source packages; `openspec/specs/` contains eight accepted specs.
-- Sequential work is not blocked by pending acceptance: Phase 2 work item 2.2 is ready.
+- Sequential work is not blocked by pending acceptance: Phase 2 work item 2.2 is active.
 
 Last updated: 2026-07-14.
 

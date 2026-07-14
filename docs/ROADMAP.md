@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: continue the accepted Phase 2 plan sequentially from ready work item 2.2 and build the externally certified transfer-ready process package after the Phase 1 accepted-spec baseline.
+- Current roadmap focus: execute active work item 2.2 and continue the accepted Phase 2 plan sequentially toward the externally certified transfer-ready process package.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -69,7 +69,7 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress. Work item 2.1 is closed after worker, reviewer, architecture, and verification gates; work item 2.2 is ready.
+Status: in_progress. Work item 2.1 is closed; work item 2.2 is active under the worker/reviewer/verification workflow.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
