@@ -31,5 +31,118 @@
         ]
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "classification"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "classification"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.allowed-classes"}, "override_mode": {"const": "locked"}, "value": {"const": ["minor", "major", "hotfix"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.no-downgrade"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.no-automatic-hotfix-migration"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "classification.additional-major-triggers"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "artifact-matrix"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "artifact-matrix"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/change-artifact-contracts/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.minimum-scenario-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.minimum-verification-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "artifacts.additional-required-artifacts"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "gates"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "gates"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.human-approval-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.security-compliance-minimum"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "gates.additional-review-gates"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "regression"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "regression"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "regression.source-linked-evidence"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "strictness", "value"], "properties": {"id": {"const": "regression.minimum-scenarios"}, "override_mode": {"const": "stricter_only"}, "strictness": {"const": "minimum"}, "value": {"const": 1}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "flow-controls"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "flow-controls"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.production-stop-triggers"}, "override_mode": {"const": "locked"}, "value": {"const": ["authority-exceeded", "access-failure", "evidence-corruption", "rollback-unavailable"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.rollback-or-hold-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "flow.additional-stop-triggers"}, "override_mode": {"const": "additive"}, "value": {"const": []}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "release"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "release"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.distinct-states"}, "override_mode": {"const": "locked"}, "value": {"const": ["ready_to_archive", "release_ready", "delivered"]}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.final-archive-human-approval"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "release.hotfix-reconciliation"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "pilot-safety"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "pilot-safety"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "pilot.ai-authority-boundary"}, "override_mode": {"const": "locked"}, "value": {"const": "advisory-only"}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "pilot.minimum-risk-controls"}, "override_mode": {"const": "additive"}, "value": {"const": ["privacy", "secrets", "access", "rollback"]}}}}
+          ]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "failed-runs"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "failed-runs"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.retention-enabled"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}},
+            {"contains": {"required": ["id", "override_mode", "strictness", "value"], "properties": {"id": {"const": "failed-runs.minimum-retention-days"}, "override_mode": {"const": "stricter_only"}, "strictness": {"const": "minimum"}, "value": {"const": 1}}}},
+            {"contains": {"required": ["id", "override_mode", "value"], "properties": {"id": {"const": "failed-runs.source-linked"}, "override_mode": {"const": "locked"}, "value": {"const": true}}}}
+          ]}
+        }
+      }
+    }
+  ]
 }

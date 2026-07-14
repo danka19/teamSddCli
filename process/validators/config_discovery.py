@@ -27,7 +27,7 @@ from .config_validation import (
     schema_diagnostics,
     secret_diagnostics,
 )
-from .policy_validation import validate_policy_bundle
+from .policy_validation import corporate_owner_diagnostics, validate_policy_bundle
 
 
 MAX_FILE_BYTES = 1_048_576
@@ -312,6 +312,10 @@ def validate_configuration(
         "owners.schema.json", owners, "owners-registry", stage=8,
         schema_resources=schema_resources,
     ))
+    if result.diagnostics:
+        return result
+
+    result.add(*corporate_owner_diagnostics(config, owners))
     if result.diagnostics:
         return result
 

@@ -101,6 +101,13 @@ def test_change_v2_rejects_unknown_class_and_legacy_mode() -> None:
     ]
 
 
+def test_native_v2_change_rejects_legacy_reference() -> None:
+    native = load_yaml(FIXTURES / "valid" / "minor.yaml")
+    native["compatibility"]["legacy_ref"] = "legacy-change.yaml"
+
+    assert errors("change-v2.schema.json", native)
+
+
 def test_negative_change_fixtures_retain_facts_without_computing_a_verdict() -> None:
     expected_facts = {
         "unknown-impact.yaml": ("unknown-impact", "unknown"),
@@ -138,6 +145,16 @@ def test_manifest_pins_one_versioned_local_policy_set() -> None:
         assert policy["kind"] == item["kind"]
 
 
+def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> None:
+    manifest = load_yaml(POLICIES / "manifest.yaml")
+
+    for item in manifest["policies"]:
+        policy = load_yaml(ROOT / "process" / item["path"])
+        policy["rules"] = policy["rules"][1:]
+
+        assert errors("policy-document.schema.json", policy), item["kind"]
+
+
 def test_policy_bundle_builds_immutable_provenance_snapshot() -> None:
     manifest = load_yaml(POLICIES / "manifest.yaml")
     config = load_yaml(FIXTURES / "config" / "valid-central.yaml")
@@ -168,6 +185,22 @@ def test_policy_bundle_rejects_missing_values_and_weakening_with_provenance() ->
         diagnostic = next(item for item in result.diagnostics if item.code == expected)
         assert diagnostic.source == "central-config"
         assert diagnostic.pointer.startswith("/policy_set/")
+
+
+def test_stricter_only_rejects_boolean_and_incomparable_numeric_types() -> None:
+    manifest = load_yaml(POLICIES / "manifest.yaml")
+
+    for value in (True, 2.0):
+        config = load_yaml(FIXTURES / "config" / "valid-central.yaml")
+        config["policy_set"]["overrides"] = [{
+            "rule_id": "regression.minimum-scenarios",
+            "operation": "set",
+            "value": value,
+        }]
+
+        result = validate_policy_bundle(ROOT / "process", manifest, config, None)
+
+        assert "policy.override-not-stricter" in diagnostic_codes(result), value
 
 
 def test_adapter_override_is_bounded_and_cannot_supply_policy_paths() -> None:
@@ -231,3 +264,26 @@ def test_policy_integrity_rejects_versions_duplicates_missing_refs_and_cycles(
             candidate["policies"][0]["requires"] = ["failed-runs"]
         result = validate_policy_bundle(package, candidate, config, None)
         assert expected in diagnostic_codes(result), name
+
+
+def test_policy_integrity_rejects_missing_requires_before_cycle_detection(
+    tmp_path: Path,
+) -> None:
+    package = tmp_path / "missing-requires"
+    shutil.copytree(ROOT / "process", package)
+    manifest = load_yaml(package / "policies" / "manifest.yaml")
+    config = load_yaml(FIXTURES / "config" / "valid-central.yaml")
+    policy_path = package / "policies" / "classification.yaml"
+    policy = load_yaml(policy_path)
+    policy["rules"].append({
+        "id": "classification.additional-check",
+        "override_mode": "replaceable",
+        "value": True,
+        "requires": ["missing.rule"],
+    })
+    policy_path.write_text(yaml.safe_dump(policy, sort_keys=False), encoding="utf-8")
+
+    result = validate_policy_bundle(package, manifest, config, None)
+
+    assert "policy.reference-missing" in diagnostic_codes(result)
+    assert "policy.requirement-cycle" not in diagnostic_codes(result)

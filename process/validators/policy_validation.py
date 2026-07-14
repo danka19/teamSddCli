@@ -161,14 +161,15 @@ def validate_policy_bundle(
 
     known_rules = set(rules)
     for identifier, (rule, _) in rules.items():
-        for ref in rule.get("refs", []):
-            if ref not in known_rules:
-                result.diagnostics.append(_diag(
-                    "policy.reference-missing",
-                    "A policy rule references an unknown rule.",
-                    f"policy:{identifier.split('.', 1)[0]}",
-                    f"/rules/{identifier}/refs",
-                ))
+        for relation in ("refs", "requires"):
+            for ref in rule.get(relation, []):
+                if ref not in known_rules:
+                    result.diagnostics.append(_diag(
+                        "policy.reference-missing",
+                        "A policy rule references an unknown rule.",
+                        f"policy:{identifier.split('.', 1)[0]}",
+                        f"/rules/{identifier}/{relation}",
+                    ))
     rule_entries = [
         {"id": identifier, "requires": rule.get("requires", [])}
         for identifier, (rule, _) in rules.items()
@@ -334,17 +335,66 @@ def _apply_overrides(
 
 
 def _is_stricter(current: Any, proposed: Any, direction: Any) -> bool:
-    if isinstance(current, bool) and isinstance(proposed, bool):
-        return proposed or not current
-    if isinstance(current, (int, float)) and isinstance(proposed, (int, float)):
+    if type(current) in (int, float) and type(proposed) is type(current):
         if direction == "maximum":
             return proposed <= current
         if direction == "minimum":
             return proposed >= current
         return False
     if isinstance(current, tuple) and isinstance(proposed, list):
-        return set(current) <= set(proposed)
-    return proposed == current
+        try:
+            return set(current) <= set(proposed)
+        except TypeError:
+            return False
+    return False
+
+
+def corporate_owner_diagnostics(
+    config: dict[str, Any], owners: dict[str, Any]
+) -> list[Diagnostic]:
+    """Resolve owner-valued corporate policy slots against the loaded registry."""
+    policy_set = config.get("policy_set", {})
+    corporate = policy_set.get("corporate_values", {})
+    groups = owners.get("owner_groups", [])
+    if not isinstance(corporate, dict) or not isinstance(groups, list):
+        return []
+
+    diagnostics: list[Diagnostic] = []
+    slots = {
+        "tech_lead_owner": "tech_lead",
+        "qa_owner": "qa",
+        "escalation_route": None,
+    }
+    for identifier, required_role in slots.items():
+        reference = corporate.get(identifier)
+        if not isinstance(reference, str):
+            continue
+        if not _owner_reference_resolves(reference, groups, required_role):
+            diagnostics.append(_diag(
+                "policy.corporate-owner-unresolved",
+                "A corporate owner reference is absent or incompatible with the owners registry.",
+                "central-config",
+                f"/policy_set/corporate_values/{identifier}",
+            ))
+    return diagnostics
+
+
+def _owner_reference_resolves(
+    reference: str, groups: list[Any], required_role: str | None
+) -> bool:
+    for group in groups:
+        if not isinstance(group, dict):
+            continue
+        roles = group.get("roles", [])
+        members = group.get("members", [])
+        has_required_role = required_role is None or required_role in roles
+        if reference == group.get("id") and has_required_role:
+            return True
+        if reference in members and has_required_role:
+            return True
+        if reference in roles and (required_role is None or reference == required_role):
+            return True
+    return False
 
 
 def _graph_diagnostics(entries: list[Any], known: list[Any]) -> list[Diagnostic]:

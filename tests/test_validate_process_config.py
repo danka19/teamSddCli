@@ -102,7 +102,7 @@ def build_central_layout(root: Path) -> Path:
             "owner_groups": [
                 {
                     "id": "production-platform-team",
-                    "roles": ["tech_lead"],
+                    "roles": ["tech_lead", "qa"],
                     "members": ["sample-user"],
                 }
             ],
@@ -426,6 +426,33 @@ def test_missing_corporate_policy_value_is_not_guessed(tmp_path: Path) -> None:
     assert code == 1
     assert diagnostic_codes(stdout) == ["policy.corporate-value-missing"]
     assert json.loads(stdout)["diagnostics"][0]["pointer"].endswith("/qa_owner")
+
+
+@pytest.mark.parametrize(
+    "field",
+    ("tech_lead_owner", "qa_owner", "escalation_route"),
+)
+def test_corporate_policy_owner_references_must_resolve_against_registry(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    root = build_central_layout(tmp_path / field)
+    config = read_yaml(root / "sdd.config.yaml")
+    config["policy_set"]["corporate_values"][field] = "missing-owner-reference"
+    write_yaml(root / "sdd.config.yaml", config)
+    called = False
+
+    def probe() -> str:
+        nonlocal called
+        called = True
+        return "1.4.1"
+
+    code, stdout, _ = run_cli([str(root), "--json"], probe)
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["policy.corporate-owner-unresolved"]
+    assert json.loads(stdout)["diagnostics"][0]["pointer"].endswith(f"/{field}")
+    assert not called
 
 
 def test_adapter_cannot_supply_arbitrary_policy_paths(tmp_path: Path) -> None:
