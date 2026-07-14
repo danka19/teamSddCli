@@ -24,7 +24,7 @@
     "waivers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "valid", "expires_on", "source_ref"], "properties": {"id": {"type": "string"}, "valid": {"type": "boolean"}, "expires_on": {"type": "string", "format": "date"}, "source_ref": {"type": "string"}}}},
     "deferrals": {"type": "array", "items": {"type": "object"}},
     "control_records": {"type": "array", "items": {"$ref": "tech-lead-control-record.schema.json"}},
-    "checkpoint": {"type": "object", "additionalProperties": false, "required": ["kind", "event", "source_ref"], "properties": {"kind": {"enum": ["scheduled", "event-driven"]}, "event": {"type": "string", "minLength": 1}, "source_ref": {"type": "string", "minLength": 1}}}
+    "checkpoint": {"type": "object", "additionalProperties": false, "required": ["kind", "event", "source_ref", "owner_ref"], "properties": {"kind": {"enum": ["scheduled", "event-driven"]}, "event": {"type": "string", "minLength": 1}, "source_ref": {"type": "string", "minLength": 1}, "owner_ref": {"type": "string", "minLength": 1}}}
   },
   "$defs": {
     "policySnapshot": {"type": "object", "additionalProperties": false, "required": ["id", "version", "digest"], "properties": {"id": {"type": "string"}, "version": {"type": "string"}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}},

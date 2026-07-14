@@ -133,6 +133,19 @@ Compatibility rules:
 ## Change Intake
 
 ```text
+Idea: Bind Tech Lead control decisions, time semantics, checkpoints, and finding output to canonical evidence after architecture review.
+Source: Phase 2 work item 2.6 architecture findings on 2026-07-14.
+Type: bug_fix, architecture_change, data_contract_change, verification_change, documentation_change
+Decision: adopt_now
+Reason: Leaving any invalid authoritative record able to return clear, comparing timestamp strings/local dates, accepting self-asserted checkpoints, or ignoring the locked finding contract would make the active safety/control work item architecturally incorrect.
+Affected specs: adopt-nis-corporate-process-governance tech-lead-workflow delta.
+Affected architecture: Check-only Tech Lead validator and its resolved policy/config snapshot; no mutation, daemon, calendar, or inbox boundary changes.
+Data contract impact: UTC cutoff provenance, checkpoint owner binding, locked checkpoint definitions, and compiled finding fields.
+Verification impact: Adversarial fail-closed, timezone offset/order/tie/cutoff, checkpoint mismatch, and policy-tampering tests plus existing Phase 2 regression gates.
+Status: adopted for work item 2.6 remediation; work-item and OpenSpec task statuses remain unchanged pending independent reconciliation.
+```
+
+```text
 Idea: Deliver a reusable externally certified process package before corporate adaptation.
 Source: Human transfer-readiness decision and D-012.
 Type: scope_refinement, architecture_change, verification_change

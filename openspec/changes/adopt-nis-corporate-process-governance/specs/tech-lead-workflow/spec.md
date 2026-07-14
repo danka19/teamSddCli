@@ -40,6 +40,14 @@ The tech lead workflow SHALL support explicit control of technically unsafe or i
 - **WHEN** a defined technical stop condition occurs
 - **THEN** the change records the trigger, observed evidence, affected work, immediate safety action, owner, escalation route, and conditions required for resume
 
+#### Scenario: Invalid control evidence fails closed
+- **WHEN** any authoritative control record has an invalid policy snapshot, trigger, owner resolution, human authority, escalation route, timestamp, or source order
+- **THEN** the check-only control report returns a stable blocking diagnostic and an invalid or still-active held state rather than clear state or a successful exit
+
+#### Scenario: Control timestamps use canonical UTC instants
+- **WHEN** control records use RFC3339 timestamps with different timezone offsets or a date-only evaluation cutoff is supplied
+- **THEN** the checker requires timezone-aware timestamps, normalizes them to UTC for ordering, tie detection, and future-record filtering, treats the cutoff as the inclusive end of that UTC date, and exposes the resolved cutoff in report provenance
+
 #### Scenario: Resume requires resolved evidence
 - **WHEN** held work requests resume
 - **THEN** deterministic checks confirm required corrective evidence exists and an authorized human records the resume decision
@@ -73,6 +81,14 @@ The process package SHALL provide deterministic tech-lead views before an AI-enh
 #### Scenario: Configured control checkpoint exposes flow risks
 - **WHEN** a scheduled or event-driven Tech Lead checkpoint runs
 - **THEN** the report identifies untriaged or unclassified work, missing fixed input, class/gate blockers, scope drift, missing owners, stopped or externally waiting work, failed evidence collection, invalid waivers, overdue hotfix reconciliation, process bypass, and release-package gaps from authoritative sources
+
+#### Scenario: Checkpoint identity is canonical
+- **WHEN** a Tech Lead checkpoint report is requested
+- **THEN** its event, kind, source, and owner match the locked checkpoint definition and resolved Tech Lead owner from the same policy/config snapshot; unknown or self-asserted checkpoints block the report
+
+#### Scenario: Finding shape is policy-bound
+- **WHEN** a Tech Lead report emits a finding
+- **THEN** the required stable finding fields come from the locked compiled `tech-lead.finding-fields` contract, and a missing or changed contract blocks report generation
 
 #### Scenario: Cadence is configuration rather than universal policy
 - **WHEN** a project needs daily, weekly, release-based, or event-driven Tech Lead review

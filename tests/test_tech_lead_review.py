@@ -138,7 +138,7 @@ def review_input() -> dict[str, object]:
         "waivers": [],
         "deferrals": [],
         "control_records": [],
-        "checkpoint": {"kind": "event-driven", "event": "change-updated", "source_ref": "config/checkpoints.yaml"},
+        "checkpoint": {"kind": "event-driven", "event": "change-updated", "source_ref": "config/checkpoints.yaml", "owner_ref": "sample-tech-leads"},
     }
 
 

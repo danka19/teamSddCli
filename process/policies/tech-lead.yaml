@@ -21,6 +21,12 @@ rules:
   - id: tech-lead.finding-fields
     override_mode: locked
     value: [code, severity, blocking, source-ref, zone, role, action, policy-snapshot]
+  - id: tech-lead.checkpoints
+    override_mode: locked
+    value:
+      - {event: change-updated, kind: event-driven, source-ref: config/checkpoints.yaml}
+      - {event: resume-requested, kind: event-driven, source-ref: config/checkpoints.yaml}
+      - {event: weekly-control, kind: scheduled, source-ref: config/checkpoints.yaml}
   - id: tech-lead.decision-only
     override_mode: locked
     value: true

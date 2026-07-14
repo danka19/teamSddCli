@@ -3,7 +3,7 @@ id: sample-change
 classification: minor
 status: in_implementation
 evaluation_date: "2026-07-14"
-policy_snapshot: &policy {id: sdd-core, version: 1.0.0, digest: c3aa34da5d1a3e593705b90840c456314ca4fc3dda7e98a252e019c622a0e8ff}
+policy_snapshot: &policy {id: sdd-core, version: 1.0.0, digest: 90830c69b5daba933ff7386a13d3cf0b30e36334a8953ef1cbcd599101054f5f}
 classification_report: {source_ref: reports/classification.json, policy_snapshot: *policy, status: human-confirmed, triggered_major: false}
 gate_reports: {source_ref: reports/gates.json, policy_snapshot: *policy, review_ready: ready, definition_of_ready: ready, definition_of_done: ready, release_transfer_readiness: ready}
 requirements: [{id: REQ-1, source_ref: specs/sample/spec.md}]
@@ -47,4 +47,4 @@ control_records:
     approvals: [{type: human, id: sample-primary, role: tech_lead, source_ref: decisions/resume.yaml}]
     recorded_at: "2026-07-14T09:00:00Z"
     source_ref: controls/resume-1.yaml
-checkpoint: {kind: scheduled, event: weekly-control, source_ref: config/checkpoints.yaml}
+checkpoint: {kind: scheduled, event: weekly-control, source_ref: config/checkpoints.yaml, owner_ref: sample-tech-leads}

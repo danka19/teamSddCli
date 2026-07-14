@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, time, timezone
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
@@ -36,6 +36,10 @@ FORBIDDEN_AUTHORITIES = (
 INDEPENDENT_APPROVALS = (
     "qa", "product", "security", "release", "merge", "archive", "tracker",
 )
+FINDING_FIELDS = (
+    "code", "severity", "blocking", "source_ref", "zone", "role", "action",
+    "policy_snapshot",
+)
 
 
 class TechLeadPolicyError(ValueError):
@@ -50,6 +54,9 @@ class CompiledTechLeadPolicy:
     allowed_actions: tuple[str, ...]
     forbidden_authorities: tuple[str, ...]
     independent_approvals: tuple[str, ...]
+    finding_fields: tuple[str, ...]
+    checkpoints: tuple[Mapping[str, str], ...]
+    checkpoint_owner: str
     stop_triggers: tuple[str, ...]
     policy_sources: tuple[Mapping[str, str], ...]
 
@@ -82,6 +89,7 @@ class ControlState:
     active_record_ids: tuple[str, ...]
     diagnostics: tuple[Diagnostic, ...]
     as_of: str | None = None
+    as_of_cutoff: str | None = None
     evaluation_date: str | None = None
     snapshot_digest: str | None = None
     decision_only: bool = True
@@ -101,6 +109,7 @@ class ControlState:
             "active_record_ids": list(self.active_record_ids),
             "diagnostics": [item.as_dict() for item in self.diagnostics],
             "as_of": self.as_of,
+            "as_of_cutoff": self.as_of_cutoff,
             "evaluation_date": self.evaluation_date,
             "snapshot_digest": self.snapshot_digest,
             "decision_only": self.decision_only,
@@ -148,6 +157,71 @@ def compile_tech_lead_policy(snapshot: PolicySnapshot) -> CompiledTechLeadPolicy
             "source": rule.source,
             "pointer": rule.pointer,
         }))
+    finding_rule = snapshot.rules.get("tech-lead.finding-fields")
+    finding_fields = tuple(
+        str(item).replace("-", "_")
+        for item in (
+            finding_rule.value
+            if finding_rule is not None and isinstance(finding_rule.value, tuple)
+            else ()
+        )
+    )
+    if (
+        finding_rule is None
+        or finding_rule.policy_id != "tech-lead"
+        or finding_fields != FINDING_FIELDS
+    ):
+        raise TechLeadPolicyError(
+            "Required immutable rule tech-lead.finding-fields is missing or changed."
+        )
+    sources.append(MappingProxyType({
+        "rule": "tech-lead.finding-fields",
+        "policy_id": finding_rule.policy_id,
+        "policy_version": finding_rule.policy_version,
+        "source": finding_rule.source,
+        "pointer": finding_rule.pointer,
+    }))
+    checkpoint_rule = snapshot.rules.get("tech-lead.checkpoints")
+    checkpoints: list[Mapping[str, str]] = []
+    if (
+        checkpoint_rule is not None
+        and checkpoint_rule.policy_id == "tech-lead"
+        and isinstance(checkpoint_rule.value, tuple)
+    ):
+        for item in checkpoint_rule.value:
+            if not isinstance(item, Mapping):
+                checkpoints = []
+                break
+            normalized = {
+                "event": item.get("event"),
+                "kind": item.get("kind"),
+                "source_ref": item.get("source-ref"),
+            }
+            if (
+                set(item) != {"event", "kind", "source-ref"}
+                or not all(
+                    isinstance(value, str) and bool(value)
+                    for value in normalized.values()
+                )
+                or normalized["kind"] not in {"scheduled", "event-driven"}
+            ):
+                checkpoints = []
+                break
+            checkpoints.append(MappingProxyType(normalized))
+    if not checkpoints or len({item["event"] for item in checkpoints}) != len(checkpoints):
+        raise TechLeadPolicyError(
+            "Required immutable rule tech-lead.checkpoints is missing or changed."
+        )
+    checkpoint_owner = snapshot.corporate_values.get("tech_lead_owner")
+    if not isinstance(checkpoint_owner, str) or not checkpoint_owner:
+        raise TechLeadPolicyError("Configured Tech Lead checkpoint owner is missing.")
+    sources.append(MappingProxyType({
+        "rule": "tech-lead.checkpoints",
+        "policy_id": checkpoint_rule.policy_id,
+        "policy_version": checkpoint_rule.policy_version,
+        "source": checkpoint_rule.source,
+        "pointer": checkpoint_rule.pointer,
+    }))
     for identifier in ("tech-lead.decision-only", "tech-lead.human-control-required"):
         rule = snapshot.rules.get(identifier)
         if rule is None or rule.policy_id != "tech-lead" or rule.value is not True:
@@ -166,6 +240,9 @@ def compile_tech_lead_policy(snapshot: PolicySnapshot) -> CompiledTechLeadPolicy
         allowed_actions=ALLOWED_ACTIONS,
         forbidden_authorities=FORBIDDEN_AUTHORITIES,
         independent_approvals=INDEPENDENT_APPROVALS,
+        finding_fields=finding_fields,
+        checkpoints=tuple(checkpoints),
+        checkpoint_owner=checkpoint_owner,
         stop_triggers=stop_triggers,
         policy_sources=tuple(sources),
     )
@@ -220,19 +297,12 @@ def check_control_state(
     as_of: str | None = None,
     evaluation_date: str | None = None,
 ) -> ControlState:
-    try:
-        policy = compile_tech_lead_policy(snapshot)
-    except TechLeadPolicyError as error:
-        return ControlState(
-            state="invalid", resume_eligible=False, active_record_ids=(),
-            diagnostics=(_diag("tech-lead.policy-contract-invalid", str(error)),),
-            as_of=as_of, evaluation_date=evaluation_date,
-            snapshot_digest=policy_snapshot_digest(snapshot),
-        )
-    diagnostics: list[Diagnostic] = []
+    cutoff: datetime | None = None
+    cutoff_text: str | None = None
     if as_of is not None:
         try:
-            date.fromisoformat(as_of)
+            cutoff = _date_cutoff(as_of)
+            cutoff_text = _format_utc(cutoff)
         except (TypeError, ValueError):
             return ControlState(
                 state="invalid", resume_eligible=False, active_record_ids=(),
@@ -241,8 +311,19 @@ def check_control_state(
                     "The evaluation cutoff must be an ISO calendar date.",
                 ),),
                 as_of=as_of, evaluation_date=evaluation_date,
-                snapshot_digest=policy.snapshot_digest,
             )
+    try:
+        policy = compile_tech_lead_policy(snapshot)
+    except TechLeadPolicyError as error:
+        return ControlState(
+            state="invalid", resume_eligible=False, active_record_ids=(),
+            diagnostics=(_diag("tech-lead.policy-contract-invalid", str(error)),),
+            as_of=as_of, evaluation_date=evaluation_date,
+            as_of_cutoff=cutoff_text,
+            snapshot_digest=policy_snapshot_digest(snapshot),
+        )
+    diagnostics: list[Diagnostic] = []
+    if as_of is not None:
         if evaluation_date is not None and evaluation_date != as_of:
             return ControlState(
                 state="invalid", resume_eligible=False, active_record_ids=(),
@@ -251,11 +332,21 @@ def check_control_state(
                     "The input evaluation date does not match the requested cutoff.",
                 ),),
                 as_of=as_of, evaluation_date=evaluation_date,
+                as_of_cutoff=cutoff_text,
                 snapshot_digest=policy.snapshot_digest,
             )
     current_records: list[Mapping[str, Any]] = []
+    record_instants: list[datetime] = []
     for record in records:
-        if as_of is not None and _record_date(record.get("recorded_at")) > date.fromisoformat(as_of):
+        instant = _parse_rfc3339(record.get("recorded_at"))
+        if instant is None:
+            diagnostics.append(_diag(
+                "tech-lead.control-recorded-at-invalid",
+                "A control record timestamp must be an RFC3339 timezone-aware instant.",
+                source=str(record.get("source_ref", "control-record")),
+            ))
+            continue
+        if cutoff is not None and instant > cutoff:
             diagnostics.append(_diag(
                 "tech-lead.control-record-future",
                 "A future control record was excluded before state derivation.",
@@ -263,23 +354,32 @@ def check_control_state(
             ))
             continue
         current_records.append(record)
+        record_instants.append(instant)
     ids = [json.dumps(row.get("id"), sort_keys=True, default=str) for row in current_records]
     if len(ids) != len(set(ids)):
         diagnostics.append(_diag(
             "tech-lead.control-id-duplicate",
             "Control record identifiers must be unique.",
         ))
-    times = [str(row.get("recorded_at", "")) for row in current_records]
-    if times != sorted(times):
+    if record_instants != sorted(record_instants):
         diagnostics.append(_diag(
             "tech-lead.control-order-invalid",
             "Control records must be supplied in source chronological order.",
         ))
-    if any(item.code in {"tech-lead.control-id-duplicate", "tech-lead.control-order-invalid"} for item in diagnostics):
+    if len(record_instants) != len(set(record_instants)):
+        diagnostics.append(_diag(
+            "tech-lead.control-time-tie",
+            "Control records must have distinct UTC instants so source order is unambiguous.",
+        ))
+    if any(item.code in {
+        "tech-lead.control-id-duplicate", "tech-lead.control-order-invalid",
+        "tech-lead.control-time-tie",
+    } for item in diagnostics):
         return ControlState(
             state="invalid", resume_eligible=False, active_record_ids=(),
             diagnostics=tuple(diagnostics),
             as_of=as_of, evaluation_date=evaluation_date,
+            as_of_cutoff=cutoff_text,
             snapshot_digest=policy.snapshot_digest,
         )
     active: list[Mapping[str, Any]] = []
@@ -429,9 +529,7 @@ def check_control_state(
                     ))
                 state = _active_control_state(active)
             # Check-only: active records deliberately remain active until work item 2.7.
-    if state == "clear" and any(
-        item.code == "tech-lead.control-record-future" for item in diagnostics
-    ):
+    if state == "clear" and diagnostics:
         state = "invalid"
     return ControlState(
         state=state,
@@ -439,6 +537,7 @@ def check_control_state(
         active_record_ids=tuple(str(row.get("id")) for row in active),
         diagnostics=tuple(diagnostics),
         as_of=as_of,
+        as_of_cutoff=cutoff_text,
         evaluation_date=evaluation_date or as_of,
         snapshot_digest=policy.snapshot_digest,
     )
@@ -589,10 +688,34 @@ def evaluate_tech_lead_review(
                     "Complete source-linked hotfix reconciliation.", policy_ref,
                 ))
     checkpoint = document.get("checkpoint", {})
-    if checkpoint.get("kind") not in {"scheduled", "event-driven"} or not checkpoint.get("event"):
+    definition = next(
+        (item for item in policy.checkpoints if item["event"] == checkpoint.get("event")),
+        None,
+    )
+    if definition is None:
         views["checkpoint-summary"].append(_finding(
-            "tech-lead.checkpoint-invalid", True, str(checkpoint.get("source_ref", "checkpoint")),
-            "global", "tech_lead", "Supply a configured scheduled/event-driven checkpoint.", policy_ref,
+            "tech-lead.checkpoint-unknown", True,
+            str(checkpoint.get("source_ref", "checkpoint")), "global", "tech_lead",
+            "Select a checkpoint from the canonical Tech Lead policy.", policy_ref,
+        ))
+    else:
+        if checkpoint.get("kind") != definition["kind"]:
+            views["checkpoint-summary"].append(_finding(
+                "tech-lead.checkpoint-kind-conflict", True,
+                str(checkpoint.get("source_ref", "checkpoint")), "global", "tech_lead",
+                "Use the configured checkpoint kind.", policy_ref,
+            ))
+        if checkpoint.get("source_ref") != definition["source_ref"]:
+            views["checkpoint-summary"].append(_finding(
+                "tech-lead.checkpoint-source-conflict", True,
+                str(checkpoint.get("source_ref", "checkpoint")), "global", "tech_lead",
+                "Use the configured checkpoint source.", policy_ref,
+            ))
+    if checkpoint.get("owner_ref") != policy.checkpoint_owner:
+        views["checkpoint-summary"].append(_finding(
+            "tech-lead.checkpoint-owner-conflict", True,
+            str(checkpoint.get("source_ref", "checkpoint")), "global", "tech_lead",
+            "Use the Tech Lead owner resolved by canonical configuration.", policy_ref,
         ))
     findings = [item for name in TECH_LEAD_VIEWS for item in views[name]]
     return _report(document, policy, findings, views, as_of=as_of)
@@ -613,6 +736,7 @@ def _report(
         "independent_approvals": {role: "still-required" for role in INDEPENDENT_APPROVALS},
         "decision_only": True, "control_state_mutated": False, "lifecycle_mutated": False,
         "as_of": as_of,
+        "as_of_cutoff": _format_utc(_date_cutoff(as_of)) if _valid_date(as_of) else None,
         "evaluation_date": document.get("evaluation_date"),
         "snapshot_digest": (
             policy.snapshot_digest if policy else document.get("policy_snapshot", {}).get("digest")
@@ -627,11 +751,11 @@ def _finding(
     code: str, blocking: bool, source_ref: str, zone: str, role: str,
     action: str, policy_ref: Mapping[str, str],
 ) -> dict[str, Any]:
-    return {
-        "code": code, "severity": "error" if blocking else "warning",
-        "blocking": blocking, "source_ref": source_ref, "zone": zone,
-        "role": role, "action": action, "policy_snapshot": dict(policy_ref),
-    }
+    values = (
+        code, "error" if blocking else "warning", blocking, source_ref, zone,
+        role, action, dict(policy_ref),
+    )
+    return dict(zip(FINDING_FIELDS, values, strict=True))
 
 
 def _snapshot_matches(value: Any, policy: CompiledTechLeadPolicy) -> bool:
@@ -641,11 +765,34 @@ def _snapshot_matches(value: Any, policy: CompiledTechLeadPolicy) -> bool:
     }
 
 
-def _record_date(value: Any) -> date:
+def _parse_rfc3339(value: Any) -> datetime | None:
     try:
-        return datetime.fromisoformat(str(value).replace("Z", "+00:00")).date()
+        if not isinstance(value, str):
+            return None
+        parsed = datetime.fromisoformat(
+            value[:-1] + "+00:00" if value.endswith("Z") else value
+        )
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            return None
+        return parsed.astimezone(timezone.utc)
     except (TypeError, ValueError):
-        return date.max
+        return None
+
+
+def _date_cutoff(value: str) -> datetime:
+    return datetime.combine(date.fromisoformat(value), time.max, tzinfo=timezone.utc)
+
+
+def _format_utc(value: datetime) -> str:
+    return value.isoformat().replace("+00:00", "Z")
+
+
+def _valid_date(value: Any) -> bool:
+    try:
+        date.fromisoformat(value)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 
 def _active_control_state(active: Sequence[Mapping[str, Any]]) -> str:

@@ -324,13 +324,15 @@ Status: implementation-worker-complete; independent task review, architecture re
 - Review/control RED failed collection because `process.validators.tech_lead` did not exist. Subsequent behavior and registration RED runs exposed missing persistent control checks, owner-policy fixture mismatch, and unregistered ninth-policy/two-schema package surfaces before GREEN.
 - Final adversarial RED: 8 failures after 24 passes exposed missing duplicate/order/action/severity/trigger/AI-approval/incomplete-resume checks plus absent role/certification fixtures. The focused owner/review/control/certification GREEN reached 32 tests.
 - Independent-review hardening RED: 16 failures after 3 passes exposed open classification/gate status strings, standalone or unbound resume eligibility, list-order-dependent overlap resolution, malformed owner-v2 crashes/late failures, and an unbound evaluation cutoff. The hardening GREEN reached 20/20 adversarial tests without changing work-item or OpenSpec task status.
+- Architecture-remediation RED: four groups produced 11 failures for invalid authoritative records returning clear/exit 0, local-date/lexical timestamp handling, self-asserted checkpoints, and an uncompiled finding contract; a separate equal-instant RED proved timezone-offset ties could still influence state. GREEN binds all four contracts without changing work-item or OpenSpec task status.
 
 ### Scope And Residual Risk
 
 - Every output is decision-only and records `control_state_mutated: false` and `lifecycle_mutated: false`. A `resume-eligible` result does not clear a hold or resume work.
 - Tech Lead recommendations never satisfy QA, product, security, release, merge, archive, or tracker approvals. AI cannot create or approve a control decision.
-- Scheduled/event-driven support means explicit configured checkpoint/event input plus deterministic `--as-of`; no daemon, calendar, role inbox, inferred due date, or integration was added.
-- `--as-of`, input `evaluation_date`, and the policy snapshot digest are explicit report provenance. Future control records are diagnosed and filtered before state derivation; an evaluation-date mismatch blocks review.
+- Scheduled/event-driven support means a checkpoint whose event/kind/source match locked policy and whose owner matches resolved configuration plus deterministic `--as-of`; no daemon, calendar, role inbox, inferred due date, or integration was added.
+- `--as-of`, its inclusive end-of-UTC-date `as_of_cutoff`, input `evaluation_date`, and the policy snapshot digest are explicit report provenance. RFC3339 records are timezone-aware UTC instants for order/tie/future checks; representation offsets cannot change state, and an evaluation-date mismatch blocks review.
+- Any invalid authoritative snapshot, trigger, owner resolution, authority, escalation route, timestamp, or ordering evidence returns an invalid or still-active held state with nonzero exit. Findings use the compiled locked `tech-lead.finding-fields` shape; missing or changed rule content fails closed.
 - Resume eligibility requires explicit active-record targets and source evidence bound to every target resume condition. Standalone resume and partially addressed multi-record control state fail closed while the check-only output retains every active record.
 - Actual flow mutation/enforcement, failed-run retention, and release-handoff persistence remain 2.7; full traceability remains 2.8. Actual Qwen/DeepSeek certification and cross-platform release certification remain later Phase 2 work.
 
