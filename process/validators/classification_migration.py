@@ -4,16 +4,22 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator
 
 
 MAPPINGS = {"thin": "minor", "full": "major"}
 BACKUP_SUFFIX = ".pre-classification-v2.bak"
+CHANGE_V2_SCHEMA = (
+    Path(__file__).resolve().parents[1] / "schemas" / "change-v2.schema.json"
+)
 
 
 class _UniqueKeyLoader(yaml.SafeLoader):
@@ -90,6 +96,7 @@ def plan_migration(path: str | Path) -> MigrationResult:
     mode = document.get("mode")
     classification = document.get("classification")
     excluded = _historical_path(target) or document.get("status") == "archived"
+    validation_errors: list[str] = []
     if mode is not None and classification is not None:
         ambiguities.append(
             "legacy-target-conflict"
@@ -98,6 +105,27 @@ def plan_migration(path: str | Path) -> MigrationResult:
         )
     elif mode is not None and mode not in MAPPINGS:
         ambiguities.append("unsupported-legacy-mode")
+
+    if not excluded and not ambiguities and mode in MAPPINGS:
+        try:
+            proposed_text = _surgical_migration(
+                source.decode("utf-8"), mode, MAPPINGS[mode], source_sha
+            )
+            proposed_document = yaml.load(proposed_text, Loader=_UniqueKeyLoader)
+            validation_errors = _schema_errors(proposed_document)
+        except (UnicodeError, yaml.YAMLError, ValueError):
+            validation_errors = ["/: proposed metadata could not be constructed"]
+        if validation_errors:
+            ambiguities.append("target-schema-validation-failed")
+    elif (
+        not excluded
+        and not ambiguities
+        and document.get("schema_version") == 2
+        and classification in {"minor", "major", "hotfix"}
+    ):
+        validation_errors = _schema_errors(document)
+        if validation_errors:
+            ambiguities.append("target-schema-validation-failed")
 
     if excluded:
         status = "excluded-history"
@@ -129,6 +157,7 @@ def plan_migration(path: str | Path) -> MigrationResult:
             str(key) for key in document if key not in {"mode", "classification"}
         ),
         "ambiguities": sorted(set(ambiguities)),
+        "validation_errors": validation_errors,
         "diagnostics": ([{
             "code": "migration.legacy-mode-deprecated",
             "source_field": "mode",
@@ -196,7 +225,11 @@ def apply_migration(
         payload["source_sha256"],
     )
     parsed = yaml.load(migrated, Loader=_UniqueKeyLoader)
-    if not isinstance(parsed, dict) or parsed.get("classification") != mapping["classification"]:
+    if (
+        not isinstance(parsed, dict)
+        or parsed.get("classification") != mapping["classification"]
+        or _schema_errors(parsed)
+    ):
         payload.update({
             "status": "blocked",
             "validation_result": "invalid",
@@ -204,12 +237,26 @@ def apply_migration(
         })
         return MigrationResult(payload)
 
-    backup.write_bytes(source)
+    _write_fsynced(backup, source, exclusive=True)
+    temporary: Path | None = None
     try:
-        target.write_text(migrated, encoding="utf-8", newline="")
-    except OSError:
-        target.write_bytes(source)
-        raise
+        with tempfile.NamedTemporaryFile(
+            mode="wb",
+            dir=target.parent,
+            prefix=f".{target.name}.classification-v2-",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(migrated.encode("utf-8"))
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, target)
+        temporary = None
+        _fsync_directory(target.parent)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
     payload.update({
         "status": "applied",
         "validation_result": "valid",
@@ -245,6 +292,38 @@ def _historical_path(path: Path) -> bool:
 def _plan_digest(payload: dict[str, Any]) -> str:
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _schema_errors(document: Any) -> list[str]:
+    schema = json.loads(CHANGE_V2_SCHEMA.read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    errors = sorted(validator.iter_errors(document), key=lambda item: list(item.path))
+    return [
+        f"/{'/'.join(str(item) for item in error.path)}: {error.validator}"
+        for error in errors
+    ]
+
+
+def _write_fsynced(path: Path, content: bytes, *, exclusive: bool) -> None:
+    mode = "xb" if exclusive else "wb"
+    with path.open(mode) as handle:
+        handle.write(content)
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def _fsync_directory(path: Path) -> None:
+    flags = getattr(os, "O_RDONLY", 0)
+    try:
+        descriptor = os.open(path, flags)
+    except OSError:
+        return
+    try:
+        os.fsync(descriptor)
+    except OSError:
+        pass
+    finally:
+        os.close(descriptor)
 
 
 def _surgical_migration(

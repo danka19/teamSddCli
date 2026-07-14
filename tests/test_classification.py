@@ -120,6 +120,21 @@ def test_major_returns_every_trigger_and_rejects_minor_downgrade() -> None:
     ]
 
 
+def test_new_feature_metadata_cannot_hide_major_trigger_by_omitting_evidence() -> None:
+    snapshot = _snapshot()
+    document = _document(declared="minor", facts=_minor_facts(snapshot))
+    document["type"] = "new_feature"
+
+    report = evaluate_classification(document, snapshot)
+
+    assert report.exit_code == 1
+    assert report.as_dict()["proposed_class"] == "major"
+    assert "new-feature" in report.as_dict()["triggered_rules"]
+    assert "classification.under-classified" in {
+        item["code"] for item in report.as_dict()["blockers"]
+    }
+
+
 def test_pseudo_hotfix_is_rejected_without_increasing_harm() -> None:
     snapshot = _snapshot()
     facts = {
@@ -156,6 +171,36 @@ def test_major_impact_hotfix_retains_major_and_hotfix_obligations() -> None:
         payload["required_artifacts"]
     )
     assert set(snapshot.rules["artifacts.hotfix-entry-required"].value) <= set(
+        payload["required_artifacts"]
+    )
+
+
+def test_hotfix_eligible_change_may_use_reasoned_standard_major_route() -> None:
+    snapshot = _snapshot()
+    facts = {
+        identifier: True
+        for identifier in snapshot.rules["classification.hotfix-eligibility"].value
+    }
+    facts["security-impact"] = True
+    document = _document(declared="major", facts=facts)
+    document["extensions"] = {
+        "stricter-route-reason": "Human owner selected the standard major sequence."
+    }
+
+    report = evaluate_classification(document, snapshot)
+    payload = report.as_dict()
+
+    assert report.exit_code == 0
+    assert payload["selected_class"] == "major"
+    assert payload["proposed_class"] == "hotfix"
+    assert payload["triggered_rules"] == ["security-impact"]
+    assert set(snapshot.rules["artifacts.major-required"].value) <= set(
+        payload["required_artifacts"]
+    )
+    assert set(snapshot.rules["artifacts.hotfix-entry-required"].value) <= set(
+        payload["required_artifacts"]
+    )
+    assert set(snapshot.rules["artifacts.hotfix-reconciliation-required"].value) <= set(
         payload["required_artifacts"]
     )
 

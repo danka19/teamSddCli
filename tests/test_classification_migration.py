@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import shutil
 from pathlib import Path
 
+import pytest
 import yaml
 
 from process.validators.classification_migration import apply_migration, plan_migration
@@ -76,6 +78,32 @@ def test_conflict_and_ambiguous_legacy_metadata_are_refused(tmp_path: Path) -> N
     assert plan_migration(ambiguous).exit_code == 1
 
 
+def test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation(
+    tmp_path: Path,
+) -> None:
+    arbitrary = tmp_path / "arbitrary" / "change.yaml"
+    arbitrary.parent.mkdir(parents=True)
+    arbitrary.write_text("mode: thin\nunrelated: value\n", encoding="utf-8")
+    invalid = _copy("legacy-thin.yaml", tmp_path / "invalid")
+    invalid.write_text(
+        invalid.read_text(encoding="utf-8").replace(
+            "decision: {owner_type: human, owner_id: sample-tech-lead, state: confirmed, evidence_ref: decisions/classification.md}\n",
+            "",
+        ),
+        encoding="utf-8",
+    )
+
+    for path in (arbitrary, invalid):
+        before = path.read_bytes()
+        result = plan_migration(path)
+        assert result.exit_code == 1
+        assert result.as_dict()["status"] == "blocked"
+        assert result.as_dict()["validation_result"] == "invalid"
+        assert "target-schema-validation-failed" in result.as_dict()["ambiguities"]
+        assert path.read_bytes() == before
+        assert not list(path.parent.glob(".*classification-v2*.tmp"))
+
+
 def test_apply_requires_matching_valid_plan_and_preserves_metadata_and_comments(tmp_path: Path) -> None:
     path = _copy("legacy-thin.yaml", tmp_path)
     before = _load(path)
@@ -118,6 +146,49 @@ def test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup(tmp_path:
     assert second.as_dict()["status"] == "already-current"
     assert path.read_bytes() == before
     assert len(list(tmp_path.glob("*.bak"))) == 1
+
+
+def test_apply_uses_same_directory_atomic_replace_and_cleans_temp_on_failure(
+    tmp_path: Path, monkeypatch
+) -> None:
+    success = _copy("legacy-thin.yaml", tmp_path / "success")
+    real_replace = os.replace
+    replacements: list[tuple[Path, Path]] = []
+
+    def recording_replace(source: str | os.PathLike[str], target: str | os.PathLike[str]) -> None:
+        source_path = Path(source)
+        target_path = Path(target)
+        assert source_path.parent == target_path.parent == success.parent
+        assert source_path.is_file()
+        replacements.append((source_path, target_path))
+        real_replace(source_path, target_path)
+
+    monkeypatch.setattr(os, "replace", recording_replace)
+    success_plan = plan_migration(success)
+    applied = apply_migration(
+        success, expected_plan_digest=success_plan.as_dict()["plan_digest"]
+    )
+
+    assert applied.as_dict()["status"] == "applied"
+    assert replacements and replacements[0][1] == success
+    assert not list(success.parent.glob(".*classification-v2*.tmp"))
+
+    failure = _copy("legacy-full.yaml", tmp_path / "failure")
+    failure_before = failure.read_bytes()
+
+    def failing_replace(source: str | os.PathLike[str], target: str | os.PathLike[str]) -> None:
+        raise OSError("synthetic replace failure")
+
+    monkeypatch.setattr(os, "replace", failing_replace)
+    failure_plan = plan_migration(failure)
+    with pytest.raises(OSError, match="synthetic replace failure"):
+        apply_migration(
+            failure, expected_plan_digest=failure_plan.as_dict()["plan_digest"]
+        )
+
+    assert failure.read_bytes() == failure_before
+    assert failure.with_name(failure.name + ".pre-classification-v2.bak").read_bytes() == failure_before
+    assert not list(failure.parent.glob(".*classification-v2*.tmp"))
 
 
 def test_archived_or_accepted_history_is_reported_but_never_rewritten(tmp_path: Path) -> None:

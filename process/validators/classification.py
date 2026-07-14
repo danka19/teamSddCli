@@ -79,6 +79,9 @@ def evaluate_classification(
     ]
     hotfix_conditions = _rule_values(snapshot, "classification.hotfix-eligibility")
 
+    for identifier, row in _metadata_major_facts(document, major_triggers).items():
+        evidence[identifier] = row
+
     satisfied_minor = sorted(
         identifier
         for identifier in minor_conditions
@@ -138,7 +141,7 @@ def evaluate_classification(
             "/classification",
             "The declared route is incompatible with deterministic evidence.",
         ))
-    elif proposed == "minor" and declared == "major":
+    elif _requires_stricter_route_reason(declared, proposed):
         extensions = document.get("extensions")
         reason = (
             extensions.get("stricter-route-reason")
@@ -186,7 +189,9 @@ def evaluate_classification(
     obligation_class = selected or (
         proposed if proposed in {"minor", "major", "hotfix"} else declared
     )
-    required_artifacts = _required_artifacts(snapshot, obligation_class, triggered)
+    required_artifacts = _required_artifacts(
+        snapshot, obligation_class, triggered, proposed
+    )
     required_reviewers = _required_reviewers(snapshot, obligation_class)
     source_inputs = [
         {
@@ -284,6 +289,21 @@ def _fact(evidence: dict[str, dict[str, Any]], identifier: str) -> Any:
     return row.get("value") if isinstance(row, dict) else None
 
 
+def _metadata_major_facts(
+    document: dict[str, Any], major_triggers: list[str]
+) -> dict[str, dict[str, Any]]:
+    """Return major facts that are already unambiguous in canonical metadata."""
+    derived: dict[str, dict[str, Any]] = {}
+    if document.get("type") == "new_feature" and "new-feature" in major_triggers:
+        derived["new-feature"] = {
+            "id": "new-feature",
+            "value": True,
+            "source": {"kind": "metadata", "ref": "/type"},
+            "rationale": "Work type new_feature is a canonical major trigger.",
+        }
+    return derived
+
+
 def _rule_values(snapshot: PolicySnapshot, identifier: str) -> list[str]:
     rule = snapshot.rules.get(identifier)
     if rule is None or not isinstance(rule.value, tuple):
@@ -294,11 +314,18 @@ def _rule_values(snapshot: PolicySnapshot, identifier: str) -> list[str]:
 def _route_is_allowed(declared: str, proposed: str) -> bool:
     if declared == proposed:
         return True
-    return proposed == "minor" and declared == "major"
+    return declared == "major" and proposed in {"minor", "hotfix"}
+
+
+def _requires_stricter_route_reason(declared: Any, proposed: str | None) -> bool:
+    return declared == "major" and proposed in {"minor", "hotfix"}
 
 
 def _required_artifacts(
-    snapshot: PolicySnapshot, selected: str | None, triggered: list[str]
+    snapshot: PolicySnapshot,
+    selected: str | None,
+    triggered: list[str],
+    proposed: str | None,
 ) -> list[str]:
     if selected is None:
         return []
@@ -307,6 +334,11 @@ def _required_artifacts(
         identifiers.append("artifacts.minor-required")
     elif selected == "major":
         identifiers.extend(("artifacts.minor-required", "artifacts.major-required"))
+        if proposed == "hotfix":
+            identifiers.extend((
+                "artifacts.hotfix-entry-required",
+                "artifacts.hotfix-reconciliation-required",
+            ))
     else:
         identifiers.extend((
             "artifacts.hotfix-entry-required",
