@@ -2,7 +2,7 @@
 
 Date: 2026-07-13.
 
-Status: completed audit. Remediation direction was accepted on 2026-07-14 in `D-015`; implementation is paused until the corrected plan is accepted after two remaining human decisions.
+Status: completed audit. Remediation direction was accepted on 2026-07-14 in `D-015`; the risk-oriented certification matrix is now accepted, and implementation is paused until the Apple target is clarified and the corrected plan is accepted.
 
 ## Executive Result
 
@@ -10,7 +10,7 @@ The Phase 2 plan is strong in scope coverage, architecture boundaries, acceptanc
 
 At audit time, work item 2.1 was technically independent. The later plan contained a blocking dependency cycle: work item 2.3A claimed ownership of all 42 then-current tasks in `adopt-nis-corporate-process-governance` and had to close before certification and release work items, while NIS tasks 8.3-8.7 themselves required that later certification, release evidence, human acceptance, and Phase 3 pilot work. The same broad ownership also overlapped work assigned to Phase 2 items 2.3-2.8.
 
-Accepted disposition under `D-015`: pause all Phase 2 implementation, replace the draft mapping with clean sequential work items `2.3-2.14`, assign every task once, split the Phase 3 portion of NIS task 8.7 into new task 8.8, and accept the corrected plan before returning 2.1 to `ready`. The certification matrix and supported external reference runtime remain open inputs to that final rewrite.
+Accepted disposition under `D-015`: pause all Phase 2 implementation, replace the draft mapping with clean sequential work items `2.3-2.14`, assign every task once, split the Phase 3 portion of NIS task 8.7 into new task 8.8, and accept the corrected plan before returning 2.1 to `ready`. The risk-oriented certification matrix is accepted; only the requested Apple execution target (`iOS` device/runtime or `macOS` host) remains open input to that final rewrite.
 
 ## Audit Boundary
 

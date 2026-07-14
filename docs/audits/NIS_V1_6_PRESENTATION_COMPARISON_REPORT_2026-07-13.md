@@ -267,7 +267,7 @@ Accepted direction:
 - `D-015` pauses Phase 2 implementation until the corrected plan is accepted and selects clean renumbering from `2.3` onward;
 - the NIS package is ignored and untracked;
 - the NIS OpenSpec change contains 11 capability deltas and 43 tasks after splitting the Phase 2 external-acceptance stop from Phase 3 corporate configuration and pilot execution;
-- the audited `2.3A-2.8` mapping is not executable and will be replaced by clean work items `2.3-2.14` after the certification-matrix and supported-runtime decisions close;
+- the risk-oriented Qwen/DeepSeek certification matrix is accepted; the audited `2.3A-2.8` mapping is not executable and will be replaced by clean work items `2.3-2.14` after the requested Apple target is clarified as native `iOS` or a `macOS` host;
 - failed-run retention remains a requirement and task.
 
 Not implemented yet:

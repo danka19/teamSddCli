@@ -26,7 +26,7 @@
 - [ ] 4.2 Add negative certification cases for missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, invalid lifecycle transition, adapter failure, and context-limit failure.
 - [ ] 4.3 Implement a certification runner and evidence record that captures model/runtime identifier, adapter version, process-package version, read-pack identity, validation result, human intervention, forbidden-action result, and limitations; commit normalized synthetic evidence/manifests/hashes to Git and reference raw outputs stored in the versioned release artifact by checksum.
 - [ ] 4.4 Execute and record AI-disabled certification for every gated minor/major/hotfix operation, including Tech Lead, stop/resume, and hotfix reconciliation cases.
-- [ ] 4.5 Execute and record actual Qwen/DeepSeek-class certification for analyst, developer, QA, and Tech Lead workflows; route unreliable operations to deterministic or mandatory-human fallbacks.
+- [ ] 4.5 Execute and record the accepted risk-oriented pairwise Qwen/DeepSeek-class matrix: each model family performs analyst, developer, QA, and Tech Lead work once, minor/major/hotfix are each exercised by both families, and critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negative cases run on both; route unreliable operations to deterministic or mandatory-human fallbacks.
 
 ## 5. Release Candidate And Transfer Runbook
 

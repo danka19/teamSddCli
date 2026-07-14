@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: blocked. The technical prerequisites are available, but human decision `D-015` pauses all implementation until the corrected, cleanly renumbered Phase 2 plan is accepted. The certification matrix and supported external reference runtime remain open planning decisions.
+Status: blocked. The technical prerequisites and risk-oriented certification matrix are accepted, but human decision `D-015` pauses all implementation until the requested Apple target is clarified (`iOS` device/runtime or `macOS` host) and the corrected, cleanly renumbered Phase 2 plan is accepted.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` to execute exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Each completed work item follows scenario-first TDD, passes its reviewer/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -29,7 +29,7 @@ Status: accepted.
 - The human owner accepted the release-candidate boundary and the removal of schedule dates from project planning artifacts.
 - Active proposed change `define-transfer-ready-process-package` contains proposal, design, two capability deltas, and implementation tasks.
 - Active proposed change `adopt-nis-corporate-process-governance` contains proposal, design, twelve capability deltas, and the implementation backlog for `D-013`.
-- Product and technical prerequisites are available, but the human planning gate is closed under `D-015`. Work item 2.1 and the rest of Phase 2 must not start until the corrected plan replaces the defective `2.3A-2.8` mapping and the two open decisions below are accepted.
+- Product and technical prerequisites are available, but the human planning gate is closed under `D-015`. Work item 2.1 and the rest of Phase 2 must not start until the Apple target is clarified and the corrected plan replaces the defective `2.3A-2.8` mapping.
 
 ## Inputs To Read
 
@@ -288,13 +288,26 @@ Reason: The old `2.3A-2.8` mapping has circular and duplicate task ownership. Cl
 Affected specs: Both active OpenSpec changes stay open through the Phase 3 pilot. NIS task 8.7 is split so Phase 2 stops at external release acceptance and Phase 3 owns real corporate configuration and pilot execution.
 Affected architecture: No change to canonical ownership or the external/corporate boundary.
 Data contract impact: Normalized synthetic evidence, manifests, and hashes are committed to Git; raw certification outputs live in a versioned release artifact and are referenced by manifest/checksum.
-Verification impact: The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable.
-Status: blocked. The listed `D-015` choices are accepted, but implementation remains blocked while the exact certification matrix and supported external reference runtime are open; after those choices, the plan will replace `2.3A-2.8` with clean work items `2.3-2.14` and an exact one-owner task matrix.
+Verification impact: The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable. Weak-model evidence uses the accepted risk-oriented pairwise matrix. Platform evidence must cover Windows, Linux, and the clarified Apple target; required runtimes, dependencies, and MCP are provisioned on every supported platform.
+Status: blocked. The listed `D-015` choices and certification matrix are accepted, but implementation remains blocked while `iOS` versus `macOS` is clarified; after that answer, the plan will replace `2.3A-2.8` with clean work items `2.3-2.14` and an exact one-owner task matrix.
+```
+
+```text
+Idea: Certify the package across Windows, Linux, and an Apple platform, with all required runtimes, dependencies, and MCP provisioned on every supported environment.
+Source: Human response to open decisions 4 and 5 on 2026-07-14.
+Type: scope_refinement, architecture_change, verification_change, documentation_change
+Decision: adopt_now
+Reason: Portability is a product requirement rather than a best-effort compatibility claim. The release evidence must prove each supported host instead of assuming that a successful Windows run generalizes to other platforms.
+Affected specs: The weak-model certification matrix is updated now. The transfer-readiness platform scenario will be finalized after the Apple target is clarified.
+Affected architecture: Windows and Linux are accepted full process-package hosts. The third Apple target remains ambiguous because native iOS execution requires an application-embedded runtime, whereas macOS is a conventional desktop CLI host.
+Data contract impact: The release manifest and certification evidence must identify OS family/version, architecture, shell, Python, Node.js/OpenSpec, Git, MCP/runtime versions, and platform-specific limitations.
+Verification impact: Run clean bootstrap, deterministic flow, AI-disabled gates, MCP connectivity, update, and rollback on every accepted host; do not treat provisioned prerequisites as evidence that the package itself is portable.
+Status: blocked. Risk-oriented matrix and Windows/Linux support are accepted; the exact Apple execution target requires one human clarification.
 ```
 
 ## Work Items
 
-Planning warning: the existing entries `2.3A-2.8` below document the audited draft only and are not executable. They will be replaced, not patched in place, by clean sequential work items `2.3-2.14` after the two open human decisions are resolved. No task may be started from the draft mapping.
+Planning warning: the existing entries `2.3A-2.8` below document the audited draft only and are not executable. They will be replaced, not patched in place, by clean sequential work items `2.3-2.14` after the Apple execution target is clarified. No task may be started from the draft mapping.
 
 ### 2.1 Process Package And Synthetic Central Topology
 
@@ -387,7 +400,7 @@ Exit criteria:
 
 ### 2.3A NIS Corporate Governance And Classification Migration
 
-Status: superseded. Replaced by the clean `2.3-2.14` decomposition required by `D-015`; the replacement details wait for the two open decisions.
+Status: superseded. Replaced by the clean `2.3-2.14` decomposition required by `D-015`; the replacement details wait for the Apple execution-target clarification.
 
 Dependency status: superseded. This draft dependency must not be used for implementation.
 
@@ -736,7 +749,7 @@ OpenSpec task 7.5 belongs to Phase 3 because it requires successful real corpora
 
 ## Phase Gate
 
-Status: blocked. The gate criteria will be finalized with the clean `2.3-2.14` plan after the two open decisions close.
+Status: blocked. The gate criteria will be finalized with the clean `2.3-2.14` plan after the Apple execution target is clarified.
 
 Phase 2 can move to `pending_acceptance` only when:
 
@@ -767,19 +780,14 @@ Resolved:
 - `D-015` selects clean sequential renumbering from `2.3`, requires plan acceptance before any Phase 2 implementation, and keeps both active OpenSpec changes open through the Phase 3 pilot.
 - Certification evidence storage uses normalized synthetic evidence, manifests, and hashes in Git, with raw outputs in a versioned release artifact referenced by checksum and manifest.
 - The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable.
+- Certification uses the risk-oriented pairwise matrix: each Qwen-class and DeepSeek-class family performs analyst, developer, QA, and Tech Lead work once; minor, major, and hotfix are each exercised by both families; critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negative cases run on both.
+- The process package must be cross-platform across Windows, Linux, and the clarified Apple target. Required runtimes, dependencies, and MCP will be provisioned on every supported platform rather than treated as optional or unavailable-environment fallbacks.
 
-Open decisions that block the corrected plan and all implementation:
+Open clarification that blocks the corrected plan and all implementation:
 
-- Certification coverage matrix: choose how actual Qwen-class and DeepSeek-class runs cover three change classes and four roles without either leaving material gaps or requiring an unnecessarily large Cartesian test suite.
-  - **A — risk-oriented pairwise matrix (recommended):** eight positive role/model walkthroughs so each model family performs analyst, developer, QA, and Tech Lead work once; distribute minor, major, and hotfix so each class is exercised by both model families; run the critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negatives on both. This gives direct model/role and model/class evidence with materially less repetition than a full Cartesian matrix.
-  - **B — full Cartesian matrix:** 24 positive walkthroughs (`2 model families x 4 roles x 3 classes`) plus the negative suite on both. This gives the strongest direct coverage but increases execution, review, artifact-storage, and maintenance cost substantially.
-  - **C — minimal smoke matrix:** one end-to-end governed change per model family, with some roles/classes covered only by AI-disabled fixtures. This is cheapest, but it does not satisfy the current requirement for actual role certification without changing the OpenSpec contract and leaves model-specific gaps.
-- Supported external reference runtime: choose the exact clean environment for which Phase 2 promises reproducible bootstrap and certification. Corporate environment compatibility remains a separate Phase 3 responsibility.
-  - **A — one pinned Windows reference environment (recommended):** certify the current external workstation family with exact Windows, PowerShell, Python, OpenSpec, Git, and package dependency versions recorded after inventory. This is the narrowest honest support promise and is closest to the expected corporate desktop while leaving real corporate compatibility to Phase 3.
-  - **B — Windows and Linux reference matrix:** certify clean bootstrap and the deterministic package on both operating-system families. This improves portability confidence but nearly doubles environment setup, compatibility testing, troubleshooting, and release evidence.
-  - **C — container-only reference runtime:** certify one pinned container image. This maximizes reproducibility but may prove little about a restricted Windows corporate desktop where containers or required network/package access are unavailable, so an additional Phase 3 compatibility burden remains.
+- Apple execution target: does `iOS` mean that the full process package, OpenSpec CLI, Python validators, Git operations, and MCP server must run natively inside an iPhone/iPad application sandbox, or was `macOS` intended as the third desktop host alongside Windows and Linux? Native iOS would require a dedicated mobile host/application architecture because OpenSpec currently requires Node.js on `PATH`, while Python on iOS is embedded into an application rather than installed as an ordinary desktop CLI runtime.
 
-The old `2.3A-2.8` mapping must not be used for implementation. Once these two decisions are accepted, the plan must be rewritten as `2.3-2.14`, checked for one-owner task coverage and acyclic dependencies, and explicitly accepted before 2.1 can return to `ready`.
+The old `2.3A-2.8` mapping must not be used for implementation. Once the Apple target is clarified, the plan must be rewritten as `2.3-2.14`, checked for one-owner task coverage and acyclic dependencies, and explicitly accepted before 2.1 can return to `ready`.
 
 Mandatory later evidence, not current design decisions:
 
