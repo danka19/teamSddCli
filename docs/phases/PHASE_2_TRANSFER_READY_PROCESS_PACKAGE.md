@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress. The human owner accepted the corrected implementation plan in `D-017`; work item 2.1 is active.
+Status: in_progress. Work item 2.1 is closed after all required gates; work item 2.2 is ready.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -199,7 +199,7 @@ Status: accepted. This does not reintroduce the process-effectiveness measuremen
 
 ### 2.1 Process Package And Synthetic Central Topology
 
-Status: in_progress.
+Status: closed. Implementation, independent task review, architecture review, and fresh verification passed; evidence is recorded in `docs/phases/PHASE_2_EVIDENCE_INDEX.md`.
 
 Dependency status: sequential-start. Phase 1 and the Phase 2 planning gate are accepted; no earlier Phase 2 work item is required.
 
@@ -221,7 +221,7 @@ Exit criteria: the synthetic topology is reproducible, versioned, deterministic,
 
 ### 2.2 Configuration Discovery And Compatibility Validation
 
-Status: planned.
+Status: ready.
 
 Dependency status: sequential after 2.1.
 
@@ -548,7 +548,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-No current design or planning decision blocks work item 2.1.
+No current design or planning decision blocks work item 2.2.
 
 Mandatory later evidence, not design decisions:
 

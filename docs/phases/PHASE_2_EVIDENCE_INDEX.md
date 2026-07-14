@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work item 2.1 worker evidence is recorded; independent reviewer and verification approval remain pending.
+Status: in_progress. Work item 2.1 is closed; work item 2.2 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -9,7 +9,7 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 - Phase scope and acceptance mapping: `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md`, work item 2.1.
 - Accepted behavior: `openspec/specs/repo-topology-config/spec.md`.
 - Proposed transfer boundary: `openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md`.
-- Owned OpenSpec tasks: `define-transfer-ready-process-package` 1.1 and 1.2. Their checkboxes remain unchanged until coordinator review and verification approval.
+- Owned OpenSpec tasks: `define-transfer-ready-process-package` 1.1 and 1.2, both complete after independent review, architecture, and verification gates.
 
 ### Implementation Evidence
 
@@ -46,16 +46,17 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 - Architecture-gate GREEN: the same focused command -> 15 passed after the scoped schema/fixture/workflow fixes.
 - Architecture follow-up RED: the same focused command -> 4 failed and 11 passed because semantic ID substrings were rejected, backslash paths were accepted, hosts were untyped strings, and host architecture/package dependencies were not required.
 - Architecture follow-up GREEN: the same focused command -> 15 passed after the semantic-neutral portable-reference and typed compatibility fixes.
-- Current final focused test: `python -m pytest tests/test_process_package.py -q` -> 15 passed in 0.35s.
-- Current complete test suite: `python -m pytest -q` -> 49 passed in 0.89s.
+- Current final focused test: `python -m pytest tests/test_process_package.py -q` -> 15 passed.
+- Current complete test suite: `python -m pytest -q` -> 49 passed.
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
-- OpenSpec inventory: `openspec list` -> both active changes remain 0 tasks complete; `openspec list --specs` -> 8 accepted specs.
+- OpenSpec inventory before coordinator reconciliation: `openspec list` -> both active changes had 0 tasks complete; after the reviewed gate, transfer-package tasks 1.1-1.2 are complete (2/33) while NIS governance remains 0/43. `openspec list --specs` -> 8 accepted specs.
 - Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.
 - Whitespace check: `git diff --check` -> exit 0; Git reported only non-blocking Windows LF-to-CRLF conversion warnings for touched files.
 
 ### Review State
 
-- Worker implementation and self-review: complete; task-scoped commit identity is recorded in the worker report.
-- Independent reviewer: pending.
-- Independent verification checker: pending.
-- Work item status remains `in_progress`; this index does not close 2.1 or advance 2.2.
+- Worker implementation and fix waves: complete in full commit range `d0e7521..65505e6` (implementation commits `2e2eb45` through `65505e6`).
+- Independent task reviewer: approved on reviewed head `65505e6`; no Critical, Important, or Minor findings remain.
+- Architecture checker: approved on reviewed head `65505e6`; no blocking finding or human decision remains.
+- Independent verification checker: PASS on reviewed head `65505e6` with 15 focused and 49 full tests, legacy template validation, strict OpenSpec 10/10, range diff check, and acceptance audit.
+- Coordinator reconciliation: OpenSpec tasks 1.1-1.2 complete, work item 2.1 `closed`, and work item 2.2 `ready`.

@@ -154,7 +154,7 @@ No package may claim zero production risk. Pilot evidence includes data/privacy,
 
 ### 11. Place the change before the real pilot without invalidating the package foundation
 
-Phase 2 work item 2.1 remains ready because the versioned package/config/schema foundation is required by both active changes. This governance change becomes a sequential dependency for classification-aware thin-flow replacement, expanded role certification, release-candidate acceptance, and Phase 3 pilot entry.
+Phase 2 work item 2.1 is closed with a class-neutral versioned package/config/schema foundation required by both active changes. Transfer-package work item 2.2 is ready for configuration discovery and compatibility validation; this governance change becomes the sequential dependency from work item 2.3 onward for classification-aware thin-flow replacement, expanded role certification, release-candidate acceptance, and Phase 3 pilot entry.
 
 The existing transfer-readiness change may continue through foundation work that does not encode `thin/full` as permanent behavior. Before the packaged reference flow, role kit, certification, manifest, and release acceptance are finalized, they must consume the accepted outcome of this change or explicitly remain blocked.
 
