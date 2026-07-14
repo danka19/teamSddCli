@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.5 are closed; work item 2.6 is active.
+Status: in_progress. Work items 2.1-2.6 are closed; work item 2.7 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -307,7 +307,7 @@ Status: closed after implementation, independent task review, architecture revie
 
 ## Work Item 2.6: Tech Lead Governance
 
-Status: implementation-worker-complete; independent task review, architecture review, verification review, and coordinator reconciliation are pending. Work item 2.6 remains active and NIS-governance tasks 4.1-4.6 remain unchecked.
+Status: closed after implementation, independent task review, architecture review, fresh verification, and coordinator reconciliation. NIS-governance tasks 4.1-4.6 are complete; work item 2.7 is ready.
 
 ### Implementation Evidence
 
@@ -347,4 +347,14 @@ Status: implementation-worker-complete; independent task review, architecture re
 - Standalone control evaluation with `--as-of 2026-07-15` against input `evaluation_date: 2026-07-14` returned exit 1, state `invalid`, exact `tech-lead.evaluation-date-mismatch`, unchanged input SHA-256, and `control_state_mutated: false`.
 - Forbidden AI resume direct-process check returned exact exit 3, empty stderr, no traceback, and stable `tech-lead.input-schema-invalid` at `/control_records/0/accountable_actor/type`. Direct entry points from an unrelated working directory returned exact exit 2, stable redacted JSON-only usage diagnostics, empty stderr, and no traceback.
 - Roadmap/OpenSpec governance: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. Inventories remained transfer package 3/33 and NIS governance 16/43; tasks 4.1-4.6 were not checked. `openspec validate --all --strict` passed 10/10.
-- Package/policy/schema/manifest consistency passed with process package `0.2.0`, package schema `1.1`, `sdd-core` `1.0.0`, nine pinned policy documents, owners governance v2.0 with explicit v1.0 compatibility, and Tech Lead review/control schemas v1.0. Git diff checks passed before the worker commit. These results do not close work item 2.6 or imply reviewer/coordinator acceptance.
+- Package/policy/schema/manifest consistency passed with process package `0.2.0`, package schema `1.1`, `sdd-core` `1.0.0`, nine pinned policy documents, owners governance v2.0 with explicit v1.0 compatibility, and Tech Lead review/control schemas v1.0. Git diff checks passed before the worker commit; this worker-only checkpoint did not itself close work item 2.6, which closed only after the later gates recorded below.
+
+### Review, Architecture, And Coordinator Gates
+
+- Implementation and review range: start marker `b5be3cc`; worker `68a99aa`; task-review hardening `94662dd`; architecture remediations `99e2dcd`, `d5b39ae`, and `2d63eb3`. Unrelated upstream-analysis commit `7c27d1a` predates the baseline and is not part of the reviewed range.
+- Final independent task review: approved after 51 focused review tests; blocked gate statuses, resume binding, overlap order independence, malformed owner-v2 input, and evaluation-cutoff provenance are fail-closed.
+- Final architecture review: approved after 94 targeted tests; invalid or malformed control records cannot be overwritten by later valid records, UTC ordering/cutoff is canonical, checkpoints and finding fields are policy-bound, active record IDs remain visible, and no lifecycle/control mutation occurs.
+- Final independent verification of `b5be3cc..2d63eb3`: PASS with 123 focused tests, 74 policy/config/package regressions, 263 full serial tests, compilation exit 0, legacy validator `OK`, roadmap/OpenSpec governance 0 errors and 0 warnings, strict OpenSpec validation 10/10, and range diff check exit 0.
+- AI-disabled manual evidence preserved human/JSON parity, all 11 review views, all seven independent approvals as `still-required`, scheduled resume eligibility without clearing the active stop record, no mutation, stable CWD-independent usage diagnostics, and unchanged fixture/config hashes.
+- Residual limits remain explicit: Windows-only execution, synthetic rather than actual Qwen/DeepSeek certification, flow mutation/failed-run/release persistence deferred to 2.7, and full traceability deferred to 2.8.
+- Coordinator reconciliation marks NIS tasks 4.1-4.6 complete, moving the NIS inventory from 16/43 to 22/43 while the transfer-package change remains 3/33. Work item 2.6 is `closed`; work item 2.7 is `ready`.

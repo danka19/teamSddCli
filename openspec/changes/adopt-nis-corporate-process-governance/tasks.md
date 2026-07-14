@@ -25,12 +25,12 @@
 
 ## 4. Tech lead workflow support
 
-- [ ] 4.1 Extend `owners.yaml` and config schemas with tech-lead zones, delegates, escalation routes, decision authority, and conflict/missing-owner validation.
-- [ ] 4.2 Build the bounded tech-lead review pack from canonical requirements, scenarios, design decisions, affected repositories/zones, dependencies, risks, regression obligations, blockers, and waivers.
-- [ ] 4.3 Implement tech-lead classification, readiness, architecture-decision, owner/dependency, and scope-drift reports with source links and deterministic policy versions.
-- [ ] 4.4 Implement tech-lead stop/hold/escalation/resume records and validation, including proof that AI cannot resume work or clear a hold.
-- [ ] 4.5 Implement configurable scheduled/event-driven Tech Lead control reports plus completion, release-readiness, waiver-expiry, and hotfix-follow-up views without replacing QA, product, security, release, merge, archive, or tracker approvals.
-- [ ] 4.6 Add tech-lead role instructions and certification scenarios covering positive decisions, under-classification, missing context, unsafe continuation, authority limits, and AI-disabled operation.
+- [x] 4.1 Extend `owners.yaml` and config schemas with tech-lead zones, delegates, escalation routes, decision authority, and conflict/missing-owner validation.
+- [x] 4.2 Build the bounded tech-lead review pack from canonical requirements, scenarios, design decisions, affected repositories/zones, dependencies, risks, regression obligations, blockers, and waivers.
+- [x] 4.3 Implement tech-lead classification, readiness, architecture-decision, owner/dependency, and scope-drift reports with source links and deterministic policy versions.
+- [x] 4.4 Implement tech-lead stop/hold/escalation/resume records and validation, including proof that AI cannot resume work or clear a hold.
+- [x] 4.5 Implement configurable scheduled/event-driven Tech Lead control reports plus completion, release-readiness, waiver-expiry, and hotfix-follow-up views without replacing QA, product, security, release, merge, archive, or tracker approvals.
+- [x] 4.6 Add tech-lead role instructions and certification scenarios covering positive decisions, under-classification, missing context, unsafe continuation, authority limits, and AI-disabled operation.
 
 ## 5. Corporate flow-control records
 
