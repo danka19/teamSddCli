@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: ready. The human owner accepted the corrected implementation plan in `D-017`; work item 2.1 is the ready sequential start.
+Status: in_progress. The human owner accepted the corrected implementation plan in `D-017`; work item 2.1 is active.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -199,7 +199,7 @@ Status: accepted. This does not reintroduce the process-effectiveness measuremen
 
 ### 2.1 Process Package And Synthetic Central Topology
 
-Status: ready.
+Status: in_progress.
 
 Dependency status: sequential-start. Phase 1 and the Phase 2 planning gate are accepted; no earlier Phase 2 work item is required.
 

@@ -69,7 +69,7 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: ready. The transfer boundary, product scope, Windows/Linux/macOS host matrix, risk-oriented certification matrix, reliability/parallel-throughput direction, and corrected `2.1-2.14` plan are accepted in `D-017`. Work item 2.1 is ready.
+Status: in_progress. The accepted Phase 2 plan is executing sequentially; work item 2.1 is active.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 

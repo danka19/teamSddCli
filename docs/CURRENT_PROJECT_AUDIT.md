@@ -8,10 +8,10 @@ Last status reconciliation: 2026-07-14.
 
 - Phase 0 is `closed`: its repository-foundation gate is satisfied, and its former Phase 1 decision items were resolved or explicitly deferred by the accepted Phase 1 package.
 - Phase 1 is `closed`: all 11 work items are reconciled, the human Option A decision supplies acceptance evidence, and eight changes were archived into accepted specs on 2026-07-09.
-- Phase 2 is `ready`: the human owner accepted the corrected `2.1-2.14` plan in `D-017`; exact one-owner task mapping, Windows/Linux/macOS support, risk-oriented certification, traceable coverage, safe parallel execution, and the Phase 2/3 boundary are resolved. Work item 2.1 is ready.
+- Phase 2 is `in_progress`: the human owner accepted the corrected `2.1-2.14` plan in `D-017`; work item 2.1 is active under the sequential worker/reviewer/verification workflow.
 - Phases 3-4 are `planned`: Phase 3 depends on human acceptance of the Phase 2 external release candidate; Phase 4 depends on real pilot evidence.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with proposal, design, `transfer-readiness` and `weak-model-guardrails` deltas, and 33 unchecked implementation tasks including safe parallel AI execution and traceable coverage. `adopt-nis-corporate-process-governance` is apply-ready with proposal, design, eleven capability deltas, and 43 unchecked implementation tasks for `D-013`; task 8.7 stops at Phase 2 external acceptance and task 8.8 owns Phase 3 corporate configuration and pilot execution. The former process-evaluation capability was removed, while pilot safety and failed-run retention remain in `corporate-flow-controls` and traceability. `openspec/changes/archive/` retains the accepted Phase 1 source packages; `openspec/specs/` contains eight accepted specs.
-- Sequential next work is not blocked by pending acceptance: start Phase 2 work item 2.1.
+- Sequential work is not blocked by pending acceptance: Phase 2 work item 2.1 is active.
 
 Last updated: 2026-07-14.
 
