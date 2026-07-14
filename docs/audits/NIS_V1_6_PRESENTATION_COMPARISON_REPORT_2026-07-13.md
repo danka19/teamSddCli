@@ -2,7 +2,7 @@
 
 Date: 2026-07-13
 Status: updated on 2026-07-14 for the two-horizon automation, corrected Phase 2 plan, cross-platform target, and reliability/parallel-throughput goal; presentation-ready current comparison.
-Normative owner: `D-013`, `D-014`, `D-015`, `D-016`, and the two active OpenSpec changes.
+Normative owner: `D-013`, `D-014`, `D-015`, `D-016`, `D-017`, and the two active OpenSpec changes.
 
 ## 1. Executive Summary
 
@@ -275,11 +275,12 @@ Accepted direction:
 - `D-014` records the two-horizon automation strategy;
 - `D-015` pauses Phase 2 implementation until the corrected plan is accepted and selects clean renumbering from `2.3` onward;
 - `D-016` records broader testing/traceability as the reliability direction and safe parallel AI work as the speed direction;
+- `D-017` accepts the corrected Phase 2 plan and opens work item 2.1;
 - the NIS package is ignored and untracked;
 - the NIS OpenSpec change contains 11 capability deltas and 43 tasks after splitting the Phase 2 external-acceptance stop from Phase 3 corporate configuration and pilot execution;
 - the transfer OpenSpec change contains 33 tasks after adding safe-parallel and traceable-coverage work;
 - Windows, Linux, and macOS plus the risk-oriented Qwen/DeepSeek matrix are accepted;
-- the audited `2.3A-2.8` mapping has been replaced by exact work items `2.3-2.14`; implementation waits for explicit human acceptance of the corrected plan;
+- the audited `2.3A-2.8` mapping has been replaced by accepted exact work items `2.3-2.14`; implementation may begin with work item 2.1;
 - failed-run retention remains a requirement and task.
 
 Not implemented yet:

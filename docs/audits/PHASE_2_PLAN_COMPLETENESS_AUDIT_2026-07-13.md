@@ -2,7 +2,7 @@
 
 Date: 2026-07-13.
 
-Status: completed audit. Remediation was applied on 2026-07-14: the phase plan now uses exact work items `2.1-2.14`, Windows/Linux/macOS and the risk-oriented matrix are accepted, and implementation is paused only for explicit human acceptance of the corrected plan.
+Status: completed audit. Remediation was applied and accepted on 2026-07-14 in `D-017`: the phase plan uses exact work items `2.1-2.14`, and implementation may begin with work item 2.1.
 
 ## Executive Result
 
@@ -25,7 +25,7 @@ Criteria and results:
 | Exact NIS-task coverage | Mechanical range expansion compared the plan table with the task file: 43 actual, 43 mapped, 0 duplicate, 0 missing, 0 extra | pass |
 | Phase boundary | Transfer task 7.5 and NIS task 8.8 map only to Phase 3; Phase 2 closes without pilot evidence | pass |
 | Dependency acyclicity | Plan sequence ends at external human acceptance before Phase 3; no Phase 2 item depends on Phase 3 | pass |
-| Status integrity | Roadmap/Phase 2 status parser found only allowed explicit statuses; plan acceptance is `pending_acceptance`, phase execution and 2.1 remain `blocked` | pass |
+| Status integrity | After `D-017`, roadmap/Phase 2 and 2.1 are `ready`, the planning gate is `accepted`, later items remain `planned`, and the status parser finds only allowed explicit statuses | pass |
 | OpenSpec validity | `openspec validate --all --strict`: 10 passed, 0 failed | pass |
 | Existing deterministic regression | `python -m pytest tests/test_validate_change.py -q`: 34 passed | pass |
 | Documentation structure and diff | Starter structure check passed; `git diff --check` passed | pass |
@@ -34,7 +34,7 @@ Remediation conclusion:
 
 - Findings `P2P-001` and `P2P-002` are fixed in the current plan; their original evidence remains below as historical audit context.
 - `D-016` adds two transfer tasks and acceptance scenarios for traceable verification coverage and safe parallel AI execution; this raises the transfer change from 31 to 33 tasks without reintroducing the removed process-effectiveness program.
-- The plan is complete enough for human review but is not accepted. Phase 2 and work item 2.1 correctly remain blocked until explicit human plan acceptance.
+- The human owner accepted the corrected plan in `D-017`. Phase 2 and work item 2.1 are ready; no planning-acceptance blocker remains.
 
 ## Audit Boundary
 

@@ -17,7 +17,8 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
 - Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, pilot safety, and failed-run retention, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Process-effectiveness measurement is excluded. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
-- Human decisions `D-014`, `D-015`, and `D-016` on 2026-07-14 establish the two-horizon automation strategy, Phase 2 remediation gate, and reliability/throughput direction: deterministic/AI-disabled operation is the foundation and fallback; the release package must cover Windows, Linux, and macOS; reliability grows through risk-oriented tests and traceability; speed grows through safe parallel AI work on independent tasks. Implementation still waits for explicit acceptance of the corrected `2.3-2.14` plan.
+- Human decisions `D-014`, `D-015`, and `D-016` on 2026-07-14 establish the two-horizon automation strategy, Phase 2 remediation gate, and reliability/throughput direction: deterministic/AI-disabled operation is the foundation and fallback; the release package must cover Windows, Linux, and macOS; reliability grows through risk-oriented tests and traceability; speed grows through safe parallel AI work on independent tasks. `D-015` required explicit plan acceptance before implementation; `D-017` now closes that gate.
+- Human decision `D-017` on 2026-07-14 accepts the corrected `2.1-2.14` Phase 2 plan and opens work item 2.1 as the sequential implementation start.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -68,7 +69,7 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: blocked. The transfer boundary, product scope, Windows/Linux/macOS host matrix, risk-oriented certification matrix, and reliability/parallel-throughput direction are accepted. Implementation waits only for explicit human acceptance of the corrected `2.3-2.14` dependency/task plan.
+Status: ready. The transfer boundary, product scope, Windows/Linux/macOS host matrix, risk-oriented certification matrix, reliability/parallel-throughput direction, and corrected `2.1-2.14` plan are accepted in `D-017`. Work item 2.1 is ready.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 

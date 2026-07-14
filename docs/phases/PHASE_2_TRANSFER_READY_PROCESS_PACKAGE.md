@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: blocked. The corrected implementation plan is `pending_acceptance` under `D-015`; no Phase 2 work item may start until the human owner explicitly accepts this plan.
+Status: ready. The human owner accepted the corrected implementation plan in `D-017`; work item 2.1 is the ready sequential start.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -31,11 +31,11 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites are available. The only current blocker is explicit human acceptance of this corrected plan.
+- Technical prerequisites and planning acceptance are complete. Work item 2.1 may start; later items remain planned until their dependencies close.
 
 ## Planning Acceptance Gate
 
-Status: pending_acceptance.
+Status: accepted. Human acceptance is recorded in `D-017` on 2026-07-14.
 
 Acceptance confirms:
 
@@ -44,7 +44,7 @@ Acceptance confirms:
 - no circular Phase 2 dependencies;
 - `define-transfer-ready-process-package` task 7.5 and `adopt-nis-corporate-process-governance` task 8.8 remain Phase 3 work;
 - safe parallelism is limited to independent subtasks inside an active work item unless a later plan explicitly marks cross-item work `parallel-independent`;
-- Phase 2 implementation starts only after explicit human acceptance.
+- Phase 2 implementation starts with work item 2.1 after this accepted gate.
 
 ## Inputs To Read
 
@@ -166,7 +166,7 @@ Affected specs: Both active changes remain open; task 7.5 and task 8.8 are assig
 Affected architecture: No scope expansion beyond accepted boundaries.
 Data contract impact: Normalized Git evidence plus raw versioned-artifact references/checksums.
 Verification impact: Exact one-owner matrix and acyclic dependency audit.
-Status: pending_acceptance through this corrected plan.
+Status: accepted through `D-017`; the corrected plan replaces the former draft mapping.
 ```
 
 ```text
@@ -199,9 +199,9 @@ Status: accepted. This does not reintroduce the process-effectiveness measuremen
 
 ### 2.1 Process Package And Synthetic Central Topology
 
-Status: blocked. Becomes `ready` only after the planning acceptance gate closes.
+Status: ready.
 
-Dependency status: human-planning-gate.
+Dependency status: sequential-start. Phase 1 and the Phase 2 planning gate are accepted; no earlier Phase 2 work item is required.
 
 Objective:
 
@@ -546,10 +546,9 @@ Resolved:
 - `D-014`: deterministic/AI-disabled foundation first, progressive bounded AI automation later.
 - `D-015`: clean numbering, plan-first acceptance, both changes open through Phase 3, normalized/raw evidence split, human-owner final acceptance, risk-oriented certification matrix, and Windows/Linux/macOS support with provisioned prerequisites and MCP.
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
+- `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-Current human decision:
-
-- Accept or reject this corrected Phase 2 plan. Until acceptance, Phase 2 and work item 2.1 remain blocked.
+No current design or planning decision blocks work item 2.1.
 
 Mandatory later evidence, not design decisions:
 
