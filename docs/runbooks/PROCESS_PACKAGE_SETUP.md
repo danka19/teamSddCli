@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.4 are closed. Work item 2.5 is ready to consume the schema-v2, policy/config, classification, and migration foundation for artifact matrices and lifecycle gates.
+Status: work items 2.1-2.4 are closed. Work item 2.5 is active and consumes the schema-v2, policy/config, classification, and migration foundation for artifact matrices and lifecycle gates.
 
 ## Contract Sources
 
