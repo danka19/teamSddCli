@@ -361,3 +361,43 @@ def test_cli_keeps_lifecycle_deferral_due_after_rework(
         for item in payload["reports"][0]["blocking_gaps"]
     )
     assert _yaml(change) == document
+
+
+def test_malformed_unhashable_lifecycle_history_id_fails_closed_without_mutation(
+    tmp_path: Path, capsys: Any,
+) -> None:
+    document = _input()
+    document["status"] = "in_implementation"
+    document["lifecycle_history"] = {
+        "schema_version": "1.0",
+        "reached_states": [{
+            "id": {"unexpected": "mapping"},
+            "state": "in_implementation",
+            "reached_at": "2026-07-14T09:00:00Z",
+            "source_ref": "decisions/in-implementation.yaml",
+            "recorded_by": {"type": "human", "id": "sample-tech-leads"},
+        }],
+    }
+
+    diagnostics = validate_gate_input(document, PROCESS)
+
+    assert diagnostics == [{
+        "code": "gate.input-schema-invalid",
+        "pointer": "/lifecycle_history/reached_states/0/id",
+        "message": "Gate input does not satisfy the pinned schema.",
+    }]
+
+    change = tmp_path / "malformed-history.yaml"
+    _write(change, document)
+    before = change.read_bytes()
+
+    assert gate_main([
+        str(change), "--gate", "definition-of-ready",
+        "--config", str(CONFIG), "--json",
+    ]) == 3
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload["status"] == "error"
+    assert payload["diagnostics"] == diagnostics
+    assert capsys.readouterr().err == ""
+    assert change.read_bytes() == before

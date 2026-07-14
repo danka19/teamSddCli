@@ -51,17 +51,20 @@ def validate_gate_input(document: Any, process_root: Path) -> list[dict[str, str
         "pointer": _pointer(error.absolute_path),
         "message": "Gate input does not satisfy the pinned schema.",
     } for error in errors]
-    if isinstance(document, dict) and isinstance(document.get("evidence"), list):
-        identifiers = [
-            row.get("id") for row in document["evidence"] if isinstance(row, dict)
-        ]
-        if len(identifiers) != len(set(identifiers)):
-            diagnostics.append({
-                "code": "gate.evidence-id-duplicate",
-                "pointer": "/evidence",
-                "message": "Evidence identifiers must be unique.",
-            })
-    diagnostics.extend(_lifecycle_history_diagnostics(document))
+    if not errors:
+        if isinstance(document, dict) and isinstance(document.get("evidence"), list):
+            identifiers = [
+                row.get("id")
+                for row in document["evidence"]
+                if isinstance(row, dict)
+            ]
+            if len(identifiers) != len(set(identifiers)):
+                diagnostics.append({
+                    "code": "gate.evidence-id-duplicate",
+                    "pointer": "/evidence",
+                    "message": "Evidence identifiers must be unique.",
+                })
+        diagnostics.extend(_lifecycle_history_diagnostics(document))
     return sorted(
         diagnostics, key=lambda item: (item["pointer"], item["code"])
     )
