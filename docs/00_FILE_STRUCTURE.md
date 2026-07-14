@@ -86,10 +86,14 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/package.yaml` | Process-package metadata, OpenSpec pin, workflow reference, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, central registries/config, optional project adapter, and release manifest |
+| `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema loading, and final OpenSpec runtime probe |
+| `process/validators/config_validation.py` | Structured redacted diagnostics plus pure schema, compatibility, secret, and cross-registry integrity checks |
 | `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
 | `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
 | `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
 | `tests/test_process_package.py` | Test-only YAML/schema, local-reference, cross-file-integrity, and bounded sensitive-value harness |
+| `scripts/validate_process_config.py` | Thin non-mutating human/JSON entry point for production configuration discovery and compatibility validation |
+| `tests/test_validate_process_config.py` | Focused central/adapter discovery, compatibility, integrity, secret-redaction, diagnostics, exit-code, and CWD-independence evidence |
 
 ## Planned Phase 2 Project Structure
 
@@ -97,7 +101,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| `process/templates/`, `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, role-kit, adapter, and certification assets |
+| `process/templates/`, additional `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, role-kit, adapter, and certification assets; work item 2.2 already provides config validators |
 | Additional `docs/runbooks/` files | Classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |

@@ -60,3 +60,52 @@ Status: in_progress. Work item 2.1 is closed; work item 2.2 is active.
 - Architecture checker: approved on reviewed head `65505e6`; no blocking finding or human decision remains.
 - Independent verification checker: PASS on reviewed head `65505e6` with 15 focused and 49 full tests, legacy template validation, strict OpenSpec 10/10, range diff check, and acceptance audit.
 - Coordinator reconciliation: OpenSpec tasks 1.1-1.2 complete, work item 2.1 `closed`, and work item 2.2 `ready`.
+
+## Work Item 2.2: Configuration Discovery And Compatibility Validation
+
+Status: implementation evidence recorded; work item remains `in_progress` until independent review, architecture, verification, and coordinator reconciliation complete. OpenSpec task 1.3 remains unchecked for coordinator ownership.
+
+### Sources And Implementation Evidence
+
+- Accepted topology/config behavior: `openspec/specs/repo-topology-config/spec.md`.
+- Proposed transfer compatibility behavior: `openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md`, task 1.3.
+- Discovery/loading boundary: `process/validators/config_discovery.py`.
+- Pure diagnostics/validation boundary: `process/validators/config_validation.py`.
+- Thin CLI: `scripts/validate_process_config.py`.
+- Scenario-first evidence: `tests/test_validate_process_config.py`.
+- Operator procedure: `docs/runbooks/PROCESS_PACKAGE_SETUP.md`.
+
+### Scenario And Verification Mapping
+
+| Scenario family | Evidence |
+|---|---|
+| Valid central discovery and exact compatibility JSON | `test_valid_central_mode_reports_exact_compatibility_json` |
+| Adapter discovery through sibling, portable path, and explicit registry mapping | `test_valid_adapter_modes_use_only_explicit_reference_resolution` |
+| Missing/ambiguous config and ambiguous resolved central root | `test_missing_and_ambiguous_discovery_fail_before_runtime_probe`; `test_adapter_rejects_ambiguous_resolved_central_root` |
+| Missing registry and unsafe reference | `test_missing_registry_and_unsafe_reference_are_stable` |
+| Owner/project/adapter integrity | `test_invalid_owner_project_and_adapter_relations_are_reported` |
+| Package/config/`VERSION`/OpenSpec mismatch and unsupported topology stop before runtime | `test_static_version_mismatches_prevent_runtime_probe`; `test_unsupported_topology_is_not_silently_accepted` |
+| Malformed and duplicate-key YAML | `test_malformed_and_duplicate_key_yaml_are_rejected` |
+| Missing/wrong OpenSpec runtime and static-before-runtime order | `test_runtime_is_checked_last_and_has_distinct_exit_codes` |
+| Human/JSON parity, deterministic output, redaction, no absolute-path leak, and semantic-substring safety | `test_secret_diagnostics_are_redacted_and_human_json_codes_match`; `test_diagnostics_are_deterministic_and_do_not_false_positive_semantic_ids`; `test_schema_diagnostics_never_echo_an_absolute_reference` |
+| CWD independence for imported and real script entry points | `test_behavior_is_independent_of_current_working_directory`; `test_real_entry_point_imports_package_from_any_working_directory` |
+| Usage exit code | `test_usage_error_exits_two` |
+
+### TDD And Current Verification Record
+
+- Initial RED: `python -m pytest tests/test_validate_process_config.py -q` -> 13 failed because `scripts.validate_process_config` did not exist.
+- First minimal GREEN: `python -m pytest tests/test_validate_process_config.py::test_valid_central_mode_reports_exact_compatibility_json -q` -> 1 passed.
+- Main focused GREEN: `python -m pytest tests/test_validate_process_config.py -q` -> 14 passed after bounded discovery/validation implementation and the CWD-independent real-entry-point fix.
+- Self-review RED: two focused tests failed because a resolved central root could contain both config files and schema diagnostics echoed an unsafe absolute reference.
+- Current focused GREEN: `python -m pytest tests/test_validate_process_config.py -q` -> 22 passed after ambiguity enforcement, generic redacted schema messages, explicit adapter-version coverage, all required high-confidence secret forms, and the final usage-exit correction.
+- Final exit-code RED: 21 tests passed and 1 failed because a nonexistent explicit start directory returned operational exit `3`; GREEN changed that case to CLI usage exit `2` while retaining its safe JSON diagnostic.
+- One verification orchestration attempt ran focused and full pytest concurrently against the shared repository-local `.pytest-tmp`; the focused process failed one otherwise-green central case because both processes raced on the same test temp. This failed run is retained as procedure evidence and was corrected by serial execution, not hidden or treated as a product failure.
+- Fresh serial full suite: `python -m pytest -q` -> 71 passed.
+- Python compilation: `python -m compileall -q process/validators scripts/validate_process_config.py` -> exit 0.
+- Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- Representative human CLI: `python scripts/validate_process_config.py <synthetic-central-root>` -> exit 0 and one safe `OK` line.
+- Representative JSON CLI: the same command with `--json` -> exit 0 and exactly one valid compatibility object with OpenSpec runtime `1.4.1`.
+- OpenSpec inventory remains 2/33 transfer tasks and 0/43 NIS tasks; task 1.3 was intentionally not checked by the worker. `openspec list --specs` reports 8 accepted specs.
+- Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.
+- Whitespace check: `git diff --check` -> exit 0 with only non-blocking Windows LF-to-CRLF conversion warnings on touched documentation.
+- These worker results are implementation evidence only; they do not replace independent review, architecture, verification, or coordinator acceptance.

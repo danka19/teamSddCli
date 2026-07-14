@@ -1,0 +1,487 @@
+"""Scenario-first tests for Phase 2 work item 2.2 config validation."""
+
+from __future__ import annotations
+
+import json
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Callable
+
+import yaml
+import pytest
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def write_yaml(path: Path, value: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(value, sort_keys=False), encoding="utf-8")
+
+
+def read_yaml(path: Path) -> dict[str, object]:
+    value = yaml.safe_load(path.read_text(encoding="utf-8"))
+    assert isinstance(value, dict)
+    return value
+
+
+def build_central_layout(root: Path) -> Path:
+    root.mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    shutil.copytree(REPO_ROOT / "process", root / "process")
+
+    for relative in (
+        "openspec/changes",
+        "openspec/specs",
+        "analytics",
+        "traceability",
+        "waivers",
+        "evidence",
+        "publication",
+        "repos/product-internal-tools",
+    ):
+        (root / relative).mkdir(parents=True)
+
+    write_yaml(
+        root / "sdd.config.yaml",
+        {
+            "config_schema_version": "1.0",
+            "topology": "central-team-specs",
+            "process_package": {
+                "id": "sdd-process",
+                "version": "0.1.0",
+                "location": "process",
+            },
+            "openspec": {"cli_version": "1.4.1"},
+            "canonical_paths": {
+                "changes": "openspec/changes",
+                "specs": "openspec/specs",
+                "analytics": "analytics",
+                "traceability": "traceability",
+                "waivers": "waivers",
+                "evidence": "evidence",
+                "publication": "publication",
+            },
+            "registries": {"projects": "projects.yaml", "owners": "owners.yaml"},
+            "validation": {"strict": True, "placeholders_allowed": False},
+        },
+    )
+    write_yaml(
+        root / "projects.yaml",
+        {
+            "schema_version": "1.0",
+            "projects": [
+                {
+                    "id": "product-internal-tools",
+                    "repository": {"reference": "path:repos/product-internal-tools"},
+                    "adapter_allowed": True,
+                    "owner_zones": ["private-product-zone"],
+                    "local_paths": {"code": "src", "tests": "tests"},
+                }
+            ],
+        },
+    )
+    write_yaml(
+        root / "owners.yaml",
+        {
+            "schema_version": "1.0",
+            "owner_groups": [
+                {
+                    "id": "production-platform-team",
+                    "roles": ["tech_lead"],
+                    "members": ["sample-user"],
+                }
+            ],
+            "zones": [
+                {
+                    "id": "private-product-zone",
+                    "paths": ["product-internal-tools/**"],
+                    "owner_groups": ["production-platform-team"],
+                }
+            ],
+            "default_owner_groups": ["production-platform-team"],
+        },
+    )
+    return root
+
+
+def build_adapter_layout(base: Path, reference_kind: str) -> tuple[Path, list[str]]:
+    project = base / "sample-app"
+    central = base / "team-specs"
+    registry_args: list[str] = []
+
+    if reference_kind == "path":
+        central = project / "central"
+        reference = "path:central"
+    elif reference_kind == "registry":
+        reference = "registry:central"
+        registry_args = ["--registry", f"central={central}"]
+    else:
+        reference = "sibling:team-specs"
+
+    build_central_layout(central)
+    project.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["git", "init", "-q", str(project)], check=True)
+
+    projects = read_yaml(central / "projects.yaml")
+    registered = projects["projects"]
+    assert isinstance(registered, list)
+    registered[0]["id"] = "sample-app"
+    registered[0]["repository"]["reference"] = "path:repos/product-internal-tools"
+    write_yaml(central / "projects.yaml", projects)
+
+    write_yaml(
+        project / ".sdd-project.yaml",
+        {
+            "schema_version": "1.0",
+            "config_schema_version": "1.0",
+            "project_id": "sample-app",
+            "team_specs": {"reference": reference, "config_path": "sdd.config.yaml"},
+            "process_package": {"id": "sdd-process", "version": "0.1.0"},
+            "local_paths": {"code": "src", "tests": "tests"},
+        },
+    )
+    return project, registry_args
+
+
+def run_cli(
+    args: list[str],
+    probe: Callable[[], str],
+) -> tuple[int, str, str]:
+    from scripts import validate_process_config
+
+    stdout: list[str] = []
+    stderr: list[str] = []
+    code = validate_process_config.main(
+        args,
+        runtime_probe=probe,
+        stdout=stdout.append,
+        stderr=stderr.append,
+    )
+    return code, "\n".join(stdout), "\n".join(stderr)
+
+
+def test_valid_central_mode_reports_exact_compatibility_json(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+
+    code, stdout, stderr = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 0
+    assert stderr == ""
+    payload = json.loads(stdout)
+    assert set(payload) == {
+        "schema_version",
+        "status",
+        "mode",
+        "diagnostics",
+        "compatibility",
+    }
+    assert payload["status"] == "valid"
+    assert payload["mode"] == "central"
+    assert payload["diagnostics"] == []
+    assert payload["compatibility"] == {
+        "config_schema_version": "1.0",
+        "topology": "central-team-specs",
+        "process_package": {"id": "sdd-process", "version": "0.1.0"},
+        "openspec": {"required": "1.4.1", "runtime": "1.4.1"},
+    }
+
+
+def diagnostic_codes(stdout: str) -> list[str]:
+    return [item["code"] for item in json.loads(stdout)["diagnostics"]]
+
+
+def test_valid_adapter_modes_use_only_explicit_reference_resolution(tmp_path: Path) -> None:
+    for reference_kind in ("sibling", "path", "registry"):
+        project, registry_args = build_adapter_layout(tmp_path / reference_kind, reference_kind)
+        code, stdout, stderr = run_cli(
+            [str(project), "--json", *registry_args], lambda: "1.4.1"
+        )
+        assert (code, stderr) == (0, "")
+        assert json.loads(stdout)["mode"] == "adapter"
+
+
+def test_missing_and_ambiguous_discovery_fail_before_runtime_probe(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    root.mkdir()
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    calls = 0
+
+    def probe() -> str:
+        nonlocal calls
+        calls += 1
+        return "1.4.1"
+
+    code, stdout, _ = run_cli([str(root), "--json"], probe)
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["discovery.config-missing"]
+
+    (root / "sdd.config.yaml").write_text("{}\n", encoding="utf-8")
+    (root / ".sdd-project.yaml").write_text("{}\n", encoding="utf-8")
+    code, stdout, _ = run_cli([str(root), "--json"], probe)
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["discovery.config-ambiguous"]
+    assert calls == 0
+
+
+def test_missing_registry_and_unsafe_reference_are_stable(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path / "missing-map", "registry")
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+    assert code == 1
+    assert "reference.registry-missing" in diagnostic_codes(stdout)
+
+    project, _ = build_adapter_layout(tmp_path / "unsafe", "path")
+    adapter = read_yaml(project / ".sdd-project.yaml")
+    adapter["team_specs"]["reference"] = "path:../team-specs"
+    write_yaml(project / ".sdd-project.yaml", adapter)
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+    assert code == 1
+    assert "reference.invalid" in diagnostic_codes(stdout)
+
+
+def test_adapter_rejects_ambiguous_resolved_central_root(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path, "sibling")
+    central = tmp_path / "team-specs"
+    (central / ".sdd-project.yaml").write_text("{}\n", encoding="utf-8")
+
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["discovery.config-ambiguous"]
+
+
+def test_schema_diagnostics_never_echo_an_absolute_reference(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path, "sibling")
+    unsafe = "path:C:/Users/private-account/secret-repository"
+    adapter = read_yaml(project / ".sdd-project.yaml")
+    adapter["team_specs"]["reference"] = unsafe
+    write_yaml(project / ".sdd-project.yaml", adapter)
+
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert "reference.invalid" in diagnostic_codes(stdout)
+    assert unsafe not in stdout
+    assert "C:/Users/private-account" not in stdout
+
+
+def test_invalid_owner_project_and_adapter_relations_are_reported(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path, "sibling")
+    central = tmp_path / "team-specs"
+    projects = read_yaml(central / "projects.yaml")
+    projects["projects"][0]["owner_zones"] = ["missing-zone"]
+    projects["projects"][0]["adapter_allowed"] = False
+    write_yaml(central / "projects.yaml", projects)
+
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    codes = diagnostic_codes(stdout)
+    assert "integrity.project-owner-zone" in codes
+    assert "integrity.adapter-not-allowed" in codes
+
+
+def test_static_version_mismatches_prevent_runtime_probe(tmp_path: Path) -> None:
+    mutations = {
+        "config": lambda root: _set_yaml(
+            root / "sdd.config.yaml", ("process_package", "version"), "9.9.9"
+        ),
+        "package": lambda root: _set_yaml(
+            root / "process/package.yaml", ("package", "version"), "9.9.9"
+        ),
+        "version-file": lambda root: (root / "process/VERSION").write_text(
+            "9.9.9\n", encoding="utf-8"
+        ),
+        "openspec": lambda root: _set_yaml(
+            root / "sdd.config.yaml", ("openspec", "cli_version"), "9.9.9"
+        ),
+    }
+    for name, mutate in mutations.items():
+        root = build_central_layout(tmp_path / name)
+        mutate(root)
+        called = False
+
+        def probe() -> str:
+            nonlocal called
+            called = True
+            return "1.4.1"
+
+        code, stdout, _ = run_cli([str(root), "--json"], probe)
+        assert code == 1
+        assert any(code.startswith("compat.") for code in diagnostic_codes(stdout))
+        assert not called
+
+
+def test_adapter_package_version_mismatch_is_explicit(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path, "sibling")
+    _set_yaml(
+        project / ".sdd-project.yaml", ("process_package", "version"), "9.9.9"
+    )
+
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert "compat.adapter-package-version" in diagnostic_codes(stdout)
+
+
+def _set_yaml(path: Path, keys: tuple[str, ...], value: object) -> None:
+    data = read_yaml(path)
+    target = data
+    for key in keys[:-1]:
+        target = target[key]
+    target[keys[-1]] = value
+    write_yaml(path, data)
+
+
+def test_unsupported_topology_is_not_silently_accepted(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+    _set_yaml(root / "sdd.config.yaml", ("topology",), "federated")
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert "compat.topology" in diagnostic_codes(stdout)
+
+
+def test_malformed_and_duplicate_key_yaml_are_rejected(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "malformed")
+    (root / "sdd.config.yaml").write_text("config_schema_version: [\n", encoding="utf-8")
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["yaml.invalid"]
+
+    root = build_central_layout(tmp_path / "duplicate")
+    config_text = (root / "sdd.config.yaml").read_text(encoding="utf-8")
+    (root / "sdd.config.yaml").write_text(
+        "topology: central-team-specs\n" + config_text, encoding="utf-8"
+    )
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["yaml.duplicate-key"]
+
+
+def test_runtime_is_checked_last_and_has_distinct_exit_codes(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.0")
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["compat.openspec-runtime"]
+
+    def unavailable() -> str:
+        raise FileNotFoundError("openspec")
+
+    code, stdout, _ = run_cli([str(root), "--json"], unavailable)
+    assert code == 3
+    assert diagnostic_codes(stdout) == ["runtime.openspec-unavailable"]
+
+
+def test_secret_diagnostics_are_redacted_and_human_json_codes_match(tmp_path: Path) -> None:
+    token = "ghp_abcdefghijklmnopqrstuvwxyz1234567890"
+    root = build_central_layout(tmp_path / "central")
+    config = read_yaml(root / "sdd.config.yaml")
+    config["api_key"] = token
+    write_yaml(root / "sdd.config.yaml", config)
+
+    json_code, json_stdout, json_stderr = run_cli(
+        [str(root), "--json"], lambda: "1.4.1"
+    )
+    human_code, human_stdout, human_stderr = run_cli([str(root)], lambda: "1.4.1")
+
+    assert json_code == human_code == 1
+    assert json_stderr == human_stdout == ""
+    assert diagnostic_codes(json_stdout) == ["secret.inline-credential"]
+    assert "[secret.inline-credential]" in human_stderr
+    combined = json_stdout + human_stderr
+    assert token not in combined
+    assert str(root.resolve()) not in combined
+
+
+@pytest.mark.parametrize(
+    ("value", "expected_code"),
+    [
+        ("-----BEGIN PRIVATE KEY-----\nredacted\n", "secret.private-key"),
+        ("https://sample-user:sample-password@example.invalid/repo", "secret.uri-userinfo"),
+        ("https://example.invalid/path?access_token=redacted", "secret.query-credential"),
+        ("AKIAABCDEFGHIJKLMNOP", "secret.recognizable-token"),
+    ],
+)
+def test_high_confidence_secret_forms_are_rejected_without_echo(
+    tmp_path: Path, value: str, expected_code: str
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    config = read_yaml(root / "sdd.config.yaml")
+    config["note"] = value
+    write_yaml(root / "sdd.config.yaml", config)
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert expected_code in diagnostic_codes(stdout)
+    assert value not in stdout
+
+
+def test_diagnostics_are_deterministic_and_do_not_false_positive_semantic_ids(
+    tmp_path: Path,
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    first = run_cli([str(root), "--json"], lambda: "1.4.1")
+    second = run_cli([str(root), "--json"], lambda: "1.4.1")
+    assert first == second
+    assert first[0] == 0
+
+
+def test_behavior_is_independent_of_current_working_directory(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 0
+    assert json.loads(stdout)["status"] == "valid"
+
+
+def test_real_entry_point_imports_package_from_any_working_directory(
+    tmp_path: Path,
+) -> None:
+    root = build_central_layout(tmp_path / "central")
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "validate_process_config.py"),
+            str(root),
+            "--json",
+        ],
+        cwd=elsewhere,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert json.loads(completed.stdout)["status"] == "valid"
+
+
+def test_usage_error_exits_two() -> None:
+    from scripts import validate_process_config
+
+    try:
+        validate_process_config.main([], runtime_probe=lambda: "1.4.1")
+    except SystemExit as error:
+        assert error.code == 2
+    else:
+        raise AssertionError("missing explicit start directory was accepted")
+
+
+def test_nonexistent_start_directory_is_usage_error(tmp_path: Path) -> None:
+    code, _, _ = run_cli(
+        [str(tmp_path / "missing"), "--json"], lambda: "1.4.1"
+    )
+    assert code == 2
