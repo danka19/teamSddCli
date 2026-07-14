@@ -145,6 +145,13 @@ def evaluate_corporate_flow(
         str(row.get("id")): row for row in document.get("evidence_catalog", [])
         if isinstance(row, Mapping) and isinstance(row.get("id"), str)
     }
+    for identifier, item in evidence.items():
+        if not _local_ref(item.get("ref")):
+            findings.append(_finding(
+                "governance.evidence-source-ref-invalid",
+                "Evidence source reference must stay within the local bundle.",
+                identifier,
+            ))
 
     ids: list[str] = []
     instants: list[tuple[str, datetime]] = []
@@ -173,6 +180,8 @@ def evaluate_corporate_flow(
         actor = record.get("accountable_decision", {})
         if not isinstance(actor, Mapping) or actor.get("actor_type") != "human":
             findings.append(_finding("governance.human-decision-required", "Accountable decisions require a named human.", identifier))
+        elif not _local_ref(actor.get("decision_ref")):
+            findings.append(_finding("governance.decision-ref-invalid", "Decision source reference must stay within the local bundle.", identifier))
         source_ref = record.get("source_ref")
         if not _local_ref(source_ref):
             findings.append(_finding("governance.source-ref-invalid", "Source reference must stay within the local bundle.", identifier))
@@ -214,14 +223,19 @@ def evaluate_corporate_flow(
     for record in records:
         if str(record.get("record_id")) not in superseded_ids:
             by_type.setdefault(str(record.get("record_type")), []).append(record)
+    active_by_id = {
+        str(row.get("record_id")): row
+        for rows in by_type.values()
+        for row in rows
+    }
 
     _check_triage(by_type, findings, active_ids)
     _check_scope_drift(by_type, by_id, findings)
     _check_quality(by_type, owners, snapshot, findings)
     _check_exceptions_and_evidence(by_type, by_id, as_of, findings)
-    _check_release(by_type, evidence, findings)
+    _check_release(by_type, evidence, active_by_id, owners, findings)
     _check_roles(by_type, findings)
-    _check_portfolio_and_pilot(by_type, findings)
+    _check_portfolio_and_pilot(by_type, active_by_id, owners, as_of, findings)
     _check_failed_runs(by_type, by_id, findings, active_ids)
     _check_pilot_safety(by_type, snapshot, findings, active_ids)
     _check_payload_evidence(by_type, evidence, findings)
@@ -273,6 +287,7 @@ def _check_scope_drift(by_type: Mapping[str, list[Mapping[str, Any]]], by_id: Ma
 
 
 def _check_quality(by_type: Mapping[str, list[Mapping[str, Any]]], owners: Mapping[str, Any], snapshot: PolicySnapshot, findings: list[dict[str, Any]]) -> None:
+    baseline = _latest(by_type.get("approved-baseline", []))
     strategies = by_type.get("quality-strategy", [])
     rows = by_type.get("regression-row", [])
     qa_decisions = {str(row.get("record_id")): row for row in by_type.get("qa-decision", [])}
@@ -280,11 +295,27 @@ def _check_quality(by_type: Mapping[str, list[Mapping[str, Any]]], owners: Mappi
         findings.append(_finding("quality.strategy-missing", "Class-aware quality strategy is required.", "quality"))
     if not rows:
         findings.append(_finding("quality.regression-gap", "At least one applicable regression row or approved N/A rationale is required.", "regression"))
+    baseline_class = baseline.get("payload", {}).get("classification") if baseline else None
     for strategy in strategies:
+        strategy_class = strategy.get("payload", {}).get("classification")
+        if baseline_class is not None and strategy_class != baseline_class:
+            findings.append(_finding("quality.baseline-strategy-class-mismatch", "Baseline and quality strategy must use the same canonical class.", str(strategy.get("record_id"))))
         ref = strategy.get("payload", {}).get("qa_decision_ref")
         if ref not in qa_decisions:
             findings.append(_finding("quality.qa-decision-missing", "Quality strategy requires a configured QA decision.", str(strategy.get("record_id"))))
+        elif qa_decisions[ref].get("payload", {}).get("decision_kind") not in {"strategy", "strategy-and-regression"}:
+            findings.append(_finding("quality.qa-decision-kind-mismatch", "Referenced QA decision does not cover quality strategy.", str(ref)))
+    strategy_classes = {
+        row.get("payload", {}).get("classification") for row in strategies
+    }
     for row in rows:
+        qa_ref = row.get("payload", {}).get("qa_decision_ref")
+        qa_decision = qa_decisions.get(str(qa_ref))
+        if qa_decision is None or qa_decision.get("payload", {}).get("decision_kind") not in {"regression", "strategy-and-regression"}:
+            findings.append(_finding("quality.qa-decision-kind-mismatch", "Regression row must link a QA decision that covers regression.", str(row.get("record_id"))))
+        row_class = row.get("payload", {}).get("change_class")
+        if row_class != baseline_class or row_class not in strategy_classes:
+            findings.append(_finding("quality.regression-class-mismatch", "Regression row class must match the approved baseline and quality strategy.", str(row.get("record_id"))))
         if row.get("payload", {}).get("current_result") not in {"passed", "not-applicable-approved"}:
             findings.append(_finding("quality.regression-result-blocking", "Regression result is failed, stale, missing, or not run.", str(row.get("record_id"))))
     for decision in qa_decisions.values():
@@ -292,6 +323,9 @@ def _check_quality(by_type: Mapping[str, list[Mapping[str, Any]]], owners: Mappi
         if not _owner_authorized(str(actor.get("actor_id", "")), "qa_owner", owners, snapshot):
             findings.append(_finding("quality.qa-authority-invalid", "QA sufficiency and result disposition require the configured QA owner.", str(decision.get("record_id"))))
         payload = decision.get("payload", {})
+        positive = payload.get("decision") in {"sufficient", "passed", "not-applicable-approved"} or payload.get("gate_may_proceed") is True
+        if positive and (payload.get("material_failures") or payload.get("missing_evidence")):
+            findings.append(_finding("quality.qa-decision-contradictory", "Positive QA disposition cannot coexist with material failures or missing evidence.", str(decision.get("record_id"))))
         if payload.get("decision") not in {"sufficient", "passed", "not-applicable-approved"} or payload.get("gate_may_proceed") is not True:
             findings.append(_finding("quality.qa-decision-blocking", "QA disposition does not permit the affected gate to proceed.", str(decision.get("record_id"))))
 
@@ -315,7 +349,13 @@ def _check_exceptions_and_evidence(by_type: Mapping[str, list[Mapping[str, Any]]
             findings.append(_finding("flow.ai-evidence-incomplete", "AI evidence requires reproducible runtime metadata and human disposition.", str(record.get("record_id"))))
 
 
-def _check_release(by_type: Mapping[str, list[Mapping[str, Any]]], evidence: Mapping[str, Mapping[str, Any]], findings: list[dict[str, Any]]) -> None:
+def _check_release(
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    evidence: Mapping[str, Mapping[str, Any]],
+    active_by_id: Mapping[str, Mapping[str, Any]],
+    owners: Mapping[str, Any],
+    findings: list[dict[str, Any]],
+) -> None:
     releases = by_type.get("release-handoff", [])
     if not releases:
         findings.append(_finding("release.handoff-missing", "Per-change release or transfer handoff is required.", "release"))
@@ -330,8 +370,19 @@ def _check_release(by_type: Mapping[str, list[Mapping[str, Any]]], evidence: Map
         status = payload.get("artifact_repository_status")
         if status == "available" and "artifact_repository" not in chain:
             findings.append(_finding("release.artifact-coordinate-missing", "Applicable artifact repository evidence is missing.", str(record.get("record_id"))))
-        if status == "unavailable" and not (payload.get("artifact_repository_substitute") in evidence and payload.get("substitute_decision_ref")):
-            findings.append(_finding("release.artifact-substitute-missing", "Unavailable repository requires approved substitute evidence, never a fabricated coordinate.", str(record.get("record_id"))))
+        if status == "unavailable":
+            substitute = payload.get("artifact_repository_substitute")
+            decision = active_by_id.get(str(payload.get("substitute_decision_ref")))
+            substitute_evidence = evidence.get(str(substitute))
+            if (
+                substitute_evidence is None
+                or not set(_strings(record.get("scope_ids"))) <= set(_strings(substitute_evidence.get("scope_ids")))
+            ):
+                findings.append(_finding("release.artifact-substitute-missing", "Unavailable repository requires approved substitute evidence, never a fabricated coordinate.", str(record.get("record_id"))))
+            if not _release_substitute_decision_valid(
+                record, decision, str(substitute), by_type, owners
+            ):
+                findings.append(_finding("release.artifact-substitute-decision-invalid", "Artifact substitute requires an active, scoped, source-linked human release decision.", str(record.get("record_id"))))
     acceptances = by_type.get("consumer-acceptance", [])
     release_ids = {str(row.get("record_id")) for row in releases}
     if not any(row.get("payload", {}).get("package_ref") in release_ids for row in acceptances):
@@ -367,19 +418,131 @@ def _check_roles(by_type: Mapping[str, list[Mapping[str, Any]]], findings: list[
             findings.append(_finding("roles.walkthrough-evidence-missing", "Checklist-only role understanding is insufficient.", str(role)))
 
 
-def _check_portfolio_and_pilot(by_type: Mapping[str, list[Mapping[str, Any]]], findings: list[dict[str, Any]]) -> None:
+def _check_portfolio_and_pilot(
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    active_by_id: Mapping[str, Mapping[str, Any]],
+    owners: Mapping[str, Any],
+    as_of: str,
+    findings: list[dict[str, Any]],
+) -> None:
     wip = _latest(by_type.get("portfolio-wip", []))
     if wip is None:
         findings.append(_finding("portfolio.wip-record-missing", "Approved WIP limit record is required.", "portfolio"))
     else:
         payload = wip.get("payload", {})
-        if len(_strings(payload.get("active_change_ids"))) > int(payload.get("limit", 0)) and payload.get("decision") not in {"prioritize", "hold", "authorized-exception"}:
+        if not _local_ref(payload.get("limit_source")):
+            findings.append(_finding("governance.source-ref-invalid", "WIP limit source must stay within the local bundle.", str(wip.get("record_id"))))
+        exceeded = len(_strings(payload.get("active_change_ids"))) > int(payload.get("limit", 0))
+        if exceeded and payload.get("decision") not in {"prioritize", "hold", "authorized-exception"}:
             findings.append(_finding("portfolio.wip-decision-required", "Exceeded WIP requires explicit prioritization, hold, or authorized exception.", str(wip.get("record_id"))))
+        if exceeded and payload.get("decision") == "authorized-exception":
+            decision = active_by_id.get(str(payload.get("decision_record_ref")))
+            if not _wip_exception_valid(wip, decision, by_type, owners, as_of):
+                findings.append(_finding("portfolio.wip-authority-invalid", "WIP exception requires an active, scoped, unexpired, source-linked human decision with mapped authority.", str(wip.get("record_id"))))
     pilot = _latest(by_type.get("pilot-selection", []))
     if pilot is None:
         findings.append(_finding("pilot.selection-missing", "Synthetic pilot candidate selection record is required.", "pilot"))
     elif pilot.get("payload", {}).get("rollback_feasibility") != "verified":
         findings.append(_finding("pilot.rollback-unavailable", "Pilot candidate cannot proceed without verified rollback feasibility.", str(pilot.get("record_id"))))
+
+
+def _release_substitute_decision_valid(
+    release: Mapping[str, Any],
+    decision: Mapping[str, Any] | None,
+    substitute: str,
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    owners: Mapping[str, Any],
+) -> bool:
+    if decision is None or decision.get("record_type") != "human-decision":
+        return False
+    payload = decision.get("payload", {})
+    actor = decision.get("accountable_decision", {})
+    if (
+        set(_strings(decision.get("scope_ids"))) != set(_strings(release.get("scope_ids")))
+        or actor.get("actor_type") != "human"
+        or payload.get("decision_type") != "artifact-repository-substitute"
+        or payload.get("decision") != "approved"
+        or payload.get("subject_record_ref") != release.get("record_id")
+        or substitute not in _strings(payload.get("source_evidence"))
+        or not payload.get("follow_up")
+    ):
+        return False
+    return _role_actor_authorized(
+        by_type, owners, "release_support", str(actor.get("actor_id", ""))
+    )
+
+
+def _wip_exception_valid(
+    wip: Mapping[str, Any],
+    decision: Mapping[str, Any] | None,
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    owners: Mapping[str, Any],
+    as_of: str,
+) -> bool:
+    if decision is None or decision.get("record_type") not in {"exception", "human-decision"}:
+        return False
+    actor = decision.get("accountable_decision", {})
+    decision_owner = str(wip.get("payload", {}).get("decision_owner", ""))
+    if (
+        set(_strings(decision.get("scope_ids"))) != set(_strings(wip.get("scope_ids")))
+        or actor.get("actor_type") != "human"
+        or not _role_owner_authorized(by_type, owners, "product", decision_owner, str(actor.get("actor_id", "")))
+    ):
+        return False
+    payload = decision.get("payload", {})
+    if decision.get("record_type") == "exception":
+        try:
+            unexpired = date.fromisoformat(str(payload.get("expires_on"))) >= date.fromisoformat(as_of)
+        except ValueError:
+            return False
+        return (
+            payload.get("kind") in {"deviation", "waiver"}
+            and payload.get("decision") == "approved"
+            and "portfolio-wip" in _strings(payload.get("affected_obligations"))
+            and bool(payload.get("follow_up"))
+            and unexpired
+        )
+    return (
+        payload.get("decision_type") == "wip-authorized-exception"
+        and payload.get("decision") == "approved"
+        and payload.get("subject_record_ref") == wip.get("record_id")
+        and bool(set(_strings(payload.get("source_evidence"))) & set(_strings(wip.get("evidence_refs"))))
+        and bool(payload.get("follow_up"))
+    )
+
+
+def _role_actor_authorized(
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    owners: Mapping[str, Any],
+    role: str,
+    actor: str,
+) -> bool:
+    return _role_owner_authorized(by_type, owners, role, actor, actor)
+
+
+def _role_owner_authorized(
+    by_type: Mapping[str, list[Mapping[str, Any]]],
+    owners: Mapping[str, Any],
+    role: str,
+    owner_id: str,
+    actor: str,
+) -> bool:
+    if owner_id.lower() in {"ai", "assistant", "generic", "team", "unknown"}:
+        return False
+    role_map = _latest(by_type.get("role-map", []))
+    rows = role_map.get("payload", {}).get("roles", []) if role_map else []
+    mapping = next((
+        row for row in rows
+        if isinstance(row, Mapping) and row.get("role") == role and row.get("owner_id") == owner_id
+    ), None)
+    if mapping is None or mapping.get("owner_type") not in {"human", "group"}:
+        return False
+    if mapping.get("owner_type") == "human":
+        return actor == owner_id
+    for group in owners.get("owner_groups", []):
+        if isinstance(group, Mapping) and group.get("id") == owner_id:
+            return actor in _strings(group.get("members"))
+    return False
 
 
 def _check_failed_runs(by_type: Mapping[str, list[Mapping[str, Any]]], by_id: Mapping[str, Mapping[str, Any]], findings: list[dict[str, Any]], active: list[str]) -> None:
@@ -536,6 +699,13 @@ def _instant(value: Any) -> datetime | None:
 
 
 def _local_ref(value: Any) -> bool:
-    if not isinstance(value, str) or not value or "://" in value or value.startswith(("/", "\\")):
+    if (
+        not isinstance(value, str)
+        or not value
+        or "://" in value
+        or value.startswith(("/", "\\"))
+        or (len(value) >= 2 and value[0].isalpha() and value[1] == ":")
+    ):
         return False
-    return ".." not in Path(value).parts
+    normalized = value.replace("\\", "/")
+    return ".." not in Path(normalized).parts

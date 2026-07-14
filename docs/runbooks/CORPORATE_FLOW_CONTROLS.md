@@ -18,11 +18,11 @@ The same bundle may contain existing `tech-lead-control-record.schema.json` reco
 
 - Preliminary triage supports `proceed | hold | split | redirect | reject`; `proceed` still requires a separately approved baseline and never means Definition of Ready.
 - Material scope drift covers behavior, systems, risk, dependencies, acceptance criteria, and release outcome and requires classification, readiness, owners, regression, estimates, and human approval reassessment.
-- Class-aware quality strategy, locked nine-field regression rows, and configured QA-owner decisions expose gaps, stale/not-run evidence, and wrong authority.
+- Class-aware quality strategy, locked nine-field regression rows, and configured QA-owner decisions expose gaps, stale/not-run evidence, wrong authority, class mismatch, mismatched decision kind, and positive QA dispositions that contradict material failures or missing evidence.
 - Deviation, waiver, deferral, human-decision, and AI-execution records retain expiry/follow-up and human authority. AI evidence remains advisory and reproducible.
-- Per-change release handoff keeps tracker, Git/OpenSpec, implementation, CI/test, artifact repository when applicable, release, and external delivery evidence distinct. An unavailable repository requires approved substitute evidence; consumer acceptance is a separate record.
+- Per-change release handoff keeps tracker, Git/OpenSpec, implementation, CI/test, artifact repository when applicable, release, and external delivery evidence distinct. An unavailable repository requires an active, same-scope, source-linked human release decision for approved substitute evidence; consumer acceptance is a separate record.
 - Portable role maps require real human/group owners and scenario-based walkthrough evidence. Checklist-only evidence and AI/generic-owner substitution fail closed.
-- WIP and synthetic pilot-selection records require an approved limit, explicit over-limit disposition, representative scope, and verified rollback feasibility.
+- WIP and synthetic pilot-selection records require an approved limit, explicit over-limit disposition, representative scope, and verified rollback feasibility. An over-limit exception binds to an active, same-scope, unexpired exception or human decision whose actor resolves through the portable product-owner map.
 - Failed validation, AI, adapter, integration, and workflow attempts form an immutable retry chain. A successful retry links the retained failed predecessor and its digest.
 - Pilot safety covers the locked privacy/data, secrets, access, accidental-delivery, rollback/hold, adapter/MCP, model/runtime, logging, dependency, support, evidence-corruption, and bypass risks plus the AI-disabled path.
 

@@ -125,7 +125,7 @@ def valid_bundle() -> dict[str, object]:
             "change_class": "minor", "risk_trigger": "behavior-change",
             "required_check": "pytest tests/test_sample.py", "test_data_environment": "synthetic",
             "evidence_type": "test-result", "owner": "sample-qa", "current_result": "passed",
-            "evidence_ref": "ev-qa",
+            "evidence_ref": "ev-qa", "qa_decision_ref": "qa-1",
         }, minute=3),
         _record("qa-1", "qa-decision", {
             "decision_kind": "strategy-and-regression", "decision": "sufficient",
@@ -319,8 +319,58 @@ def test_release_chain_requires_real_or_approved_substitute_artifact_evidence() 
     assert "release.artifact-substitute-missing" in {row["code"] for row in payload["findings"]}
 
     release["payload"]["artifact_repository_substitute"] = "ev-artifact"
-    release["payload"]["substitute_decision_ref"] = "human-1"
+    decision = _record("artifact-substitute-1", "human-decision", {
+        "decision_type": "artifact-repository-substitute",
+        "source_evidence": ["ev-artifact"], "decision": "approved",
+        "follow_up": "Recheck repository availability.",
+        "subject_record_ref": "release-1",
+    }, minute=21)
+    decision["accountable_decision"].update({
+        "actor_id": "sample-release-support", "role": "release_support",
+    })
+    bundle["records"].append(decision)
+    release["payload"]["substitute_decision_ref"] = "artifact-substitute-1"
     assert "release.artifact-substitute-missing" not in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+
+
+def test_release_substitute_decision_is_active_scoped_linked_and_human_authorized() -> None:
+    bundle = valid_bundle()
+    release = next(row for row in bundle["records"] if row["record_type"] == "release-handoff")
+    release["payload"].update({
+        "artifact_repository_status": "unavailable",
+        "artifact_repository_substitute": "ev-artifact",
+        "substitute_decision_ref": "missing-decision",
+    })
+    release["payload"]["chain"].pop("artifact_repository")
+    assert "release.artifact-substitute-decision-invalid" in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+
+    decision = _record("artifact-substitute-1", "human-decision", {
+        "decision_type": "artifact-repository-substitute",
+        "source_evidence": ["ev-artifact"], "decision": "approved",
+        "follow_up": "Recheck repository availability.",
+        "subject_record_ref": "release-1",
+    }, minute=21)
+    decision["accountable_decision"].update({
+        "actor_id": "sample-release-support", "role": "release_support",
+    })
+    bundle["records"].append(decision)
+    release["payload"]["substitute_decision_ref"] = "artifact-substitute-1"
+    assert "release.artifact-substitute-decision-invalid" not in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+
+    decision["scope_ids"] = ["other-change"]
+    assert "release.artifact-substitute-decision-invalid" in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+    decision["scope_ids"] = ["sample-change"]
+    decision["accountable_decision"]["actor_type"] = "ai"
+    decision["accountable_decision"]["actor_id"] = "assistant"
+    assert "release.artifact-substitute-decision-invalid" in {
         row["code"] for row in _evaluate(bundle).as_dict()["findings"]
     }
 
@@ -338,6 +388,93 @@ def test_role_map_wip_and_pilot_selection_fail_closed() -> None:
     codes = {row["code"] for row in _evaluate(bundle).as_dict()["findings"]}
 
     assert {"roles.ai-substitution-forbidden", "portfolio.wip-decision-required", "pilot.rollback-unavailable"} <= codes
+
+
+def test_baseline_quality_regression_and_qa_decision_are_semantically_bound() -> None:
+    bundle = valid_bundle()
+    baseline = next(row for row in bundle["records"] if row["record_type"] == "approved-baseline")
+    strategy = next(row for row in bundle["records"] if row["record_type"] == "quality-strategy")
+    regression = next(row for row in bundle["records"] if row["record_type"] == "regression-row")
+    qa = next(row for row in bundle["records"] if row["record_type"] == "qa-decision")
+    baseline["payload"]["classification"] = "major"
+    regression["payload"]["change_class"] = "hotfix"
+    qa["payload"].update({
+        "decision_kind": "strategy",
+        "decision": "sufficient",
+        "material_failures": ["critical regression failed"],
+        "missing_evidence": ["ev-missing"],
+        "gate_may_proceed": True,
+    })
+
+    codes = {row["code"] for row in _evaluate(bundle).as_dict()["findings"]}
+
+    assert {
+        "quality.baseline-strategy-class-mismatch",
+        "quality.regression-class-mismatch",
+        "quality.qa-decision-kind-mismatch",
+        "quality.qa-decision-contradictory",
+    } <= codes
+
+
+@pytest.mark.parametrize("absolute_ref", [
+    r"C:\private\evidence.json",
+    "C:/private/evidence.json",
+    "/private/evidence.json",
+    r"\\server\share\evidence.json",
+])
+def test_all_absolute_local_refs_fail_schema_and_runtime_without_echo(absolute_ref: str) -> None:
+    bundle = valid_bundle()
+    bundle["records"][0]["source_ref"] = absolute_ref
+    bundle["records"][0]["accountable_decision"]["decision_ref"] = absolute_ref
+    bundle["evidence_catalog"][0]["ref"] = absolute_ref
+
+    schema_output = json.dumps(validate_corporate_flow_input(bundle, PROCESS), sort_keys=True)
+    runtime_output = json.dumps(_evaluate(bundle).as_dict(), sort_keys=True)
+
+    assert "corporate-flow.input-schema-invalid" in schema_output
+    assert "governance.source-ref-invalid" in runtime_output
+    assert "governance.decision-ref-invalid" in runtime_output
+    assert "governance.evidence-source-ref-invalid" in runtime_output
+    assert absolute_ref not in schema_output
+    assert absolute_ref not in runtime_output
+
+
+def test_wip_authorized_exception_requires_active_scoped_human_authority() -> None:
+    bundle = valid_bundle()
+    wip = next(row for row in bundle["records"] if row["record_type"] == "portfolio-wip")
+    wip["payload"].update({
+        "active_change_ids": ["sample-change", "change-2", "change-3"],
+        "decision": "authorized-exception", "decision_owner": "sample-product",
+        "decision_record_ref": "missing-exception",
+    })
+    assert "portfolio.wip-authority-invalid" in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+
+    exception = _record("wip-exception-1", "exception", {
+        "kind": "deviation", "affected_obligations": ["portfolio-wip"],
+        "reason": "Prioritized bounded overlap.", "substitute_controls": ["daily-review"],
+        "expires_on": "2026-07-15", "follow_up": "Return below limit.",
+        "decision": "approved",
+    }, minute=21)
+    exception["accountable_decision"].update({
+        "actor_id": "sample-product", "role": "product",
+    })
+    bundle["records"].append(exception)
+    wip["payload"]["decision_record_ref"] = "wip-exception-1"
+    assert "portfolio.wip-authority-invalid" not in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+
+    exception["payload"]["expires_on"] = "2026-07-13"
+    assert "portfolio.wip-authority-invalid" in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
+    exception["payload"]["expires_on"] = "2026-07-15"
+    wip["payload"]["decision_owner"] = "assistant"
+    assert "portfolio.wip-authority-invalid" in {
+        row["code"] for row in _evaluate(bundle).as_dict()["findings"]
+    }
 
 
 def test_failed_retry_cannot_erase_or_forge_predecessor() -> None:
