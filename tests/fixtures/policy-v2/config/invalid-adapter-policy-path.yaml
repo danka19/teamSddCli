@@ -1,0 +1,7 @@
+schema_version: "1.1"
+config_schema_version: "1.1"
+policy_paths: [sample/policy.yaml]
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+  overrides: []

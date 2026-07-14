@@ -1,0 +1,16 @@
+config_schema_version: "1.1"
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+  corporate_values:
+    tech_lead_owner: sample-tech-leads
+    qa_owner: sample-qa-owners
+    escalation_route: sample-escalation
+    evidence_retention_days: 30
+  overrides:
+    - rule_id: classification.additional-major-triggers
+      operation: add
+      value: [sample-corporate-trigger]
+    - rule_id: regression.minimum-scenarios
+      operation: set
+      value: 2

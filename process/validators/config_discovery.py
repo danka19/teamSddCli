@@ -27,6 +27,7 @@ from .config_validation import (
     schema_diagnostics,
     secret_diagnostics,
 )
+from .policy_validation import validate_policy_bundle
 
 
 MAX_FILE_BYTES = 1_048_576
@@ -167,6 +168,16 @@ def validate_configuration(
         if adapter is None:
             return result
         result.add(*secret_diagnostics(adapter, "project-adapter"))
+        if "policy_paths" in adapter or "policies" in adapter:
+            result.add(Diagnostic(
+                "policy.adapter-path-forbidden",
+                "policy",
+                "A project adapter cannot supply policy paths.",
+                4,
+                source="project-adapter",
+                pointer="/policy_paths",
+                hint="Use only the policy set pinned by the central config.",
+            ))
         if result.diagnostics:
             return result
         result.add(*schema_diagnostics(
@@ -247,6 +258,37 @@ def validate_configuration(
     ))
     validate_package_schemas(package_root, package.get("schemas"), result)
     version = load_version(package_root / "VERSION", result)
+    if result.diagnostics:
+        return result
+
+    policy_manifest_path = safe_package_path(
+        package_root,
+        package.get("policies"),
+        result,
+        "process-package",
+        "/policies",
+    )
+    if policy_manifest_path is None:
+        return result
+    policy_manifest = load_yaml(
+        policy_manifest_path, "policy-manifest", result, stage=6
+    )
+    if policy_manifest is None:
+        return result
+    result.add(*secret_diagnostics(policy_manifest, "policy-manifest", stage=6))
+    result.add(*schema_diagnostics(
+        "policy-manifest.schema.json",
+        policy_manifest,
+        "policy-manifest",
+        stage=6,
+        schema_resources=schema_resources,
+    ))
+    if result.diagnostics:
+        return result
+    policy_result = validate_policy_bundle(
+        package_root, policy_manifest, config, adapter
+    )
+    result.add(*policy_result.diagnostics)
     if result.diagnostics:
         return result
 

@@ -5,6 +5,11 @@ owner_groups:
       - tech_lead
     members:
       - sample-user
+  - id: sample-qa-owners
+    roles:
+      - qa
+    members:
+      - sample-qa-user
 zones:
   - id: sample-app
     paths:

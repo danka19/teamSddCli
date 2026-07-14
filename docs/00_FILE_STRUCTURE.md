@@ -82,18 +82,22 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
-| `process/VERSION` | Reusable process-package semantic version (`0.1.0` for the initial skeleton) |
-| `process/package.yaml` | Process-package metadata, OpenSpec pin, workflow reference, local schema inventory, and canonical source references |
+| `process/VERSION` | Reusable process-package semantic version (`0.2.0` for the policy/schema-v2 foundation) |
+| `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
-| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, central registries/config, optional project adapter, and release manifest |
-| `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema loading, and final OpenSpec runtime probe |
+| `process/policies/` | Manifest-driven `sdd-core` policy set with eight versioned static policy catalogs; later work items consume these records to implement behavior |
+| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
+| `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema/policy loading, and final OpenSpec runtime probe |
 | `process/validators/config_validation.py` | Structured redacted diagnostics plus pure schema, compatibility, secret, and cross-registry integrity checks |
+| `process/validators/policy_validation.py` | Static policy identity/reference/override validation and immutable effective-value snapshots with provenance |
 | `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
 | `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
 | `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
 | `tests/test_process_package.py` | Test-only YAML/schema, local-reference, cross-file-integrity, and bounded sensitive-value harness |
 | `scripts/validate_process_config.py` | Thin non-mutating human/JSON entry point for production configuration discovery and compatibility validation |
 | `tests/test_validate_process_config.py` | Focused central/adapter discovery, compatibility, integrity, secret-redaction, diagnostics, exit-code, and CWD-independence evidence |
+| `tests/fixtures/policy-v2/` | Synthetic minor/major/hotfix, decision-input, corporate-value, and override fixture families for work item 2.3 |
+| `tests/test_policy_schema_v2.py` | Scenario-first static schema-v2, policy manifest, integrity, override, provenance, and no-premature-verdict evidence |
 
 ## Planned Phase 2 Project Structure
 
@@ -101,7 +105,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| `process/templates/`, additional `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, role-kit, adapter, and certification assets; work item 2.2 already provides config validators |
+| `process/templates/`, additional behavioral `process/validators/`, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged flow, classifier/gate behavior, role-kit, adapter, and certification assets; work items 2.2-2.3 provide config and static policy/schema validation only |
 | Additional `docs/runbooks/` files | Classification migration, update/rollback, governed minor/major/hotfix flow, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |

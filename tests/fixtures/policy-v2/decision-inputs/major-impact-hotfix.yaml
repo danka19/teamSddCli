@@ -1,0 +1,19 @@
+schema_version: 2
+id: major-impact-hotfix-input
+title: Major impact hotfix input
+type: emergency
+classification: hotfix
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - id: major-impact
+    value: true
+    source: {kind: design, ref: design.md}
+    rationale: Data and integration impact must remain visible to later classification.
+decision: {owner_type: human, owner_id: sample-tech-lead, state: pending, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+compatibility: {source: native-v2}

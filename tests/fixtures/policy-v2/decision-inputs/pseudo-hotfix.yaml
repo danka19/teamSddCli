@@ -1,0 +1,19 @@
+schema_version: 2
+id: pseudo-hotfix-input
+title: Pseudo hotfix input
+type: emergency
+classification: hotfix
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - id: delay-increases-harm
+    value: false
+    source: {kind: proposal, ref: proposal.md}
+    rationale: Deadline pressure is present, but concrete increased harm is not.
+decision: {owner_type: human, owner_id: sample-tech-lead, state: pending, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+compatibility: {source: native-v2}

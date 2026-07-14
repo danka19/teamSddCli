@@ -37,6 +37,9 @@ SCHEMA_FILES = {
     "adapter": "project-adapter.schema.json",
     "reference": "reference.schema.json",
     "release": "release-manifest.schema.json",
+    "change_v2": "change-v2.schema.json",
+    "policy_manifest": "policy-manifest.schema.json",
+    "policy_document": "policy-document.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

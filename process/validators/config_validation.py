@@ -12,10 +12,12 @@ from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
 
-CONFIG_SCHEMA_VERSION = "1.0"
+CONFIG_SCHEMA_VERSION = "1.1"
 TOPOLOGY = "central-team-specs"
 PACKAGE_ID = "sdd-process"
-PACKAGE_VERSION = "0.1.0"
+PACKAGE_VERSION = "0.2.0"
+POLICY_SET_ID = "sdd-core"
+POLICY_SET_VERSION = "1.0.0"
 OPENSPEC_VERSION = "1.4.1"
 
 
@@ -84,6 +86,7 @@ class ValidationResult:
                 "config_schema_version": CONFIG_SCHEMA_VERSION,
                 "topology": TOPOLOGY,
                 "process_package": {"id": PACKAGE_ID, "version": PACKAGE_VERSION},
+                "policy_set": {"id": POLICY_SET_ID, "version": POLICY_SET_VERSION},
                 "openspec": {
                     "required": OPENSPEC_VERSION,
                     "runtime": self.runtime_version,
@@ -209,6 +212,8 @@ def config_compatibility(data: Any) -> list[Diagnostic]:
         ("process_package/id", _nested(data, "process_package", "id"), PACKAGE_ID, "compat.package-id"),
         ("process_package/version", _nested(data, "process_package", "version"), PACKAGE_VERSION, "compat.package-version"),
         ("openspec/cli_version", _nested(data, "openspec", "cli_version"), OPENSPEC_VERSION, "compat.openspec-pin"),
+        ("policy_set/id", _nested(data, "policy_set", "id"), POLICY_SET_ID, "compat.policy-set-id"),
+        ("policy_set/version", _nested(data, "policy_set", "version"), POLICY_SET_VERSION, "compat.policy-set-version"),
     )
     return [
         Diagnostic(
@@ -233,6 +238,8 @@ def adapter_compatibility(data: Any) -> list[Diagnostic]:
         ("config_schema_version", data.get("config_schema_version"), CONFIG_SCHEMA_VERSION, "compat.adapter-config-schema"),
         ("process_package/id", _nested(data, "process_package", "id"), PACKAGE_ID, "compat.adapter-package-id"),
         ("process_package/version", _nested(data, "process_package", "version"), PACKAGE_VERSION, "compat.adapter-package-version"),
+        ("policy_set/id", _nested(data, "policy_set", "id"), POLICY_SET_ID, "compat.adapter-policy-set-id"),
+        ("policy_set/version", _nested(data, "policy_set", "version"), POLICY_SET_VERSION, "compat.adapter-policy-set-version"),
     )
     return [
         Diagnostic(
@@ -260,6 +267,8 @@ def package_compatibility(
         ("compat.package-openspec-pin", _nested(package, "openspec", "cli_version"), OPENSPEC_VERSION, "process-package", "/openspec/cli_version"),
         ("compat.config-openspec-pin", _nested(config, "openspec", "cli_version"), _nested(package, "openspec", "cli_version"), "central-config", "/openspec/cli_version"),
         ("compat.workflow-topology", _nested(workflow, "workflow", "topology"), TOPOLOGY, "process-workflow", "/workflow/topology"),
+        ("compat.config-policy-set-id", _nested(config, "policy_set", "id"), POLICY_SET_ID, "central-config", "/policy_set/id"),
+        ("compat.config-policy-set-version", _nested(config, "policy_set", "version"), POLICY_SET_VERSION, "central-config", "/policy_set/version"),
     )
     diagnostics = [
         Diagnostic(
@@ -285,6 +294,18 @@ def package_compatibility(
                         7,
                         source="project-adapter",
                         pointer=f"/process_package/{key}",
+                    )
+                )
+        for key in ("id", "version"):
+            if _nested(adapter, "policy_set", key) != _nested(config, "policy_set", key):
+                diagnostics.append(
+                    Diagnostic(
+                        f"compat.adapter-policy-set-{key}",
+                        "compatibility",
+                        "Adapter and central config consume different policy sets.",
+                        7,
+                        source="project-adapter",
+                        pointer=f"/policy_set/{key}",
                     )
                 )
     return diagnostics

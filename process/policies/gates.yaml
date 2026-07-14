@@ -1,0 +1,16 @@
+schema_version: "1.0"
+policy_id: gates
+version: 1.0.0
+kind: gates
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md
+rules:
+  - id: gates.human-approval-required
+    override_mode: locked
+    value: true
+  - id: gates.security-compliance-minimum
+    override_mode: locked
+    value: true
+  - id: gates.additional-review-gates
+    override_mode: additive
+    value: []

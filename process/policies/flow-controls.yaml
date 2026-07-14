@@ -1,0 +1,16 @@
+schema_version: "1.0"
+policy_id: flow-controls
+version: 1.0.0
+kind: flow-controls
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
+rules:
+  - id: flow.production-stop-triggers
+    override_mode: locked
+    value: [authority-exceeded, access-failure, evidence-corruption, rollback-unavailable]
+  - id: flow.rollback-or-hold-required
+    override_mode: locked
+    value: true
+  - id: flow.additional-stop-triggers
+    override_mode: additive
+    value: []

@@ -1,0 +1,13 @@
+schema_version: "1.0"
+policy_id: pilot-safety
+version: 1.0.0
+kind: pilot-safety
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
+rules:
+  - id: pilot.ai-authority-boundary
+    override_mode: locked
+    value: advisory-only
+  - id: pilot.minimum-risk-controls
+    override_mode: additive
+    value: [privacy, secrets, access, rollback]

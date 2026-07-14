@@ -16,7 +16,7 @@
         "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
       }
     },
-    "config_schema_version": {"const": "1.0"},
+    "config_schema_version": {"const": "1.1"},
     "openspec": {
       "type": "object",
       "additionalProperties": false,

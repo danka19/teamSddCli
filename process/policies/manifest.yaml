@@ -1,0 +1,62 @@
+schema_version: "1.0"
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+required_corporate_values:
+  - id: tech_lead_owner
+    type: string
+  - id: qa_owner
+    type: string
+  - id: escalation_route
+    type: string
+  - id: evidence_retention_days
+    type: integer
+policies:
+  - id: classification
+    version: 1.0.0
+    kind: classification
+    path: policies/classification.yaml
+    schema: schemas/policy-document.schema.json
+    requires: []
+  - id: artifact-matrix
+    version: 1.0.0
+    kind: artifact-matrix
+    path: policies/artifact-matrix.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [classification]
+  - id: gates
+    version: 1.0.0
+    kind: gates
+    path: policies/gates.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [classification, artifact-matrix]
+  - id: regression
+    version: 1.0.0
+    kind: regression
+    path: policies/regression.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [classification]
+  - id: flow-controls
+    version: 1.0.0
+    kind: flow-controls
+    path: policies/flow-controls.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [gates]
+  - id: release
+    version: 1.0.0
+    kind: release
+    path: policies/release.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [gates, regression]
+  - id: pilot-safety
+    version: 1.0.0
+    kind: pilot-safety
+    path: policies/pilot-safety.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [flow-controls, release]
+  - id: failed-runs
+    version: 1.0.0
+    kind: failed-runs
+    path: policies/failed-runs.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [flow-controls]

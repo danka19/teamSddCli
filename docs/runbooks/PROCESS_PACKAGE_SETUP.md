@@ -1,11 +1,12 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work item 2.1 package setup plus active work item 2.2 configuration compatibility procedure. Independent review and coordinator reconciliation are still required before 2.2 closes.
+Status: work items 2.1-2.2 are closed. Work item 2.3 adds the static schema-v2 and policy/config foundation; independent review and coordinator reconciliation are still required before 2.3 closes.
 
 ## Contract Sources
 
 - Accepted topology and configuration behavior: `openspec/specs/repo-topology-config/spec.md`.
 - Proposed transfer-package boundary: `openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md`.
+- Proposed class/policy boundary: `openspec/changes/adopt-nis-corporate-process-governance/` tasks 1.1-1.4 and its capability deltas.
 - Documentation and scenario-first verification rules: `openspec/specs/documentation-governance/spec.md`.
 
 This runbook does not restate those normative requirements.
@@ -13,13 +14,16 @@ This runbook does not restate those normative requirements.
 ## Initial Identifiers
 
 - Process package ID: `sdd-process`.
-- Process package version: `0.1.0`.
-- Configuration/schema contract version: `1.0`.
+- Process package version: `0.2.0`.
+- Configuration and project-adapter schema contract version: `1.1`.
+- Change metadata schema version: integer `2`.
+- Policy document schema version: `1.0`.
+- Policy-set ID/version: `sdd-core` / `1.0.0`.
 - JSON Schema draft: Draft 2020-12.
 - OpenSpec CLI pin: `1.4.1`.
 - Supported first topology: `central-team-specs`.
 
-These identifiers are deliberately small and reversible. Later compatibility or release behavior must change them through the active OpenSpec workflow instead of editing copied package rules.
+These identifiers move atomically. A mixed `0.1.0`/`0.2.0` package, `1.0`/`1.1` config, adapter, or policy-set pin is incompatible rather than silently upgraded.
 
 ## Reference Layout
 
@@ -30,6 +34,10 @@ The initial workflow contract intentionally contains an empty `artifact_dependen
 Repository pointers use one shared local schema and may be synthetic `sibling:<id>`, configured `registry:<id>`, or portable relative `path:<relative>` references. The reusable schema validates scheme and path safety, not business semantics: legitimate IDs may contain words such as `product`, `prod`, `private`, or `internal`. Portable paths use forward-slash-separated segments and reject URLs, absolute roots/drives, backslashes, traversal or dot segments, trailing-dot/space segments, and Windows reserved device segments. Work item 2.2 implements the corresponding bounded discovery and precedence behavior.
 
 The production validator now resolves those forms without environment, home-directory, network, or name guessing. `sibling:<id>` resolves beside the repository declaring the reference; `path:<relative>` stays inside that declaring repository after canonicalization; `registry:<id>` requires an explicit repeatable `--registry ID=PATH` argument. A central package location may also use one of these explicit schemes; the existing schema-compatible plain relative package location is resolved from the central repository and remains bounded to that declared location.
+
+The package also pins one local `process/policies/manifest.yaml`. The validator loads the eight policy documents named there, checks local paths and schema/version agreement, unique IDs, references, acyclic requirements, required corporate values, and bounded overrides. `locked` values cannot be replaced, `additive` values cannot lose bundled minimums, and `stricter_only` values must be safely comparable and no weaker. Diagnostics retain the logical source and JSON pointer. Project adapters may provide only bounded overrides and cannot select alternate policy paths. The immutable resolved snapshot is validation input for later work items; work item 2.3 does not classify changes or evaluate gates.
+
+The schema-v2 contract records `minor | major | hotfix` separately from work type and lifecycle status, retains source-linked `true | false | unknown` evidence and human decision ownership, and rejects legacy `mode` in v2 documents. Legacy `thin/full` is allowed only inside bounded compatibility metadata for later migration. The existing `templates/change/` and its validator remain the accepted Phase 1 legacy baseline until the dedicated migration/classification work item replaces them; this work item does not infer or apply migration.
 
 All committed templates use `sample-*` identities and synthetic relative references. The separate committed-asset scanner and its negative fixtures reject secret/private and production-looking values without making those substrings illegal in real configured IDs. Replace template values only in an authorized environment-specific configuration; never place credentials, private specifications, real owner identities, production URLs, or secret values in the reusable package or templates.
 
@@ -58,7 +66,7 @@ python scripts/validate_process_config.py C:/work/sample-app --json
 python scripts/validate_process_config.py C:/work/sample-app --registry central=C:/work/team-specs --json
 ```
 
-The validator discovers `sdd.config.yaml` for central mode or `.sdd-project.yaml` for adapter mode, then performs bounded UTF-8/duplicate-key-safe YAML loading, high-confidence inline-secret rejection, bundled JSON Schema checks, package/workflow/schema checks, exact config/package/adapter/`VERSION`/OpenSpec compatibility, registry and owner/project/adapter integrity, and only then `openspec --version`. Package schema traversal applies nested `$id` effective-base semantics before `$ref` and `$dynamicRef`: relative local bases may resolve only to files inside the package schema directory, while remote/network-backed effective targets are rejected. It never writes configuration or canonical artifacts.
+The validator discovers `sdd.config.yaml` for central mode or `.sdd-project.yaml` for adapter mode, then performs bounded UTF-8/duplicate-key-safe YAML loading, high-confidence inline-secret rejection, bundled JSON Schema checks, package/workflow/schema/policy checks, exact config/package/adapter/policy-set/`VERSION`/OpenSpec compatibility, registry and owner/project/adapter integrity, and only then `openspec --version`. Package schema traversal applies nested `$id` effective-base semantics before `$ref` and `$dynamicRef`: relative local bases may resolve only to files inside the package schema directory, while remote/network-backed effective targets are rejected. It never writes configuration or canonical artifacts.
 
 Human mode writes stable error codes and remediation to stderr. `--json` writes exactly one JSON object to stdout with `schema_version`, `status`, `mode`, `diagnostics`, and `compatibility`. Diagnostics use safe logical source labels and JSON pointers; they do not echo secret values or unrestricted absolute paths.
 
@@ -68,6 +76,12 @@ Focused work item 2.2 verification:
 
 ```text
 python -m pytest tests/test_validate_process_config.py -q
+```
+
+Focused work item 2.3 verification:
+
+```text
+python -m pytest tests/test_policy_schema_v2.py -q
 ```
 
 Before integrating the work item, also run the complete command set recorded in `docs/phases/PHASE_2_EVIDENCE_INDEX.md`.

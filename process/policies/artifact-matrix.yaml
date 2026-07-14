@@ -1,0 +1,16 @@
+schema_version: "1.0"
+policy_id: artifact-matrix
+version: 1.0.0
+kind: artifact-matrix
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/change-artifact-contracts/spec.md
+rules:
+  - id: artifacts.minimum-scenario-evidence
+    override_mode: locked
+    value: true
+  - id: artifacts.minimum-verification-evidence
+    override_mode: locked
+    value: true
+  - id: artifacts.additional-required-artifacts
+    override_mode: additive
+    value: []

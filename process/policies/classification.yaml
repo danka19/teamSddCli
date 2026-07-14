@@ -1,0 +1,19 @@
+schema_version: "1.0"
+policy_id: classification
+version: 1.0.0
+kind: classification
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
+rules:
+  - id: classification.allowed-classes
+    override_mode: locked
+    value: [minor, major, hotfix]
+  - id: classification.no-downgrade
+    override_mode: locked
+    value: true
+  - id: classification.no-automatic-hotfix-migration
+    override_mode: locked
+    value: true
+  - id: classification.additional-major-triggers
+    override_mode: additive
+    value: []

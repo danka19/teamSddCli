@@ -1,0 +1,17 @@
+schema_version: "1.0"
+policy_id: failed-runs
+version: 1.0.0
+kind: failed-runs
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md
+rules:
+  - id: failed-runs.retention-enabled
+    override_mode: locked
+    value: true
+  - id: failed-runs.minimum-retention-days
+    override_mode: stricter_only
+    strictness: minimum
+    value: 1
+  - id: failed-runs.source-linked
+    override_mode: locked
+    value: true

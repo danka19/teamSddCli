@@ -1,0 +1,14 @@
+schema_version: "1.0"
+policy_id: regression
+version: 1.0.0
+kind: regression
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md
+rules:
+  - id: regression.source-linked-evidence
+    override_mode: locked
+    value: true
+  - id: regression.minimum-scenarios
+    override_mode: stricter_only
+    strictness: minimum
+    value: 1

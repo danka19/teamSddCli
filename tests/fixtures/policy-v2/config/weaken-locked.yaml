@@ -1,0 +1,6 @@
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+  corporate_values: {tech_lead_owner: sample, qa_owner: sample, escalation_route: sample, evidence_retention_days: 30}
+  overrides:
+    - {rule_id: classification.no-downgrade, operation: set, value: false}

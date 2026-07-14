@@ -1,0 +1,16 @@
+schema_version: "1.0"
+policy_id: release
+version: 1.0.0
+kind: release
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md
+rules:
+  - id: release.distinct-states
+    override_mode: locked
+    value: [ready_to_archive, release_ready, delivered]
+  - id: release.final-archive-human-approval
+    override_mode: locked
+    value: true
+  - id: release.hotfix-reconciliation
+    override_mode: locked
+    value: true

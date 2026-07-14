@@ -1,11 +1,20 @@
-config_schema_version: "1.0"
+config_schema_version: "1.1"
 topology: central-team-specs
 process_package:
   id: sdd-process
-  version: 0.1.0
+  version: 0.2.0
   location: ../../process
 openspec:
   cli_version: 1.4.1
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+  corporate_values:
+    tech_lead_owner: sample-tech-leads
+    qa_owner: sample-qa-owners
+    escalation_route: sample-tech-leads
+    evidence_retention_days: 30
+  overrides: []
 canonical_paths:
   changes: openspec/changes
   specs: openspec/specs

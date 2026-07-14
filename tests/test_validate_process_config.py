@@ -48,14 +48,25 @@ def build_central_layout(root: Path) -> Path:
     write_yaml(
         root / "sdd.config.yaml",
         {
-            "config_schema_version": "1.0",
+            "config_schema_version": "1.1",
             "topology": "central-team-specs",
             "process_package": {
                 "id": "sdd-process",
-                "version": "0.1.0",
+                "version": "0.2.0",
                 "location": "process",
             },
             "openspec": {"cli_version": "1.4.1"},
+            "policy_set": {
+                "id": "sdd-core",
+                "version": "1.0.0",
+                "corporate_values": {
+                    "tech_lead_owner": "production-platform-team",
+                    "qa_owner": "production-platform-team",
+                    "escalation_route": "production-platform-team",
+                    "evidence_retention_days": 30,
+                },
+                "overrides": [],
+            },
             "canonical_paths": {
                 "changes": "openspec/changes",
                 "specs": "openspec/specs",
@@ -136,11 +147,12 @@ def build_adapter_layout(base: Path, reference_kind: str) -> tuple[Path, list[st
     write_yaml(
         project / ".sdd-project.yaml",
         {
-            "schema_version": "1.0",
-            "config_schema_version": "1.0",
+            "schema_version": "1.1",
+            "config_schema_version": "1.1",
             "project_id": "sample-app",
             "team_specs": {"reference": reference, "config_path": "sdd.config.yaml"},
-            "process_package": {"id": "sdd-process", "version": "0.1.0"},
+            "process_package": {"id": "sdd-process", "version": "0.2.0"},
+            "policy_set": {"id": "sdd-core", "version": "1.0.0", "overrides": []},
             "local_paths": {"code": "src", "tests": "tests"},
         },
     )
@@ -183,9 +195,10 @@ def test_valid_central_mode_reports_exact_compatibility_json(tmp_path: Path) -> 
     assert payload["mode"] == "central"
     assert payload["diagnostics"] == []
     assert payload["compatibility"] == {
-        "config_schema_version": "1.0",
+        "config_schema_version": "1.1",
         "topology": "central-team-specs",
-        "process_package": {"id": "sdd-process", "version": "0.1.0"},
+        "process_package": {"id": "sdd-process", "version": "0.2.0"},
+        "policy_set": {"id": "sdd-core", "version": "1.0.0"},
         "openspec": {"required": "1.4.1", "runtime": "1.4.1"},
     }
 
@@ -372,6 +385,59 @@ def test_adapter_package_version_mismatch_is_explicit(tmp_path: Path) -> None:
 
     assert code == 1
     assert "compat.adapter-package-version" in diagnostic_codes(stdout)
+
+
+def test_policy_weakening_has_human_json_parity_and_provenance(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+    config = read_yaml(root / "sdd.config.yaml")
+    config["policy_set"]["overrides"] = [
+        {
+            "rule_id": "classification.no-downgrade",
+            "operation": "set",
+            "value": False,
+        }
+    ]
+    write_yaml(root / "sdd.config.yaml", config)
+
+    json_code, json_stdout, json_stderr = run_cli(
+        [str(root), "--json"], lambda: "1.4.1"
+    )
+    human_code, human_stdout, human_stderr = run_cli(
+        [str(root)], lambda: "1.4.1"
+    )
+
+    assert json_code == human_code == 1
+    assert json_stderr == human_stdout == ""
+    assert diagnostic_codes(json_stdout) == ["policy.override-locked"]
+    diagnostic = json.loads(json_stdout)["diagnostics"][0]
+    assert diagnostic["source"] == "central-config"
+    assert diagnostic["pointer"] == "/policy_set/overrides/0"
+    assert "[policy.override-locked]" in human_stderr
+
+
+def test_missing_corporate_policy_value_is_not_guessed(tmp_path: Path) -> None:
+    root = build_central_layout(tmp_path / "central")
+    config = read_yaml(root / "sdd.config.yaml")
+    del config["policy_set"]["corporate_values"]["qa_owner"]
+    write_yaml(root / "sdd.config.yaml", config)
+
+    code, stdout, _ = run_cli([str(root), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["policy.corporate-value-missing"]
+    assert json.loads(stdout)["diagnostics"][0]["pointer"].endswith("/qa_owner")
+
+
+def test_adapter_cannot_supply_arbitrary_policy_paths(tmp_path: Path) -> None:
+    project, _ = build_adapter_layout(tmp_path, "sibling")
+    adapter = read_yaml(project / ".sdd-project.yaml")
+    adapter["policy_paths"] = ["sample/policy.yaml"]
+    write_yaml(project / ".sdd-project.yaml", adapter)
+
+    code, stdout, _ = run_cli([str(project), "--json"], lambda: "1.4.1")
+
+    assert code == 1
+    assert diagnostic_codes(stdout) == ["policy.adapter-path-forbidden"]
 
 
 def _set_yaml(path: Path, keys: tuple[str, ...], value: object) -> None:

@@ -124,3 +124,43 @@ Status: closed after independent task review, architecture review, fresh verific
 - Fresh verification at `6ff425f` passed 39 focused tests, 88 full tests, an 18-case selected negative matrix, compilation, legacy template validation, valid central and all three adapter modes, human/JSON usage and redaction contracts, OpenSpec inventory/spec listing, strict OpenSpec 10/10, range/commit whitespace checks, and Git inventory. Only the pre-existing untracked `.claude/` and `.vite/` directories remained; no `.superpowers` file was tracked.
 - Final reviewed implementation range: `597d78c..6ff425f`, restricted to nine work-item files. Unrelated presentation commits `affd105` and `597d78c` were preserved and excluded from work-item review by using commit-scoped packages.
 - Residual limitation: this work-item verification ran on Windows. Equivalent clean-host Windows/Linux/macOS release certification remains owned by work item 2.12.
+
+## Work Item 2.3: Policy Schema V2 And Class Foundation
+
+Status: implementation evidence recorded; independent worker review, architecture review, fresh verification, and coordinator reconciliation remain pending.
+
+### Sources And Implementation Evidence
+
+- Proposed behavior and owned tasks: `openspec/changes/adopt-nis-corporate-process-governance/` tasks 1.1-1.4 and its affected capability deltas.
+- Architecture boundary: ignored worker brief `.superpowers/sdd/task-2.3-architecture.md`; no human decision was blocking.
+- Static schemas: `process/schemas/change-v2.schema.json`, `process/schemas/policy-manifest.schema.json`, and `process/schemas/policy-document.schema.json`.
+- Manifest-driven policy set: `process/policies/manifest.yaml` plus eight versioned policy documents.
+- Pure static policy resolver: `process/validators/policy_validation.py`; discovery integration remains in `process/validators/config_discovery.py`.
+- Synthetic fixture families and focused scenarios: `tests/fixtures/policy-v2/` and `tests/test_policy_schema_v2.py`.
+
+### Scenario And Verification Mapping
+
+| Scenario family | Evidence |
+|---|---|
+| Explicit schema v2, canonical classes, separate type/class/status, tri-state source evidence, human ownership, and no legacy `mode` | `test_change_v2_accepts_all_classes_and_preserves_decision_facts`; `test_change_v2_rejects_unknown_class_and_legacy_mode` |
+| Unknown, under-classification, major-impact hotfix, and pseudo-hotfix facts remain available without a classifier verdict | `test_negative_change_fixtures_retain_facts_without_computing_a_verdict` |
+| One local manifest pins eight policy kinds and exact document identity/schema/version | `test_manifest_pins_one_versioned_local_policy_set` |
+| Effective policy values are immutable and retain source, policy ID/version, and pointer provenance | `test_policy_bundle_builds_immutable_provenance_snapshot` |
+| Missing corporate values and locked/additive/stricter-only weakening fail with stable provenance diagnostics | `test_policy_bundle_rejects_missing_values_and_weakening_with_provenance`; `test_policy_weakening_has_human_json_parity_and_provenance`; `test_missing_corporate_policy_value_is_not_guessed` |
+| Adapter policy path injection is forbidden | `test_adapter_override_is_bounded_and_cannot_supply_policy_paths`; `test_adapter_cannot_supply_arbitrary_policy_paths` |
+| Version mismatch, duplicate IDs, missing refs, and cycles fail | `test_policy_integrity_rejects_versions_duplicates_missing_refs_and_cycles` |
+| Existing config discovery, local-schema safety, redaction, human/JSON, and CWD contracts remain intact | `tests/test_validate_process_config.py`; `tests/test_process_package.py` |
+
+### TDD And Current Verification Record
+
+- RED: `python -m pytest tests/test_policy_schema_v2.py -q` -> collection error `ModuleNotFoundError: process.validators.policy_validation` before production policy code existed.
+- Focused GREEN: the same command -> 8 passed; the final focused set reached 9 passed after the bounded central-then-adapter provenance check.
+- Atomic package/config integration regression: `python -m pytest tests/test_process_package.py tests/test_validate_process_config.py -q` -> first 25 failed and 29 passed on expected old `0.1.0`/`1.0` fixture and assertion pins; after atomic test/fixture alignment -> 54 passed.
+- Combined static-policy/config/package verification after CLI provenance additions: `python -m pytest tests/test_policy_schema_v2.py tests/test_validate_process_config.py tests/test_process_package.py -q` -> 66 passed.
+- Final serial full suite: `python -m pytest -q` -> 100 passed.
+- Python compilation: `python -m compileall -q process/validators scripts/validate_process_config.py` -> exit 0.
+- Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`; migration remains later scope.
+- Roadmap/OpenSpec governance JSON validator -> 5 phases, 8 specs, 2 active changes, 0 errors, 0 warnings.
+- OpenSpec inventory -> transfer package 3/33, NIS governance 0/43; accepted specs 8. Strict validation -> 10 passed, 0 failed.
+- `git diff --check` -> exit 0 with only non-blocking Windows line-ending warnings.
+- This evidence does not claim classification calculation, migration, gate evaluation, artifact enforcement, workflow mutation, release/pilot approval, or failed-run persistence; those remain assigned to later work items.

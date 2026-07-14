@@ -1,0 +1,9 @@
+config_schema_version: "1.1"
+policy_set:
+  id: sdd-core
+  version: 1.0.0
+  corporate_values:
+    tech_lead_owner: sample-tech-leads
+    qa_owner: sample-qa-owners
+    escalation_route: sample-escalation
+  overrides: []
