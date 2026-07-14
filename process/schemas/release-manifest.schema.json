@@ -47,17 +47,31 @@
           "minItems": 3,
           "maxItems": 3,
           "uniqueItems": true,
-          "items": {"enum": ["windows", "linux", "macos"]},
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["os", "version_constraint", "architectures"],
+            "properties": {
+              "os": {"enum": ["windows", "linux", "macos"]},
+              "version_constraint": {"type": "string", "minLength": 1},
+              "architectures": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"}
+              }
+            }
+          },
           "allOf": [
-            {"contains": {"const": "windows"}},
-            {"contains": {"const": "linux"}},
-            {"contains": {"const": "macos"}}
+            {"contains": {"type": "object", "properties": {"os": {"const": "windows"}}, "required": ["os"]}},
+            {"contains": {"type": "object", "properties": {"os": {"const": "linux"}}, "required": ["os"]}},
+            {"contains": {"type": "object", "properties": {"os": {"const": "macos"}}, "required": ["os"]}}
           ]
         },
         "dependencies": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["python", "node", "git", "mcp", "shells"],
+          "required": ["python", "node", "git", "mcp", "shells", "packages"],
           "properties": {
             "python": {"type": "string", "minLength": 1},
             "node": {"type": "string", "minLength": 1},
@@ -68,6 +82,20 @@
               "minItems": 1,
               "uniqueItems": true,
               "items": {"type": "string", "minLength": 1}
+            },
+            "packages": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "version"],
+                "properties": {
+                  "name": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+                  "version": {"type": "string", "minLength": 1}
+                }
+              }
             }
           }
         },

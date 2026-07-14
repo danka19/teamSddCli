@@ -1,4 +1,5 @@
 references:
   - sibling:sample-app
+  - sibling:product-catalog
   - registry:sample-app
   - path:repositories/sample-app

@@ -18,9 +18,21 @@ included_assets:
     sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 compatibility:
   supported_hosts:
-    - windows
-    - linux
-    - macos
+    - os: windows
+      version_constraint: "10+"
+      architectures:
+        - x86_64
+        - arm64
+    - os: linux
+      version_constraint: maintained
+      architectures:
+        - x86_64
+        - arm64
+    - os: macos
+      version_constraint: "13+"
+      architectures:
+        - x86_64
+        - arm64
   dependencies:
     python: "3.11+"
     node: "20+"
@@ -30,6 +42,11 @@ compatibility:
       - powershell-7+
       - bash-5+
       - zsh-5+
+    packages:
+      - name: PyYAML
+        version: 6.0.3
+      - name: jsonschema
+        version: 4.26.0
   assumptions:
     - Synthetic compatibility metadata only; clean-host certification belongs to a later work item.
 verification:

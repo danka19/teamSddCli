@@ -1,9 +1,18 @@
 references:
   - https://example.invalid/team-specs.git
   - path:C:\sample\team-specs
+  - path:C:/sample/team-specs
   - path:/sample/team-specs
-  - path:configs/private/team-specs
-  - path:configs/production/team-specs
-  - path:configs/secret/team-specs
-  - sibling:production-app
-  - registry:private-team-specs
+  - path:configs\team-specs
+  - path:configs/../team-specs
+  - path:configs/./team-specs
+  - path:configs/team-specs.
+  - "path:configs/team-specs "
+  - path:configs/CON/team-specs
+  - path:configs/prn/team-specs
+  - path:configs/Aux.txt/team-specs
+  - path:configs/NUL/team-specs
+  - path:configs/com1.log/team-specs
+  - path:configs/COM9/team-specs
+  - path:configs/lpt1.log/team-specs
+  - path:configs/Lpt9/team-specs

@@ -28,8 +28,8 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 | Workflow contract remains class/gate/flow-neutral while retaining the future artifact-dependency shape | `test_workflow_contract_does_not_freeze_later_flow_or_classes` |
 | Package, schema, config, and canonical-source references resolve locally | `test_package_schemas_are_valid_and_use_only_local_references`; `test_fragment_only_reference_resolves_within_current_schema`; `test_synthetic_central_topology_is_coherent` |
 | Synthetic central topology and optional adapter validate | `test_synthetic_central_topology_is_coherent` |
-| Sibling, registry, and safe relative path repository references share one local schema; unsafe forms fail | `test_repository_reference_shape_is_shared_and_accepts_supported_forms`; `test_unsafe_repository_reference_fixtures_fail_at_reference_field` |
-| Release manifest represents mandatory transfer-evidence sections and rejects incomplete base contracts | `test_release_manifest_base_contract_covers_accepted_transfer_evidence`; `test_incomplete_release_manifest_fails_for_new_mandatory_sections` |
+| Sibling, registry, and canonical portable relative-path references share one semantic-neutral local schema; URL/absolute/traversal/non-portable forms fail while clean committed templates remain free of sensitive values | `test_repository_reference_shape_is_shared_and_accepts_supported_forms`; `test_unsafe_repository_reference_fixtures_fail_at_reference_field`; `test_clean_templates_and_positive_fixtures_have_no_sensitive_values` |
+| Release manifest represents mandatory transfer-evidence sections, typed OS/version/architecture support, and exact pinned package dependencies; incomplete base contracts fail | `test_release_manifest_base_contract_covers_accepted_transfer_evidence`; `test_incomplete_release_manifest_fails_for_new_mandatory_sections` |
 | Missing package/config version and invalid schema fail | `test_invalid_schema_fixtures_fail_stably` |
 | Invalid owner-zone/project/adapter reference fails | `test_invalid_cross_file_reference_fails_stably` |
 | Clean assets exclude sensitive values | `test_clean_templates_and_positive_fixtures_have_no_sensitive_values` |
@@ -44,8 +44,10 @@ Status: in_progress. Work item 2.1 worker evidence is recorded; independent revi
 - Earlier review-fix checkpoint: focused suite -> 10 passed; complete suite -> 44 passed.
 - Architecture-gate RED: `python -m pytest tests/test_process_package.py -q` -> 5 failed and 10 passed because the workflow froze later stages, repository references lacked the shared accepted shape, and the base release manifest omitted mandatory transfer-evidence sections.
 - Architecture-gate GREEN: the same focused command -> 15 passed after the scoped schema/fixture/workflow fixes.
-- Current final focused test: `python -m pytest tests/test_process_package.py -q` -> 15 passed in 0.25s.
-- Current complete test suite: `python -m pytest -q` -> 49 passed in 0.83s.
+- Architecture follow-up RED: the same focused command -> 4 failed and 11 passed because semantic ID substrings were rejected, backslash paths were accepted, hosts were untyped strings, and host architecture/package dependencies were not required.
+- Architecture follow-up GREEN: the same focused command -> 15 passed after the semantic-neutral portable-reference and typed compatibility fixes.
+- Current final focused test: `python -m pytest tests/test_process_package.py -q` -> 15 passed in 0.35s.
+- Current complete test suite: `python -m pytest -q` -> 49 passed in 0.89s.
 - Legacy template compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - OpenSpec inventory: `openspec list` -> both active changes remain 0 tasks complete; `openspec list --specs` -> 8 accepted specs.
 - Strict OpenSpec validation: `openspec validate --all --strict` -> 10 passed, 0 failed.

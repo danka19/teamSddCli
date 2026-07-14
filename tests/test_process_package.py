@@ -183,6 +183,13 @@ def test_repository_reference_shape_is_shared_and_accepts_supported_forms() -> N
     )
 
     references = load_yaml(FIXTURES / "valid" / "repository-references.yaml")["references"]
+    references.extend(
+        [
+            "registry:prod-services",
+            "sibling:private-tools",
+            "path:departments/internal-tools",
+        ]
+    )
     projects = load_yaml(TEAM_SPECS / "projects.yaml")
     adapter = load_yaml(PROJECT_ADAPTER)
     for reference in references:
@@ -193,6 +200,9 @@ def test_repository_reference_shape_is_shared_and_accepts_supported_forms() -> N
         candidate_adapter = copy.deepcopy(adapter)
         candidate_adapter["team_specs"]["reference"] = reference
         assert schema_errors("adapter", candidate_adapter) == []
+
+    assert scan_categories(TEAM_SPECS / "projects.yaml") == set()
+    assert scan_categories(PROJECT_ADAPTER) == set()
 
 
 def test_unsafe_repository_reference_fixtures_fail_at_reference_field() -> None:
@@ -232,10 +242,27 @@ def test_release_manifest_base_contract_covers_accepted_transfer_evidence() -> N
         "known_limitations",
         "rollback_reference",
     } <= set(release)
-    assert {"windows", "linux", "macos"} == set(release["compatibility"]["supported_hosts"])
+    hosts = release["compatibility"]["supported_hosts"]
+    assert all(isinstance(host, dict) for host in hosts)
+    assert {"windows", "linux", "macos"} == {host["os"] for host in hosts}
+    for host in hosts:
+        assert host["version_constraint"]
+        assert host["architectures"]
     assert {"python", "node", "git", "mcp", "shells"} == set(
         release["compatibility"]["dependencies"]
+    ) - {"packages"}
+    package_versions = {
+        package["name"]: package["version"]
+        for package in release["compatibility"]["dependencies"]["packages"]
+    }
+    pinned_lines = (REPO_ROOT / "requirements-test.txt").read_text(
+        encoding="utf-8"
+    ).splitlines()
+    pinned_packages = dict(
+        line.split("==", 1)
+        for line in pinned_lines if line
     )
+    assert package_versions == pinned_packages
     for asset in release["included_assets"]:
         assert {"path", "version", "sha256"} <= set(asset)
         assert re.fullmatch(r"[0-9a-f]{64}", asset["sha256"])
@@ -261,6 +288,19 @@ def test_incomplete_release_manifest_fails_for_new_mandatory_sections() -> None:
             and f"'{field}' is a required property" == error.message
             for error in errors
         ), f"release manifest did not require {field}: {errors}"
+
+    assert any(
+        error.validator == "required"
+        and list(error.absolute_path) == ["compatibility", "supported_hosts", 0]
+        and "'architectures' is a required property" == error.message
+        for error in errors
+    ), f"release manifest did not require host architectures: {errors}"
+    assert any(
+        error.validator == "required"
+        and list(error.absolute_path) == ["compatibility", "dependencies"]
+        and "'packages' is a required property" == error.message
+        for error in errors
+    ), f"release manifest did not require package dependencies: {errors}"
 
 
 def test_synthetic_central_topology_is_coherent() -> None:
