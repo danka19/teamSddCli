@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work item 2.1 closed the versioned process-package/schema/template foundation, work item 2.2 closed deterministic central/project configuration discovery and compatibility validation, and work item 2.3 is ready to implement the NIS-aligned policy/schema foundation. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, migration from legacy thin/full, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work item 2.1 closed the versioned process-package/schema/template foundation, work item 2.2 closed deterministic central/project configuration discovery and compatibility validation, and work item 2.3 is implementing the NIS-aligned policy/schema foundation. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. The release candidate must still implement and certify that target, migration from legacy thin/full, AI-disabled operation, bootstrap/update/rollback, and transfer runbooks before corporate configuration and pilot work begin.
 
 ## Scope
 

@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.2 are closed; work item 2.3 is ready.
+Status: in_progress. Work items 2.1-2.2 are closed; work item 2.3 is active.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
