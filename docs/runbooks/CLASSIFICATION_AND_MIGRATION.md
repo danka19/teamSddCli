@@ -1,6 +1,6 @@
 # Classification And Legacy Migration
 
-Status: Phase 2 work item 2.4 implementation guide; independent review and coordinator closure remain separate gates.
+Status: Phase 2 work item 2.4 closed after independent task review, architecture review, fresh verification, and coordinator reconciliation.
 
 ## Authority And Scope
 

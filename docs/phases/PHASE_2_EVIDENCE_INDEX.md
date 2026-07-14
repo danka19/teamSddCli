@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.3 are closed; work item 2.4 is ready.
+Status: in_progress. Work items 2.1-2.4 are closed; work item 2.5 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -177,7 +177,7 @@ Status: closed after independent task review, architecture review, fresh verific
 
 ## Work Item 2.4: Classification And Legacy Migration
 
-Status: implementation worker complete; independent task review, architecture review, fresh verification, and coordinator reconciliation remain pending. NIS-governance tasks 2.1-2.6 are intentionally not checked here.
+Status: closed after implementation, independent task review, architecture review, fresh verification, and coordinator reconciliation. NIS-governance tasks 2.1-2.6 are complete.
 
 ### Sources And Implementation Evidence
 
@@ -225,5 +225,14 @@ Status: implementation worker complete; independent task review, architecture re
 - Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
 - Representative classifier human and JSON modes both selected `major`, returned `valid`, exposed two triggers, configured reviewers, artifacts, sources, versions, and human state.
 - Representative migration check returned `ready` with `thin -> minor`; digest-guarded apply returned `applied` with a backup; the second apply returned `already-current`.
-- Roadmap/OpenSpec governance JSON: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. OpenSpec inventory remains NIS 4/43 and transfer package 3/33; strict validation passed 10/10.
+- Roadmap/OpenSpec governance JSON: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. Before coordinator reconciliation the OpenSpec inventory remained NIS 4/43 and transfer package 3/33; strict validation passed 10/10.
 - `git diff --check` passed with only Git's non-blocking LF-to-CRLF notices on existing Windows working-tree files.
+
+### Independent Review, Architecture, And Verification
+
+- Implementation commits: `91ae70f` (classifier, migration, target surfaces), `413210c` (metadata-derived major facts, standard-major hotfix choice, full v2 migration validation, atomic replace), `aa6c779` (supported `change.yaml` target boundary and per-target plan binding), and `cc2e0ba` (fail-closed compiled classification policy snapshot). Unrelated commit `7c27d1a` is excluded from the work-item evidence range.
+- Independent task review reproduced and closed six defects: `new_feature` under-classification, arbitrary/invalid YAML migration, standard-major rejection for hotfix-eligible work, non-atomic apply, unsupported metadata target acceptance, and cross-target plan-digest reuse. Final re-review: Approved with 25 focused tests.
+- Independent architecture review required the evaluator to consume and fail closed on the versioned classification policy snapshot instead of claiming a policy version while duplicating route, obligation, and reviewer truth in Python. Commit `cc2e0ba` closed the finding; final architecture recheck: Approved with 18 classifier and 14 policy-schema tests.
+- Independent verification on the reviewed head: PASS. Focused classification/migration 30 passed; policy/config/package/root regression 108 passed; representative classifier matrix 8 passed; migration safety matrix 7 passed; full serial suite 138 passed; compilation exit 0; Phase 1 root validator `OK`; governance 0 errors/0 warnings; OpenSpec strict 10/10; current target surfaces contained no `thin/full` authoring options and no work item 2.5 behavior.
+- Coordinator reconciliation marks NIS-governance tasks 2.1-2.6 complete, moving the inventory from 4/43 to 10/43 while the transfer-package change remains 3/33. Work item 2.4 is `closed`; work item 2.5 is `ready`.
+- Residual risk remains intentionally later scope: independent verification ran on Windows only; cross-platform equivalence is work item 2.12, and actual Qwen/DeepSeek plus AI-disabled certification remains later Phase 2 work.

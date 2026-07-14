@@ -7,12 +7,12 @@
 
 ## 2. Classification and legacy migration
 
-- [ ] 2.1 Implement the deterministic classifier with all-conditions minor eligibility, any-trigger major routing, harm-based hotfix eligibility, and complete triggered-rule output.
-- [ ] 2.2 Implement stable human-readable and JSON classification reports containing source inputs, unknowns, blockers, required artifacts/reviewers, policy version, and human-decision state.
-- [ ] 2.3 Implement human classification confirmation, audited source-evidence correction and recalculation, stricter-route selection, and negative tests proving waiver, Tech Lead, AI, or free text cannot lower a major-trigger change to minor.
-- [ ] 2.4 Implement non-mutating migration check mode for `mode: thin -> classification: minor` and `mode: full -> classification: major`, with no automatic hotfix mapping.
-- [ ] 2.5 Implement idempotent migration apply mode that preserves unrelated metadata, refuses conflicts/ambiguity, excludes archived history, and emits rollback/hold evidence.
-- [ ] 2.6 Replace target templates, diagnostics, examples, tests, read packs, and generated views so new user-facing behavior no longer offers `thin` or `full`; retain explicit historical/migration references only.
+- [x] 2.1 Implement the deterministic classifier with all-conditions minor eligibility, any-trigger major routing, harm-based hotfix eligibility, and complete triggered-rule output.
+- [x] 2.2 Implement stable human-readable and JSON classification reports containing source inputs, unknowns, blockers, required artifacts/reviewers, policy version, and human-decision state.
+- [x] 2.3 Implement human classification confirmation, audited source-evidence correction and recalculation, stricter-route selection, and negative tests proving waiver, Tech Lead, AI, or free text cannot lower a major-trigger change to minor.
+- [x] 2.4 Implement non-mutating migration check mode for `mode: thin -> classification: minor` and `mode: full -> classification: major`, with no automatic hotfix mapping.
+- [x] 2.5 Implement idempotent migration apply mode that preserves unrelated metadata, refuses conflicts/ambiguity, excludes archived history, and emits rollback/hold evidence.
+- [x] 2.6 Replace target templates, diagnostics, examples, tests, read packs, and generated views so new user-facing behavior no longer offers `thin` or `full`; retain explicit historical/migration references only.
 
 ## 3. Artifact matrices and business gates
 
