@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tech-lead-review-input.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "classification", "status", "evaluation_date", "policy_snapshot", "classification_report", "gate_reports", "requirements", "scenarios", "design_decisions", "affected", "dependencies", "risks", "scope", "architecture_disposition", "waivers", "deferrals", "control_records", "checkpoint"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "classification": {"enum": ["minor", "major", "hotfix"]},
+    "status": {"enum": ["draft", "spec_review", "approved", "in_implementation", "ready_to_archive", "archived"]},
+    "evaluation_date": {"type": "string", "format": "date"},
+    "policy_snapshot": {"$ref": "#/$defs/policySnapshot"},
+    "classification_report": {"type": "object", "additionalProperties": false, "required": ["source_ref", "policy_snapshot", "status", "triggered_major"], "properties": {"source_ref": {"type": "string", "minLength": 1}, "policy_snapshot": {"$ref": "#/$defs/policySnapshot"}, "status": {"type": "string", "minLength": 1}, "triggered_major": {"type": "boolean"}}},
+    "gate_reports": {"type": "object", "additionalProperties": false, "required": ["source_ref", "policy_snapshot", "definition_of_ready", "definition_of_done", "release_transfer_readiness"], "properties": {"source_ref": {"type": "string", "minLength": 1}, "policy_snapshot": {"$ref": "#/$defs/policySnapshot"}, "definition_of_ready": {"type": "string"}, "definition_of_done": {"type": "string"}, "release_transfer_readiness": {"type": "string"}}},
+    "requirements": {"$ref": "#/$defs/sourceRows"},
+    "scenarios": {"$ref": "#/$defs/sourceRows"},
+    "design_decisions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "state", "source_ref"], "properties": {"id": {"type": "string"}, "state": {"type": "string"}, "source_ref": {"type": "string"}}}},
+    "affected": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["repository", "path", "zone"], "properties": {"repository": {"type": "string"}, "path": {"type": "string"}, "zone": {"type": "string"}}}},
+    "dependencies": {"$ref": "#/$defs/ownedRows"},
+    "risks": {"$ref": "#/$defs/ownedRows"},
+    "scope": {"type": "object", "additionalProperties": false, "required": ["baseline", "current", "reassessment"], "properties": {"baseline": {"type": "array", "items": {"type": "string"}}, "current": {"type": "array", "items": {"type": "string"}}, "reassessment": {"type": "object", "additionalProperties": false, "required": ["state", "source_ref"], "properties": {"state": {"type": "string"}, "source_ref": {"type": "string"}}}}},
+    "architecture_disposition": {"type": "object", "additionalProperties": false, "required": ["state", "source_ref"], "properties": {"state": {"type": "string"}, "source_ref": {"type": "string"}}},
+    "waivers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "valid", "expires_on", "source_ref"], "properties": {"id": {"type": "string"}, "valid": {"type": "boolean"}, "expires_on": {"type": "string", "format": "date"}, "source_ref": {"type": "string"}}}},
+    "deferrals": {"type": "array", "items": {"type": "object"}},
+    "control_records": {"type": "array", "items": {"$ref": "tech-lead-control-record.schema.json"}},
+    "checkpoint": {"type": "object", "additionalProperties": false, "required": ["kind", "event", "source_ref"], "properties": {"kind": {"enum": ["scheduled", "event-driven"]}, "event": {"type": "string", "minLength": 1}, "source_ref": {"type": "string", "minLength": 1}}}
+  },
+  "$defs": {
+    "policySnapshot": {"type": "object", "additionalProperties": false, "required": ["id", "version", "digest"], "properties": {"id": {"type": "string"}, "version": {"type": "string"}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}},
+    "sourceRows": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "source_ref"], "properties": {"id": {"type": "string"}, "source_ref": {"type": "string"}}}},
+    "ownedRows": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "owner", "source_ref"], "properties": {"id": {"type": "string"}, "owner": {"type": "string"}, "source_ref": {"type": "string"}}}}
+  }
+}

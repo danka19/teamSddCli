@@ -1,0 +1,29 @@
+schema_version: "1.0"
+policy_id: tech-lead
+version: 1.0.0
+kind: tech-lead
+canonical_sources:
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/repo-topology-config/spec.md
+rules:
+  - id: tech-lead.views
+    override_mode: locked
+    value: [under-classification, missing-canonical-context, architecture-disposition, owner-dependency, scope-drift, control-state, completion-dod, release-recommendation, waiver-expiry, hotfix-follow-up, checkpoint-summary]
+  - id: tech-lead.control-actions
+    override_mode: locked
+    value: [stop, hold, escalate, resume]
+  - id: tech-lead.forbidden-authorities
+    override_mode: locked
+    value: [qa-approval, product-approval, security-approval, release-approval, merge-approval, archive-approval, tracker-approval]
+  - id: tech-lead.independent-approvals
+    override_mode: locked
+    value: [qa, product, security, release, merge, archive, tracker]
+  - id: tech-lead.finding-fields
+    override_mode: locked
+    value: [code, severity, blocking, source-ref, zone, role, action, policy-snapshot]
+  - id: tech-lead.decision-only
+    override_mode: locked
+    value: true
+  - id: tech-lead.human-control-required
+    override_mode: locked
+    value: true

@@ -1,0 +1,48 @@
+schema_version: "1.0"
+id: sample-change
+classification: minor
+status: in_implementation
+evaluation_date: "2026-07-14"
+policy_snapshot: &policy {id: sdd-core, version: 1.0.0, digest: c3aa34da5d1a3e593705b90840c456314ca4fc3dda7e98a252e019c622a0e8ff}
+classification_report: {source_ref: reports/classification.json, policy_snapshot: *policy, status: human-confirmed, triggered_major: false}
+gate_reports: {source_ref: reports/gates.json, policy_snapshot: *policy, definition_of_ready: ready, definition_of_done: ready, release_transfer_readiness: ready}
+requirements: [{id: REQ-1, source_ref: specs/sample/spec.md}]
+scenarios: [{id: SC-1, source_ref: specs/sample/spec.md}]
+design_decisions: [{id: ADR-1, state: accepted, source_ref: decisions/adr-1.md}]
+affected: [{repository: sample-app, path: src/domain/service.py, zone: sample-app}]
+dependencies: [{id: sample-dependency, owner: sample-primary, source_ref: design.md}]
+risks: [{id: R-1, owner: sample-primary, source_ref: risks.yaml}]
+scope: {baseline: [REQ-1], current: [REQ-1], reassessment: {state: not-required, source_ref: decisions/scope.yaml}}
+architecture_disposition: {state: accepted, source_ref: decisions/adr-1.md}
+waivers: []
+deferrals: []
+control_records:
+  - &stop
+    schema_version: "1.0"
+    id: control-stop-1
+    action: stop
+    trigger: required-context-missing-or-contradictory
+    severity: high
+    source_evidence: [evidence/context-check.json]
+    affected_work: [sample-app:src/domain/service.py]
+    safety_action: Keep affected work non-mutating.
+    accountable_actor: {type: human, id: sample-primary, role: tech_lead}
+    escalation_route: sample-escalation
+    response_expectation: Resolve before further work.
+    resume_conditions: [canonical-context-restored]
+    corrective_evidence: []
+    residual_risk: Context is incomplete.
+    approvals: []
+    follow_up: Continue source-linked review.
+    recorded_at: "2026-07-14T08:00:00Z"
+    source_ref: controls/stop-1.yaml
+    policy_snapshot: *policy
+  - <<: *stop
+    id: control-resume-1
+    action: resume
+    corrective_evidence: [evidence/context-restored.json]
+    residual_risk: No known residual risk.
+    approvals: [{type: human, id: sample-primary, role: tech_lead, source_ref: decisions/resume.yaml}]
+    recorded_at: "2026-07-14T09:00:00Z"
+    source_ref: controls/resume-1.yaml
+checkpoint: {kind: scheduled, event: weekly-control, source_ref: config/checkpoints.yaml}

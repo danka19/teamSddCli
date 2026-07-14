@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "owner_groups", "zones", "default_owner_groups"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"enum": ["1.0", "2.0"]},
     "owner_groups": {
       "type": "array",
       "minItems": 1,
@@ -50,6 +50,38 @@
             "minItems": 1,
             "uniqueItems": true,
             "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+          },
+          "tech_lead": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "primary": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+              "authority": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+              },
+              "delegates": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["owner", "authority"],
+                  "properties": {
+                    "owner": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+                    "authority": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+                    }
+                  }
+                }
+              },
+              "escalation_route": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+            }
           }
         }
       }
@@ -60,5 +92,15 @@
       "uniqueItems": true,
       "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": "1.0"}}},
+      "then": {
+        "properties": {
+          "zones": {"items": {"not": {"required": ["tech_lead"]}}}
+        }
+      }
+    }
+  ]
 }

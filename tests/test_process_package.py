@@ -41,6 +41,8 @@ SCHEMA_FILES = {
     "policy_manifest": "policy-manifest.schema.json",
     "policy_document": "policy-document.schema.json",
     "gate_evaluation_input": "gate-evaluation-input.schema.json",
+    "tech_lead_review_input": "tech-lead-review-input.schema.json",
+    "tech_lead_control_record": "tech-lead-control-record.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

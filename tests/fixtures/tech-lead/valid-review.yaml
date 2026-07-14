@@ -1,0 +1,20 @@
+schema_version: "1.0"
+id: sample-change
+classification: minor
+status: in_implementation
+evaluation_date: "2026-07-14"
+policy_snapshot: &policy {id: sdd-core, version: 1.0.0, digest: c3aa34da5d1a3e593705b90840c456314ca4fc3dda7e98a252e019c622a0e8ff}
+classification_report: {source_ref: reports/classification.json, policy_snapshot: *policy, status: human-confirmed, triggered_major: false}
+gate_reports: {source_ref: reports/gates.json, policy_snapshot: *policy, definition_of_ready: ready, definition_of_done: ready, release_transfer_readiness: ready}
+requirements: [{id: REQ-1, source_ref: specs/sample/spec.md}]
+scenarios: [{id: SC-1, source_ref: specs/sample/spec.md}]
+design_decisions: [{id: ADR-1, state: accepted, source_ref: decisions/adr-1.md}]
+affected: [{repository: sample-app, path: src/domain/service.py, zone: sample-app}]
+dependencies: [{id: sample-dependency, owner: sample-primary, source_ref: design.md}]
+risks: [{id: R-1, owner: sample-primary, source_ref: risks.yaml}]
+scope: {baseline: [REQ-1], current: [REQ-1], reassessment: {state: not-required, source_ref: decisions/scope.yaml}}
+architecture_disposition: {state: accepted, source_ref: decisions/adr-1.md}
+waivers: []
+deferrals: []
+control_records: []
+checkpoint: {kind: event-driven, event: change-updated, source_ref: config/checkpoints.yaml}

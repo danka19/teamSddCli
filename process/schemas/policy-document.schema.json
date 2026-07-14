@@ -8,7 +8,7 @@
     "schema_version": {"const": "1.0"},
     "policy_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
     "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
-    "kind": {"enum": ["classification", "artifact-matrix", "gates", "regression", "flow-controls", "release", "pilot-safety", "failed-runs"]},
+    "kind": {"enum": ["classification", "artifact-matrix", "gates", "regression", "flow-controls", "release", "pilot-safety", "failed-runs", "tech-lead"]},
     "canonical_sources": {
       "type": "array", "minItems": 1, "uniqueItems": true,
       "items": {"type": "string", "minLength": 1}
@@ -35,6 +35,24 @@
     }
   },
   "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "tech-lead"}}},
+      "then": {
+        "properties": {
+          "policy_id": {"const": "tech-lead"},
+          "canonical_sources": {"const": ["openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md", "openspec/changes/adopt-nis-corporate-process-governance/specs/repo-topology-config/spec.md"]},
+          "rules": {"allOf": [
+            {"contains": {"properties": {"id": {"const": "tech-lead.views"}, "override_mode": {"const": "locked"}, "value": {"const": ["under-classification", "missing-canonical-context", "architecture-disposition", "owner-dependency", "scope-drift", "control-state", "completion-dod", "release-recommendation", "waiver-expiry", "hotfix-follow-up", "checkpoint-summary"]}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.control-actions"}, "override_mode": {"const": "locked"}, "value": {"const": ["stop", "hold", "escalate", "resume"]}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.forbidden-authorities"}, "override_mode": {"const": "locked"}, "value": {"const": ["qa-approval", "product-approval", "security-approval", "release-approval", "merge-approval", "archive-approval", "tracker-approval"]}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.independent-approvals"}, "override_mode": {"const": "locked"}, "value": {"const": ["qa", "product", "security", "release", "merge", "archive", "tracker"]}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.finding-fields"}, "override_mode": {"const": "locked"}, "value": {"const": ["code", "severity", "blocking", "source-ref", "zone", "role", "action", "policy-snapshot"]}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.decision-only"}, "override_mode": {"const": "locked"}, "value": {"const": true}}, "required": ["id", "override_mode", "value"]}},
+            {"contains": {"properties": {"id": {"const": "tech-lead.human-control-required"}, "override_mode": {"const": "locked"}, "value": {"const": true}}, "required": ["id", "override_mode", "value"]}}
+          ]}
+        }
+      }
+    },
     {
       "if": {"properties": {"kind": {"const": "classification"}}},
       "then": {

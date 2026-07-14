@@ -304,3 +304,40 @@ Status: closed after implementation, independent task review, architecture revie
 - Independent final verification on reviewed range `b40845d..3efc808`: PASS. Focused artifact/lifecycle/CLI/policy/schema 45 passed; policy/config/package regression 74 passed; full serial suite 169 passed; six report matrix, five forward and two rework transitions, authority/waiver/N/A/expiry/hotfix/stale/placeholder/AI/external-state/malformed-history negative matrices, compilation, package/schema/manifest validation, Phase 1 legacy validator, governance 0/0, and OpenSpec strict 10/10 passed. Commands remained non-mutating and no 2.6/2.8 behavior appeared.
 - Coordinator reconciliation marks NIS tasks 3.1-3.6 complete, moving the NIS inventory from 10/43 to 16/43 while the transfer-package change remains 3/33. Work item 2.5 is `closed`; work item 2.6 is `ready`.
 - Residual risk remains later scope: verification ran on Windows only; full Tech Lead owner-zone/delegate/conflict governance is work item 2.6; broader traceability is 2.8; cross-platform and Qwen/DeepSeek/AI-disabled certification remain later Phase 2 work.
+
+## Work Item 2.6: Tech Lead Governance
+
+Status: implementation-worker-complete; independent task review, architecture review, verification review, and coordinator reconciliation are pending. Work item 2.6 remains active and NIS-governance tasks 4.1-4.6 remain unchecked.
+
+### Implementation Evidence
+
+- Explicit owner-registry v2.0 governance with primary Tech Lead, delegates, escalation route, bounded authority, repository/path/zone coverage, overlap conflict, and uncovered-scope rejection: `process/validators/owners.py` and `process/schemas/owners.schema.json`. Legacy v1.0 remains an explicit compatibility contract and cannot be used for Tech Lead governance.
+- Ninth immutable policy catalog: `process/policies/tech-lead.yaml`, registered through the policy and package manifests and compiled with the same policy snapshot/digest used by classification and gates.
+- Versioned operational boundaries: `process/schemas/tech-lead-review-input.schema.json` and `process/schemas/tech-lead-control-record.schema.json`.
+- Pure non-mutating reports/checks: `process/validators/tech_lead.py`; thin human/JSON entry points: `scripts/review_tech_lead.py` and `scripts/check_tech_lead_control.py`.
+- Current bounded role instruction and operator procedure: `process/roles/tech-lead.md` and `docs/runbooks/TECH_LEAD_GOVERNANCE.md`.
+- Synthetic AI-disabled evidence only: `tests/fixtures/tech-lead/`; the manifest explicitly records that actual Qwen/DeepSeek certification was not performed.
+
+### TDD And Acceptance Evidence
+
+- Owner RED failed collection because `process.validators.owners` did not exist; immutable configured-slot RED then proved policy escape was not rejected. The first GREEN reached 8 owner scenarios and preserved 74 config/policy/package regressions.
+- Review/control RED failed collection because `process.validators.tech_lead` did not exist. Subsequent behavior and registration RED runs exposed missing persistent control checks, owner-policy fixture mismatch, and unregistered ninth-policy/two-schema package surfaces before GREEN.
+- Final adversarial RED: 8 failures after 24 passes exposed missing duplicate/order/action/severity/trigger/AI-approval/incomplete-resume checks plus absent role/certification fixtures. The focused owner/review/control/certification GREEN reached 32 tests.
+
+### Scope And Residual Risk
+
+- Every output is decision-only and records `control_state_mutated: false` and `lifecycle_mutated: false`. A `resume-eligible` result does not clear a hold or resume work.
+- Tech Lead recommendations never satisfy QA, product, security, release, merge, archive, or tracker approvals. AI cannot create or approve a control decision.
+- Scheduled/event-driven support means explicit configured checkpoint/event input plus deterministic `--as-of`; no daemon, calendar, role inbox, inferred due date, or integration was added.
+- Actual flow mutation/enforcement, failed-run retention, and release-handoff persistence remain 2.7; full traceability remains 2.8. Actual Qwen/DeepSeek certification and cross-platform release certification remain later Phase 2 work.
+
+### Worker Verification Record
+
+- Focused owner/review/control/certification: 32 passed.
+- Policy/config/package/gate regression: 97 passed.
+- Final focused owner/review/control/CLI/policy/package suite: 63 passed. Policy/config/package regression: 74 passed. Full serial suite: 203 passed.
+- Python compilation: `python -m compileall -q process scripts tests` -> exit 0. Phase 1 compatibility: `python scripts/validate_change.py --allow-placeholders templates/change` -> `OK`.
+- Representative AI-disabled review: human and JSON event-driven commands returned exit 0, `reviewable`, all 11 views, zero findings, `recommend`, every independent approval `still-required`, and both mutation flags false. Representative scheduled stop/resume commands returned exit 0 and `resume-eligible` while retaining `control-stop-1` active and both mutation flags false.
+- Forbidden AI resume direct-process check returned exact exit 3, empty stderr, no traceback, and stable `tech-lead.input-schema-invalid` at `/control_records/0/accountable_actor/type`. Direct entry points from an unrelated working directory returned exact exit 2, stable redacted JSON-only usage diagnostics, empty stderr, and no traceback.
+- Roadmap/OpenSpec governance: 5 phases, 8 accepted specs, 2 active changes, 0 errors, 0 warnings. Inventories remained transfer package 3/33 and NIS governance 16/43; tasks 4.1-4.6 were not checked. `openspec validate --all --strict` passed 10/10.
+- Package/policy/schema/manifest consistency passed with process package `0.2.0`, package schema `1.1`, `sdd-core` `1.0.0`, nine pinned policy documents, owners governance v2.0 with explicit v1.0 compatibility, and Tech Lead review/control schemas v1.0. Git diff checks passed before the worker commit. These results do not close work item 2.6 or imply reviewer/coordinator acceptance.

@@ -151,6 +151,7 @@ def test_manifest_pins_one_versioned_local_policy_set() -> None:
         "release",
         "pilot-safety",
         "failed-runs",
+        "tech-lead",
     }
     for item in manifest["policies"]:
         assert not Path(item["path"]).is_absolute()
@@ -350,6 +351,27 @@ def test_policy_document_schema_requires_kind_specific_foundation_catalogs() -> 
             "failed-runs.minimum-fields": {
                 "attempt-id", "outcome", "source", "time",
                 "version-or-configuration", "owner-disposition",
+            },
+        },
+        "tech-lead": {
+            "tech-lead.views": {
+                "under-classification", "missing-canonical-context",
+                "architecture-disposition", "owner-dependency", "scope-drift",
+                "control-state", "completion-dod", "release-recommendation",
+                "waiver-expiry", "hotfix-follow-up", "checkpoint-summary",
+            },
+            "tech-lead.control-actions": {"stop", "hold", "escalate", "resume"},
+            "tech-lead.forbidden-authorities": {
+                "qa-approval", "product-approval", "security-approval",
+                "release-approval", "merge-approval", "archive-approval",
+                "tracker-approval",
+            },
+            "tech-lead.independent-approvals": {
+                "qa", "product", "security", "release", "merge", "archive", "tracker",
+            },
+            "tech-lead.finding-fields": {
+                "code", "severity", "blocking", "source-ref", "zone", "role",
+                "action", "policy-snapshot",
             },
         },
     }

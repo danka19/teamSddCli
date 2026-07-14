@@ -1,0 +1,16 @@
+schema_version: "2.0"
+owner_groups:
+  - {id: sample-tech-leads, roles: [tech_lead], members: [sample-primary, sample-delegate]}
+  - {id: sample-escalation, roles: [process_owner], members: [sample-escalation-owner]}
+  - {id: sample-qa-owners, roles: [qa], members: [sample-qa-owner]}
+zones:
+  - id: sample-app
+    paths: [src/**, tests/**]
+    owner_groups: [sample-tech-leads, sample-qa-owners]
+    tech_lead:
+      primary: sample-primary
+      authority: [classification-confirmation, technical-readiness, architecture-decision, owner-dependency-review, stop-hold, resume, completion-recommendation, release-readiness-recommendation]
+      delegates:
+        - {owner: sample-delegate, authority: [technical-readiness, owner-dependency-review, stop-hold]}
+      escalation_route: sample-escalation
+default_owner_groups: [sample-tech-leads]

@@ -1,0 +1,9 @@
+schema_version: "1.0"
+mode: ai-disabled
+actual_model_certification_performed: false
+fixtures: [valid-review.yaml, stop-resume.yaml, ai-resume-invalid.yaml]
+forbidden_mutations: [control-state, lifecycle]
+canonical_role_instruction: process/roles/tech-lead.md
+limitations:
+  - Synthetic fixtures do not certify Qwen-class or DeepSeek-class runtimes.
+  - Flow-state mutation and enforcement remain outside work item 2.6.

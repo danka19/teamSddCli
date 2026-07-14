@@ -60,3 +60,9 @@ policies:
     path: policies/failed-runs.yaml
     schema: schemas/policy-document.schema.json
     requires: [flow-controls]
+  - id: tech-lead
+    version: 1.0.0
+    kind: tech-lead
+    path: policies/tech-lead.yaml
+    schema: schemas/policy-document.schema.json
+    requires: [classification, gates, flow-controls, release]

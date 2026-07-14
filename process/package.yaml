@@ -19,6 +19,8 @@ schemas:
   policy_manifest: schemas/policy-manifest.schema.json
   policy_document: schemas/policy-document.schema.json
   gate_evaluation_input: schemas/gate-evaluation-input.schema.json
+  tech_lead_review_input: schemas/tech-lead-review-input.schema.json
+  tech_lead_control_record: schemas/tech-lead-control-record.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
 examples:
@@ -28,7 +30,10 @@ examples:
     - examples/classification/hotfix.yaml
 read_packs:
   classification: read-packs/classification.yaml
+role_instructions:
+  tech_lead: roles/tech-lead.md
 canonical_sources:
   - openspec/specs/repo-topology-config/spec.md
   - openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md

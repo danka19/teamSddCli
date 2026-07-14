@@ -85,13 +85,15 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/VERSION` | Reusable process-package semantic version (`0.2.0` for the policy/schema-v2 foundation) |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
-| `process/policies/` | Manifest-driven `sdd-core` policy set with eight versioned static catalogs; work item 2.5 consumes the artifact/gate/release/classification rules without maintaining a second matrix in code |
-| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate-evaluation input, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
+| `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |
+| `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate and Tech Lead review/control inputs, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
 | `process/validators/config_discovery.py` | Bounded repository/config discovery, duplicate-safe YAML loading, explicit reference resolution, package/schema/policy loading, and final OpenSpec runtime probe |
 | `process/validators/config_validation.py` | Structured redacted diagnostics plus pure schema, compatibility, secret, and cross-registry integrity checks |
 | `process/validators/policy_validation.py` | Static policy identity/reference/override validation and immutable effective-value snapshots with provenance |
 | `process/validators/artifact_gates.py`, `process/validators/lifecycle.py` | Pure immutable-snapshot class-aware report evaluation and read-only six-state forward-transition decisions |
 | `process/validators/gate_input.py` | Versioned gate-input schema boundary with stable redacted diagnostics and duplicate-evidence rejection |
+| `process/validators/owners.py`, `process/validators/tech_lead.py` | Versioned owner/delegate/zone authority resolution plus immutable-snapshot, check-only Tech Lead views and control-state evaluation |
+| `process/roles/tech-lead.md` | Bounded current Tech Lead role instruction with source, AI-disabled, authority, and human stop-point rules |
 | `templates/team-specs/` | Placeholder-only synthetic central topology with approved config names and canonical directory roots |
 | `templates/project-adapter/.sdd-project.yaml` | Optional synthetic project-repository pointer to central `team-specs` and package/config versions |
 | `tests/fixtures/process-package/` | Positive release-manifest and negative schema/reference/privacy fixture families for work item 2.1 |
@@ -111,6 +113,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `scripts/evaluate_change_gates.py`, `scripts/check_lifecycle_transition.py` | Thin non-mutating human/JSON entry points for six gate reports and forward-adjacent lifecycle decisions |
 | `tests/test_artifact_gates.py`, `tests/test_lifecycle_gates.py`, `tests/test_gate_cli.py` | Scenario-first artifact, gate, lifecycle, authority, freshness, schema-boundary, CLI, and non-mutation evidence |
 | `docs/runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md` | Operator input contract, commands, exit codes, authority boundary, and manual decision guidance for work item 2.5 |
+| `docs/runbooks/TECH_LEAD_GOVERNANCE.md` | Work item 2.6 owner/review/control inputs, commands, stable exits, non-mutation boundary, and synthetic AI-disabled evidence |
+| `tests/fixtures/tech-lead/` | Synthetic event/checkpoint, stop/resume, and forbidden-AI cases; explicitly not actual Qwen/DeepSeek certification |
 
 ## Planned Phase 2 Project Structure
 
@@ -118,7 +122,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| Additional packaged-flow templates/validators, `process/roles/`, `process/adapters/`, `process/certification/` | Later packaged mutation/orchestration, role kit, adapters, and certification assets; work item 2.5 reports and transition checks remain read-only |
+| Additional packaged-flow templates/validators, analyst/developer/QA roles, `process/adapters/`, and `process/certification/` | Later mutation/orchestration, broader role kit, adapters, and actual certification assets; current Tech Lead reports/control checks remain read-only |
 | Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 | `scripts/build_read_pack.py` | Planned deterministic authority-labelled bounded read-pack builder |

@@ -28,6 +28,7 @@ from .config_validation import (
     secret_diagnostics,
 )
 from .policy_validation import corporate_owner_diagnostics, validate_policy_bundle
+from .owners import owner_registry_diagnostics
 
 
 MAX_FILE_BYTES = 1_048_576
@@ -316,6 +317,8 @@ def validate_configuration(
         return result
 
     result.add(*corporate_owner_diagnostics(config, owners))
+    if policy_result.snapshot is not None:
+        result.add(*owner_registry_diagnostics(owners, projects, policy_result.snapshot))
     if result.diagnostics:
         return result
 
