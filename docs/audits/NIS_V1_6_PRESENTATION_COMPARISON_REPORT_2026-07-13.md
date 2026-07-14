@@ -1,12 +1,14 @@
 # NIS v1.6 Presentation Comparison Report
 
 Date: 2026-07-13
-Status: updated after the human decision to exclude process-effectiveness evaluation; presentation-ready current comparison.
-Normative owner: `D-013` and `openspec/changes/adopt-nis-corporate-process-governance/`.
+Status: updated on 2026-07-14 for the two-horizon automation decision and Phase 2 remediation gate; presentation-ready current comparison.
+Normative owner: `D-013`, `D-014`, `D-015`, and the two active OpenSpec changes.
 
 ## 1. Executive Summary
 
-NIS does not replace the teamSddCli architecture. Git/OpenSpec remains canonical, Confluence remains a generated publication surface, Jira remains workflow/status, Bitbucket PR remains review/audit, Jenkins remains deterministic verification, and AI remains advisory.
+NIS does not replace the teamSddCli architecture. Git/OpenSpec remains canonical, Confluence remains a generated publication surface, Jira remains workflow/status, Bitbucket PR remains review/audit, and Jenkins remains deterministic verification.
+
+The automation strategy has two horizons. First, the complete governed process must work without AI; this makes deterministic checks and human decisions the reliability foundation and permanent fallback. After the process and pilot are stable, AI is expected to progressively automate bounded orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation. AI does not gain independent approval, waiver, merge, release, archive, or risk-acceptance authority through that evolution.
 
 NIS strengthens the operating process with corporate practices that were previously incomplete:
 
@@ -35,6 +37,7 @@ The project does not borrow the NIS process-effectiveness evaluation layer. The 
 | What evaluation material is adopted? | None. |
 | What single rule is retained from that material? | Failed attempts remain visible after successful retry. |
 | Is the NIS team/project structure copied? | No. PPRB organization and NIS repository layout are excluded. |
+| Is AI-disabled operation the final product state? | No. It is the first required delivery state and permanent fallback; later accepted changes progressively automate bounded process execution with AI. |
 
 ## 3. What Was Already The Same
 
@@ -42,7 +45,7 @@ The project does not borrow the NIS process-effectiveness evaluation layer. The 
 |---|---|---|
 | Canonical source | Git/OpenSpec owns behavior | Git-centered process and reconstructable evidence |
 | Human authority | Humans approve, merge, waive, release, and archive | Named role ownership and decision records |
-| AI boundary | AI drafts and checks but cannot own gates | AI execution is separated from accountable decisions |
+| AI boundary | The process works without AI; AI may draft and check but cannot own gates | Later AI automation can expand bounded execution while accountable decisions and deterministic verification stay explicit |
 | Traceability | Requirement/scenario/change/implementation/test links | End-to-end reconstructability |
 | Quality | Scenario-first checks and deterministic validation | Quality strategy and regression discipline |
 | Safety | Stop points, waivers, rollback, secret/private-data boundaries | Explicit stop and release controls |
@@ -215,50 +218,56 @@ Failed-run retention is the sole preserved rule from this excluded material.
 
 NIS reflects real corporate delivery and fills gaps in classification, readiness, completion, Tech Lead operations, release handoff, and pilot safety.
 
-### Slide 2: What was already the same
+### Slide 2: Two automation horizons
 
-Git/OpenSpec source ownership, human authority, deterministic gates, traceability, and AI as assistant.
+Show the near horizon as a complete AI-disabled deterministic process and permanent fallback. Show the later horizon as progressive AI automation of bounded orchestration, evidence assembly, routing, monitoring, and transition preparation, with deterministic verification and human authority retained.
 
-### Slide 3: Accepted classification
+### Slide 3: What was already the same
+
+Git/OpenSpec source ownership, human authority, deterministic gates, traceability, and an AI-disabled foundation that later supports bounded AI automation.
+
+### Slide 4: Accepted classification
 
 Show `thin -> minor`, `full -> major`, and hotfix only for increasing concrete harm.
 
-### Slide 4: When work may start
+### Slide 5: When work may start
 
 Show triage, fixed input, Spec Review, DoR, owners, quality strategy, regression, risks, and rollback.
 
-### Slide 5: When work is complete
+### Slide 6: When work is complete
 
 Separate implementation complete, DoD, release ready, archive ready, archived, and external Done.
 
-### Slide 6: Tech Lead automation
+### Slide 7: Tech Lead automation
 
 Show review packs, source-linked reports, scope/risk control, stop/resume, release recommendation, and follow-up visibility.
 
-### Slide 7: Quality and release package
+### Slide 8: Quality and release package
 
 Show QA-owned strategy/regression and reproducible release/transfer handoff.
 
-### Slide 8: Pilot safety and failed runs
+### Slide 9: Pilot safety and failed runs
 
 Show bounded risk, rollback/hold, AI-disabled path, operational stop conditions, and the rule that retries never erase failures.
 
-### Slide 9: What is deliberately excluded
+### Slide 10: What is deliberately excluded
 
 Show AI-only production, PPRB/project structure, zero-risk claims, and the entire process-effectiveness evaluation layer.
 
-### Slide 10: Delivery path
+### Slide 11: Delivery path
 
-Phase 2 builds and certifies the reusable package; Phase 3 configures it and runs one bounded corporate pilot; later expansion requires new accepted changes.
+Phase 2 builds and certifies the reusable deterministic package; Phase 3 configures it and runs one bounded corporate pilot; later accepted changes progressively automate bounded process execution with AI.
 
 ## 9. Current Acceptance And Implementation Status
 
 Accepted direction:
 
 - `D-013` records the flat classification and corporate process boundary;
+- `D-014` records the two-horizon automation strategy;
+- `D-015` pauses Phase 2 implementation until the corrected plan is accepted and selects clean renumbering from `2.3` onward;
 - the NIS package is ignored and untracked;
-- the active OpenSpec change contains 11 capability deltas and 42 tasks after removing the evaluation capability;
-- Phase 2 work item 2.3A owns implementation;
+- the NIS OpenSpec change contains 11 capability deltas and 43 tasks after splitting the Phase 2 external-acceptance stop from Phase 3 corporate configuration and pilot execution;
+- the audited `2.3A-2.8` mapping is not executable and will be replaced by clean work items `2.3-2.14` after the certification-matrix and supported-runtime decisions close;
 - failed-run retention remains a requirement and task.
 
 Not implemented yet:
@@ -280,4 +289,4 @@ It does not claim that proposed behavior is implemented. It also does not preser
 
 The durable presentation message is:
 
-> NIS supplies realistic corporate process behavior for classification, readiness, completion, Tech Lead control, quality, release, and pilot safety. teamSddCli keeps its architecture, human authority, deterministic gates, and transfer boundary. The evaluation layer is excluded; only failed-run retention remains.
+> NIS supplies realistic corporate process behavior for classification, readiness, completion, Tech Lead control, quality, release, and pilot safety. teamSddCli first proves the whole process without AI, then progressively automates bounded process work with AI after the pilot is stable. Deterministic verification remains the control plane, human authority stays explicit, and the evaluation layer is excluded; only failed-run retention remains.

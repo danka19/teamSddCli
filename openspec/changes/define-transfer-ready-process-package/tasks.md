@@ -24,16 +24,16 @@
 
 - [ ] 4.1 Create synthetic reference repositories, canonical change/spec inputs, expected role outputs, and deterministic golden validation results without corporate or private data.
 - [ ] 4.2 Add negative certification cases for missing context, conflicting sources, fabricated evidence, forbidden approval, skipped stop point, invalid lifecycle transition, adapter failure, and context-limit failure.
-- [ ] 4.3 Implement a certification runner and evidence record that captures model/runtime identifier, adapter version, process-package version, read-pack identity, validation result, human intervention, forbidden-action result, and limitations.
+- [ ] 4.3 Implement a certification runner and evidence record that captures model/runtime identifier, adapter version, process-package version, read-pack identity, validation result, human intervention, forbidden-action result, and limitations; commit normalized synthetic evidence/manifests/hashes to Git and reference raw outputs stored in the versioned release artifact by checksum.
 - [ ] 4.4 Execute and record AI-disabled certification for every gated minor/major/hotfix operation, including Tech Lead, stop/resume, and hotfix reconciliation cases.
 - [ ] 4.5 Execute and record actual Qwen/DeepSeek-class certification for analyst, developer, QA, and Tech Lead workflows; route unreliable operations to deterministic or mandatory-human fallbacks.
 
 ## 5. Release Candidate And Transfer Runbook
 
-- [ ] 5.1 Implement deterministic release-manifest generation and validation for package/config/OpenSpec versions, included assets, compatibility assumptions, evidence references, known limitations, and rollback reference.
+- [ ] 5.1 Implement deterministic release-manifest generation and validation for package/config/OpenSpec versions, included assets, compatibility assumptions, normalized Git evidence, raw versioned-artifact references and checksums, known limitations, and rollback reference.
 - [ ] 5.2 Add clean-bootstrap and release-candidate acceptance automation that fails on missing, stale, failed, private, or AI-only evidence.
 - [ ] 5.3 Write installation, compatibility inventory, approved secret setup, integration-adapter configuration, update, rollback, and no-fork feedback procedures.
-- [ ] 5.4 Produce a transfer rehearsal from a clean supported environment and record the accepted external release-candidate evidence.
+- [ ] 5.4 Produce a transfer rehearsal from the human-approved clean supported reference environment and record the evidence packet used for external release-candidate acceptance.
 
 ## 6. Corporate Adaptation And Pilot Package
 
@@ -47,5 +47,5 @@
 - [ ] 7.1 Update repository structure, setup, operations, context, roadmap, audit, and role-facing documentation to reference canonical OpenSpec requirements without duplicating normative text.
 - [ ] 7.2 Run focused tests, full tests, template/config/package validation, AI-disabled certification, actual weak-model certification, `openspec list`, `openspec list --specs`, `openspec validate --all --strict`, and `git diff --check`.
 - [ ] 7.3 Complete worker, reviewer, architecture-checker, and verification-checker gates for each Phase 2 work item when execution tooling is available, or record the local fallback and limitation.
-- [ ] 7.4 Stop for human acceptance of the external release candidate before any corporate pilot starts.
+- [ ] 7.4 Stop for final human-owner acceptance of the external release candidate, supported by mandatory Tech Lead and QA evidence plus security evidence when applicable, before any corporate pilot starts.
 - [ ] 7.5 After successful corporate adaptation and pilot evidence, stop for human acceptance before promoting or archiving the new OpenSpec capabilities.

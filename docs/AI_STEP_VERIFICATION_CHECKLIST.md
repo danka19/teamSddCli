@@ -57,6 +57,7 @@ Whenever the human owner explains how the product should work, rejects behavior,
 - Do not move reusable package, schema, validator, workflow, role-instruction, read-pack, certification, update/rollback, or release-manifest design into the corporate environment. Phase 2 completes and externally certifies that core; Phase 3 supplies only verified real configuration, approved wiring, thin adapters, and pilot evidence.
 - Weak models do not select their own workflow or authority. A deterministic launcher or explicit non-AI procedure must supply the role instruction, bounded authority-labelled read pack, output/evidence contract, and stop point.
 - Every weak-model-assisted gate must have an AI-disabled fallback, and reusable corporate findings must return to the external OpenSpec workflow rather than create an internal fork.
+- Treat the AI-disabled path as the reliability foundation, not the final automation ceiling: later AI automation must be introduced through accepted OpenSpec changes, remain bounded and evidence-backed, and continue to pass deterministic checks.
 - Do not require Gherkin for every QA artifact; require a testable scenario first, and require Gherkin only when the scenario is executable or exported to AT.
 
 ## Test And Evidence Check

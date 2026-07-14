@@ -1,6 +1,6 @@
 # Implementation Strategy: SDD Automation Without a Custom `sdd` CLI
 
-Status: accepted by the human owner on 2026-07-03; target classification and corporate governance refined by `D-013` on 2026-07-13.
+Status: accepted by the human owner on 2026-07-03; target classification and corporate governance refined by `D-013` on 2026-07-13; automation horizon refined by `D-014` on 2026-07-14.
 
 This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The historical architecture draft that originally motivated the project was removed on 2026-07-06 after current decisions moved into `docs/` and `openspec/`; this strategy defines how the process is delivered first.
 
@@ -12,9 +12,11 @@ The team is mandated to use SDD. The process is delivered without building a cus
 |---|---|---|
 | Deterministic base | Templates, validation scripts, pre-commit, Jenkinsfile — all versioned inside `team-specs` | All gates and process rules live here. The process must work with AI turned off |
 | Standard tool features | Bitbucket default reviewers and branch policies, Jira Automation, markdown->Confluence publisher (e.g. kovetskiy/mark), OpenSpec CLI | Integrations without custom API clients |
-| AI assistant layer | Role skills (`change-new`, `qa-propose`, `at-propose`, `dev-start`) executed by a local AI CLI | Drafts and convenience only; never a gate |
+| AI automation layer | Initially bounded role skills and draft/review support; later accepted changes may add workflow orchestration, evidence assembly, routing, monitoring, and permitted transition preparation | May automate work, but deterministic checks and explicit human authority remain the control boundary |
 
 Hard rule: no gated action may depend on the AI layer. Every gate must be executable and verifiable by scripts/CI alone.
+
+This hard rule defines the reliability floor, not the final automation ceiling. The first release proves that the process survives AI failure or absence. After the process and pilot are stable, AI is expected to automate more bounded process work while deterministic validation checks its outputs and non-delegable human decisions remain explicit.
 
 A custom `sdd` CLI is built only when the trigger criteria in section 6 fire, and then incrementally, targeting the specific proven friction (most likely `change new/validate` ergonomics first), never as an upfront platform.
 
@@ -47,6 +49,15 @@ Portability rules derived from this constraint:
 - Before transfer, accept a reproducible release candidate with clean bootstrap, package/config/OpenSpec compatibility, legacy thin/full migration, minor/major/hotfix flow evidence, Tech Lead authority checks, update/rollback, privacy checks, AI-disabled operation, and actual Qwen/DeepSeek certification.
 - During corporate adaptation, verify MCP availability and policy, the available Qwen/DeepSeek/GigaCode adapter, Bitbucket/Jenkins/Jira/Confluence versions (Cloud vs Server/DC), secrets handling, network rules, and artifact distribution without redesigning reusable process behavior.
 - Follow-up adjustments that affect reusable behavior return to the external OpenSpec/change workflow and a new package release rather than becoming ad-hoc internal divergence.
+
+### Progressive AI automation horizon
+
+The project intentionally separates two horizons:
+
+1. **Independent foundation:** every governed action has a deterministic or explicit human path, AI-disabled certification passes, and no process guarantee depends on model behavior.
+2. **Progressive automation:** later OpenSpec changes may let AI assemble read packs and evidence, draft artifacts, route work, monitor configured conditions, coordinate supported tools, and prepare permitted state-transition requests.
+
+Progressive automation must remain observable, reversible where mutation occurs, evidence-backed, and bounded by the same dry-run, idempotency, JSON-output, audit-log, privacy, and stop/hold expectations as other mutating automation. AI does not gain approval, waiver, risk-acceptance, merge, release, archive, or accountable-owner authority by implication.
 
 ## 5. Mandatory Gates And Role-Understanding Evidence
 

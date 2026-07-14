@@ -1,6 +1,6 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: ready. The human owner accepted the transfer boundary; work item 2.1 may start, and later items follow the dependency order below.
+Status: blocked. The technical prerequisites are available, but human decision `D-015` pauses all implementation until the corrected, cleanly renumbered Phase 2 plan is accepted. The certification matrix and supported external reference runtime remain open planning decisions.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` to execute exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Each completed work item follows scenario-first TDD, passes its reviewer/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -16,7 +16,7 @@ Phase 2 does not perform the real corporate pilot. It produces the accepted rele
 - External development owns all reusable schemas, deterministic checks, workflow entry points, package/bootstrap/update/rollback behavior, role instructions, read packs, certification fixtures, release evidence, and runbooks.
 - Corporate work owns only real non-secret configuration, approved secret references, environment-specific standard-tool wiring, thin AI adapter configuration, and pilot evidence.
 - Reusable gaps found in the corporate environment return to the external canonical source through OpenSpec; long-lived internal forks are rejected.
-- AI is never a gate, approval owner, waiver approver, merge owner, archive owner, or canonical-state owner.
+- AI-disabled operation is the first delivery requirement and permanent fallback. Under `D-014`, later accepted changes are expected to automate bounded workflow orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation; AI is not a gate, approval owner, waiver approver, merge owner, archive owner, or canonical-state owner unless a future explicit human decision changes that authority contract.
 - Jira task automation, Confluence publication, QA/AT proposal generation, role inboxes, deploy, Zephyr integration, graph databases, and broad project-memory automation remain outside Phase 2.
 
 ## Dependency Gate
@@ -29,7 +29,7 @@ Status: accepted.
 - The human owner accepted the release-candidate boundary and the removal of schedule dates from project planning artifacts.
 - Active proposed change `define-transfer-ready-process-package` contains proposal, design, two capability deltas, and implementation tasks.
 - Active proposed change `adopt-nis-corporate-process-governance` contains proposal, design, twelve capability deltas, and the implementation backlog for `D-013`.
-- Phase 2 is sequentially unblocked. Work item 2.1 is ready; other work items remain planned until their named dependencies close.
+- Product and technical prerequisites are available, but the human planning gate is closed under `D-015`. Work item 2.1 and the rest of Phase 2 must not start until the corrected plan replaces the defective `2.3A-2.8` mapping and the two open decisions below are accepted.
 
 ## Inputs To Read
 
@@ -237,7 +237,7 @@ Affected specs: New active change `adopt-nis-corporate-process-governance` modif
 Affected architecture: Preserves Git/OpenSpec canonical ownership, the six lifecycle states, deterministic/AI-disabled gates, human decisions, external-release boundary, and no-fork rule while adding corporate business gates and Tech Lead governance.
 Data contract impact: Adds schema version 2, `classification: minor|major|hotfix`, migration from legacy mode, readiness/completion, regression, flow-control, release-package, decision/AI evidence, pilot-safety, and failed-run records.
 Verification impact: Requires class and migration fixtures, DoR/DoD and hotfix negative cases, Tech Lead authority cases, stop/resume and reconciliation evidence, failed-run retention, pilot safety, AI-disabled operation, actual Qwen/DeepSeek certification, and human review.
-Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; work item 2.3A is the Phase 2 implementation owner.
+Status: accepted planning direction under `D-013`. The OpenSpec change is documentation-complete but remains unimplemented; its tasks will receive unique owners in the corrected `2.3-2.14` matrix, and the old 2.3A ownership claim is superseded by `D-015`.
 ```
 
 ```text
@@ -266,13 +266,41 @@ Verification impact: Strict OpenSpec validation, documentation-wide forbidden-te
 Status: accepted and applied to the active documentation/OpenSpec proposal on 2026-07-13.
 ```
 
+```text
+Idea: Deliver the process in two automation horizons: first a complete AI-disabled deterministic process, then progressive AI automation of bounded process work after the process and pilot are stable.
+Source: Human clarification on 2026-07-14.
+Type: architecture_change, scope_refinement, verification_change, documentation_change
+Decision: adopt_now
+Reason: The AI-disabled path is the reliability foundation and fallback, but the intended product direction is not permanently AI-minimal. Future automation must be planned explicitly without weakening deterministic checks or silently transferring accountable human authority.
+Affected specs: Current Phase 2 transfer and weak-model contracts retain AI-disabled certification; later automation capabilities require future OpenSpec changes after the governed pilot.
+Affected architecture: Establishes deterministic verification as the control plane and progressive AI automation as a later execution layer.
+Data contract impact: None in Phase 2 beyond keeping evidence and authority boundaries explicit; future automation contracts are out of current scope.
+Verification impact: Phase 2 must prove every gate without AI. Later automation must prove equivalent or stronger deterministic evidence and safe fallback behavior.
+Status: accepted as `D-014` and recorded in project and presentation-facing documentation.
+```
+
+```text
+Idea: Repair the Phase 2 work-item plan before implementation.
+Source: Human selections 1A, 2A, 3A, 6A, and 7A on 2026-07-14 after the Phase 2 completeness audit.
+Type: planning_change, data_contract_clarification, verification_change, documentation_change
+Decision: queue_current_phase
+Reason: The old `2.3A-2.8` mapping has circular and duplicate task ownership. Clean sequential renumbering, a pre-implementation acceptance gate, explicit evidence storage, and a named final human acceptor remove ambiguity without changing accepted product scope.
+Affected specs: Both active OpenSpec changes stay open through the Phase 3 pilot. NIS task 8.7 is split so Phase 2 stops at external release acceptance and Phase 3 owns real corporate configuration and pilot execution.
+Affected architecture: No change to canonical ownership or the external/corporate boundary.
+Data contract impact: Normalized synthetic evidence, manifests, and hashes are committed to Git; raw certification outputs live in a versioned release artifact and are referenced by manifest/checksum.
+Verification impact: The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable.
+Status: blocked. The listed `D-015` choices are accepted, but implementation remains blocked while the exact certification matrix and supported external reference runtime are open; after those choices, the plan will replace `2.3A-2.8` with clean work items `2.3-2.14` and an exact one-owner task matrix.
+```
+
 ## Work Items
+
+Planning warning: the existing entries `2.3A-2.8` below document the audited draft only and are not executable. They will be replaced, not patched in place, by clean sequential work items `2.3-2.14` after the two open human decisions are resolved. No task may be started from the draft mapping.
 
 ### 2.1 Process Package And Synthetic Central Topology
 
-Status: ready.
+Status: blocked.
 
-Dependency status: sequential-start. Phase 1 is closed and no earlier Phase 2 item is required.
+Dependency status: human-planning-gate. Phase 1 and technical prerequisites are complete, but `D-015` explicitly pauses implementation until the corrected whole-phase plan is accepted.
 
 Objective:
 
@@ -359,9 +387,9 @@ Exit criteria:
 
 ### 2.3A NIS Corporate Governance And Classification Migration
 
-Status: planned.
+Status: superseded. Replaced by the clean `2.3-2.14` decomposition required by `D-015`; the replacement details wait for the two open decisions.
 
-Dependency status: sequential. Starts after 2.1 and 2.2 are closed. It must close before work items 2.3-2.8 finalize class-dependent flow, role, certification, release, or pilot behavior.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -410,9 +438,9 @@ Exit criteria:
 
 ### 2.3 Packaged Deterministic Class-Aware Flow
 
-Status: planned.
+Status: superseded. This draft item will be redefined in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: sequential. Starts after 2.1, 2.2, and the applicable 2.3A schema/classification foundation are closed; final flow acceptance waits for all of 2.3A.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -457,9 +485,9 @@ Exit criteria:
 
 ### 2.4 Weak-Model Operating Contracts And Role Kit
 
-Status: planned.
+Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: parallel-after-foundation. Source-independent read-pack mechanics may start after 2.1; final role contracts and certification fixtures wait for 2.3A because they must use minor/major/hotfix, DoR/DoD, Tech Lead authority, and corporate stop/release rules.
+Dependency status: superseded. No parallel work is authorized before the corrected whole-phase plan is accepted.
 
 Parallel independence rationale:
 
@@ -510,9 +538,9 @@ Exit criteria:
 
 ### 2.5 Weak-Model And AI-Disabled Certification
 
-Status: planned.
+Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: sequential. Starts after 2.3A, 2.3, and 2.4 are closed.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -556,9 +584,9 @@ Exit criteria:
 
 ### 2.6 Release Manifest, Transfer Runbook, And Rehearsal
 
-Status: planned.
+Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: sequential. Starts after 2.2, 2.3A, 2.3, and 2.5 are closed.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -601,9 +629,9 @@ Exit criteria:
 
 ### 2.7 Corporate Adaptation And Pilot Package
 
-Status: planned.
+Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: sequential. Starts after 2.6 is closed; it prepares Phase 3 but does not execute the real pilot.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -645,9 +673,9 @@ Exit criteria:
 
 ### 2.8 External Release Candidate Acceptance Review
 
-Status: planned.
+Status: superseded. This draft item will be redistributed in the clean `2.3-2.14` plan required by `D-015`.
 
-Dependency status: sequential-final. Starts after 2.1-2.7 and 2.3A are closed.
+Dependency status: superseded. This draft dependency must not be used for implementation.
 
 Objective:
 
@@ -688,7 +716,9 @@ Exit criteria:
 
 - Human accepts the exact external release candidate for corporate adaptation, with known limitations and rollback evidence visible.
 
-## OpenSpec Task Mapping
+## Superseded OpenSpec Task Mapping
+
+The table below records the audited draft mapping only. It is retained for traceability and must be replaced by an exact one-owner mapping in the corrected plan.
 
 | Phase 2 work item | OpenSpec task groups |
 |---|---|
@@ -706,7 +736,7 @@ OpenSpec task 7.5 belongs to Phase 3 because it requires successful real corpora
 
 ## Phase Gate
 
-Status: planned.
+Status: blocked. The gate criteria will be finalized with the clean `2.3-2.14` plan after the two open decisions close.
 
 Phase 2 can move to `pending_acceptance` only when:
 
@@ -733,8 +763,23 @@ Resolved:
 - Corporate work is limited to real paths, projects, owners, approved secret references, integration wiring, thin model adapters, environment checks, and pilot evidence.
 - The plan and roadmap contain no delivery dates or calendar deadlines.
 - `D-013` accepts the flat NIS target model `minor|major|hotfix`, legacy mapping `thin -> minor` and `full -> major`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, pilot safety, and failed-run retention. Process-effectiveness measurement is excluded.
+- `D-014` accepts two automation horizons: Phase 2 first proves a complete AI-disabled deterministic process; later accepted changes progressively automate bounded process work while deterministic checks remain the control plane and accountable human authority stays explicit.
+- `D-015` selects clean sequential renumbering from `2.3`, requires plan acceptance before any Phase 2 implementation, and keeps both active OpenSpec changes open through the Phase 3 pilot.
+- Certification evidence storage uses normalized synthetic evidence, manifests, and hashes in Git, with raw outputs in a versioned release artifact referenced by checksum and manifest.
+- The human owner makes final Phase 2 release-candidate acceptance using mandatory Tech Lead, QA, and security evidence when applicable.
 
-No decision currently blocks work item 2.1. Work items that encode target classification, roles, gates, certification, release, or pilot behavior must consume 2.3A instead of finalizing the historical thin/full model.
+Open decisions that block the corrected plan and all implementation:
+
+- Certification coverage matrix: choose how actual Qwen-class and DeepSeek-class runs cover three change classes and four roles without either leaving material gaps or requiring an unnecessarily large Cartesian test suite.
+  - **A — risk-oriented pairwise matrix (recommended):** eight positive role/model walkthroughs so each model family performs analyst, developer, QA, and Tech Lead work once; distribute minor, major, and hotfix so each class is exercised by both model families; run the critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negatives on both. This gives direct model/role and model/class evidence with materially less repetition than a full Cartesian matrix.
+  - **B — full Cartesian matrix:** 24 positive walkthroughs (`2 model families x 4 roles x 3 classes`) plus the negative suite on both. This gives the strongest direct coverage but increases execution, review, artifact-storage, and maintenance cost substantially.
+  - **C — minimal smoke matrix:** one end-to-end governed change per model family, with some roles/classes covered only by AI-disabled fixtures. This is cheapest, but it does not satisfy the current requirement for actual role certification without changing the OpenSpec contract and leaves model-specific gaps.
+- Supported external reference runtime: choose the exact clean environment for which Phase 2 promises reproducible bootstrap and certification. Corporate environment compatibility remains a separate Phase 3 responsibility.
+  - **A — one pinned Windows reference environment (recommended):** certify the current external workstation family with exact Windows, PowerShell, Python, OpenSpec, Git, and package dependency versions recorded after inventory. This is the narrowest honest support promise and is closest to the expected corporate desktop while leaving real corporate compatibility to Phase 3.
+  - **B — Windows and Linux reference matrix:** certify clean bootstrap and the deterministic package on both operating-system families. This improves portability confidence but nearly doubles environment setup, compatibility testing, troubleshooting, and release evidence.
+  - **C — container-only reference runtime:** certify one pinned container image. This maximizes reproducibility but may prove little about a restricted Windows corporate desktop where containers or required network/package access are unavailable, so an additional Phase 3 compatibility burden remains.
+
+The old `2.3A-2.8` mapping must not be used for implementation. Once these two decisions are accepted, the plan must be rewritten as `2.3-2.14`, checked for one-owner task coverage and acyclic dependencies, and explicitly accepted before 2.1 can return to `ready`.
 
 Mandatory later evidence, not current design decisions:
 

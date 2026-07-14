@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: execute the ready Phase 2 plan and build the externally certified transfer-ready process package after the Phase 1 accepted-spec baseline.
+- Current roadmap focus: complete and accept the Phase 2 plan remediation before implementation, then build the externally certified transfer-ready process package after the Phase 1 accepted-spec baseline.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -17,6 +17,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
 - Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, pilot safety, and failed-run retention, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Process-effectiveness measurement is excluded. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
+- Human decisions `D-014` and `D-015` on 2026-07-14 establish the two-horizon automation strategy and Phase 2 remediation gate: deterministic/AI-disabled operation is the foundation and permanent fallback, future accepted changes progressively automate bounded process work with AI, implementation waits for the corrected Phase 2 plan, and the plan is cleanly renumbered from work item 2.3 onward after the remaining certification/runtime decisions close.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -67,7 +68,7 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: ready. The transfer boundary is accepted, the detailed phase plan exists, and work item 2.1 is unblocked.
+Status: blocked. The transfer boundary and product scope are accepted, but the human owner chose to finish and accept the corrected dependency/task plan before work item 2.1 starts. The remaining blockers are the certification-matrix and external reference-runtime decisions plus the resulting plan rewrite.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -145,6 +146,8 @@ Likely scope:
 - Drift detection for generated Confluence blocks.
 - Bitbucket Code Insights or equivalent reporting.
 - Read-only MCP exploration only after the deterministic and standard-tool flow is working.
+- Progressive AI automation after the deterministic flow and monitored pilot are accepted: source-linked evidence assembly, workflow routing, bounded monitoring, role assistance, supported tool coordination, and permitted transition preparation through new OpenSpec changes.
+- Deterministic fallback and verification remain supported as AI automation expands; human authority changes only through explicit accepted decisions.
 
 ## Phase Planning Rule
 

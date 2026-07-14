@@ -45,6 +45,10 @@ The SDD process SHALL require reproducible external evidence before a release ca
 - **WHEN** any mandatory release-manifest evidence is missing, failed, stale, or refers only to an AI assertion
 - **THEN** the candidate is not marked transfer-ready
 
+#### Scenario: Human owner makes the final external acceptance decision
+- **WHEN** the external release-candidate evidence packet is complete
+- **THEN** the human owner accepts or rejects transfer readiness using recorded Tech Lead and QA evidence plus security evidence when the applicable class, data, integration, or risk contract requires it
+
 ### Requirement: Corporate adaptation boundary
 The SDD process SHALL limit corporate-environment work to verified environment inventory, real configuration, approved integration wiring, thin tool adapters, and pilot evidence.
 
@@ -80,7 +84,7 @@ The SDD process SHALL make the release candidate and corporate pilot traceable t
 
 #### Scenario: Release manifest identifies what was certified
 - **WHEN** a release candidate is accepted
-- **THEN** its manifest records the process-package version, config-schema version, OpenSpec pin, included artifact versions, compatibility assumptions, verification commands or evidence paths, weak-model certification references, known limitations, and rollback reference
+- **THEN** its manifest records the process-package version, config-schema version, OpenSpec pin, included artifact versions, compatibility assumptions, verification commands or normalized evidence paths, raw-artifact references and checksums, weak-model certification references, known limitations, and rollback reference
 
 #### Scenario: Pilot evidence identifies installed state
 - **WHEN** pilot results are recorded

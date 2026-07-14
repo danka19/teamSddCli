@@ -89,6 +89,10 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 - **WHEN** a model cannot reliably perform a role operation after bounded instruction and one documented remediation attempt
 - **THEN** the release evidence identifies the limitation and routes the operation to a deterministic command, simpler instruction, mandatory human execution, or a strategy-trigger review
 
+#### Scenario: Certification evidence is stored without private raw data in Git
+- **WHEN** AI-disabled or weak-model certification evidence is finalized for a release candidate
+- **THEN** Git contains normalized synthetic evidence, the evidence manifest, content hashes, and stable references, while raw model/runtime outputs are stored in the versioned release artifact and linked by manifest and checksum
+
 ### Requirement: Weak-model artifacts preserve source ownership
 Role instructions, read packs, examples, and certification fixtures SHALL reference canonical requirements and SHALL NOT become a second maintained behavior source.
 

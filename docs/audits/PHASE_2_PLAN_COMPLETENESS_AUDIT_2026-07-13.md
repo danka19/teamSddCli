@@ -2,15 +2,15 @@
 
 Date: 2026-07-13.
 
-Status: completed audit. Remediation is not applied; the human owner must authorize changes to the Phase 2 plan and active OpenSpec task split.
+Status: completed audit. Remediation direction was accepted on 2026-07-14 in `D-015`; implementation is paused until the corrected plan is accepted after two remaining human decisions.
 
 ## Executive Result
 
 The Phase 2 plan is strong in scope coverage, architecture boundaries, acceptance intent, and explicit status tracking, but it is not yet fully correct as an end-to-end execution plan.
 
-Work item 2.1 is genuinely ready and may start independently. The later plan contains a blocking dependency cycle: work item 2.3A claims ownership of all 42 tasks in `adopt-nis-corporate-process-governance` and must close before certification and release work items, while NIS tasks 8.3-8.7 themselves require that later certification, release evidence, human acceptance, and Phase 3 pilot work. The same broad ownership also overlaps work assigned to Phase 2 items 2.3-2.8.
+At audit time, work item 2.1 was technically independent. The later plan contained a blocking dependency cycle: work item 2.3A claimed ownership of all 42 then-current tasks in `adopt-nis-corporate-process-governance` and had to close before certification and release work items, while NIS tasks 8.3-8.7 themselves required that later certification, release evidence, human acceptance, and Phase 3 pilot work. The same broad ownership also overlapped work assigned to Phase 2 items 2.3-2.8.
 
-Recommended disposition: keep 2.1 ready, but repair the Phase 2 work-item/task matrix before 2.2 closes and before any class-aware implementation is finalized. Split NIS task groups into bounded, uniquely owned Phase 2 work items, carve the Phase 3 portion of NIS task 8.7 out of Phase 2 closure, and remove the circular prerequisites.
+Accepted disposition under `D-015`: pause all Phase 2 implementation, replace the draft mapping with clean sequential work items `2.3-2.14`, assign every task once, split the Phase 3 portion of NIS task 8.7 into new task 8.8, and accept the corrected plan before returning 2.1 to `ready`. The certification matrix and supported external reference runtime remain open inputs to that final rewrite.
 
 ## Audit Boundary
 
