@@ -217,8 +217,9 @@ def test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it() -> None:
     incomplete = _control("resume", at="2026-07-14T09:00:00Z")
     incomplete["corrective_evidence"] = []
     unresolved = check_control_state([*records, incomplete], _owners(), projects(), _snapshot())
-    assert unresolved.state == "stopped"
+    assert unresolved.state == "invalid"
     assert unresolved.resume_eligible is False
+    assert unresolved.active_record_ids == (records[0]["id"],)
 
 
 def test_authorized_resume_is_eligible_but_remains_check_only() -> None:

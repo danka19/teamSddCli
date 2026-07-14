@@ -124,7 +124,7 @@ def test_resume_requires_condition_bound_evidence_for_every_targeted_record() ->
         [stop, resume], _owners(), projects(), _snapshot(), as_of="2026-07-14"
     )
 
-    assert result.state == "stopped"
+    assert result.state == "invalid"
     assert result.resume_eligible is False
     assert result.active_record_ids == (stop["id"],)
     assert "tech-lead.resume-condition-evidence-incomplete" in {
@@ -142,7 +142,7 @@ def test_resume_must_address_all_active_records_and_remains_check_only() -> None
         [stop, hold, resume], _owners(), projects(), _snapshot(), as_of="2026-07-14"
     )
 
-    assert result.state == "held"
+    assert result.state == "invalid"
     assert result.resume_eligible is False
     assert result.active_record_ids == (stop["id"], hold["id"])
     assert result.control_state_mutated is False

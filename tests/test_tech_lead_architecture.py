@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import ast
 import copy
+import inspect
+import textwrap
 from types import MappingProxyType
 
 import pytest
 
 from process.validators.policy_validation import EffectiveRule, PolicySnapshot
 from process.validators.tech_lead import (
+    BLOCKING_CONTROL_DIAGNOSTICS,
     TechLeadPolicyError,
     check_control_state,
     compile_tech_lead_policy,
@@ -221,6 +225,90 @@ def test_bad_authoritative_record_invalidates_eligible_sequence_in_any_position(
     assert result.resume_eligible is False
     assert result.exit_code == 1
     assert result.active_record_ids == (stop["id"],)
+    assert expected_code in {item.code for item in result.diagnostics}
+    assert result.control_state_mutated is False
+    assert result.lifecycle_mutated is False
+
+
+def test_every_local_control_diagnostic_is_in_the_blocking_catalog() -> None:
+    tree = ast.parse(textwrap.dedent(inspect.getsource(check_control_state)))
+    emitted = {
+        node.args[0].value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "_diag"
+        and node.args
+        and isinstance(node.args[0], ast.Constant)
+        and isinstance(node.args[0].value, str)
+    }
+
+    assert emitted == BLOCKING_CONTROL_DIAGNOSTICS
+
+
+@pytest.mark.parametrize(
+    ("case", "position", "expected_code"),
+    [
+        ("without-active", "before", "tech-lead.resume-without-active-control"),
+        ("inactive-target", "between", "tech-lead.resume-target-inactive"),
+        ("inactive-target", "after", "tech-lead.resume-target-inactive"),
+        ("unaddressed", "between", "tech-lead.resume-active-records-unaddressed"),
+        ("unaddressed", "after", "tech-lead.resume-active-records-unaddressed"),
+        ("condition", "between", "tech-lead.resume-condition-evidence-incomplete"),
+        ("condition", "after", "tech-lead.resume-condition-evidence-incomplete"),
+        ("evidence", "between", "tech-lead.resume-evidence-incomplete"),
+        ("evidence", "after", "tech-lead.resume-evidence-incomplete"),
+    ],
+)
+def test_malformed_resume_diagnostic_invalidates_surrounding_valid_sequence(
+    case: str, position: str, expected_code: str,
+) -> None:
+    stop = _control("stop", at="2026-07-14T08:00:00Z")
+    active = [stop]
+    if case == "unaddressed":
+        active.append(_control("hold", at="2026-07-14T08:15:00Z"))
+
+    valid = _control("resume", at="2026-07-14T09:00:00Z")
+    valid["id"] = "control-valid-resume"
+    valid["source_ref"] = "controls/valid-resume.yaml"
+    valid["target_active_record_ids"] = [str(row["id"]) for row in active]
+
+    bad_at = "2026-07-14T07:00:00Z" if position == "before" else (
+        "2026-07-14T08:30:00Z" if position == "between" else "2026-07-14T10:00:00Z"
+    )
+    bad = _control("resume", at=bad_at)
+    bad["id"] = "control-bad-resume"
+    bad["source_ref"] = "controls/bad-resume.yaml"
+    if case == "inactive-target":
+        bad["target_active_record_ids"] = ["control-missing"]
+    elif case == "unaddressed":
+        bad["target_active_record_ids"] = [str(stop["id"])]
+    elif case == "condition":
+        bad["target_active_record_ids"] = [str(stop["id"])]
+        bad["condition_evidence"] = [{
+            "condition": "canonical-context-restored",
+            "source_evidence": ["evidence/unbound.json"],
+        }]
+    elif case == "evidence":
+        bad["target_active_record_ids"] = [str(stop["id"])]
+        bad["corrective_evidence"] = []
+        bad["approvals"] = []
+
+    if position == "before":
+        records = [bad, *active, valid]
+    elif position == "between":
+        records = [*active, bad, valid]
+    else:
+        records = [*active, valid, bad]
+
+    result = check_control_state(
+        records, _owners(), projects(), _snapshot(), as_of="2026-07-14"
+    )
+
+    assert result.state == "invalid"
+    assert result.exit_code == 1
+    assert result.resume_eligible is False
+    assert result.active_record_ids == tuple(str(row["id"]) for row in active)
     assert expected_code in {item.code for item in result.diagnostics}
     assert result.control_state_mutated is False
     assert result.lifecycle_mutated is False

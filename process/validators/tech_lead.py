@@ -40,9 +40,15 @@ FINDING_FIELDS = (
     "code", "severity", "blocking", "source_ref", "zone", "role", "action",
     "policy_snapshot",
 )
-INVALIDATING_CONTROL_DIAGNOSTICS = frozenset({
+BLOCKING_CONTROL_DIAGNOSTICS = frozenset({
+    "tech-lead.as-of-invalid",
+    "tech-lead.policy-contract-invalid",
+    "tech-lead.evaluation-date-mismatch",
     "tech-lead.control-record-future",
     "tech-lead.control-recorded-at-invalid",
+    "tech-lead.control-id-duplicate",
+    "tech-lead.control-order-invalid",
+    "tech-lead.control-time-tie",
     "tech-lead.control-action-unknown",
     "tech-lead.control-severity-unknown",
     "tech-lead.control-trigger-unknown",
@@ -51,6 +57,11 @@ INVALIDATING_CONTROL_DIAGNOSTICS = frozenset({
     "tech-lead.control-authority-forbidden",
     "tech-lead.control-ai-approval-forbidden",
     "tech-lead.control-escalation-conflict",
+    "tech-lead.resume-without-active-control",
+    "tech-lead.resume-target-inactive",
+    "tech-lead.resume-active-records-unaddressed",
+    "tech-lead.resume-condition-evidence-incomplete",
+    "tech-lead.resume-evidence-incomplete",
 })
 
 
@@ -541,15 +552,12 @@ def check_control_state(
                     ))
                 state = _active_control_state(active)
             # Check-only: active records deliberately remain active until work item 2.7.
-    if any(
-        item.code in INVALIDATING_CONTROL_DIAGNOSTICS
-        or item.code.startswith("owners.")
-        for item in diagnostics
-    ):
+    # Every diagnostic emitted by this checker is blocking. The explicit catalog is
+    # regression-checked against the function source; owner-resolution diagnostics
+    # are external blocking inputs and retain their stable owners.* codes.
+    if diagnostics:
         state = "invalid"
         eligible = False
-    elif state == "clear" and diagnostics:
-        state = "invalid"
     return ControlState(
         state=state,
         resume_eligible=eligible,
