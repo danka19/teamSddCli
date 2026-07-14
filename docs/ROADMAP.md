@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: execute work item 2.6 and continue the accepted Phase 2 plan sequentially toward the externally certified transfer-ready process package.
+- Current roadmap focus: execute work item 2.7 and continue the accepted Phase 2 plan sequentially toward the externally certified transfer-ready process package.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.

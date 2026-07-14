@@ -578,7 +578,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-No current design or planning decision blocks work item 2.6.
+No current design or planning decision blocks ready work item 2.7.
 
 Mandatory later evidence, not design decisions:
 
