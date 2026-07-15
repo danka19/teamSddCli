@@ -1,0 +1,13 @@
+schema_version: "1.0"
+namespace: synthetic
+fixture_id: synthetic-qa-hotfix
+role: qa
+change_class: hotfix
+executed: false
+output:
+  artifact_kind: qa-evidence-review
+  summary: Hotfix QA evidence review retaining minimum safety and follow-up.
+  required_fields: [sources_read, verification_results, reconciliation_follow_up, human_stop]
+canonical_sources:
+  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md, sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+validation: {expected_result: passed, expected_codes: []}

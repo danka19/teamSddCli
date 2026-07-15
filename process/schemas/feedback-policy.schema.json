@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"feedback-policy.schema.json","type":"object","additionalProperties":false,
+  "required":["schema_version","namespace","enabled","sla","comments","core_route","source","generated_views"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"namespace":{"enum":["synthetic","example"]},"enabled":{"type":"boolean"},
+    "sla":{"type":"object","additionalProperties":false,"required":["blocker_days","non_blocker_days"],"properties":{"blocker_days":{"type":["integer","null"],"minimum":1},"non_blocker_days":{"type":["integer","null"],"minimum":1}}},
+    "comments":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["id","severity","disposition","follow_up"],"properties":{"id":{"type":"string"},"severity":{"enum":["blocker","non-blocker"]},"disposition":{"enum":["unresolved","accepted","rejected","deferred","duplicate","approved-waiver"]},"follow_up":{"type":["string","null"]}}}},
+    "core_route":{"type":"object","additionalProperties":false,"required":["change_class","publication_implemented","evidence_claimed"],"properties":{"change_class":{"enum":["minor","major","hotfix"]},"publication_implemented":{"type":"boolean"},"evidence_claimed":{"type":"boolean"}}},
+    "source":{"type":"object","additionalProperties":false,"required":["mode","legacy_corpus_read_only"],"properties":{"mode":{"enum":["git-openspec","legacy-reference"]},"legacy_corpus_read_only":{"type":"boolean"}}},
+    "generated_views":{"type":"object","additionalProperties":false,"required":["selection_owner","selected"],"properties":{"selection_owner":{"enum":["corporate-environment","external-package"]},"selected":{"type":"boolean"}}}
+  }
+}

@@ -21,33 +21,8 @@ sources:
   - {kind: delta, capability: tech-lead-workflow, path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md}
   - {kind: delta, capability: traceability-contract, path: openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md}
   - {kind: delta, capability: waiver-policy, path: openspec/changes/adopt-nis-corporate-process-governance/specs/waiver-policy/spec.md}
-coverage:
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Bounded authority-labelled read packs, scenario: Missing canonical context is visible, evidence: case:missing-context}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Weak-model artifacts preserve source ownership, scenario: Derived artifact conflict is corrected from source, evidence: case:conflicting-sources}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Evidence-backed weak-model output, scenario: Unsupported claim fails certification, evidence: case:fabricated-evidence}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: AI remains advisory and non-authoritative, scenario: Model attempts a forbidden approval, evidence: case:forbidden-approval}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Role instructions and explicit stop points, scenario: One operation produces one bounded artifact stage, evidence: case:skipped-stop}
-  - {source_kind: accepted, capability: change-lifecycle, requirement: Human approval ownership, scenario: AI cannot approve lifecycle transitions, evidence: case:invalid-lifecycle-transition}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Deterministic fallback, scenario: Model adapter failure does not alter canonical data, evidence: case:adapter-failure}
-  - {source_kind: delta, capability: weak-model-guardrails, requirement: Deterministic fallback, scenario: AI is unavailable or unusable, evidence: case:context-limit}
-evidence_rules:
-  - {capability: change-artifact-contracts, evidence: pytest:tests/test_artifact_gates.py}
-  - {capability: change-lifecycle, evidence: pytest:tests/test_lifecycle_gates.py}
-  - {capability: change-package-foundation, evidence: pytest:tests/test_classification_migration.py}
-  - {capability: documentation-governance, evidence: pytest:tests/test_validate_change.py}
-  - {capability: repo-topology-config, evidence: pytest:tests/test_validate_process_config.py}
-  - {capability: traceability-contract, evidence: pytest:tests/test_packaged_flow.py}
-  - {capability: waiver-policy, evidence: pytest:tests/test_artifact_gates.py}
-  - {capability: corporate-change-classification, evidence: pytest:tests/test_classification.py}
-  - {capability: corporate-flow-controls, evidence: pytest:tests/test_corporate_flow.py}
-  - {capability: readiness-completion-gates, evidence: pytest:tests/test_artifact_gates.py}
-  - {capability: tech-lead-workflow, evidence: pytest:tests/test_tech_lead_review.py}
-  - {capability: weak-model-guardrails, evidence: pytest:tests/test_weak_model_kit.py}
-gap_rules:
-  - capability: confluence-feedback-loop
-    gap: {owner: example-documentation-owner, risk: low, reason: publication integration is outside the deterministic package, compensation: accepted source contract and manual review, follow_up: work-item-2.13}
-  - capability: transfer-readiness
-    gap: {owner: example-release-owner, risk: medium, reason: release acceptance evidence is not executed in work item 2.10, compensation: deterministic fixture and package regression only, follow_up: work-items-2.11-through-2.14}
+evidence_manifest: process/certification/evidence-manifest.yaml
+binding_manifest: tests/certification-evidence-bindings.yaml
 future_work:
   - {capability: weak-model-guardrails, requirement: Actual weak-model certification, work_item: "2.11", reason: actual model runtimes are intentionally not executed by fixture certification}
   - {capability: transfer-readiness, requirement: External release acceptance gate, work_item: "2.11/2.14", reason: AI-disabled and model runs plus human acceptance remain future work}

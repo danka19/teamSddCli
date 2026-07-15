@@ -1,0 +1,13 @@
+schema_version: "1.0"
+namespace: synthetic
+fixture_id: synthetic-developer-major
+role: developer
+change_class: major
+executed: false
+output:
+  artifact_kind: implementation-preparation-draft
+  summary: Major implementation preparation with dependencies and checks.
+  required_fields: [sources_read, write_scope, focused_checks, human_stop]
+canonical_sources:
+  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+validation: {expected_result: passed, expected_codes: []}

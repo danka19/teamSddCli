@@ -12,7 +12,7 @@ import pytest
 import yaml
 from jsonschema import Draft202012Validator
 
-from process.certification import CertificationError, build_coverage_report, certify_release
+from process.certification import CertificationError, build_coverage_report, certify_release, validate_role_output_fixtures
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,6 +51,10 @@ def test_evidence_schema_supports_future_actual_model_shape_without_claiming_exe
     schema = json.loads((PROCESS / "schemas/certification-evidence.schema.json").read_text(encoding="utf-8"))
     deterministic = certify_release(ROOT, CATALOG, Path(tempfile.gettempdir()) / "schema-check", check=True)
     assert list(Draft202012Validator(schema).iter_errors(deterministic)) == []
+    forged_deterministic = copy.deepcopy(deterministic)
+    forged_deterministic["cases"][0]["execution_mode"] = "actual-model"
+    forged_deterministic["cases"][0]["read_pack"] = {"identity": "a" * 64}
+    assert list(Draft202012Validator(schema).iter_errors(forged_deterministic))
     actual = copy.deepcopy(deterministic)
     actual.update({"evidence_kind": "actual-model", "actual_model_run": True})
     actual["model"] = {"family": "qwen-class", "id": "example-model-id", "runtime": "example-runtime"}
@@ -58,6 +62,16 @@ def test_evidence_schema_supports_future_actual_model_shape_without_claiming_exe
     actual["cases"][0]["execution_mode"] = "actual-model"
     actual["cases"][0]["read_pack"] = {"identity": "a" * 64}
     actual["normalized_sha256"] = "b" * 64
+    assert list(Draft202012Validator(schema).iter_errors(actual)), "partial actual-model forgery must fail"
+    roles = ["analyst", "developer", "qa", "tech-lead"]
+    classes = ["minor", "major", "hotfix"]
+    for index, case in enumerate(actual["cases"]):
+        case["execution_mode"] = "actual-model"
+        case["read_pack"] = {"identity": "abcdef"[index % 6] * 64}
+        case["role"] = roles[index % len(roles)]
+        case["change_class"] = classes[index % len(classes)]
+    for row in actual["planned_dimensions"]["roles"] + actual["planned_dimensions"]["classes"]:
+        row["executed"] = True
     assert list(Draft202012Validator(schema).iter_errors(actual)) == []
 
 
@@ -67,6 +81,10 @@ def test_catalog_declares_role_class_dimensions_and_expected_outputs_without_exe
     assert {row["role"] for row in dimensions["roles"]} == {"analyst", "developer", "qa", "tech-lead"}
     assert {row["change_class"] for row in dimensions["classes"]} == {"minor", "major", "hotfix"}
     assert all(row["expected_output"] and row["executed"] is False for row in dimensions["roles"])
+    validated = validate_role_output_fixtures(ROOT, catalog)
+    assert {row["role"] for row in validated} == {"analyst", "developer", "qa", "tech-lead"}
+    assert {row["change_class"] for row in validated} == {"minor", "major", "hotfix"}
+    assert all(row["sha256"] and row["executed"] is False for row in validated)
 
 
 def test_valid_golden_check_is_repeatable_private_and_hash_bound(external_tmp: Path) -> None:
@@ -237,6 +255,7 @@ def test_coverage_composes_accepted_and_active_delta_scenarios() -> None:
     assert report["future_work"]
     assert {row["source_kind"] for row in report["coverage"]} == {"accepted", "delta"}
     assert all(row["scenario"] and (row.get("evidence") or row.get("gap")) for row in report["coverage"])
+    assert all(not isinstance(ref, str) or not (ref.startswith("pytest:") and "::" not in ref) for row in report["coverage"] for ref in row.get("evidence", []))
     future_selectors = {(row["capability"], row["requirement"], row.get("scenario")) for row in report["future_work"]}
     assert ("weak-model-guardrails", "Actual weak-model certification", None) in future_selectors
     assert not any(row["capability"] == "change-artifact-contracts" and row["requirement"] in {"Thin change artifact contract", "Full package artifact contract"} and row["source_kind"] == "accepted" for row in report["coverage"])
@@ -244,18 +263,48 @@ def test_coverage_composes_accepted_and_active_delta_scenarios() -> None:
 
 def test_explicit_residual_gap_wins_and_requires_all_fields(tmp_path: Path) -> None:
     coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
-    row = coverage["coverage"][0]
-    row.pop("evidence", None)
+    manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
+    row = manifest["coverage"][0]
+    row.pop("evidence", None); row.pop("binding_id", None)
     row["gap"] = {
         "owner": "example-qa-owner", "risk": "medium", "reason": "synthetic gap",
         "compensation": "manual synthetic review", "follow_up": "work-item-2.11",
     }
+    custom_manifest = tmp_path / "evidence-manifest.yaml"
+    custom_manifest.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    coverage["evidence_manifest"] = custom_manifest.relative_to(ROOT).as_posix()
     custom = tmp_path / "coverage.yaml"
     custom.write_text(yaml.safe_dump(coverage, sort_keys=False), encoding="utf-8")
     report = build_coverage_report(ROOT, custom)
     selected = next(item for item in report["coverage"] if item["capability"] == row["capability"] and item["requirement"] == row["requirement"] and item["scenario"] == row["scenario"])
     assert "gap" in selected and "evidence" not in selected
     assert report["status"] == "gaps"
+
+
+def test_unrelated_existing_pytest_node_is_rejected_by_selector_binding(tmp_path: Path) -> None:
+    coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
+    manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
+    manifest["coverage"][0]["evidence"] = ["pytest:tests/test_certification.py::test_full_package_regression_includes_certification_inventory"]
+    custom_manifest = tmp_path / "evidence-manifest.yaml"
+    custom_manifest.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    coverage["evidence_manifest"] = custom_manifest.relative_to(ROOT).as_posix()
+    custom = tmp_path / "coverage.yaml"
+    custom.write_text(yaml.safe_dump(coverage, sort_keys=False), encoding="utf-8")
+    with pytest.raises(CertificationError, match="coverage.binding-mismatch"):
+        build_coverage_report(ROOT, custom)
+
+
+def test_bare_pytest_file_reference_is_forbidden(tmp_path: Path) -> None:
+    coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
+    manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
+    manifest["coverage"][0]["evidence"] = ["pytest:tests/test_artifact_gates.py"]
+    custom_manifest = tmp_path / "evidence-manifest.yaml"
+    custom_manifest.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    coverage["evidence_manifest"] = custom_manifest.relative_to(ROOT).as_posix()
+    custom = tmp_path / "coverage.yaml"
+    custom.write_text(yaml.safe_dump(coverage, sort_keys=False), encoding="utf-8")
+    with pytest.raises(CertificationError, match="coverage.bare-pytest-file"):
+        build_coverage_report(ROOT, custom)
 
 
 @pytest.mark.parametrize("mutation,code", [
@@ -269,17 +318,21 @@ def test_coverage_rejects_unknown_duplicates_invalid_gaps_and_delta_targets(
     tmp_path: Path, mutation: str, code: str
 ) -> None:
     coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
+    manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
     if mutation == "unknown-case":
-        coverage["coverage"][0]["evidence"] = "case:does-not-exist"
+        manifest["coverage"][0]["evidence"] = ["case:does-not-exist"]
     elif mutation == "unknown-pytest":
-        coverage["coverage"][0]["evidence"] = "pytest:tests/test_certification.py::does_not_exist"
+        manifest["coverage"][0]["evidence"] = ["pytest:tests/test_certification.py::does_not_exist"]
     elif mutation == "duplicate":
-        coverage["coverage"].append(copy.deepcopy(coverage["coverage"][0]))
+        manifest["coverage"].append(copy.deepcopy(manifest["coverage"][0]))
     elif mutation == "gap-fields":
-        coverage["coverage"][0].pop("evidence")
-        coverage["coverage"][0]["gap"] = {"owner": "qa"}
+        manifest["coverage"][0].pop("evidence"); manifest["coverage"][0].pop("binding_id")
+        manifest["coverage"][0]["gap"] = {"owner": "qa"}
     else:
         coverage["delta_targets"].append({"capability": "missing", "requirement": "Not real", "change": "define-transfer-ready-process-package", "kind": "MODIFIED"})
+    custom_manifest = tmp_path / "evidence-manifest.yaml"
+    custom_manifest.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    coverage["evidence_manifest"] = custom_manifest.relative_to(ROOT).as_posix()
     custom = tmp_path / "coverage.yaml"
     custom.write_text(yaml.safe_dump(coverage, sort_keys=False), encoding="utf-8")
     with pytest.raises(CertificationError, match=code):

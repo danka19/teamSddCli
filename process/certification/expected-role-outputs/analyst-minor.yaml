@@ -1,0 +1,13 @@
+schema_version: "1.0"
+namespace: synthetic
+fixture_id: synthetic-analyst-minor
+role: analyst
+change_class: minor
+executed: false
+output:
+  artifact_kind: requirements-draft
+  summary: Bounded minor requirement draft awaiting human review.
+  required_fields: [sources_read, requirement_scenarios, unresolved_inputs, human_stop]
+canonical_sources:
+  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+validation: {expected_result: passed, expected_codes: []}

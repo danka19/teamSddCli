@@ -98,7 +98,10 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/adapters/*.yaml` | Thin Qwen/DeepSeek/GigaCode-class packaging templates with no policy, transition, canonical-write, or human authority |
 | `process/weak_model_kit.py` | Pure authority-labelled read-pack, deterministic launch, operation-evidence, and safe-parallel contract logic |
 | `process/certification.py` | Pure deterministic fixture runner, allowlisted validator dispatch, normalized/raw evidence boundary, and exact OpenSpec coverage inventory |
-| `process/certification/` | Synthetic reference repository, golden case catalog, eight fail-closed negative families, and accepted/active scenario coverage inventory |
+| `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
+| `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
+| `tests/certification-evidence-bindings.yaml` | Test-owned exact selector-to-pytest/case binding manifest used to reject unrelated evidence substitution |
+| `tests/test_feedback_policy.py` | Eight exact deterministic scenarios for the modified NIS feedback/publication-boundary requirement |
 | `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
 | `scripts/certify_process_release.py` | Thin CWD-independent fixture-certification and coverage entry point; actual model/cross-platform execution remains later work |
 | `tests/test_weak_model_kit.py` | Scenario-first launch, missing context, authority, derived-output, adapter, role, and parallel-safety evidence |

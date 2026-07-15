@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"role-output-fixture.schema.json","type":"object","additionalProperties":false,
+  "required":["schema_version","namespace","fixture_id","role","change_class","executed","output","canonical_sources","validation"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"namespace":{"const":"synthetic"},"fixture_id":{"type":"string","pattern":"^synthetic-[a-z0-9-]+$"},
+    "role":{"enum":["analyst","developer","qa","tech-lead"]},"change_class":{"enum":["minor","major","hotfix"]},"executed":{"const":false},
+    "output":{"type":"object","additionalProperties":false,"required":["artifact_kind","summary","required_fields"],"properties":{"artifact_kind":{"type":"string"},"summary":{"type":"string"},"required_fields":{"type":"array","minItems":2,"uniqueItems":true,"items":{"type":"string"}}}},
+    "canonical_sources":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["stable_id","path","sha256"],"properties":{"stable_id":{"type":"string"},"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+    "validation":{"type":"object","additionalProperties":false,"required":["expected_result","expected_codes"],"properties":{"expected_result":{"enum":["passed","blocked"]},"expected_codes":{"type":"array","items":{"type":"string"}}}}
+  }
+}

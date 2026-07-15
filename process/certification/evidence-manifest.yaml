@@ -1,0 +1,2157 @@
+schema_version: '1.0'
+coverage:
+- source_kind: accepted
+  capability: change-artifact-contracts
+  requirement: Artifact height rules
+  scenario: Proposal stays business and scope focused
+  binding_id: binding-9a6239d13a8e18f4
+  evidence: &id001
+  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_artifact_gates.py::test_required_artifact_must_be_substantive_current_and_source_linked
+  - pytest:tests/test_artifact_gates.py::test_conditional_not_applicable_requires_structured_human_rationale
+  - pytest:tests/test_artifact_gates.py::test_only_eligible_artifact_accepts_a_current_human_approved_waiver
+  - pytest:tests/test_artifact_gates.py::test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_remains_due_after_canonical_rework
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_fails_closed_when_prior_reach_cannot_be_determined
+  - pytest:tests/test_artifact_gates.py::test_all_named_reports_are_stable_and_keep_required_human_approval_explicit
+  - pytest:tests/test_artifact_gates.py::test_ai_completion_text_is_never_implementation_evidence
+  - pytest:tests/test_artifact_gates.py::test_release_not_applicable_is_approved_and_does_not_infer_external_done
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_on_missing_or_wrong_policy_provenance
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_when_canonical_gate_semantics_are_missing_or_changed
+  - pytest:tests/test_artifact_gates.py::test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day
+- source_kind: accepted
+  capability: change-artifact-contracts
+  requirement: Artifact height rules
+  scenario: Tasks stay executable and parseable
+  binding_id: binding-0529555723f09cc2
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact matrix baseline status
+  scenario: Existing implementation evidence remains recorded
+  binding_id: binding-52402734189d2b7e
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact matrix baseline status
+  scenario: Target matrix is versioned
+  binding_id: binding-946e958248af94ec
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact matrix baseline status
+  scenario: Deferred integrations are explicit
+  binding_id: binding-45518bd974a965bc
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact matrix baseline status
+  scenario: Future corrections use accepted-spec workflow
+  binding_id: binding-52c74475dbc5e15b
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+  scenario: Core source artifacts cannot be waived
+  binding_id: binding-c3d74cdf6bba0ae8
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+  scenario: No-spec-change rationale is limited
+  binding_id: binding-076f8c9aa332a504
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+  scenario: No-spec-change rationale cannot hide behavior change
+  binding_id: binding-fb8c314c1279622c
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+  scenario: QA or automation artifact can be waived with approved evidence
+  binding_id: binding-3c441210fd2aac0b
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+  scenario: Hotfix deferral follows restricted policy
+  binding_id: binding-4cd5c0b5114220d5
+  evidence: *id001
+- source_kind: accepted
+  capability: change-artifact-contracts
+  requirement: Delta Spec operation vocabulary
+  scenario: Added delta introduces new behavior
+  binding_id: binding-ba24a81bef8cc05f
+  evidence: *id001
+- source_kind: accepted
+  capability: change-artifact-contracts
+  requirement: Delta Spec operation vocabulary
+  scenario: Removed delta includes reason and migration
+  binding_id: binding-e0e75869e4a7f1b3
+  evidence: *id001
+- source_kind: accepted
+  capability: change-artifact-contracts
+  requirement: Delta Spec operation vocabulary
+  scenario: Rename does not hide content change
+  binding_id: binding-c23dbcef9f2e9639
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Future journey and screen artifacts
+  scenario: UI major package may require screen catalog
+  binding_id: binding-6450eb881e867297
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Future journey and screen artifacts
+  scenario: Non-UI minor does not require screen catalog
+  binding_id: binding-b3cb4bda8d97a027
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Future journey and screen artifacts
+  scenario: Hotfix records deferred UI evidence
+  binding_id: binding-b1d9fabf12190302
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Hotfix change artifact contract
+  scenario: Hotfix entry package is bounded
+  binding_id: binding-26596ab4fecef14f
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Hotfix change artifact contract
+  scenario: Deferred artifact has follow-up
+  binding_id: binding-822a951d04e57607
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Hotfix change artifact contract
+  scenario: Hotfix release package is reconciled
+  binding_id: binding-76ae9b77799f9e49
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Hotfix change artifact contract
+  scenario: Hotfix does not bypass major-impact evidence silently
+  binding_id: binding-b20ea9a45a616e06
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Legacy baseline artifact mode
+  scenario: Legacy change records observed behavior
+  binding_id: binding-c4b78659e933a190
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Legacy baseline artifact mode
+  scenario: Historical changes do not require retroactive target package
+  binding_id: binding-ffb720ea79cd4e81
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Major change artifact contract
+  scenario: Major change expands required evidence
+  binding_id: binding-01fc6a348fff25d9
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Major change artifact contract
+  scenario: Empty major artifact is not evidence
+  binding_id: binding-d7fec9a863989121
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Minor change artifact contract
+  scenario: Minor change has minimum reviewable evidence
+  binding_id: binding-73ed38cc6b5c1c6d
+  evidence: *id001
+- source_kind: delta
+  capability: change-artifact-contracts
+  requirement: Minor change artifact contract
+  scenario: Minor avoids major-only burden
+  binding_id: binding-2be5fc28fe31bf30
+  evidence: *id001
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Archive history convention
+  scenario: Archive uses dated history path
+  binding_id: binding-3f427ab5918696a8
+  evidence: &id002
+  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_lifecycle_gates.py::test_canonical_rework_transitions_require_reason_authority_and_evidence
+  - pytest:tests/test_lifecycle_gates.py::test_other_skipped_backward_same_and_unknown_transitions_are_rejected
+  - pytest:tests/test_lifecycle_gates.py::test_dor_start_and_archive_require_transition_specific_human_approval
+  - pytest:tests/test_lifecycle_gates.py::test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up
+  - pytest:tests/test_lifecycle_gates.py::test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive
+  - pytest:tests/test_lifecycle_gates.py::test_transition_cli_has_stable_human_json_and_exit_contract
+  - pytest:tests/test_lifecycle_gates.py::test_transition_blocks_when_gate_evidence_is_valid_but_approval_is_pending
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Archive history convention
+  scenario: Archive commit is greppable
+  binding_id: binding-c6a62524ef264d9d
+  evidence: *id002
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Archive history convention
+  scenario: Archive convention does not replace approval
+  binding_id: binding-9421fd2f5a6763b5
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Delivered state is external to archive state
+  scenario: Archived spec may precede or follow delivery
+  binding_id: binding-17ec6888e3e9b514
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Delivered state is external to archive state
+  scenario: Tracker transition uses mapping
+  binding_id: binding-8a350ea905d3747e
+  evidence: *id002
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Derived approval and verification display
+  scenario: Confluence displays but does not own approval state
+  binding_id: binding-94efcbde39d4cb6b
+  evidence: *id002
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Derived approval and verification display
+  scenario: Generated view cannot approve transition
+  binding_id: binding-ac9c48e5007902f8
+  evidence: *id002
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Derived approval and verification display
+  scenario: Public lifecycle can be simpler than internal readiness
+  binding_id: binding-e80009c788b9c0bc
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Allowed transitions are explicit
+  binding_id: binding-2b6b035d3b47fa64
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Spec PR transition checks structure
+  binding_id: binding-c7e662e555383010
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Approval transition checks Definition of Ready
+  binding_id: binding-b62388c68c3f747a
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Archive-readiness transition checks Definition of Done
+  binding_id: binding-b8edd42fe1381197
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Draft cannot skip to approved
+  binding_id: binding-b471758208664a19
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Draft cannot skip to archive readiness
+  binding_id: binding-89067401ce66f228
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Archive requires explicit human approval
+  binding_id: binding-fc15a06b4ffeba82
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+  scenario: Lifecycle expiry remains due after rework
+  binding_id: binding-ad72b0a326071db4
+  evidence: *id002
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Human approval ownership
+  scenario: AI cannot approve lifecycle transitions
+  binding_id: binding-3e1e4c7784c0e63e
+  evidence:
+  - case:invalid-lifecycle-transition
+- source_kind: accepted
+  capability: change-lifecycle
+  requirement: Human approval ownership
+  scenario: CI blocks but does not approve
+  binding_id: binding-6be7841c05e92c2e
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Lifecycle states
+  scenario: Minor route remains compact
+  binding_id: binding-dfe4ceb5ff7c2a40
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Lifecycle states
+  scenario: Major route uses expanded gates
+  binding_id: binding-2432fd932523af76
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Lifecycle states
+  scenario: Hotfix accelerates sequence but not accountability
+  binding_id: binding-ce359951605d44c5
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: MVP boundary for lifecycle automation
+  scenario: Core process is AI-disabled and integration-independent
+  binding_id: binding-34fba160551e4a47
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: MVP boundary for lifecycle automation
+  scenario: Deferred integration is not fabricated
+  binding_id: binding-cbdaaefbe961fa9b
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Named corporate business gates
+  scenario: Review-ready gate precedes Spec Review
+  binding_id: binding-30d5c08db52eda6d
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Named corporate business gates
+  scenario: Definition of Ready precedes approval
+  binding_id: binding-4938875bf65186e1
+  evidence: *id002
+- source_kind: delta
+  capability: change-lifecycle
+  requirement: Named corporate business gates
+  scenario: Definition of Done precedes archive readiness
+  binding_id: binding-c361da4ba88efea4
+  evidence: *id002
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Bounded legacy compatibility
+  scenario: Legacy package receives deprecation result
+  binding_id: binding-fd778652fc569a63
+  evidence: &id003
+  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
+  - pytest:tests/test_classification_migration.py::test_conflict_and_ambiguous_legacy_metadata_are_refused
+  - pytest:tests/test_classification_migration.py::test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation
+  - pytest:tests/test_classification_migration.py::test_migration_refuses_structurally_valid_legacy_metadata_at_unsupported_targets
+  - pytest:tests/test_classification_migration.py::test_plan_digest_is_bound_to_canonical_resolved_change_target
+  - pytest:tests/test_classification_migration.py::test_apply_requires_matching_valid_plan_and_preserves_metadata_and_comments
+  - pytest:tests/test_classification_migration.py::test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup
+  - pytest:tests/test_classification_migration.py::test_apply_uses_same_directory_atomic_replace_and_cleans_temp_on_failure
+  - pytest:tests/test_classification_migration.py::test_archived_or_accepted_history_is_reported_but_never_rewritten
+  - pytest:tests/test_classification_migration.py::test_migration_cli_has_stable_human_json_and_exit_semantics
+  - pytest:tests/test_classification_migration.py::test_classifier_cli_consumes_policy_snapshot_and_emits_stable_json
+  - pytest:tests/test_classification_migration.py::test_both_clis_render_json_usage_errors_with_exit_two
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Bounded legacy compatibility
+  scenario: Conflicting metadata is rejected
+  binding_id: binding-80f7669aa7f961dc
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Bounded legacy compatibility
+  scenario: Compatibility end is versioned
+  binding_id: binding-a74adf83776a0e13
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Change package template
+  scenario: Template contains required artifacts
+  binding_id: binding-100d8ff20968a96c
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Classification-aware placeholder validation
+  scenario: Target route examples validate structurally
+  binding_id: binding-19c69b9f18708798
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Classification-aware placeholder validation
+  scenario: Real package rejects undecided classification
+  binding_id: binding-383e288415ed5ed3
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Deterministic classification migration command
+  scenario: Check mode is non-mutating
+  binding_id: binding-e957f77ea6600ac1
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Deterministic classification migration command
+  scenario: Apply mode preserves unrelated metadata
+  binding_id: binding-8ea90faeab9d4cd0
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Deterministic classification migration command
+  scenario: Archived history is excluded
+  binding_id: binding-9bd245b81fd1f7ae
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Local change package validation
+  scenario: Valid package passes validation
+  binding_id: binding-aeb464ee3acc721a
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Local change package validation
+  scenario: Missing artifact fails validation
+  binding_id: binding-c9b19d0967095d53
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Local change package validation
+  scenario: Missing traceability fails validation
+  binding_id: binding-5ce1a6f32e9a31d6
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Pre-commit validation entrypoint
+  scenario: Plain OpenSpec project change is ignored
+  binding_id: binding-ac458fe2c085b22f
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Pre-commit validation entrypoint
+  scenario: SDD package is validated
+  binding_id: binding-0939b0f80f4915c6
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Template placeholder validation mode
+  scenario: Template validates in placeholder mode
+  binding_id: binding-4271988f7113e8c9
+  evidence: *id003
+- source_kind: accepted
+  capability: change-package-foundation
+  requirement: Template placeholder validation mode
+  scenario: Real package rejects placeholders
+  binding_id: binding-a51b764c7aceaa88
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Versioned corporate classification metadata
+  scenario: Version 2 metadata is explicit
+  binding_id: binding-b208a273b224292a
+  evidence: *id003
+- source_kind: delta
+  capability: change-package-foundation
+  requirement: Versioned corporate classification metadata
+  scenario: New writer does not emit legacy mode
+  binding_id: binding-c2bb756a6d39cf50
+  evidence: *id003
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Confluence is generated publication
+  scenario: Generated page links back to source
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Confluence is generated publication
+  scenario: Generated content is not edited as source
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Confluence is generated publication
+  scenario: Raw OpenSpec is not published as the main business view
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Evidence-backed status display
+  scenario: Status display has evidence link or waiver
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Evidence-backed status display
+  scenario: Confluence does not own status
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Feedback loop disposition
+  scenario: Accepted comment becomes source change
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Feedback loop disposition
+  scenario: Rejected comment records reason
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Feedback loop disposition
+  scenario: Deferred comment records follow-up
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Feedback loop disposition
+  scenario: Duplicate comment links to source disposition
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Generated publication assets
+  scenario: Accepted diagram has versioned source
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: accepted
+  capability: confluence-feedback-loop
+  requirement: Generated publication assets
+  scenario: Confluence drawing is draft-only
+  gap:
+    owner: example-documentation-owner
+    risk: low
+    reason: generated publication integration is not implemented
+    compensation: deterministic package checks and manual source review
+    follow_up: work-item-2.13
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Feedback SLA is configurable
+  binding_id: binding-c853ed60e9781d41
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_feedback_sla_is_configurable
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Default triage SLA is used when enabled
+  binding_id: binding-d379cce87e7aff81
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_default_triage_sla_is_used_when_enabled
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Blocker comment prevents final publication
+  binding_id: binding-6dfb4d2d499713f5
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_blocker_comment_prevents_final_publication
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Non-blocking comment still needs disposition
+  binding_id: binding-7236231aba7d8618
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_non_blocking_comment_still_needs_disposition
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Core class routes do not require fabricated Confluence evidence
+  binding_id: binding-26261e08c0395ec4
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_core_class_routes_do_not_require_fabricated_confluence_evidence
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Applicable publication becomes class-aware later
+  binding_id: binding-11ad88a1f85c7b07
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_applicable_publication_becomes_class_aware_later
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Existing Confluence corpus is read-only archive
+  binding_id: binding-e6f0b9f309731dff
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_existing_confluence_corpus_is_read_only_archive
+- source_kind: delta
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+  scenario: Generated views are selected in corporate environment
+  binding_id: binding-ce8ef99274ae75e4
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_generated_views_are_selected_in_corporate_environment
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Accelerated hotfix route
+  scenario: Urgent harmful delay qualifies for hotfix assessment
+  binding_id: binding-f698155e4d730143
+  evidence: &id004
+  - pytest:tests/test_classification.py::test_classifier_fails_closed_when_required_policy_rule_is_missing_or_malformed
+  - pytest:tests/test_classification.py::test_classifier_fails_closed_on_changed_class_and_route_policy_relationships
+  - pytest:tests/test_classification.py::test_classifier_fails_closed_on_changed_obligation_or_reviewer_mapping
+  - pytest:tests/test_classification.py::test_classifier_reports_the_compiled_snapshot_policy_version
+  - pytest:tests/test_classification.py::test_classifier_fails_closed_on_conflicting_required_rule_version
+  - pytest:tests/test_classification.py::test_minor_requires_every_condition_and_reports_sources
+  - pytest:tests/test_classification.py::test_unknown_or_missing_minor_fact_blocks_minor
+  - pytest:tests/test_classification.py::test_major_returns_every_trigger_and_rejects_minor_downgrade
+  - pytest:tests/test_classification.py::test_new_feature_metadata_cannot_hide_major_trigger_by_omitting_evidence
+  - pytest:tests/test_classification.py::test_pseudo_hotfix_is_rejected_without_increasing_harm
+  - pytest:tests/test_classification.py::test_major_impact_hotfix_retains_major_and_hotfix_obligations
+  - pytest:tests/test_classification.py::test_hotfix_eligible_change_may_use_reasoned_standard_major_route
+  - pytest:tests/test_classification.py::test_report_is_stable_and_includes_versions_reviewers_and_human_state
+  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification.py::test_audited_correction_recalculates_source_fact
+  - pytest:tests/test_classification.py::test_stricter_route_is_allowed_but_authority_text_cannot_downgrade_major
+  - pytest:tests/test_classification.py::test_change_v2_schema_accepts_only_audited_human_corrections
+  - pytest:tests/test_classification.py::test_target_template_examples_and_read_pack_offer_only_current_classes
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Accelerated hotfix route
+  scenario: Convenience does not qualify as hotfix
+  binding_id: binding-2aa72845f2ed9ebe
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Accelerated hotfix route
+  scenario: Hotfix preserves minimum safety evidence
+  binding_id: binding-dcb5a424a149b10a
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Accelerated hotfix route
+  scenario: Major-impact hotfix keeps risk obligations visible
+  binding_id: binding-328591135c714746
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Canonical corporate change classification
+  scenario: New package uses canonical classification
+  binding_id: binding-3720fa4efdc1a2d6
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Canonical corporate change classification
+  scenario: Work type remains separate
+  binding_id: binding-7ecd14022b0e56d4
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Canonical corporate change classification
+  scenario: Unknown class is rejected
+  binding_id: binding-1d195b36947dbaff
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Conservative major triggers
+  scenario: Any material trigger requires major
+  binding_id: binding-6d076e5307587daa
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Conservative major triggers
+  scenario: Multiple triggers remain visible
+  binding_id: binding-1fba8adff0ef2ab4
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Deterministic minor eligibility
+  scenario: Bounded low-impact change qualifies as minor
+  binding_id: binding-a19993e2a240f7cb
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Deterministic minor eligibility
+  scenario: Missing minor evidence blocks minor route
+  binding_id: binding-117e366adcae265f
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Explainable classification report
+  scenario: Report explains the result
+  binding_id: binding-2d3d43c1e2e02427
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Explainable classification report
+  scenario: Machine-readable result is stable
+  binding_id: binding-1a23c97d210f0db9
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Human-owned classification confirmation and correction
+  scenario: AI recommendation is advisory
+  binding_id: binding-ad59e4130cd1b673
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Human-owned classification confirmation and correction
+  scenario: Under-classification is rejected
+  binding_id: binding-f500e87449b430fd
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Human-owned classification confirmation and correction
+  scenario: Erroneous source input is corrected and recalculated
+  binding_id: binding-44ace18b1f795975
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Human-owned classification confirmation and correction
+  scenario: Stricter route may be selected
+  binding_id: binding-5775c9610d5ba51a
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Human-owned classification confirmation and correction
+  scenario: Class criteria change only through policy change
+  binding_id: binding-cd71efe76f284d68
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Legacy classification migration
+  scenario: Legacy values map conservatively
+  binding_id: binding-6330f68d1273889b
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Legacy classification migration
+  scenario: Migration preview precedes mutation
+  binding_id: binding-d6ecdf6f972556a4
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Legacy classification migration
+  scenario: Migration is idempotent
+  binding_id: binding-ca0b523acae528ab
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-change-classification
+  requirement: Legacy classification migration
+  scenario: Accepted archive history is preserved
+  binding_id: binding-848a9111ba73371c
+  evidence: *id004
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Corporate system-of-record links
+  scenario: Evidence chain crosses systems by identifier
+  binding_id: binding-ba7ae6d2688bb884
+  evidence: &id005
+  - pytest:tests/test_corporate_flow.py::test_valid_governance_bundle_is_check_only_and_may_continue
+  - pytest:tests/test_corporate_flow.py::test_triage_supports_all_outcomes_but_only_proceed_requires_baseline
+  - pytest:tests/test_corporate_flow.py::test_material_scope_drift_requires_complete_human_reassessment
+  - pytest:tests/test_corporate_flow.py::test_regression_gap_stale_or_wrong_qa_authority_blocks
+  - pytest:tests/test_corporate_flow.py::test_existing_control_ledger_is_authoritative_and_exception_cannot_clear_hold
+  - pytest:tests/test_corporate_flow.py::test_release_chain_requires_real_or_approved_substitute_artifact_evidence
+  - pytest:tests/test_corporate_flow.py::test_release_substitute_decision_is_active_scoped_linked_and_human_authorized
+  - pytest:tests/test_corporate_flow.py::test_role_map_wip_and_pilot_selection_fail_closed
+  - pytest:tests/test_corporate_flow.py::test_baseline_quality_regression_and_qa_decision_are_semantically_bound
+  - pytest:tests/test_corporate_flow.py::test_all_absolute_local_refs_fail_schema_and_runtime_without_echo
+  - pytest:tests/test_corporate_flow.py::test_wip_authorized_exception_requires_active_scoped_human_authority
+  - pytest:tests/test_corporate_flow.py::test_wip_authorized_exception_rejects_human_decision_substitute
+  - pytest:tests/test_corporate_flow.py::test_failed_retry_cannot_erase_or_forge_predecessor
+  - pytest:tests/test_corporate_flow.py::test_pilot_safety_locked_risks_and_failed_operational_flags_block
+  - pytest:tests/test_corporate_flow.py::test_envelope_integrity_rejects_bad_scope_future_equal_time_and_duplicate_ids
+  - pytest:tests/test_corporate_flow.py::test_valid_correction_appends_and_supersedes_semantics_without_overwrite
+  - pytest:tests/test_corporate_flow.py::test_cli_has_stable_human_json_parity_and_never_mutates
+  - pytest:tests/test_corporate_flow.py::test_cli_rejects_and_redacts_inline_secret_material
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Corporate system-of-record links
+  scenario: Missing artifact repository is explicit
+  binding_id: binding-ea989a28281b6eb9
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Failed-run evidence retention
+  scenario: Successful retry does not erase failure
+  binding_id: binding-005c4c9cf8096fd7
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Failed-run evidence retention
+  scenario: Failed run can trigger operational control
+  binding_id: binding-ef3124ba3ec1bba2
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Fixed input and scope-change control
+  scenario: Approved baseline is identifiable
+  binding_id: binding-eea7eac6eb3622aa
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Fixed input and scope-change control
+  scenario: Material scope drift triggers reassessment
+  binding_id: binding-c77157d8de806fb8
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Human decision and AI execution evidence
+  scenario: Human decision log is explicit
+  binding_id: binding-a8edcf3fae4fbeac
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Human decision and AI execution evidence
+  scenario: AI run evidence is reproducible
+  binding_id: binding-349d1d3b67f2f480
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Monitored-pilot safety boundary
+  scenario: Pilot risk register covers operational boundaries
+  binding_id: binding-260ae0e367d7bfda
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Monitored-pilot safety boundary
+  scenario: AI-disabled path is certified
+  binding_id: binding-4b176e35ff1f698a
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Monitored-pilot safety boundary
+  scenario: Operational pilot stop is testable
+  binding_id: binding-d6791b8b71065562
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Portable corporate role map
+  scenario: Governed roles are mapped explicitly
+  binding_id: binding-d3bb774124f894da
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Portable corporate role map
+  scenario: Missing role is not assigned to AI
+  binding_id: binding-ad6e21d5e141f6a4
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Portable corporate role map
+  scenario: Team-specific hierarchy is excluded
+  binding_id: binding-35b61546aae2bbd6
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Portfolio WIP and pilot-selection controls
+  scenario: Pilot selection is justified
+  binding_id: binding-dbf13998b7325a4b
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Portfolio WIP and pilot-selection controls
+  scenario: Excessive WIP is visible
+  binding_id: binding-b69672b98dc2bf13
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Preliminary initiative triage
+  scenario: Triage records decision inputs
+  binding_id: binding-acfa1d951f86f45b
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Preliminary initiative triage
+  scenario: Triage is not implementation approval
+  binding_id: binding-553b031d9d5a5f03
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Quality strategy before implementation
+  scenario: Quality strategy covers verification contours
+  binding_id: binding-d5a93667491541be
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Quality strategy before implementation
+  scenario: QA owner confirms quality strategy sufficiency
+  binding_id: binding-60f66ea6bedb0a79
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Quality strategy before implementation
+  scenario: Hotfix reconciles deferred planning
+  binding_id: binding-02a90f760c9496c5
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Regression matrix
+  scenario: Matrix links impact to checks
+  binding_id: binding-203c7d95e3bad283
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Regression matrix
+  scenario: Missing applicable regression row is visible
+  binding_id: binding-7a47340a5835835f
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Regression matrix
+  scenario: QA owner dispositions regression results
+  binding_id: binding-4dde1aad6cdb1308
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Release-package handoff
+  scenario: Handoff is reproducible
+  binding_id: binding-125faafb1955cbe3
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Release-package handoff
+  scenario: Consumer acceptance is recorded separately
+  binding_id: binding-5c1cddd7f255220d
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Role-understanding verification
+  scenario: Role walkthrough tests real decisions
+  binding_id: binding-b9ab871887891d08
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Role-understanding verification
+  scenario: Checklist completion alone is insufficient
+  binding_id: binding-62491d903787194d
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Stop, hold, escalation, resume, and deviation records
+  scenario: Stop record is actionable
+  binding_id: binding-41b3573f06e8b773
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Stop, hold, escalation, resume, and deviation records
+  scenario: Canonical production stop triggers cannot be disabled silently
+  binding_id: binding-1875d3ef80760431
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Stop, hold, escalation, resume, and deviation records
+  scenario: Resume is auditable
+  binding_id: binding-82b41109280fb6d5
+  evidence: *id005
+- source_kind: delta
+  capability: corporate-flow-controls
+  requirement: Stop, hold, escalation, resume, and deviation records
+  scenario: Approved deviation remains traceable
+  binding_id: binding-8624af351a732973
+  evidence: *id005
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: AI verification checklist evidence
+  scenario: Completion report includes verification evidence
+  binding_id: binding-44f80e26993c9ad9
+  evidence: &id006
+  - pytest:tests/test_validate_change.py::test_valid_thin_change_package_passes_validation
+  - pytest:tests/test_validate_change.py::test_valid_full_change_package_with_waiver_passes_validation
+  - pytest:tests/test_validate_change.py::test_missing_full_package_artifacts_are_reported_without_waiver
+  - pytest:tests/test_validate_change.py::test_missing_requirement_scenario_traceability_is_reported
+  - pytest:tests/test_validate_change.py::test_requirement_without_scenario_is_reported
+  - pytest:tests/test_validate_change.py::test_missing_traceability_row_is_reported
+  - pytest:tests/test_validate_change.py::test_historical_status_is_rejected
+  - pytest:tests/test_validate_change.py::test_unsupported_mode_is_rejected
+  - pytest:tests/test_validate_change.py::test_placeholder_mode_still_rejects_invalid_metadata_enums
+  - pytest:tests/test_validate_change.py::test_placeholder_values_are_rejected_in_production_mode
+  - pytest:tests/test_validate_change.py::test_invalid_waiver_shape_is_reported
+  - pytest:tests/test_validate_change.py::test_full_archive_rejects_non_automation_waiver_for_missing_automation_evidence
+  - pytest:tests/test_validate_change.py::test_full_archive_requires_waiver_to_match_same_requirement_and_scenario
+  - pytest:tests/test_validate_change.py::test_pending_traceability_is_allowed_before_archive_readiness
+  - pytest:tests/test_validate_change.py::test_archive_ready_thin_change_accepts_practical_verification_evidence
+  - pytest:tests/test_validate_change.py::test_archive_ready_rejects_pending_traceability_links
+  - pytest:tests/test_validate_change.py::test_behavior_change_rejects_no_spec_change_rationale
+  - pytest:tests/test_validate_change.py::test_refactor_can_use_no_spec_change_rationale
+  - pytest:tests/test_validate_change.py::test_thin_package_rejects_full_only_type_combination
+  - pytest:tests/test_validate_change.py::test_thin_package_rejects_risky_quality_triggers
+  - pytest:tests/test_validate_change.py::test_thin_package_rejects_cross_repo_scope
+  - pytest:tests/test_validate_change.py::test_waiver_approver_accepts_owner_group_reference_from_metadata
+  - pytest:tests/test_validate_change.py::test_waiver_approver_rejects_bot_or_unknown_labels
+  - pytest:tests/test_validate_change.py::test_staged_discovery_ignores_plain_project_openspec_changes
+  - pytest:tests/test_validate_change.py::test_template_skeleton_validates_in_placeholder_mode
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: AI verification checklist evidence
+  scenario: Checklist does not replace deterministic validation
+  binding_id: binding-40ec71a03d52013d
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Process specs use English and product analytics specs use Russian prose
+  binding_id: binding-eb195934efdc11c9
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Generated Confluence view may be localized
+  binding_id: binding-1db53f59637c9206
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Feedback on generated views returns to canonical source
+  binding_id: binding-b26f184516958397
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Docs versus OpenSpec responsibility
+  scenario: Product behavior belongs in OpenSpec
+  binding_id: binding-2079e45dbbe3cc52
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Docs versus OpenSpec responsibility
+  scenario: Project organization belongs in docs
+  binding_id: binding-bd2da4ebb5857a3d
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Documentation update discipline
+  scenario: Behavior change updates durable docs
+  binding_id: binding-83de98174e32ad01
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Documentation update discipline
+  scenario: Proposed behavior stays in proposed changes
+  binding_id: binding-c211a02ac1130290
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Documentation update discipline
+  scenario: Accepted specs require human archive approval
+  binding_id: binding-ec5944dc9023620e
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Human feedback memory
+  scenario: Feedback affects proposed behavior
+  binding_id: binding-3dcb6ca5e9adb1f4
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Human feedback memory
+  scenario: Feedback affects accepted behavior
+  binding_id: binding-95b65908e6596a73
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Source ownership and deduplication
+  scenario: Behavior text is referenced rather than duplicated
+  binding_id: binding-af1a8e7c367bc8c2
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Source ownership and deduplication
+  scenario: Derived view includes source metadata
+  binding_id: binding-8be41fb86732cc49
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Source ownership and deduplication
+  scenario: Conflict is resolved from the canonical owner
+  binding_id: binding-47647639e4433e6f
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Source ownership and deduplication
+  scenario: Weak-model read pack identifies authority
+  binding_id: binding-a399fd577c1cbc5f
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Source ownership and deduplication
+  scenario: Documentation drift checks are planned
+  binding_id: binding-f88a4c42bd19a575
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: TDD-style verification discipline
+  scenario: Scenarios identified before implementation
+  binding_id: binding-8b876d56881c1b09
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: TDD-style verification discipline
+  scenario: Negative cases are covered
+  binding_id: binding-7a70b8e974e99e94
+  evidence: *id006
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: TDD-style verification discipline
+  scenario: Manual verification is explicit when automation is absent
+  binding_id: binding-3c0d06edc0c5940d
+  evidence: *id006
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Archive readiness and archive approval
+  scenario: Archive readiness checks canonical completion
+  binding_id: binding-7c7e613dde62e921
+  evidence: &id007
+  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_artifact_gates.py::test_required_artifact_must_be_substantive_current_and_source_linked
+  - pytest:tests/test_artifact_gates.py::test_conditional_not_applicable_requires_structured_human_rationale
+  - pytest:tests/test_artifact_gates.py::test_only_eligible_artifact_accepts_a_current_human_approved_waiver
+  - pytest:tests/test_artifact_gates.py::test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_remains_due_after_canonical_rework
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_fails_closed_when_prior_reach_cannot_be_determined
+  - pytest:tests/test_artifact_gates.py::test_all_named_reports_are_stable_and_keep_required_human_approval_explicit
+  - pytest:tests/test_artifact_gates.py::test_ai_completion_text_is_never_implementation_evidence
+  - pytest:tests/test_artifact_gates.py::test_release_not_applicable_is_approved_and_does_not_infer_external_done
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_on_missing_or_wrong_policy_provenance
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_when_canonical_gate_semantics_are_missing_or_changed
+  - pytest:tests/test_artifact_gates.py::test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Archive readiness and archive approval
+  scenario: Archive remains human-approved
+  binding_id: binding-5bcfb3da58f01baf
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-aware Definition of Done
+  scenario: Done includes outcome and evidence
+  binding_id: binding-bf99532ed6bb8533
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-aware Definition of Done
+  scenario: Hotfix reconciliation blocks closure
+  binding_id: binding-b1a5018391832b87
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-aware Definition of Done
+  scenario: Placeholder artifact does not satisfy done
+  binding_id: binding-67f15f0423338d8b
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-specific Definition of Ready
+  scenario: Minor uses minimum reviewable evidence
+  binding_id: binding-6fc858b7b6482765
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-specific Definition of Ready
+  scenario: Major expands readiness evidence
+  binding_id: binding-3e3bf82188071019
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Class-specific Definition of Ready
+  scenario: Hotfix uses accelerated entry evidence
+  binding_id: binding-2111ac452e89a35e
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Common Definition of Ready
+  scenario: Common readiness evidence is complete
+  binding_id: binding-afc45bc999c47854
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Common Definition of Ready
+  scenario: Readiness report separates blockers
+  binding_id: binding-813323274efa203a
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Common Definition of Ready
+  scenario: Green checks do not approve implementation
+  binding_id: binding-eedc7c318cbe6518
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: External delivered or done state remains distinct
+  scenario: Archive does not close Jira automatically
+  binding_id: binding-1ed5f1312c177c43
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: External delivered or done state remains distinct
+  scenario: Tracker Done has configured evidence
+  binding_id: binding-a7bf1a13f9ae82c1
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Implementation-complete evidence
+  scenario: Implementation can be complete before final closure
+  binding_id: binding-357271da57d03de9
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Implementation-complete evidence
+  scenario: AI statement is not implementation evidence
+  binding_id: binding-343f8e264cb5fbce
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Release and transfer readiness
+  scenario: Release package is complete
+  binding_id: binding-d292191eb1a2ae43
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Release and transfer readiness
+  scenario: Non-release change records not-applicable rationale
+  binding_id: binding-acd4d2e7b1753fee
+  evidence: *id007
+- source_kind: delta
+  capability: readiness-completion-gates
+  requirement: Release and transfer readiness
+  scenario: Major and hotfix default to release-package evidence
+  binding_id: binding-dc14671fb9b54fb2
+  evidence: *id007
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Corporate configuration remains external to reusable source
+  scenario: Corporate adaptation supplies local values
+  binding_id: binding-dd702ee474e60739
+  evidence: &id008
+  - pytest:tests/test_validate_process_config.py::test_valid_central_mode_reports_exact_compatibility_json
+  - pytest:tests/test_validate_process_config.py::test_valid_adapter_modes_use_only_explicit_reference_resolution
+  - pytest:tests/test_validate_process_config.py::test_missing_and_ambiguous_discovery_fail_before_runtime_probe
+  - pytest:tests/test_validate_process_config.py::test_missing_registry_and_unsafe_reference_are_stable
+  - pytest:tests/test_validate_process_config.py::test_windows_rooted_package_location_is_rejected_before_resolution
+  - pytest:tests/test_validate_process_config.py::test_registry_symlink_cannot_escape_central_root
+  - pytest:tests/test_validate_process_config.py::test_adapter_rejects_ambiguous_resolved_central_root
+  - pytest:tests/test_validate_process_config.py::test_schema_diagnostics_never_echo_an_absolute_reference
+  - pytest:tests/test_validate_process_config.py::test_invalid_owner_project_and_adapter_relations_are_reported
+  - pytest:tests/test_validate_process_config.py::test_static_version_mismatches_prevent_runtime_probe
+  - pytest:tests/test_validate_process_config.py::test_adapter_package_version_mismatch_is_explicit
+  - pytest:tests/test_validate_process_config.py::test_policy_weakening_has_human_json_parity_and_provenance
+  - pytest:tests/test_validate_process_config.py::test_missing_corporate_policy_value_is_not_guessed
+  - pytest:tests/test_validate_process_config.py::test_corporate_policy_owner_references_must_resolve_against_registry
+  - pytest:tests/test_validate_process_config.py::test_adapter_cannot_supply_arbitrary_policy_paths
+  - pytest:tests/test_validate_process_config.py::test_unsupported_topology_is_not_silently_accepted
+  - pytest:tests/test_validate_process_config.py::test_malformed_and_duplicate_key_yaml_are_rejected
+  - pytest:tests/test_validate_process_config.py::test_runtime_is_checked_last_and_has_distinct_exit_codes
+  - pytest:tests/test_validate_process_config.py::test_runtime_requires_exact_stable_openspec_version
+  - pytest:tests/test_validate_process_config.py::test_package_schemas_reject_remote_reference_keywords
+  - pytest:tests/test_validate_process_config.py::test_package_schema_graph_rejects_indirect_remote_references
+  - pytest:tests/test_validate_process_config.py::test_package_schema_graph_rejects_relative_reference_under_remote_id
+  - pytest:tests/test_validate_process_config.py::test_package_schema_graph_resolves_reference_from_local_relative_id
+  - pytest:tests/test_validate_process_config.py::test_package_schema_graph_stays_contained_and_handles_local_cycles
+  - pytest:tests/test_validate_process_config.py::test_schema_validation_uses_injected_immutable_resources
+  - pytest:tests/test_validate_process_config.py::test_secret_diagnostics_are_redacted_and_human_json_codes_match
+  - pytest:tests/test_validate_process_config.py::test_high_confidence_secret_forms_are_rejected_without_echo
+  - pytest:tests/test_validate_process_config.py::test_diagnostics_are_deterministic_and_do_not_false_positive_semantic_ids
+  - pytest:tests/test_validate_process_config.py::test_behavior_is_independent_of_current_working_directory
+  - pytest:tests/test_validate_process_config.py::test_real_entry_point_imports_package_from_any_working_directory
+  - pytest:tests/test_validate_process_config.py::test_generic_parser_failures_use_stable_human_and_json_contracts
+  - pytest:tests/test_validate_process_config.py::test_nonexistent_start_directory_is_usage_error
+  - pytest:tests/test_validate_process_config.py::test_malformed_registry_has_human_json_usage_parity
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Corporate configuration remains external to reusable source
+  scenario: Reusable correction returns upstream
+  binding_id: binding-93c260517ab3c6bf
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Corporate governance policy configuration
+  scenario: Config points to canonical policy versions
+  binding_id: binding-1dfac466b01f03b0
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Corporate governance policy configuration
+  scenario: Project adapter cannot weaken canonical minimums silently
+  binding_id: binding-8ef515e690a3e08b
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Corporate governance policy configuration
+  scenario: Missing corporate value is not guessed
+  binding_id: binding-8b9619b9ad360f44
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: External workflow mapping
+  scenario: Mapping distinguishes archive and delivered
+  binding_id: binding-910ebd7af0e498b7
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: External workflow mapping
+  scenario: Unmapped external status blocks automation
+  binding_id: binding-0ee2bcb47d907b3e
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: First supported topology
+  scenario: Central team-specs is the recommended first topology
+  binding_id: binding-c9ef7b585daa27d4
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: First supported topology
+  scenario: Specs-next-to-code remains a future topology
+  binding_id: binding-24ce1298f444d4a1
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: First supported topology
+  scenario: Unsupported topology is not silently accepted
+  binding_id: binding-3ab5caaff4f6a0e7
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Human decision gate for topology and config
+  scenario: Gate 1.5 presents practical options
+  binding_id: binding-14eccbc5cc6f80e3
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Human decision gate for topology and config
+  scenario: Gate 1.5 approved recommended defaults
+  binding_id: binding-6e30df3ddf547222
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Human decision gate for topology and config
+  scenario: Validator enforcement follows approved implementation scope
+  binding_id: binding-7f4c564daf8196f5
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: OpenSpec version pin and upgrade policy
+  scenario: OpenSpec version is pinned centrally
+  binding_id: binding-6ab9bf141061fa28
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: OpenSpec version pin and upgrade policy
+  scenario: Version mismatch is reported before gated validation
+  binding_id: binding-0893a2e4bdd7e843
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: OpenSpec version pin and upgrade policy
+  scenario: Upgrade requires reviewed evidence
+  binding_id: binding-06661ec3c8935ecc
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Owner registry and reviewer assignment
+  scenario: owners.yaml is the owner source
+  binding_id: binding-92fa98cf60bc9ee8
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Owner registry and reviewer assignment
+  scenario: CODEOWNERS is generated or validated from owners registry
+  binding_id: binding-8bdce355c1ebca34
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Owner registry and reviewer assignment
+  scenario: Multi-zone changes require all affected owners
+  binding_id: binding-f9c41be26fa7763d
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Owner registry and reviewer assignment
+  scenario: Unowned paths are visible
+  binding_id: binding-90e72857e71fc98e
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Practical developer and agent workflow
+  scenario: Developer receives a bounded read pack
+  binding_id: binding-526a0c803d83faae
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Practical developer and agent workflow
+  scenario: Agent can work with sibling repositories
+  binding_id: binding-0f6572b85a586f30
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Practical developer and agent workflow
+  scenario: Archive readiness links implementation evidence
+  binding_id: binding-a68298423cdbaf18
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process configuration files
+  scenario: Central config declares supported process assumptions
+  binding_id: binding-5acc9e0ba96f5d70
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process configuration files
+  scenario: Project adapter config points to central process config
+  binding_id: binding-565d3503d195804c
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process configuration files
+  scenario: Config names are approved defaults
+  binding_id: binding-74501af85919ea13
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process package distribution
+  scenario: One versioned folder carries process assets
+  binding_id: binding-5f0861b1f5cc9b03
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process package distribution
+  scenario: Artifact dependencies are shared by skills and validators
+  binding_id: binding-66e43187c4fc7ea9
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process package distribution
+  scenario: Manual forks are not the default reuse model
+  binding_id: binding-7f3d5209db21219d
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Repository content split
+  scenario: team-specs owns process and requirement truth
+  binding_id: binding-df252b043be8253c
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Repository content split
+  scenario: Project repos own implementation truth
+  binding_id: binding-be2e32ea845f4858
+  evidence: *id008
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Repository content split
+  scenario: Code PR references canonical specs
+  binding_id: binding-5f4b42fc670e3a56
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Tech lead ownership registry
+  scenario: Tech lead mapping is resolvable
+  binding_id: binding-f960a43e711ace5f
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Tech lead ownership registry
+  scenario: Conflicting authority is visible
+  binding_id: binding-6e45c8b89cbbb2c2
+  evidence: *id008
+- source_kind: delta
+  capability: repo-topology-config
+  requirement: Tech lead ownership registry
+  scenario: Other role authority is preserved
+  binding_id: binding-01721fe384cdfca7
+  evidence: *id008
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: AI advisory boundary for tech lead automation
+  scenario: AI may draft analysis
+  binding_id: binding-dc48f0e4da6b8698
+  evidence: &id009
+  - pytest:tests/test_tech_lead_review.py::test_policy_compiles_to_immutable_source_bound_contract
+  - pytest:tests/test_tech_lead_review.py::test_review_exposes_all_views_and_never_mutates_or_substitutes_approvals
+  - pytest:tests/test_tech_lead_review.py::test_mixed_snapshot_missing_context_scope_drift_and_expiry_fail_closed
+  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_review.py::test_authorized_resume_is_eligible_but_remains_check_only
+  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_duplicate_ids_and_out_of_order_sources
+  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_unknown_protocol_values
+  - pytest:tests/test_tech_lead_review.py::test_resume_rejects_mixed_snapshot_ai_approval_and_incomplete_evidence
+  - pytest:tests/test_tech_lead_review.py::test_hotfix_follow_up_and_uncovered_owner_path_are_blocking_views
+  - pytest:tests/test_tech_lead_review.py::test_versioned_input_and_control_schemas_reject_free_text_authority
+  - pytest:tests/test_tech_lead_review.py::test_thin_review_and_control_clis_are_deterministic_and_non_mutating
+  - pytest:tests/test_tech_lead_review.py::test_cli_malformed_paths_and_private_values_have_stable_redacted_exits
+  - pytest:tests/test_tech_lead_review.py::test_real_entry_points_import_package_from_any_working_directory
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: AI advisory boundary for tech lead automation
+  scenario: AI may not approve
+  binding_id: binding-6f360ea33dd504b7
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Required deterministic views are available
+  binding_id: binding-8f3f7a8bed868185
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Role inbox waits for authoritative sources
+  binding_id: binding-0062a07127b376fd
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Configured control checkpoint exposes flow risks
+  binding_id: binding-2cba7c6e99d640a8
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Checkpoint identity is canonical
+  binding_id: binding-0014be2a4e8ddebd
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Finding shape is policy-bound
+  binding_id: binding-1142f61d6de5da31
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Deterministic tech lead decision support
+  scenario: Cadence is configuration rather than universal policy
+  binding_id: binding-e2532e3941395f5c
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead classification control
+  scenario: Tech lead receives classification evidence
+  binding_id: binding-e6b0df3db877352a
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead classification control
+  scenario: Tech lead cannot approve a lower class
+  binding_id: binding-e986881c2b4fffd1
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead completion and release recommendation
+  scenario: Completion report exposes unresolved obligations
+  binding_id: binding-075cd23c9cd27e9e
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead completion and release recommendation
+  scenario: Recommendation is not final approval
+  binding_id: binding-c567ed032117097f
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead governance responsibilities
+  scenario: Tech lead review covers required decisions
+  binding_id: binding-92c2b77885fe9b48
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead governance responsibilities
+  scenario: Business ownership remains separate
+  binding_id: binding-f8bb544536c254bb
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead readiness and architecture control
+  scenario: Readiness pack is bounded and source-linked
+  binding_id: binding-94bb0477145eb430
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead readiness and architecture control
+  scenario: Architecture decision is explicit
+  binding_id: binding-525559bf0ce00892
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead stop, hold, escalation, and resume control
+  scenario: Stop condition creates a hold record
+  binding_id: binding-a528a9e2392c029f
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead stop, hold, escalation, and resume control
+  scenario: Invalid control evidence fails closed
+  binding_id: binding-8ac1db4eae920a47
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead stop, hold, escalation, and resume control
+  scenario: Control timestamps use canonical UTC instants
+  binding_id: binding-eef43dff6109d779
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead stop, hold, escalation, and resume control
+  scenario: Resume requires resolved evidence
+  binding_id: binding-98d65102129743b6
+  evidence: *id009
+- source_kind: delta
+  capability: tech-lead-workflow
+  requirement: Tech lead stop, hold, escalation, and resume control
+  scenario: AI cannot resume held work
+  binding_id: binding-e0688a410db140a7
+  evidence: *id009
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: AI traceability suggestions are advisory
+  scenario: AI proposes missing links
+  binding_id: binding-db859d410a4d73c0
+  evidence: &id010
+  - pytest:tests/test_packaged_flow.py::test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence
+  - pytest:tests/test_packaged_flow.py::test_bootstrap_and_create_reject_unsafe_or_existing_destinations
+  - pytest:tests/test_packaged_flow.py::test_reference_change_creation_is_class_aware_and_ai_disabled
+  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
+  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
+  - pytest:tests/test_packaged_flow.py::test_traceability_allows_conditional_links_pending_before_archive
+  - pytest:tests/test_packaged_flow.py::test_manual_fallback_covers_unavailable_integrations_without_ai
+  - pytest:tests/test_packaged_flow.py::test_update_and_rollback_are_transactional_and_preserve_openspec_history
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Major package archive checks expanded evidence
+  binding_id: binding-c8ec70edf48e953a
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Minor package accepts practical evidence
+  binding_id: binding-cb6a352b5e1d44a1
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Hotfix package links reconciliation
+  binding_id: binding-3bea67aba0f24b0d
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Verification evidence remains source-linked
+  binding_id: binding-f04825c4a149c589
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Pending traceability is allowed before archive readiness
+  binding_id: binding-db8e10fc379e48e7
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+  scenario: Pending downstream link blocks archive readiness
+  binding_id: binding-b78128c47abe77a7
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Corporate governance traceability
+  scenario: Classification decision is source-linked
+  binding_id: binding-31b00be0fdb46d8d
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Corporate governance traceability
+  scenario: Gate result links evidence and owner
+  binding_id: binding-d64063fa2b654f31
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Corporate governance traceability
+  scenario: Stop and resume history remains visible
+  binding_id: binding-83f0337046daec5b
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Corporate governance traceability
+  scenario: Release package links canonical scope
+  binding_id: binding-1d75e334ad08882f
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Corporate governance traceability
+  scenario: Failed attempts remain traceable after retry
+  binding_id: binding-8ca24f730bc1c2e7
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Future journey and screen traceability
+  scenario: Journey view links product path to evidence
+  binding_id: binding-46858a5ceb1eb365
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Future journey and screen traceability
+  scenario: Screen catalog preserves requirement links
+  binding_id: binding-4d598cef5d7f8d67
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Future journey and screen traceability
+  scenario: Non-UI minor does not require journey traceability
+  binding_id: binding-f37fb0c71aea2603
+  evidence: *id010
+- source_kind: delta
+  capability: traceability-contract
+  requirement: Future journey and screen traceability
+  scenario: Deferred hotfix screen evidence remains pending
+  binding_id: binding-52ab75ce42c96a04
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Legacy baseline traceability
+  scenario: Legacy baseline records known gaps
+  binding_id: binding-22eae4c46f1fe0f1
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Legacy baseline traceability
+  scenario: Legacy gaps are not hidden in generated views
+  binding_id: binding-2ddae2fadb135892
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Review-minimum traceability
+  scenario: Requirement links to scenario
+  binding_id: binding-f2ad7b9ecb41a67a
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Review-minimum traceability
+  scenario: Missing scenario blocks review readiness
+  binding_id: binding-9e83b24cdbfe7358
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Waived traceability links
+  scenario: Missing automation link requires waiver
+  binding_id: binding-816c10acf2d6160d
+  evidence: *id010
+- source_kind: accepted
+  capability: traceability-contract
+  requirement: Waived traceability links
+  scenario: Waiver does not hide requirement coverage
+  binding_id: binding-a860043f48d94f03
+  evidence: *id010
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: First transfer boundary preserves later-layer exclusions
+  scenario: Later integrations do not block transfer readiness
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: First transfer boundary preserves later-layer exclusions
+  scenario: Standard integration wiring may be configured
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Release evidence and auditability
+  scenario: Release manifest identifies what was certified
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Release evidence and auditability
+  scenario: Pilot evidence identifies installed state
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Release evidence and auditability
+  scenario: Verification coverage is traceable and gaps remain visible
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Reproducible bootstrap and maintenance
+  scenario: Clean environment can bootstrap the reference setup
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Reproducible bootstrap and maintenance
+  scenario: Incompatible runtime is reported before gated work
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Reproducible bootstrap and maintenance
+  scenario: Upgrade can be rolled back
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Transfer-ready release candidate contents
+  scenario: Release candidate contains the reusable core
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Transfer-ready release candidate contents
+  scenario: Release candidate does not contain corporate values
+  gap:
+    owner: example-release-owner
+    risk: medium
+    reason: release execution remains outside work item 2.10
+    compensation: deterministic package checks and manual source review
+    follow_up: work-items-2.11-through-2.14
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Classification criteria cannot be waived
+  scenario: Major trigger blocks minor waiver
+  binding_id: binding-9a521f6ac5d0c9b2
+  evidence: &id011
+  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_artifact_gates.py::test_required_artifact_must_be_substantive_current_and_source_linked
+  - pytest:tests/test_artifact_gates.py::test_conditional_not_applicable_requires_structured_human_rationale
+  - pytest:tests/test_artifact_gates.py::test_only_eligible_artifact_accepts_a_current_human_approved_waiver
+  - pytest:tests/test_artifact_gates.py::test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_remains_due_after_canonical_rework
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_fails_closed_when_prior_reach_cannot_be_determined
+  - pytest:tests/test_artifact_gates.py::test_all_named_reports_are_stable_and_keep_required_human_approval_explicit
+  - pytest:tests/test_artifact_gates.py::test_ai_completion_text_is_never_implementation_evidence
+  - pytest:tests/test_artifact_gates.py::test_release_not_applicable_is_approved_and_does_not_infer_external_done
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_on_missing_or_wrong_policy_provenance
+  - pytest:tests/test_artifact_gates.py::test_evaluator_fails_closed_when_canonical_gate_semantics_are_missing_or_changed
+  - pytest:tests/test_artifact_gates.py::test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Classification criteria cannot be waived
+  scenario: Classification policy changes through OpenSpec
+  binding_id: binding-a28a61d44dd97bac
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Hotfix artifact deferral
+  scenario: Deferral has a bounded follow-up
+  binding_id: binding-0cabdeb16723a132
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Hotfix artifact deferral
+  scenario: Missing reconciliation blocks archive
+  binding_id: binding-f7d7a0b605315dac
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Non-waivable corporate minimums
+  scenario: Mandatory approval and safety controls remain
+  binding_id: binding-9e3e3d8138a54aaa
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Non-waivable corporate minimums
+  scenario: Hotfix cannot waive follow-up entirely
+  binding_id: binding-4b6c070603370866
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Non-waivable corporate minimums
+  scenario: AI cannot authorize exception
+  binding_id: binding-b4374f2dc2e188b3
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Stop and deviation exception relationship
+  scenario: Held work needs separate resume decision
+  binding_id: binding-dd555ee37afe41d4
+  evidence: *id011
+- source_kind: delta
+  capability: waiver-policy
+  requirement: Stop and deviation exception relationship
+  scenario: Expired exception is visible
+  binding_id: binding-c5d6cc9d8a939bd1
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver approval ownership
+  scenario: AI cannot approve a waiver
+  binding_id: binding-6a2e715063125595
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver approval ownership
+  scenario: Approver matches waived obligation
+  binding_id: binding-4d3973d279fbd040
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver approval ownership
+  scenario: Role-appropriate approver is required
+  binding_id: binding-52b525df36a79e12
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver approval ownership
+  scenario: Residual risk requires follow-up
+  binding_id: binding-23d15bf8c2f59a6d
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver negative cases
+  scenario: Waiver cannot replace human approval
+  binding_id: binding-1fd4590ac232d6eb
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver negative cases
+  scenario: Waiver cannot hide behavior scenario coverage
+  binding_id: binding-5abf0ab9c860db01
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver negative cases
+  scenario: Non-behavior work is reclassified instead of waived
+  binding_id: binding-c8c2857edea3e46b
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver negative cases
+  scenario: Waiver cannot bypass mandatory risk review
+  binding_id: binding-12332430be58919c
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver policy baseline status
+  scenario: Validator implementation evidence is recorded
+  binding_id: binding-0d2b18c27181e937
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver policy baseline status
+  scenario: Future corrections use accepted-spec workflow
+  binding_id: binding-28268c562a343e6f
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver record
+  scenario: Waiver has required audit fields
+  binding_id: binding-5041f47df4ab830d
+  evidence: *id011
+- source_kind: accepted
+  capability: waiver-policy
+  requirement: Waiver record
+  scenario: Free-text exception is rejected
+  binding_id: binding-1c8543d61db321ac
+  evidence: *id011
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: AI remains advisory and non-authoritative
+  scenario: Model attempts a forbidden approval
+  binding_id: binding-2486d6db504b899e
+  evidence:
+  - case:forbidden-approval
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: AI remains advisory and non-authoritative
+  scenario: Model draft becomes evidence only after review
+  binding_id: binding-28714421d2987313
+  evidence: &id012
+  - pytest:tests/test_weak_model_kit.py::test_build_read_pack_is_authority_labelled_bounded_and_stable
+  - pytest:tests/test_weak_model_kit.py::test_build_read_pack_blocks_missing_unsafe_or_ambiguous_context
+  - pytest:tests/test_weak_model_kit.py::test_launcher_selects_instruction_and_stop_point_outside_model
+  - pytest:tests/test_weak_model_kit.py::test_launcher_blocks_incomplete_read_pack
+  - pytest:tests/test_weak_model_kit.py::test_launcher_rejects_forged_ready_pack_and_tampered_source
+  - pytest:tests/test_weak_model_kit.py::test_recomputed_pack_still_requires_canonical_source_and_evidence_binding
+  - pytest:tests/test_weak_model_kit.py::test_read_pack_request_rejects_empty_or_unbounded_context
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_accepts_supported_advisory_completion
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_rejects_authority_and_unsupported_claims
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_rejects_derived_canonical_artifact_without_source_reference
+  - pytest:tests/test_weak_model_kit.py::test_evidence_rejects_lie_in_claims_forbidden_actions_or_wrong_launch_binding
+  - pytest:tests/test_weak_model_kit.py::test_claims_use_closed_safe_kinds_and_reject_decision_semantics_in_values
+  - pytest:tests/test_weak_model_kit.py::test_evidence_rejects_unverified_source_reference_even_when_id_matches
+  - pytest:tests/test_weak_model_kit.py::test_parallel_plan_allows_only_independent_scopes_with_complete_gates
+  - pytest:tests/test_weak_model_kit.py::test_parallel_plan_serializes_or_blocks_unsafe_work
+  - pytest:tests/test_weak_model_kit.py::test_parallel_plan_rejects_duplicate_ids_windows_equivalent_paths_and_promotion_without_results
+  - pytest:tests/test_weak_model_kit.py::test_parallel_rejects_drive_unc_paths_and_reused_check_or_result_ids
+  - pytest:tests/test_weak_model_kit.py::test_parallel_promotion_requires_each_focused_and_combined_pass_evidence
+  - pytest:tests/test_weak_model_kit.py::test_parallel_promotion_rejects_extra_or_duplicate_result_rows
+  - pytest:tests/test_weak_model_kit.py::test_package_exposes_all_role_instructions_adapters_and_contract_schemas
+  - pytest:tests/test_weak_model_kit.py::test_role_instructions_are_bounded_and_reference_canonical_contract
+  - pytest:tests/test_weak_model_kit.py::test_adapter_templates_are_thin_and_cannot_own_process_rules
+  - pytest:tests/test_weak_model_kit.py::test_clis_reject_malformed_nested_documents_without_traceback_from_other_cwd
+  - pytest:tests/test_weak_model_kit.py::test_schema_failure_stops_semantics_and_evidence_parallel_clis_exit_three
+  - pytest:tests/test_weak_model_kit.py::test_evidence_stops_before_semantics_when_launch_or_pack_schema_is_invalid
+  - pytest:tests/test_weak_model_kit.py::test_launch_and_evidence_clis_bind_concrete_documents_with_stable_errors
+  - pytest:tests/test_weak_model_kit.py::test_weak_model_clis_have_stable_redacted_usage_exit
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Bounded authority-labelled read packs
+  scenario: Read pack identifies source authority
+  binding_id: binding-724d67b3e3dc00bd
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Bounded authority-labelled read packs
+  scenario: Read pack stays task specific
+  binding_id: binding-10b4ea55f7d36a22
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Bounded authority-labelled read packs
+  scenario: Missing canonical context is visible
+  binding_id: binding-2e812308d14ef05a
+  evidence:
+  - case:missing-context
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Deterministic fallback
+  scenario: AI is unavailable or unusable
+  binding_id: binding-d0846212e751f5f9
+  evidence:
+  - case:context-limit
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Deterministic fallback
+  scenario: Model adapter failure does not alter canonical data
+  binding_id: binding-2c5a80a6b6bce424
+  evidence:
+  - case:adapter-failure
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Deterministic workflow launch
+  scenario: User starts a bounded role operation
+  binding_id: binding-bfc8ebfa5ccf6b87
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Deterministic workflow launch
+  scenario: Model does not select its own authority
+  binding_id: binding-77afaff46d99e27f
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Evidence-backed weak-model output
+  scenario: Completion output includes evidence boundaries
+  binding_id: binding-c3b1e7c851e6eae4
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Evidence-backed weak-model output
+  scenario: Unsupported claim fails certification
+  binding_id: binding-26fbe77daab71c79
+  evidence:
+  - case:fabricated-evidence
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Role instructions and explicit stop points
+  scenario: One operation produces one bounded artifact stage
+  binding_id: binding-354b382a35e37518
+  evidence:
+  - case:skipped-stop
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Role instructions and explicit stop points
+  scenario: Negative examples prevent common overreach
+  binding_id: binding-2b376c687ba86924
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Safe parallel AI execution
+  scenario: Independent tasks run concurrently
+  binding_id: binding-54fe057fdd57c9b0
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Safe parallel AI execution
+  scenario: Shared mutation prevents unsafe parallelism
+  binding_id: binding-b5b524274eb6e6a9
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Safe parallel AI execution
+  scenario: Parallel outputs pass an integration gate
+  binding_id: binding-ac6f6fbcf3857983
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Weak-model artifacts preserve source ownership
+  scenario: Derived instruction references canonical contracts
+  binding_id: binding-e22ac11b84aba004
+  evidence: *id012
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Weak-model artifacts preserve source ownership
+  scenario: Derived artifact conflict is corrected from source
+  binding_id: binding-fcb095f9db452c9c
+  evidence:
+  - case:conflicting-sources

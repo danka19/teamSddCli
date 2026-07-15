@@ -112,6 +112,27 @@ def _canonical_snapshot(root: Path) -> str:
     return digest.hexdigest()
 
 
+def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    schema = json.loads((root / "process/schemas/role-output-fixture.schema.json").read_text(encoding="utf-8"))
+    validated: list[dict[str, Any]] = []
+    for declaration in catalog.get("planned_dimensions", {}).get("roles", []):
+        relative = _safe_relative(str(declaration.get("fixture", "")), prefix="process")
+        path = root / Path(*relative.parts)
+        if not path.is_file() or _is_link_or_reparse(path):
+            raise CertificationError("certification.role-output-missing")
+        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_hash != declaration.get("sha256"):
+            raise CertificationError("certification.role-output-hash")
+        payload = _load_yaml(path)
+        if list(Draft202012Validator(schema).iter_errors(payload)):
+            raise CertificationError("certification.role-output-schema")
+        if payload["role"] != declaration["role"] or payload["executed"] is not False:
+            raise CertificationError("certification.role-output-binding")
+        validated.append({"role": payload["role"], "change_class": payload["change_class"],
+                          "fixture": str(relative), "sha256": actual_hash, "executed": False})
+    return validated
+
+
 def _preflight(payload: dict[str, Any]) -> list[str]:
     diagnostics: list[str] = []
     context = payload.get("context", {})
@@ -228,6 +249,7 @@ def certify_release(
     case_schema = json.loads((root / "process/schemas/certification-case.schema.json").read_text(encoding="utf-8"))
     if list(Draft202012Validator(case_schema).iter_errors(catalog)):
         raise CertificationError("certification.invalid-input")
+    validate_role_output_fixtures(root, catalog)
     if catalog.get("schema_version") != "1.0" or not isinstance(catalog.get("cases"), list):
         raise CertificationError("certification.invalid-input")
     identifiers = [case.get("id") for case in catalog["cases"] if isinstance(case, dict)]
@@ -375,17 +397,20 @@ def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[s
     discovered_keys = [(row["source_kind"], row["capability"], row["requirement"], row["scenario"]) for row in all_rows]
     if len(discovered_keys) != len(set(discovered_keys)):
         raise CertificationError("coverage.duplicate-selector")
-    overrides = inventory.get("coverage", [])
-    override_keys = [(r.get("source_kind"), r.get("capability"), r.get("requirement"), r.get("scenario")) for r in overrides]
-    if len(override_keys) != len(set(override_keys)):
+    manifest_relative = _safe_relative(str(inventory.get("evidence_manifest", "")))
+    binding_relative = _safe_relative(str(inventory.get("binding_manifest", "")))
+    manifest = _load_yaml(root / Path(*manifest_relative.parts))
+    binding_manifest = _load_yaml(root / Path(*binding_relative.parts))
+    declared_rows = manifest.get("coverage", [])
+    declared_keys = [(r.get("source_kind"), r.get("capability"), r.get("requirement"), r.get("scenario")) for r in declared_rows]
+    if len(declared_keys) != len(set(declared_keys)):
         raise CertificationError("coverage.duplicate-selector")
-    by_key = {(r["source_kind"], r["capability"], r["requirement"], r["scenario"]): r for r in overrides}
-    evidence_rules = inventory.get("evidence_rules", [])
-    gap_rules = inventory.get("gap_rules", [])
-    if len({row.get("capability") for row in evidence_rules}) != len(evidence_rules) or len({row.get("capability") for row in gap_rules}) != len(gap_rules):
-        raise CertificationError("coverage.duplicate-rule")
-    evidence_by_capability = {row["capability"]: row["evidence"] for row in evidence_rules}
-    gap_by_capability = {row["capability"]: row["gap"] for row in gap_rules}
+    by_key = {key: row for key, row in zip(declared_keys, declared_rows)}
+    binding_rows = binding_manifest.get("bindings", [])
+    binding_ids = [row.get("binding_id") for row in binding_rows]
+    if len(binding_ids) != len(set(binding_ids)):
+        raise CertificationError("coverage.duplicate-binding")
+    bindings = {row["binding_id"]: row for row in binding_rows}
     future_declarations = inventory.get("future_work", [])
     future_matches = [0] * len(future_declarations)
     coverage: list[dict[str, Any]] = []
@@ -401,23 +426,34 @@ def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[s
                 break
         if matched_future:
             continue
+        if not declared:
+            raise CertificationError("coverage.unmapped-scenario")
         evidence = declared.get("evidence")
         gap = declared.get("gap")
-        if gap is None and evidence is None:
-            if row["capability"] in gap_by_capability:
-                gap = gap_by_capability[row["capability"]]
-            else:
-                evidence = evidence_by_capability.get(row["capability"])
         if gap is not None:
             if not isinstance(gap, dict) or set(gap) != {"owner", "risk", "reason", "compensation", "follow_up"} or not all(gap.values()):
                 raise CertificationError("coverage.invalid-gap")
         elif not evidence:
             raise CertificationError("coverage.unmapped-scenario")
-        if isinstance(evidence, str) and evidence.startswith("case:") and evidence[5:] not in case_ids:
-            raise CertificationError("coverage.unknown-case")
-        if isinstance(evidence, str) and evidence.startswith("pytest:") and not _pytest_node_exists(root, evidence):
-            raise CertificationError("coverage.unknown-pytest")
+        if evidence:
+            if not isinstance(evidence, list) or not evidence or not all(isinstance(ref, str) for ref in evidence):
+                raise CertificationError("coverage.invalid-evidence")
+            for reference in evidence:
+                if reference.startswith("case:") and reference[5:] not in case_ids:
+                    raise CertificationError("coverage.unknown-case")
+                if reference.startswith("pytest:"):
+                    if "::" not in reference:
+                        raise CertificationError("coverage.bare-pytest-file")
+                    if not _pytest_node_exists(root, reference):
+                        raise CertificationError("coverage.unknown-pytest")
+                if not reference.startswith(("case:", "pytest:", "manual:")):
+                    raise CertificationError("coverage.invalid-evidence")
+            binding = bindings.get(declared.get("binding_id"))
+            binding_key = None if not binding else tuple(binding.get(name) for name in ("source_kind", "capability", "requirement", "scenario"))
+            if binding_key != key or binding.get("evidence") != evidence:
+                raise CertificationError("coverage.binding-mismatch")
         coverage.append({**row, **({"evidence": evidence} if evidence else {"gap": gap})})
+        by_key.pop(key, None)
     if by_key:
         raise CertificationError("coverage.unknown-selector")
     if any(count == 0 for count in future_matches):

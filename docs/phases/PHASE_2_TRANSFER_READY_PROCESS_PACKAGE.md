@@ -133,6 +133,19 @@ Compatibility rules:
 ## Change Intake
 
 ```text
+Idea: Close the eight uncovered deterministic NIS feedback/publication-boundary scenarios with focused policy/config validation and exact scenario evidence.
+Source: Work item 2.10 second independent review.
+Type: bug_fix, verification_change
+Decision: adopt_now
+Reason: NIS task 8.1 and transfer-package task 4.6 already own focused positive/negative coverage; leaving these scenarios as aggregate gaps makes work item 2.10 acceptance evidence incorrect.
+Affected specs: Existing adopt-nis-corporate-process-governance confluence-feedback-loop delta; no new requirement or capability.
+Affected architecture: Add only a pure deterministic policy/config boundary and synthetic fixtures; do not implement Confluence integration, publication, remote access, or corporate generated-view selection.
+Data contract impact: Add a closed synthetic feedback-policy/evaluation contract with explicit SLA enable/disable, defaults/overrides, dispositions/follow-up, evidence-boundary, source-mode, and generated-view ownership fields.
+Verification impact: Eight exact pytest nodes bind one-to-one to the eight delta scenarios, plus negative privacy/schema/package regression and the combined certification coverage gate.
+Status: adopted for work item 2.10 hardening pending independent re-review; task/status closure remains coordinator-owned.
+```
+
+```text
 Idea: Bind Tech Lead control decisions, time semantics, checkpoints, and finding output to canonical evidence after architecture review.
 Source: Phase 2 work item 2.6 architecture findings on 2026-07-14.
 Type: bug_fix, architecture_change, data_contract_change, verification_change, documentation_change

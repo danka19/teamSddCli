@@ -1,0 +1,13 @@
+schema_version: "1.0"
+namespace: synthetic
+fixture_id: synthetic-tech-lead-major
+role: tech-lead
+change_class: major
+executed: false
+output:
+  artifact_kind: governance-review
+  summary: Advisory major governance review preserving human authority.
+  required_fields: [sources_read, risks, recommendations, pending_human_decisions]
+canonical_sources:
+  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md, sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc}
+validation: {expected_result: passed, expected_codes: []}

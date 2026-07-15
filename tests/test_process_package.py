@@ -57,6 +57,8 @@ SCHEMA_FILES = {
     "certification_case": "certification-case.schema.json",
     "certification_evidence": "certification-evidence.schema.json",
     "coverage_report": "coverage-report.schema.json",
+    "feedback_policy": "feedback-policy.schema.json",
+    "role_output_fixture": "role-output-fixture.schema.json",
 }
 
 SENSITIVE_PATTERNS = {
@@ -408,11 +410,11 @@ def test_clean_templates_and_positive_fixtures_have_no_sensitive_values() -> Non
 
 
 def test_certification_tree_sensitive_content_is_limited_to_named_negative_privacy_fixtures() -> None:
-    files = [path for path in yaml_files(PROCESS_ROOT / "certification") if path.name not in {"cases.yaml", "coverage.yaml"}]
+    files = [path for path in yaml_files(PROCESS_ROOT / "certification") if path.name not in {"cases.yaml", "coverage.yaml", "evidence-manifest.yaml"}]
     findings = {
         path.relative_to(PROCESS_ROOT).as_posix()
         for path in files
-        if FIXTURE_PRIVATE.search(path.read_text(encoding="utf-8"))
+        if FIXTURE_PRIVATE.search(yaml.safe_dump({key: value for key, value in load_yaml(path).items() if key != "canonical_sources"}))
     }
     assert findings == {
         "certification/privacy-cases/corporate-identifier.yaml",

@@ -15,7 +15,7 @@
     "planned_dimensions": {
       "type":"object","additionalProperties":false,"required":["roles","classes"],
       "properties": {
-        "roles":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["role","expected_output","executed"],"properties":{"role":{"type":"string"},"expected_output":{"type":"string"},"executed":{"type":"boolean"}}}},
+        "roles":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["role","expected_output","fixture","sha256","executed"],"properties":{"role":{"type":"string"},"expected_output":{"type":"string"},"fixture":{"type":"string"},"sha256":{"$ref":"#/$defs/sha256"},"executed":{"type":"boolean"}}}},
         "classes":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["change_class","executed"],"properties":{"change_class":{"type":"string"},"executed":{"type":"boolean"}}}}
       }
     },
@@ -25,13 +25,29 @@
     "normalized_sha256": {"$ref": "#/$defs/sha256"}
   },
   "allOf": [
-    {"if":{"properties":{"actual_model_run":{"const":false}}},"then":{"properties":{"evidence_kind":{"const":"deterministic-fixture"},"model":{"properties":{"family":{"const":"not-executed"},"id":{"const":"not-executed"},"runtime":{"const":"not-executed"}}},"adapter":{"properties":{"family":{"const":"not-executed"},"version":{"const":"not-executed"}}}}}},
-    {"if":{"properties":{"actual_model_run":{"const":true}}},"then":{"properties":{"evidence_kind":{"const":"actual-model"}}}}
+    {"if":{"properties":{"actual_model_run":{"const":false}}},"then":{"properties":{"evidence_kind":{"const":"deterministic-fixture"},"model":{"properties":{"family":{"const":"not-executed"},"id":{"const":"not-executed"},"runtime":{"const":"not-executed"}}},"adapter":{"properties":{"family":{"const":"not-executed"},"version":{"const":"not-executed"}}},"planned_dimensions":{"properties":{"roles":{"items":{"properties":{"executed":{"const":false}}}},"classes":{"items":{"properties":{"executed":{"const":false}}}}}},"cases":{"items":{"properties":{"execution_mode":{"const":"deterministic-fixture"},"read_pack":{"required":["not_applicable_reason"],"not":{"required":["identity"]}}}}}}}},
+    {"if":{"properties":{"actual_model_run":{"const":true}}},"then":{
+      "properties":{
+        "evidence_kind":{"const":"actual-model"},
+        "model":{"properties":{"family":{"not":{"const":"not-executed"}},"id":{"not":{"const":"not-executed"}},"runtime":{"not":{"const":"not-executed"}}}},
+        "adapter":{"properties":{"family":{"not":{"const":"not-executed"}},"version":{"not":{"const":"not-executed"}}}},
+        "planned_dimensions":{"properties":{"roles":{"items":{"properties":{"executed":{"const":true}}}},"classes":{"items":{"properties":{"executed":{"const":true}}}}}},
+        "cases":{
+          "items":{"properties":{"execution_mode":{"const":"actual-model"},"read_pack":{"required":["identity"],"not":{"required":["not_applicable_reason"]}}}},
+          "allOf":[
+            {"contains":{"properties":{"role":{"const":"analyst"}}}},{"contains":{"properties":{"role":{"const":"developer"}}}},
+            {"contains":{"properties":{"role":{"const":"qa"}}}},{"contains":{"properties":{"role":{"const":"tech-lead"}}}},
+            {"contains":{"properties":{"change_class":{"const":"minor"}}}},{"contains":{"properties":{"change_class":{"const":"major"}}}},
+            {"contains":{"properties":{"change_class":{"const":"hotfix"}}}}
+          ]
+        }
+      }
+    }}
   ],
   "$defs": {
     "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "model": {"type":"object","additionalProperties":false,"required":["family","id","runtime"],"properties":{"family":{"type":"string"},"id":{"type":"string"},"runtime":{"type":"string"}}},
-    "adapter": {"type":"object","additionalProperties":false,"required":["family","version"],"properties":{"family":{"type":"string"},"version":{"type":"string"}}},
+    "model": {"type":"object","additionalProperties":false,"required":["family","id","runtime"],"properties":{"family":{"type":"string","minLength":1},"id":{"type":"string","minLength":1},"runtime":{"type":"string","minLength":1}}},
+    "adapter": {"type":"object","additionalProperties":false,"required":["family","version"],"properties":{"family":{"type":"string","minLength":1},"version":{"type":"string","minLength":1}}},
     "case": {
       "type":"object","additionalProperties":false,
       "required":["evidence_id","run_id","case_id","family","role","change_class","expected_output","execution_mode","observed","diagnostic_codes","matches_golden","canonical_snapshot_before","canonical_snapshot_after","canonical_mutated","read_pack","operation","validation","human_intervention","forbidden_action","human_stop","limitations"],
@@ -44,10 +60,10 @@
         "read_pack":{"oneOf":[{"type":"object","additionalProperties":false,"required":["identity"],"properties":{"identity":{"$ref":"#/$defs/sha256"}}},{"type":"object","additionalProperties":false,"required":["not_applicable_reason"],"properties":{"not_applicable_reason":{"type":"string","minLength":1}}}]},
         "operation":{"type":"object","additionalProperties":false,"required":["name","input_fixture","input_artifact_sha256","output_artifact_sha256"],"properties":{"name":{"type":"string"},"input_fixture":{"type":"string"},"input_artifact_sha256":{"$ref":"#/$defs/sha256"},"output_artifact_sha256":{"$ref":"#/$defs/sha256"}}},
         "validation":{"type":"object","additionalProperties":false,"required":["result","codes"],"properties":{"result":{"enum":["passed","blocked"]},"codes":{"type":"array","items":{"type":"string"}}}},
-        "human_intervention":{"type":"object","additionalProperties":false,"required":["required","performed","type"],"properties":{"required":{"type":"boolean"},"performed":{"type":"boolean"},"type":{"type":"string"}}},
+        "human_intervention":{"type":"object","additionalProperties":false,"required":["required","performed","type"],"properties":{"required":{"type":"boolean"},"performed":{"type":"boolean"},"type":{"type":"string","minLength":1}}},
         "forbidden_action":{"type":"object","additionalProperties":false,"required":["expected","detected"],"properties":{"expected":{"type":"boolean"},"detected":{"type":"boolean"}}},
         "human_stop":{"type":"object","additionalProperties":false,"required":["expected","reached"],"properties":{"expected":{"type":"boolean"},"reached":{"type":"boolean"}}},
-        "limitations":{"type":"array","items":{"type":"string"}}
+        "limitations":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}}
       }
     },
     "rawArtifact": {"type":"object","additionalProperties":false,"required":["logical_version","filename","sha256","stored_in_git"],"properties":{"logical_version":{"type":"string"},"filename":{"const":"bundle.json"},"sha256":{"$ref":"#/$defs/sha256"},"stored_in_git":{"const":false}}}

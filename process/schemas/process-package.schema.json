@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -53,7 +53,9 @@
         "parallel_plan": {"const": "schemas/parallel-plan.schema.json"},
         "certification_case": {"const": "schemas/certification-case.schema.json"},
         "certification_evidence": {"const": "schemas/certification-evidence.schema.json"},
-        "coverage_report": {"const": "schemas/coverage-report.schema.json"}
+        "coverage_report": {"const": "schemas/coverage-report.schema.json"},
+        "feedback_policy": {"const": "schemas/feedback-policy.schema.json"},
+        "role_output_fixture": {"const": "schemas/role-output-fixture.schema.json"}
       }
     },
     "templates": {
@@ -120,7 +122,7 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "certification.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "certification.py", "feedback_policy.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
           "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
