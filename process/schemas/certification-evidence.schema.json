@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "certification-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "evidence_kind", "actual_model_run", "model", "runtime", "canonical_mutated", "cases", "raw_artifact"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["passed", "failed"]},
+    "evidence_kind": {"const": "deterministic-fixture"},
+    "actual_model_run": {"const": false},
+    "model": {"const": "not-executed"},
+    "runtime": {"const": "not-executed"},
+    "canonical_mutated": {"const": false},
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "family", "observed", "diagnostic_codes", "matches_golden", "canonical_mutated"],
+        "properties": {
+          "case_id": {"type": "string"}, "family": {"type": "string"},
+          "observed": {"enum": ["passed", "blocked"]},
+          "diagnostic_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "matches_golden": {"type": "boolean"}, "canonical_mutated": {"const": false}
+        }
+      }
+    },
+    "raw_artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["logical_version", "filename", "sha256", "stored_in_git"],
+      "properties": {
+        "logical_version": {"type": "string"}, "filename": {"const": "bundle.json"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "stored_in_git": {"const": false}
+      }
+    }
+  }
+}

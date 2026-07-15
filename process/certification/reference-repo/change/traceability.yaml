@@ -1,0 +1,7 @@
+requirements:
+  - id: REQ-SYNTHETIC-001
+    requirement: Synthetic validation
+    scenario: Reference fixture validates
+    tasks: [TASK-SYNTHETIC-001]
+    tests: [TC-SYNTHETIC-001]
+    automated_tests: [tests/test_certification.py::test_valid_golden_check_is_repeatable_private_and_hash_bound]

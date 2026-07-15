@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "coverage-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "coverage", "future_work"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["complete", "gaps"]},
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["source_kind", "capability", "requirement", "scenario"],
+        "properties": {
+          "source_kind": {"enum": ["accepted", "delta"]}, "capability": {"type": "string"},
+          "requirement": {"type": "string"}, "scenario": {"type": "string"}, "evidence": {"type": "string"},
+          "gap": {
+            "type": "object", "additionalProperties": false,
+            "required": ["owner", "risk", "reason", "compensation", "follow_up"],
+            "properties": {"owner":{"type":"string"},"risk":{"type":"string"},"reason":{"type":"string"},"compensation":{"type":"string"},"follow_up":{"type":"string"}}
+          }
+        },
+        "oneOf": [{"required": ["evidence"]}, {"required": ["gap"]}]
+      }
+    },
+    "future_work": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+  }
+}

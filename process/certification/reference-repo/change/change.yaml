@@ -1,0 +1,29 @@
+id: SYNTHETIC-001-reference
+title: Synthetic reference change
+mode: thin
+type: behavior_change
+status: draft
+capability: synthetic-capability
+spec_change: required
+systems:
+  code_repos: [synthetic-repository]
+  at_repos: []
+review:
+  analyst_owner_group: example-analysts
+  dev_owner_groups: [example-developers]
+  qa_owner_group: example-qa
+  at_owner_groups: []
+quality:
+  scenarios: required
+  manual_cases: impacted
+  behavior_scope: focused
+  public_api: not_impacted
+  api_at: not_impacted
+  mobile_at: not_impacted
+  data_risk: not_impacted
+  security_review: not_required
+  rollback_cost: low
+publication:
+  confluence_space: null
+  page_id: null
+  mode: generated

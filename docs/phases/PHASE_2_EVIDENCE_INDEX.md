@@ -478,3 +478,23 @@ Status: closed after implementation, combined review, two hardening rounds, fina
 - Final bypass hardening `774ac99` requires a canonical source and exact pack-launch-evidence manifest binding, uses a closed structured safe-claim contract, rejects Windows drive/UNC/absolute parallel paths, requires one-to-one unique focused/combined results, and stops malformed nested CLI input at the schema boundary with redacted exit 3. Verification passed 45 focused, 105 regression, 358 full, compilation, governance 0/0, and strict OpenSpec 10/10.
 - Final targeted reviewer verdict: Approved for `f2afa24..774ac99`; 45 focused tests and `git diff --check` passed, all four remaining reproductions are closed, and no Phase 2.10 work was performed.
 - Coordinator reconciliation marks transfer tasks 3.1-3.6 complete, moving the transfer inventory from 8/33 to 14/33 while NIS remains 35/43. Work item 2.9 is `closed`; work item 2.10 is `ready` and intentionally not started.
+
+## Work Item 2.10: Certification Fixtures, Coverage, And Runner
+
+Status: implementation draft; independent review and coordinator acceptance remain required. No OpenSpec task or work-item closure is claimed here.
+
+### Worker Implementation Evidence Draft
+
+- Pure runner and coverage inventory: `process/certification.py`; thin entry point: `scripts/certify_process_release.py`.
+- Closed contracts: `certification-case.schema.json`, `certification-evidence.schema.json`, and `coverage-report.schema.json`, registered in the exact package/distribution inventory.
+- Synthetic assets: one minimal reference change, golden catalog, and fail-closed missing-context, conflicting-source, fabricated-evidence, forbidden-approval, skipped-stop, invalid-transition, adapter-failure, and context-limit families under `process/certification/`.
+- Storage boundary: normalized semantic evidence and SHA-256 references are Git-safe; captured validator streams remain only in an immutable raw bundle outside Git. Check mode performs no writes and create mode rejects overwrite, overlap, links/reparse paths, and privacy-unsafe fixture paths.
+- Coverage inventory composes all eight accepted capability specs and both active delta trees, resolves exact requirement/scenario headings, validates case/pytest evidence references, checks declared MODIFIED/REMOVED targets, and requires owner/risk/reason/compensation/follow-up for residual gaps.
+- Explicit limitation: evidence is deterministic fixture evidence with `actual_model_run=false` and model/runtime `not-executed`. Work items 2.11-2.14 remain future work; no AI-disabled walkthrough, Qwen/DeepSeek run, cross-platform run, migration/update/rollback rehearsal, release acceptance, corporate adaptation, or pilot was executed.
+
+### TDD Draft
+
+- Initial RED: `tests/test_certification.py` failed collection because `process.certification` did not exist.
+- Integration RED: the first implementation pass exposed output-boundary/privacy overreach and a malformed schema; the package regression then exposed the exact schema inventory omission.
+- Focused GREEN before final verification: 23 passed and one Windows symlink-privilege skip; combined certification/package/packaged-flow/weak-model regression reached 92 passed with only the expected inventory RED before reconciliation.
+- Final worker verification: certification plus exact package contract passed 38 tests with the same environment-dependent symlink skip; the full serial suite passed 381 tests with one skip. Compilation, direct CLI/check-mode, privacy/package, roadmap/OpenSpec, strict OpenSpec, and diff checks are recorded in the worker handoff and implementation commit.

@@ -52,6 +52,9 @@ SCHEMA_FILES = {
     "read_pack": "read-pack.schema.json",
     "weak_model_operation_evidence": "weak-model-operation-evidence.schema.json",
     "parallel_plan": "parallel-plan.schema.json",
+    "certification_case": "certification-case.schema.json",
+    "certification_evidence": "certification-evidence.schema.json",
+    "coverage_report": "coverage-report.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

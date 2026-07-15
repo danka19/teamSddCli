@@ -30,6 +30,9 @@ schemas:
   read_pack: schemas/read-pack.schema.json
   weak_model_operation_evidence: schemas/weak-model-operation-evidence.schema.json
   parallel_plan: schemas/parallel-plan.schema.json
+  certification_case: schemas/certification-case.schema.json
+  certification_evidence: schemas/certification-evidence.schema.json
+  coverage_report: schemas/coverage-report.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
   change_package: templates/change/change.yaml
@@ -49,10 +52,14 @@ adapters:
   qwen_class: adapters/qwen-class.yaml
   deepseek_class: adapters/deepseek-class.yaml
   gigacode_class: adapters/gigacode-class.yaml
+certification:
+  case_catalog: certification/cases.yaml
+  coverage_inventory: certification/coverage.yaml
 distribution:
   files:
     - VERSION
     - __init__.py
+    - certification.py
     - operation_cli.py
     - package.yaml
     - weak_model_kit.py
@@ -60,6 +67,7 @@ distribution:
     - workflow_operations.py
   roots:
     - adapters
+    - certification
     - examples
     - policies
     - read-packs

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "certification-case.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "family", "operation", "fixture", "expected"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "family": {"type": "string"},
+          "operation": {"type": "string", "minLength": 1},
+          "fixture": {"type": "string"},
+          "signal": {"type": "string"},
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "codes"],
+            "properties": {
+              "status": {"enum": ["passed", "blocked"]},
+              "codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+            }
+          }
+        }
+      }
+    }
+  }
+}
