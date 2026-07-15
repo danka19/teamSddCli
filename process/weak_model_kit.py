@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -217,6 +218,8 @@ def build_role_launch(
         raise ContractError("read pack identity does not match its content")
     if read_pack.get("status") != "ready":
         raise ContractError("read pack is blocked; resolve every missing or invalid context item")
+    if not any(source.get("authority") == "canonical" for source in read_pack.get("sources", [])):
+        raise ContractError("read pack must contain at least one canonical source")
     role = read_pack.get("role")
     instruction = ROLE_FILES.get(role)
     if instruction is None or not (process_root / instruction).is_file():
@@ -272,12 +275,26 @@ def validate_operation_evidence(
 ) -> list[dict[str, str]]:
     diagnostics: list[dict[str, str]] = []
     process_root = process_root or Path(__file__).resolve().parent
-    for location in _schema_errors(process_root, "weak-model-operation-evidence.schema.json", evidence):
-        diagnostics.append({"code": "evidence.schema", "detail": location})
-    if _schema_errors(process_root, "task-launch.schema.json", launch) or launch.get("identity") != _digest(_without_identity(launch)):
-        diagnostics.append({"code": "evidence.invalid-launch", "detail": "launch contract or identity is invalid"})
-    if _schema_errors(process_root, "read-pack.schema.json", read_pack) or read_pack.get("identity") != _digest(_without_identity(read_pack)):
-        diagnostics.append({"code": "evidence.invalid-read-pack", "detail": "read-pack contract or identity is invalid"})
+    evidence_schema_errors = _schema_errors(process_root, "weak-model-operation-evidence.schema.json", evidence)
+    if evidence_schema_errors:
+        return [{"code": "evidence.schema", "detail": location} for location in evidence_schema_errors]
+    launch_schema_errors = _schema_errors(process_root, "task-launch.schema.json", launch)
+    read_pack_schema_errors = _schema_errors(process_root, "read-pack.schema.json", read_pack)
+    if launch_schema_errors or read_pack_schema_errors:
+        return [
+            *({"code": "evidence.invalid-launch", "detail": location} for location in launch_schema_errors),
+            *({"code": "evidence.invalid-read-pack", "detail": location} for location in read_pack_schema_errors),
+        ]
+    if launch.get("identity") != _digest(_without_identity(launch)):
+        diagnostics.append({"code": "evidence.invalid-launch", "detail": "launch identity is invalid"})
+    if read_pack.get("identity") != _digest(_without_identity(read_pack)):
+        diagnostics.append({"code": "evidence.invalid-read-pack", "detail": "read-pack identity is invalid"})
+    expected_manifest = [
+        {key: source[key] for key in ("authority", "stable_id", "path", "sha256")}
+        for source in read_pack.get("sources", [])
+    ]
+    if launch.get("read_pack_identity") != read_pack.get("identity") or launch.get("verified_source_manifest") != expected_manifest:
+        diagnostics.append({"code": "evidence.invalid-launch-binding", "detail": "launch does not bind the supplied read pack"})
     for field, launch_field in (("task_id", "task_id"), ("role", "role"), ("stage", "stage_boundary"), ("read_pack_identity", "read_pack_identity")):
         if evidence.get(field) != launch.get(launch_field):
             diagnostics.append({"code": "evidence.launch-mismatch", "detail": field})
@@ -291,9 +308,9 @@ def validate_operation_evidence(
         diagnostics.append({"code": "evidence.prohibited-action", "detail": "a prohibited action was attempted"})
     if evidence.get("human_stop_reached") is not True or evidence.get("human_review_status") != "pending":
         diagnostics.append({"code": "evidence.human-stop-missing", "detail": "human stop must remain pending"})
-    forbidden_claims = {"approval", "waiver", "transition", "merge", "release", "archive", "resume", "gate-green"}
-    if any(claim.get("kind") in forbidden_claims for claim in evidence.get("claims", []) if isinstance(claim, dict)):
-        diagnostics.append({"code": "evidence.forbidden-authority", "detail": "claim kind is human-authority only"})
+    authority_terms = re.compile(r"\b(decision|approv(?:e|ed|al)|authoriz(?:e|ed|ation)|waiv(?:e|ed|er)|transition|merge|release|archive|resume|gate[- ]?green)\b", re.IGNORECASE)
+    if any(authority_terms.search(json.dumps(claim.get("value", {}), sort_keys=True)) for claim in evidence.get("claims", [])):
+        diagnostics.append({"code": "evidence.forbidden-authority", "detail": "claim value contains human-authority semantics"})
 
     verified_sources = {
         (source["stable_id"], source["path"], source["sha256"], source["authority"])
@@ -313,7 +330,10 @@ def validate_operation_evidence(
         if claim.get("kind") in {"validation", "test", "integration", "file-state"} and claim.get("evidence") not in check_evidence:
             diagnostics.append({"code": "evidence.unsupported-claim", "detail": str(claim.get("value"))})
 
-    source_refs = {(source.get("stable_id"), source.get("sha256")) for source in evidence.get("sources_read", [])}
+    source_refs = {
+        (source.get("stable_id"), source.get("sha256"))
+        for source in evidence.get("sources_read", []) if source.get("authority") == "canonical"
+    }
     for artifact in evidence.get("artifacts_drafted", []):
         references = artifact.get("canonical_references", [])
         if artifact.get("canonical") is True:
@@ -325,7 +345,10 @@ def validate_operation_evidence(
 
 
 def _normalized_scope(value: str) -> tuple[str, ...]:
-    path = PurePosixPath(value.replace("\\", "/"))
+    normalized = value.replace("\\", "/")
+    if normalized.startswith("//") or normalized.startswith("/") or re.match(r"^[A-Za-z]:", normalized):
+        return ()
+    path = PurePosixPath(normalized)
     if path.is_absolute() or ".." in path.parts or not path.parts:
         return ()
     return tuple(part.casefold() for part in path.parts)
@@ -338,8 +361,13 @@ def _overlap(left: tuple[str, ...], right: tuple[str, ...]) -> bool:
 def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
     diagnostics: list[dict[str, str]] = []
     process_root = Path(__file__).resolve().parent
-    for location in _schema_errors(process_root, "parallel-plan.schema.json", plan):
-        diagnostics.append({"code": "parallel.schema", "detail": location})
+    schema_errors = _schema_errors(process_root, "parallel-plan.schema.json", plan)
+    if schema_errors:
+        return {
+            "schema_version": "1.0", "plan_id": plan.get("plan_id"), "status": "blocked",
+            "promotion_allowed": False,
+            "diagnostics": [{"code": "parallel.schema", "detail": location} for location in schema_errors],
+        }
     tasks = plan.get("tasks", [])
     raw_task_ids = [task.get("task_id") for task in tasks if isinstance(task, dict)]
     task_ids = set(raw_task_ids)
@@ -347,6 +375,7 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
         diagnostics.append({"code": "parallel.duplicate-task-id", "detail": "task IDs must be unique"})
     evidence_paths: set[tuple[str, ...]] = set()
     scopes: list[tuple[str, tuple[str, ...]]] = []
+    declared_check_ids: list[str] = []
     for task in tasks:
         task_id = str(task.get("task_id"))
         dependencies = task.get("dependencies", [])
@@ -364,6 +393,7 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
         evidence_paths.add(evidence_path)
         if not task.get("owner") or not task.get("stop_condition") or not task.get("focused_checks"):
             diagnostics.append({"code": "parallel.incomplete-task-boundary", "detail": task_id})
+        declared_check_ids.extend(row.get("check_id") for row in task.get("focused_checks", []))
         for raw_scope in task.get("write_scopes", []):
             scope = _normalized_scope(raw_scope)
             if not scope:
@@ -374,6 +404,9 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
                     diagnostics.append({"code": "parallel.overlapping-scope", "detail": f"{other_id} <-> {task_id}"})
             scopes.append((task_id, scope))
     combined = [row for row in plan.get("combined_checks", []) if isinstance(row, dict)]
+    declared_check_ids.extend(row.get("check_id") for row in combined)
+    if len(declared_check_ids) != len(set(declared_check_ids)):
+        diagnostics.append({"code": "parallel.duplicate-check-id", "detail": "declared check IDs must be globally unique"})
     missing_checks = REQUIRED_COMBINED_CHECKS - {row.get("kind") for row in combined}
     if missing_checks:
         diagnostics.append({"code": "parallel.missing-combined-gate", "detail": ",".join(sorted(missing_checks))})
@@ -389,7 +422,15 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(evidence, dict):
             diagnostics.append({"code": "parallel.missing-promotion-evidence", "detail": "structured results required"})
         else:
-            task_results = {row.get("task_id"): row for row in evidence.get("task_results", []) if isinstance(row, dict)}
+            task_result_rows = [row for row in evidence.get("task_results", []) if isinstance(row, dict)]
+            task_result_ids = [row.get("task_id") for row in task_result_rows]
+            task_results = {row.get("task_id"): row for row in task_result_rows}
+            all_result_rows = [
+                result
+                for task_result in task_result_rows
+                for result in task_result.get("checks", [])
+                if isinstance(result, dict)
+            ]
             for task in tasks:
                 expected = {row.get("check_id") for row in task.get("focused_checks", []) if isinstance(row, dict)}
                 actual_rows = task_results.get(task.get("task_id"), {}).get("checks", [])
@@ -399,9 +440,20 @@ def validate_parallel_plan(plan: dict[str, Any]) -> dict[str, Any]:
                 }
                 if not expected or not expected <= passed:
                     diagnostics.append({"code": "parallel.focused-evidence-incomplete", "detail": str(task.get("task_id"))})
-            combined_results = {
-                row.get("check_id"): row for row in evidence.get("combined_results", []) if isinstance(row, dict)
-            }
+            combined_result_rows = [row for row in evidence.get("combined_results", []) if isinstance(row, dict)]
+            combined_results = {row.get("check_id"): row for row in combined_result_rows}
+            all_result_rows.extend(combined_result_rows)
+            result_ids = [row.get("check_id") for row in all_result_rows]
+            result_evidence = [row.get("evidence") for row in all_result_rows]
+            declared_ids = set(declared_check_ids)
+            if (
+                len(task_result_ids) != len(set(task_result_ids))
+                or set(task_result_ids) != task_ids
+                or len(result_ids) != len(set(result_ids))
+                or set(result_ids) != declared_ids
+                or len(result_evidence) != len(set(result_evidence))
+            ):
+                diagnostics.append({"code": "parallel.reused-result", "detail": "each declared check needs one distinct result and evidence"})
             for check in combined:
                 result = combined_results.get(check.get("check_id"), {})
                 if result.get("result") != "passed" or not result.get("evidence"):

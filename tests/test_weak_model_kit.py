@@ -119,6 +119,27 @@ def test_launcher_rejects_forged_ready_pack_and_tampered_source() -> None:
         build_role_launch(ROOT, PROCESS, forged, "scratch/read-pack.json", "evidence/x.yaml")
 
 
+def test_recomputed_pack_still_requires_canonical_source_and_evidence_binding() -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    supporting_only = copy.deepcopy(pack)
+    supporting_only["sources"] = [source for source in pack["sources"] if source["authority"] == "supporting"]
+    supporting_only["identity"] = _pack_identity(supporting_only)
+    with pytest.raises(ContractError, match="canonical source"):
+        build_role_launch(ROOT, PROCESS, supporting_only, "scratch/read-pack.json", "evidence/x.yaml")
+
+    evidence, launch, pack = evidence_context()
+    supporting = next(source for source in pack["sources"] if source["authority"] == "supporting")
+    evidence["artifacts_drafted"][0]["canonical_references"] = [
+        {key: supporting[key] for key in ("stable_id", "sha256")}
+    ]
+    foreign_launch = copy.deepcopy(launch)
+    foreign_launch["read_pack_identity"] = "sha256:" + "2" * 64
+    foreign_launch["verified_source_manifest"] = foreign_launch["verified_source_manifest"][1:]
+    foreign_launch["identity"] = _pack_identity(foreign_launch)
+    codes = {item["code"] for item in validate_operation_evidence(evidence, foreign_launch, pack)}
+    assert {"evidence.invalid-launch-binding", "evidence.missing-canonical-reference"} <= codes
+
+
 def test_read_pack_request_rejects_empty_or_unbounded_context() -> None:
     data = request()
     data["sources"] = []
@@ -144,7 +165,7 @@ def valid_evidence() -> dict:
             {"path": "scratch/proposal.md", "canonical": False, "canonical_references": ["weak-model-guardrails"]}
         ],
         "checks": [{"command": "python scripts/validate_change.py sample", "result": "passed", "evidence": "log:check-1"}],
-        "claims": [{"kind": "validation", "value": "change schema passed", "evidence": "log:check-1"}],
+        "claims": [{"kind": "validation", "value": {"subject": "change-schema", "summary": "check passed"}, "evidence": "log:check-1"}],
         "human_decisions_required": ["Product owner accepts proposal"],
         "unresolved_inputs": [],
         "residual_limitations": ["No model certification performed"],
@@ -187,10 +208,10 @@ def test_operation_evidence_accepts_supported_advisory_completion() -> None:
 @pytest.mark.parametrize(
     ("change", "code"),
     [
-        ({"approval_claimed": True}, "evidence.forbidden-authority"),
-        ({"lifecycle_transition_requested": True}, "evidence.forbidden-transition"),
-        ({"status": "approved"}, "evidence.unsupported-completion"),
-        ({"checks": [], "claims": [{"kind": "validation", "value": "passed", "evidence": "log:missing"}]}, "evidence.unsupported-claim"),
+        ({"approval_claimed": True}, "evidence.schema"),
+        ({"lifecycle_transition_requested": True}, "evidence.schema"),
+        ({"status": "approved"}, "evidence.schema"),
+        ({"checks": [], "claims": [{"kind": "validation", "value": {"subject": "schema", "summary": "passed"}, "evidence": "log:missing"}]}, "evidence.unsupported-claim"),
     ],
 )
 def test_operation_evidence_rejects_authority_and_unsupported_claims(change: dict, code: str) -> None:
@@ -203,16 +224,28 @@ def test_operation_evidence_rejects_derived_canonical_artifact_without_source_re
     evidence, launch, pack = evidence_context()
     evidence["artifacts_drafted"][0] = {"path": "openspec/spec.md", "canonical": True, "canonical_references": []}
     codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
-    assert {"evidence.canonical-draft-forbidden", "evidence.missing-canonical-reference"} <= codes
+    assert codes == {"evidence.schema"}
 
 
 def test_evidence_rejects_lie_in_claims_forbidden_actions_or_wrong_launch_binding() -> None:
     evidence, launch, pack = evidence_context()
-    evidence["claims"].append({"kind": "approval", "value": "approved", "evidence": "log:check-1"})
+    evidence["claims"].append({"kind": "fact", "value": {"subject": "change", "summary": "approved"}, "evidence": "log:check-1"})
     evidence["prohibited_actions_attempted"] = ["archive"]
     evidence["task_id"] = "OTHER"
     codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
     assert {"evidence.forbidden-authority", "evidence.prohibited-action", "evidence.launch-mismatch"} <= codes
+
+
+def test_claims_use_closed_safe_kinds_and_reject_decision_semantics_in_values() -> None:
+    evidence, launch, pack = evidence_context()
+    evidence["claims"] = [
+        {"kind": "fact", "value": {"subject": "review", "summary": "waiver approved and transition authorized"}, "evidence": "log:check-1"},
+    ]
+    codes = {item["code"] for item in validate_operation_evidence(evidence, launch, pack)}
+    assert "evidence.forbidden-authority" in codes
+
+    evidence["claims"][0]["kind"] = "decision"
+    assert {item["code"] for item in validate_operation_evidence(evidence, launch, pack)} == {"evidence.schema"}
 
 
 def test_evidence_rejects_unverified_source_reference_even_when_id_matches() -> None:
@@ -295,6 +328,26 @@ def test_parallel_plan_rejects_duplicate_ids_windows_equivalent_paths_and_promot
     assert report["promotion_allowed"] is False
 
 
+def test_parallel_rejects_drive_unc_paths_and_reused_check_or_result_ids() -> None:
+    plan = valid_parallel_plan()
+    plan["tasks"][0]["write_scopes"] = ["C:\\repo\\src"]
+    plan["tasks"][1]["evidence_path"] = "\\\\server\\share\\evidence.yaml"
+    plan["tasks"][1]["focused_checks"][0]["check_id"] = "focused-a"
+    plan["combined_checks"][1]["check_id"] = plan["combined_checks"][0]["check_id"]
+    plan["promotion_requested"] = True
+    plan["promotion_evidence"] = {
+        "task_results": [
+            {"task_id": "TASK-A", "checks": [{"check_id": "focused-a", "result": "passed", "evidence": "log:a"}]},
+            {"task_id": "TASK-B", "checks": [{"check_id": "focused-a", "result": "passed", "evidence": "log:a"}]},
+        ],
+        "combined_results": [
+            {"check_id": "integration", "result": "passed", "evidence": "log:one"}
+        ],
+    }
+    codes = {item["code"] for item in validate_parallel_plan(plan)["diagnostics"]}
+    assert {"parallel.unsafe-scope", "parallel.unsafe-evidence-path", "parallel.duplicate-check-id", "parallel.reused-result"} <= codes
+
+
 def test_parallel_promotion_requires_each_focused_and_combined_pass_evidence() -> None:
     plan = valid_parallel_plan()
     plan["promotion_requested"] = True
@@ -311,6 +364,28 @@ def test_parallel_promotion_requires_each_focused_and_combined_pass_evidence() -
     assert validate_parallel_plan(plan)["promotion_allowed"] is True
     plan["promotion_evidence"]["combined_results"][0]["result"] = "failed"
     assert validate_parallel_plan(plan)["promotion_allowed"] is False
+
+
+def test_parallel_promotion_rejects_extra_or_duplicate_result_rows() -> None:
+    plan = valid_parallel_plan()
+    plan["promotion_requested"] = True
+    plan["promotion_evidence"] = {
+        "task_results": [
+            {"task_id": task["task_id"], "checks": [{"check_id": task["focused_checks"][0]["check_id"], "result": "passed", "evidence": f"log:{task['task_id']}"}]}
+            for task in plan["tasks"]
+        ],
+        "combined_results": [
+            {"check_id": row["check_id"], "result": "passed", "evidence": f"log:{row['kind']}"}
+            for row in plan["combined_checks"]
+        ],
+    }
+    plan["promotion_evidence"]["task_results"].append(copy.deepcopy(plan["promotion_evidence"]["task_results"][0]))
+    plan["promotion_evidence"]["combined_results"].append(
+        {"check_id": "undeclared", "result": "passed", "evidence": "log:undeclared"}
+    )
+    report = validate_parallel_plan(plan)
+    assert "parallel.reused-result" in {item["code"] for item in report["diagnostics"]}
+    assert report["promotion_allowed"] is False
 
 
 def test_package_exposes_all_role_instructions_adapters_and_contract_schemas() -> None:
@@ -356,6 +431,63 @@ def test_clis_reject_malformed_nested_documents_without_traceback_from_other_cwd
         assert result.returncode in {2, 3}
         assert "Traceback" not in result.stderr + result.stdout
         assert "secret" not in result.stdout
+
+
+def test_schema_failure_stops_semantics_and_evidence_parallel_clis_exit_three(tmp_path: Path) -> None:
+    evidence, launch, pack = evidence_context()
+    evidence["claims"] = ["not-a-mapping"]
+    diagnostics = validate_operation_evidence(evidence, launch, pack)
+    assert {item["code"] for item in diagnostics} == {"evidence.schema"}
+    plan = valid_parallel_plan()
+    plan["tasks"][0]["focused_checks"] = ["not-a-mapping"]
+    report = validate_parallel_plan(plan)
+    assert {item["code"] for item in report["diagnostics"]} == {"parallel.schema"}
+
+    evidence_path = tmp_path / "evidence.json"
+    launch_path = tmp_path / "launch.json"
+    pack_path = tmp_path / "pack.json"
+    plan_path = tmp_path / "plan.json"
+    for path, value in ((evidence_path, evidence), (launch_path, launch), (pack_path, pack), (plan_path, plan)):
+        path.write_text(json.dumps(value), encoding="utf-8")
+    commands = [
+        [sys.executable, str(ROOT / "scripts/check_weak_model_evidence.py"), str(evidence_path), "--launch", str(launch_path), "--read-pack", str(pack_path)],
+        [sys.executable, str(ROOT / "scripts/check_parallel_plan.py"), str(plan_path)],
+    ]
+    for command in commands:
+        result = subprocess.run(command, cwd=tmp_path, capture_output=True, text=True, check=False)
+        assert result.returncode == 3
+        assert "Traceback" not in result.stdout + result.stderr
+
+
+def test_evidence_stops_before_semantics_when_launch_or_pack_schema_is_invalid(tmp_path: Path) -> None:
+    evidence, launch, pack = evidence_context()
+    malformed_launch = copy.deepcopy(launch)
+    malformed_launch["verified_source_manifest"] = ["private-launch-value"]
+    malformed_pack = copy.deepcopy(pack)
+    malformed_pack["sources"] = ["private-pack-value"]
+
+    launch_diagnostics = validate_operation_evidence(evidence, malformed_launch, pack)
+    pack_diagnostics = validate_operation_evidence(evidence, launch, malformed_pack)
+    assert {item["code"] for item in launch_diagnostics} == {"evidence.invalid-launch"}
+    assert {item["code"] for item in pack_diagnostics} == {"evidence.invalid-read-pack"}
+
+    evidence_path = tmp_path / "evidence.json"
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    for label, launch_value, pack_value in (
+        ("launch", malformed_launch, pack),
+        ("pack", launch, malformed_pack),
+    ):
+        launch_path = tmp_path / f"{label}-launch.json"
+        pack_path = tmp_path / f"{label}-pack.json"
+        launch_path.write_text(json.dumps(launch_value), encoding="utf-8")
+        pack_path.write_text(json.dumps(pack_value), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/check_weak_model_evidence.py"), str(evidence_path), "--launch", str(launch_path), "--read-pack", str(pack_path)],
+            cwd=tmp_path, capture_output=True, text=True, check=False,
+        )
+        assert result.returncode == 3
+        assert "Traceback" not in result.stdout + result.stderr
+        assert "private-" not in result.stdout
 
 
 def test_launch_and_evidence_clis_bind_concrete_documents_with_stable_errors(tmp_path: Path) -> None:
