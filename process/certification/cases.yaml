@@ -1,55 +1,60 @@
 schema_version: "1.0"
+planned_dimensions:
+  roles:
+    - {role: analyst, expected_output: bounded requirements draft, executed: false}
+    - {role: developer, expected_output: implementation-preparation draft, executed: false}
+    - {role: qa, expected_output: source-linked QA evidence review, executed: false}
+    - {role: tech-lead, expected_output: advisory governance review, executed: false}
+  classes:
+    - {change_class: minor, executed: false}
+    - {change_class: major, executed: false}
+    - {change_class: hotfix, executed: false}
 cases:
   - id: valid-reference-change
     family: golden
     operation: validate-change
     fixture: process/certification/reference-repo/change
+    role: analyst
+    change_class: minor
+    expected_output: valid synthetic change-package diagnostic
     expected: {status: passed, codes: []}
   - id: missing-context
     family: missing-context
     operation: certification-preflight
     fixture: process/certification/negative-cases/missing-context.yaml
-    signal: certification.missing-context
     expected: {status: blocked, codes: [certification.missing-context]}
   - id: conflicting-sources
     family: conflicting-sources
     operation: certification-preflight
     fixture: process/certification/negative-cases/conflicting-sources.yaml
-    signal: certification.conflicting-sources
     expected: {status: blocked, codes: [certification.conflicting-sources]}
   - id: fabricated-evidence
     family: fabricated-evidence
     operation: certification-preflight
     fixture: process/certification/negative-cases/fabricated-evidence.yaml
-    signal: certification.fabricated-evidence
     expected: {status: blocked, codes: [certification.fabricated-evidence]}
   - id: forbidden-approval
     family: forbidden-approval
     operation: certification-preflight
     fixture: process/certification/negative-cases/forbidden-approval.yaml
-    signal: certification.forbidden-approval
     expected: {status: blocked, codes: [certification.forbidden-approval]}
   - id: skipped-stop
     family: skipped-stop
     operation: certification-preflight
     fixture: process/certification/negative-cases/skipped-stop.yaml
-    signal: certification.skipped-stop
     expected: {status: blocked, codes: [certification.skipped-stop]}
   - id: invalid-lifecycle-transition
     family: invalid-lifecycle-transition
     operation: certification-preflight
     fixture: process/certification/negative-cases/invalid-lifecycle-transition.yaml
-    signal: certification.invalid-lifecycle-transition
     expected: {status: blocked, codes: [certification.invalid-lifecycle-transition]}
   - id: adapter-failure
     family: adapter-failure
     operation: certification-preflight
     fixture: process/certification/negative-cases/adapter-failure.yaml
-    signal: certification.adapter-failure
     expected: {status: blocked, codes: [certification.adapter-failure]}
   - id: context-limit
     family: context-limit
     operation: certification-preflight
     fixture: process/certification/negative-cases/context-limit.yaml
-    signal: certification.context-limit
     expected: {status: blocked, codes: [certification.context-limit]}

@@ -20,6 +20,8 @@ from jsonschema.exceptions import ValidationError
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
+from process.certification import FIXTURE_PRIVATE
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PROCESS_ROOT = REPO_ROOT / "process"
@@ -403,6 +405,22 @@ def test_clean_templates_and_positive_fixtures_have_no_sensitive_values() -> Non
     assert files
     findings = {str(path.relative_to(REPO_ROOT)): scan_categories(path) for path in files}
     assert {path: categories for path, categories in findings.items() if categories} == {}
+
+
+def test_certification_tree_sensitive_content_is_limited_to_named_negative_privacy_fixtures() -> None:
+    files = [path for path in yaml_files(PROCESS_ROOT / "certification") if path.name not in {"cases.yaml", "coverage.yaml"}]
+    findings = {
+        path.relative_to(PROCESS_ROOT).as_posix()
+        for path in files
+        if FIXTURE_PRIVATE.search(path.read_text(encoding="utf-8"))
+    }
+    assert findings == {
+        "certification/privacy-cases/corporate-identifier.yaml",
+        "certification/privacy-cases/internal-identifier.yaml",
+        "certification/privacy-cases/email.yaml",
+        "certification/privacy-cases/url.yaml",
+        "certification/privacy-cases/ip.yaml",
+    }
 
 
 @pytest.mark.parametrize(

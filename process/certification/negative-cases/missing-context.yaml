@@ -1,2 +1,9 @@
 namespace: synthetic
-signal: certification.missing-context
+context: {required: [synthetic-required-source], present: [], bytes: 10, limit: 100}
+sources: []
+evidence_ids: [synthetic-evidence]
+claims: [{kind: validation, evidence_id: synthetic-evidence}]
+authority: {approval_claimed: false}
+human_stop: {expected: true, reached: true}
+lifecycle: {transition_requested: false}
+adapter: {result: available}

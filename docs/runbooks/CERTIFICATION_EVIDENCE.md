@@ -2,7 +2,7 @@
 
 ## Purpose And Boundary
 
-`scripts/certify_process_release.py` runs the versioned synthetic case catalog and builds exact requirement/scenario coverage inventory. This is fixture certification only: normalized evidence always states `evidence_kind: deterministic-fixture`, `actual_model_run: false`, and `model`/`runtime: not-executed`. It is not Qwen/DeepSeek evidence, cross-platform evidence, release acceptance, or pilot evidence.
+`scripts/certify_process_release.py` runs the versioned synthetic case catalog and builds exact requirement/scenario coverage inventory. This is fixture certification only: normalized evidence always states `evidence_kind: deterministic-fixture`, `actual_model_run: false`, and structured model/adapter fields with `not-executed` values. It is not Qwen/DeepSeek evidence, cross-platform evidence, release acceptance, or pilot evidence. The closed evidence schema can represent later actual-model records, but this runner cannot produce one.
 
 The runner is check-only with `--check`. Without `--check`, a passing run creates one new raw bundle directory outside the repository. It never overwrites a bundle, writes to a symlink/reparse destination, or allows source/output overlap.
 
@@ -24,7 +24,8 @@ Remove `--check` only when intentionally creating the immutable raw artifact. Ex
 - External dispatch is an allowlist in `process/certification.py`; command vectors use `sys.executable`, argument lists, `shell=False`, repository-root working directory, and a timeout.
 - YAML cannot supply an executable or arbitrary arguments. Certification-specific negative families use internal preflight signals and do not execute commands.
 - Fixture paths must be repository-relative under `process/certification/`; absolute, traversal, credential-like, URL, and production-looking values fail closed.
-- Canonical files are never mutation targets. Every normalized case records `canonical_mutated: false`.
+- Fixture payloads use the explicit `synthetic | example` namespace allowlist. Email, IP, URL, corporate/internal/production identifiers, and secret-like content fail before dispatch. Canonical OpenSpec paths remain trusted source metadata and may contain domain words without becoming fixture values.
+- Canonical files are never mutation targets. Every case records before/after SHA-256 snapshots across process, OpenSpec, templates, scripts, and docs; `canonical_mutated` is derived from those snapshots.
 
 ## Evidence Storage
 
@@ -39,9 +40,11 @@ The raw artifact reference contains:
 
 ## Coverage And Residual Gaps
 
-`process/certification/coverage.yaml` composes all accepted capability specs and both active delta trees by exact capability, requirement, and scenario headings. Explicit evidence may reference an existing case ID or pytest node. Duplicate/unknown selectors, unknown case/test IDs, and invalid MODIFIED/REMOVED targets block the report.
+`process/certification/coverage.yaml` composes all accepted capability specs and both active delta trees by exact capability, requirement, and scenario headings. `MODIFIED` replaces the accepted requirement scenarios and `REMOVED` removes them; duplicate change ownership and unknown targets fail closed. Explicit evidence may reference an existing case ID or pytest suite/node. Duplicate/unknown selectors and unknown case/test IDs block the report.
 
-An allowed residual gap must contain all five non-empty fields: `owner`, `risk`, `reason`, `compensation`, and `follow_up`. Future work items 2.11-2.14 remain explicit and are not reported as executed evidence.
+There is no aggregate default evidence. An allowed residual gap contains all five non-empty fields: `owner`, `risk`, `reason`, `compensation`, and `follow_up`, wins over any capability rule, increments the gap count, and makes report status `gaps`. Structured future-work selectors remove unperformed 2.11-2.14 scenarios from covered/gap rows and count them separately.
+
+The CLI exposes one canonical JSON representation only; it does not maintain a second human-output projection. Operators may format that JSON externally without changing semantic fields.
 
 ## Manual Review
 

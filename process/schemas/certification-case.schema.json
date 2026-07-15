@@ -3,9 +3,16 @@
   "$id": "certification-case.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "cases"],
+  "required": ["schema_version", "planned_dimensions", "cases"],
   "properties": {
     "schema_version": {"const": "1.0"},
+    "planned_dimensions": {
+      "type": "object", "additionalProperties": false, "required": ["roles", "classes"],
+      "properties": {
+        "roles": {"type": "array", "minItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["role", "expected_output", "executed"], "properties": {"role":{"enum":["analyst","developer","qa","tech-lead"]},"expected_output":{"type":"string","minLength":1},"executed":{"const":false}}}},
+        "classes": {"type": "array", "minItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["change_class", "executed"], "properties": {"change_class":{"enum":["minor","major","hotfix"]},"executed":{"const":false}}}}
+      }
+    },
     "cases": {
       "type": "array",
       "minItems": 1,
@@ -18,7 +25,9 @@
           "family": {"type": "string"},
           "operation": {"type": "string", "minLength": 1},
           "fixture": {"type": "string"},
-          "signal": {"type": "string"},
+          "role": {"enum": ["analyst", "developer", "qa", "tech-lead", "not-applicable"]},
+          "change_class": {"enum": ["minor", "major", "hotfix", "not-applicable"]},
+          "expected_output": {"type": "string"},
           "expected": {
             "type": "object",
             "additionalProperties": false,

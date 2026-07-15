@@ -1,9 +1,10 @@
 namespace: synthetic
-context: {required: [], present: [], bytes: 10, limit: 100}
-sources: []
+context: {required: [synthetic-source], present: [synthetic-source], bytes: 10, limit: 100}
+sources:
+  - {id: synthetic-source, sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
 evidence_ids: [synthetic-evidence]
 claims: [{kind: validation, evidence_id: synthetic-evidence}]
 authority: {approval_claimed: false}
 human_stop: {expected: true, reached: true}
 lifecycle: {transition_requested: false}
-adapter: {result: failed}
+adapter: {result: available}
