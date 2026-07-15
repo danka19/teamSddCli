@@ -110,10 +110,12 @@
     "certification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["case_catalog", "coverage_inventory"],
+      "required": ["case_catalog", "coverage_inventory", "ai_disabled_catalog", "qwen_matrix"],
       "properties": {
         "case_catalog": {"const": "certification/cases.yaml"},
-        "coverage_inventory": {"const": "certification/coverage.yaml"}
+        "coverage_inventory": {"const": "certification/coverage.yaml"},
+        "ai_disabled_catalog": {"const": "certification/ai-disabled-walkthroughs.yaml"},
+        "qwen_matrix": {"const": "certification/qwen-matrix.yaml"}
       }
     },
     "distribution": {
@@ -122,7 +124,7 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "certification.py", "feedback_policy.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "feedback_policy.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
           "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]

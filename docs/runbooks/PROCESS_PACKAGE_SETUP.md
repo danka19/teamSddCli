@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.10 are closed. Work item 2.11 is ready for AI-disabled and actual weak-model certification.
+Status: work items 2.1-2.10 are closed. Work item 2.11 has a passing AI-disabled baseline and a partially certified, unreliable Qwen-family proxy with explicit fallbacks, and awaits DeepSeek-family certification plus human fallback disposition.
 
 ## Contract Sources
 

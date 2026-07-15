@@ -154,7 +154,7 @@ No package may claim zero production risk. Pilot evidence includes data/privacy,
 
 ### 11. Place the change before the real pilot without invalidating the package foundation
 
-Phase 2 work items 2.1-2.10 are closed with the versioned foundation through reviewed deterministic certification fixtures and exact scenario evidence required by both active changes. Work item 2.11 is ready; later sequential work adds actual weak-model certification, release-candidate acceptance, and Phase 3 pilot entry.
+Phase 2 work items 2.1-2.10 are closed with the versioned foundation through reviewed deterministic certification fixtures and exact scenario evidence required by both active changes. Work item 2.11 is in progress after AI-disabled and Qwen-family certification and awaits mandatory DeepSeek-family certification; later sequential work adds release-candidate acceptance and Phase 3 pilot entry.
 
 The existing transfer-readiness change may continue through foundation work that does not encode `thin/full` as permanent behavior. Before the packaged reference flow, role kit, certification, manifest, and release acceptance are finalized, they must consume the accepted outcome of this change or explicitly remain blocked.
 

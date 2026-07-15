@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is ready.
+Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 has a passing AI-disabled baseline and a partially certified, unreliable Qwen-family proxy with explicit fallbacks, and awaits DeepSeek-family certification plus human fallback disposition.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -481,7 +481,7 @@ Status: closed after implementation, combined review, two hardening rounds, fina
 
 ## Work Item 2.10: Certification Fixtures, Coverage, And Runner
 
-Status: closed after implementation, independent architecture/review hardening, semantic evidence remapping, and final coordinator verification. Transfer tasks 4.1-4.3 and 4.6 plus NIS task 8.1 are complete; work item 2.11 is ready.
+Status: closed after implementation, independent architecture/review hardening, semantic evidence remapping, and final coordinator verification. Transfer tasks 4.1-4.3 and 4.6 plus NIS task 8.1 are complete; at this checkpoint work item 2.11 became ready.
 
 ### Implementation Evidence
 
@@ -525,4 +525,31 @@ Status: closed after implementation, independent architecture/review hardening, 
 - Direct check-only runner: `scripts/certify_process_release.py` exited 0 with status `passed` and the final 184/116/27 coverage summary; raw output remained outside the repository.
 - OpenSpec reconciliation marks transfer tasks 4.1-4.3 and 4.6 complete, moving that inventory from 14/33 to 18/33. NIS task 8.1 is complete, moving that inventory from 35/43 to 36/43.
 - No AI-disabled operation matrix, actual Qwen/DeepSeek execution, cross-platform rehearsal, release-candidate acceptance, corporate adaptation, or pilot is claimed. Those boundaries remain owned by work items 2.11-2.14 and Phase 3.
-- Work item 2.10 is `closed`; work item 2.11 is `ready`.
+- Work item 2.10 is `closed`; at its closure checkpoint work item 2.11 became `ready`. Its current partial-execution status is recorded below.
+
+## Work Item 2.11: AI-Disabled And Qwen-Family Certification Slice
+
+Status: `in_progress`. The AI-disabled baseline passed; the honest non-leading Qwen-family proxy produced explicit failures and fallback routes, and mandatory DeepSeek-family certification remains incomplete. Transfer task 4.4 and NIS task 8.2 are complete. Transfer task 4.5 and NIS task 8.3 remain unchecked.
+
+### Evidence And Scope
+
+- AI-disabled catalog: `process/certification/ai-disabled-walkthroughs.yaml`; 11/11 source-linked operations passed for minor, major, hotfix, migration, Tech Lead, hold/stop/resume, release package, failed-run retention, pilot safety, and both hotfix reconciliation gates.
+- Qwen catalog: `process/certification/qwen-matrix.yaml`; exact catalog-semantic revalidation of the frozen non-leading bytes passed 0/5 contract preflight and 1/15 risk-oriented matrix cases with `qwen3.5:9b`, model digest `6488c96fa5fa`, Ollama `0.30.11`, adapter `1.0`, and package `0.2.0`. Every failed operation retains deterministic or mandatory-human fallback.
+- Reviewer correction: the earlier 5/5 and 15/15 outputs were produced by leading prompts. All 20 remain append-only but are marked `invalidated` with reason `reviewer-leading-prompt` in normalized evidence.
+- Roles/classes: analyst, developer, QA, and Tech Lead are represented; minor, major, and hotfix are represented.
+- Negative coverage: all 11 required families were executed. Only `fabricated-evidence` passed exact deterministic validation; authority boundary, unsafe resume, failed-run retention, insufficient-evidence QA review, hotfix reconciliation, missing context, conflicting context, skipped stop point, forbidden approval, and forbidden lifecycle transition failed and route to deterministic or mandatory-human fallback.
+- Raw ledger: 69/69 eligible actual-model artifacts are referenced by checksum: 20 current frozen rows plus 49 invalidated or superseded Qwen attempts. The failed-attempt ledger has 50 entries because it additionally retains the initial AI-disabled `minor-flow` package-schema failure; the 11 successful retry rows remain separate. This includes all `qwen-contract-preflight-001` through `-004` files omitted by the earlier hand-maintained ledger.
+- Model output was bounded scratch evidence only. Trusted code bound the compact response to canonical source hashes and the read-pack/launch identities, expanded it into the existing operation-evidence contract, and ran deterministic validation. No approval, resume, release, merge, archive, waiver, or lifecycle authority was granted.
+- Normalized evidence: `process/certification/evidence/phase-2-11-qwen-2026-07-15.yaml`; raw artifact logical identity: `raw-artifact-v0.2.0-qwen-2026-07-15` outside Git. Normalized records contain only logical filenames and SHA-256, not local private paths.
+- Durable audit: `docs/audits/PHASE_2_WORK_ITEM_2_11_QWEN_CERTIFICATION_AUDIT_2026-07-15.md`.
+
+### Failed Attempts And Fallback
+
+- The initial AI-disabled run retained a package-schema failure before the new catalog fields were registered; the successful retry lives under a separate append-only raw group.
+- Thinking with `num_predict=32` retained an empty response with `done_reason=length`; no-think/64 returned exact `QWEN_PREFLIGHT_OK`.
+- Two overlong contract approaches and one echo/truncation response were retained rather than overwritten. The accepted bounded contract makes the model return a compact safety decision; deterministic trusted code supplies source binding and validates the full existing operation-evidence record.
+- Deterministic validators and named human decisions remain mandatory fallbacks for every case.
+
+### Limitation And Next Gate
+
+`qwen3.5:9b` is only a family-level proxy for corporate Qwen3.6-35B, not equivalence proof. DeepSeek-family certification is still mandatory. Therefore work item 2.11 is not closed, both active changes remain open, work items 2.12-2.14 are untouched, and no release acceptance, archive, PR, or pilot is claimed.

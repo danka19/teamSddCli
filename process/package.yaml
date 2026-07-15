@@ -57,10 +57,13 @@ adapters:
 certification:
   case_catalog: certification/cases.yaml
   coverage_inventory: certification/coverage.yaml
+  ai_disabled_catalog: certification/ai-disabled-walkthroughs.yaml
+  qwen_matrix: certification/qwen-matrix.yaml
 distribution:
   files:
     - VERSION
     - __init__.py
+    - actual_certification.py
     - certification.py
     - feedback_policy.py
     - operation_cli.py
@@ -85,3 +88,4 @@ canonical_sources:
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md
   - openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
+  - openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md

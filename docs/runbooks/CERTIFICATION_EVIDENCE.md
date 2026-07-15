@@ -58,3 +58,13 @@ Concrete analyst/minor, developer/major, QA/hotfix, and Tech Lead/major expected
 4. Recalculate SHA-256 for `bundle.json` and compare it with normalized evidence.
 5. Confirm normalized evidence says no actual model run occurred and contains no captured streams.
 6. Preserve the raw artifact immutable; a repeated create attempt must fail rather than overwrite it.
+
+## Actual-Model Phase 2.11 Slice
+
+`scripts/run_actual_certification.py` extends the existing certification boundary without creating a parallel authority system. `--phase ai-disabled` executes the allowlisted source-linked pytest nodes in `ai-disabled-walkthroughs.yaml`. `--phase preflight` and `--phase matrix` use the canonical `qwen-matrix.yaml`, existing read-pack builder, deterministic role launcher, Qwen adapter identity, and operation-evidence validator.
+
+The non-leading prompt supplies bounded role/class/operation identity, exact case facts, universal authority rules, an output schema, and minimal authority-labelled canonical/supporting source excerpts. It never includes expected decisions, claims, source selection, or verdicts. The model returns the role output, checks, claims, unresolved inputs, human decisions, and selected source IDs. Trusted code normalizes that envelope without supplying semantic content, binds selected IDs to exact hashes, and rejects forbidden authority, fabricated evidence, missing required sources, or a skipped human stop.
+
+`--phase runtime-probe` records the exact Ollama version, model tag/digest, loopback endpoint, adapter version, and package version. `scripts/normalize_actual_certification.py` cross-links each model row to its append-only raw artifact. Normalized validation then cross-checks operation, case, role, class, group identity, model/runtime identity, source hashes, token/duration metrics, and deterministic result against raw bytes. Failed and superseded attempts remain immutable.
+
+The 2026-07-15 evidence uses Ollama `0.30.11`, exact model `qwen3.5:9b` digest `6488c96fa5fa`, and adapter `1.0`. Exact catalog-semantic revalidation of the frozen run passed 0/5 preflight and 1/15 matrix cases; failed operations route to deterministic or mandatory-human fallback. The normalized inventory must reference every external `qwen*.json` artifact exactly once as either a current row or an invalidated/superseded ledger entry, and every failed AI-disabled attempt by exit code; successful AI-disabled rows stay separate. This is a family-level proxy for corporate Qwen3.6-35B, not equivalence proof. DeepSeek-family certification and human fallback disposition remain mandatory before work item 2.11 can close.

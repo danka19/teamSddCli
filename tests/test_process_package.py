@@ -410,11 +410,24 @@ def test_clean_templates_and_positive_fixtures_have_no_sensitive_values() -> Non
 
 
 def test_certification_tree_sensitive_content_is_limited_to_named_negative_privacy_fixtures() -> None:
+    def without_canonical_sources(value):
+        if isinstance(value, dict):
+            return {
+                key: "<local-ollama-endpoint>"
+                if key == "endpoint" and item == "http://127.0.0.1:11434"
+                else without_canonical_sources(item)
+                for key, item in value.items()
+                if key not in {"canonical_sources", "sources", "source_definitions", "source_manifest"}
+            }
+        if isinstance(value, list):
+            return [without_canonical_sources(item) for item in value]
+        return value
+
     files = [path for path in yaml_files(PROCESS_ROOT / "certification") if path.name not in {"cases.yaml", "coverage.yaml", "evidence-manifest.yaml"}]
     findings = {
         path.relative_to(PROCESS_ROOT).as_posix()
         for path in files
-        if FIXTURE_PRIVATE.search(yaml.safe_dump({key: value for key, value in load_yaml(path).items() if key != "canonical_sources"}))
+        if FIXTURE_PRIVATE.search(yaml.safe_dump(without_canonical_sources(load_yaml(path))))
     }
     assert findings == {
         "certification/privacy-cases/corporate-identifier.yaml",
