@@ -561,3 +561,300 @@ def test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day() -> None
         )
         codes = {item["code"] for item in report.as_dict()["blocking_gaps"]}
         assert (expected_code in codes) if expected_code else not codes
+
+
+SCENARIO_COVERAGE = {'test_ai_completion_text_is_never_implementation_evidence': [{'capability': 'change-artifact-contracts',
+                                                               'requirement': 'Artifact matrix baseline status',
+                                                               'scenario': 'Existing implementation evidence remains '
+                                                                           'recorded',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'readiness-completion-gates',
+                                                               'requirement': 'Common Definition of Ready',
+                                                               'scenario': 'Common readiness evidence is complete',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'readiness-completion-gates',
+                                                               'requirement': 'Common Definition of Ready',
+                                                               'scenario': 'Green checks do not approve '
+                                                                           'implementation',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'readiness-completion-gates',
+                                                               'requirement': 'Implementation-complete evidence',
+                                                               'scenario': 'Implementation can be complete before '
+                                                                           'final closure',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'readiness-completion-gates',
+                                                               'requirement': 'Implementation-complete evidence',
+                                                               'scenario': 'AI statement is not implementation '
+                                                                           'evidence',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'waiver-policy',
+                                                               'requirement': 'Non-waivable corporate minimums',
+                                                               'scenario': 'AI cannot authorize exception',
+                                                               'source_kind': 'delta'}],
+ 'test_all_named_reports_are_stable_and_keep_required_human_approval_explicit': [{'capability': 'waiver-policy',
+                                                                                  'requirement': 'Non-waivable '
+                                                                                                 'corporate minimums',
+                                                                                  'scenario': 'Mandatory approval and '
+                                                                                              'safety controls remain',
+                                                                                  'source_kind': 'delta'}],
+ 'test_conditional_not_applicable_requires_structured_human_rationale': [{'capability': 'readiness-completion-gates',
+                                                                          'requirement': 'Release and transfer '
+                                                                                         'readiness',
+                                                                          'scenario': 'Non-release change records '
+                                                                                      'not-applicable rationale',
+                                                                          'source_kind': 'delta'}],
+ 'test_evaluator_fails_closed_on_missing_or_wrong_policy_provenance': [{'capability': 'waiver-policy',
+                                                                        'requirement': 'Classification criteria '
+                                                                                       'cannot be waived',
+                                                                        'scenario': 'Classification policy changes '
+                                                                                    'through OpenSpec',
+                                                                        'source_kind': 'delta'}],
+ 'test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done': [{'capability': 'change-artifact-contracts',
+                                                                        'requirement': 'Artifact waiver eligibility',
+                                                                        'scenario': 'Hotfix deferral follows '
+                                                                                    'restricted policy',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'readiness-completion-gates',
+                                                                        'requirement': 'Class-aware Definition of '
+                                                                                       'Done',
+                                                                        'scenario': 'Hotfix reconciliation blocks '
+                                                                                    'closure',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'waiver-policy',
+                                                                        'requirement': 'Hotfix artifact deferral',
+                                                                        'scenario': 'Deferral has a bounded follow-up',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'waiver-policy',
+                                                                        'requirement': 'Hotfix artifact deferral',
+                                                                        'scenario': 'Missing reconciliation blocks '
+                                                                                    'archive',
+                                                                        'source_kind': 'delta'}],
+ 'test_lifecycle_expiry_remains_due_after_canonical_rework': [{'capability': 'readiness-completion-gates',
+                                                               'requirement': 'Archive readiness and archive approval',
+                                                               'scenario': 'Archive readiness checks canonical '
+                                                                           'completion',
+                                                               'source_kind': 'delta'}],
+ 'test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations': [{'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Artifact matrix '
+                                                                                                  'baseline status',
+                                                                                   'scenario': 'Target matrix is '
+                                                                                               'versioned',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Artifact matrix '
+                                                                                                  'baseline status',
+                                                                                   'scenario': 'Deferred integrations '
+                                                                                               'are explicit',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Artifact matrix '
+                                                                                                  'baseline status',
+                                                                                   'scenario': 'Future corrections '
+                                                                                               'use accepted-spec '
+                                                                                               'workflow',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Future journey and '
+                                                                                                  'screen artifacts',
+                                                                                   'scenario': 'UI major package may '
+                                                                                               'require screen '
+                                                                                               'catalog',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Future journey and '
+                                                                                                  'screen artifacts',
+                                                                                   'scenario': 'Non-UI minor does not '
+                                                                                               'require screen '
+                                                                                               'catalog',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Future journey and '
+                                                                                                  'screen artifacts',
+                                                                                   'scenario': 'Hotfix records '
+                                                                                               'deferred UI evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Hotfix change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Hotfix entry package '
+                                                                                               'is bounded',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Hotfix change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Deferred artifact has '
+                                                                                               'follow-up',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Hotfix change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Hotfix release '
+                                                                                               'package is reconciled',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Hotfix change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Hotfix does not '
+                                                                                               'bypass major-impact '
+                                                                                               'evidence silently',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Major change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Empty major artifact '
+                                                                                               'is not evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'change-artifact-contracts',
+                                                                                   'requirement': 'Minor change '
+                                                                                                  'artifact contract',
+                                                                                   'scenario': 'Minor avoids '
+                                                                                               'major-only burden',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Class-aware '
+                                                                                                  'Definition of Done',
+                                                                                   'scenario': 'Done includes outcome '
+                                                                                               'and evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Class-aware '
+                                                                                                  'Definition of Done',
+                                                                                   'scenario': 'Placeholder artifact '
+                                                                                               'does not satisfy done',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Class-specific '
+                                                                                                  'Definition of '
+                                                                                                  'Ready',
+                                                                                   'scenario': 'Minor uses minimum '
+                                                                                               'reviewable evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Class-specific '
+                                                                                                  'Definition of '
+                                                                                                  'Ready',
+                                                                                   'scenario': 'Major expands '
+                                                                                               'readiness evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Class-specific '
+                                                                                                  'Definition of '
+                                                                                                  'Ready',
+                                                                                   'scenario': 'Hotfix uses '
+                                                                                               'accelerated entry '
+                                                                                               'evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Common Definition '
+                                                                                                  'of Ready',
+                                                                                   'scenario': 'Readiness report '
+                                                                                               'separates blockers',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'readiness-completion-gates',
+                                                                                   'requirement': 'Release and '
+                                                                                                  'transfer readiness',
+                                                                                   'scenario': 'Major and hotfix '
+                                                                                               'default to '
+                                                                                               'release-package '
+                                                                                               'evidence',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'waiver-policy',
+                                                                                   'requirement': 'Classification '
+                                                                                                  'criteria cannot be '
+                                                                                                  'waived',
+                                                                                   'scenario': 'Major trigger blocks '
+                                                                                               'minor waiver',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'waiver-policy',
+                                                                                   'requirement': 'Non-waivable '
+                                                                                                  'corporate minimums',
+                                                                                   'scenario': 'Hotfix cannot waive '
+                                                                                               'follow-up entirely',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'waiver-policy',
+                                                                                   'requirement': 'Stop and deviation '
+                                                                                                  'exception '
+                                                                                                  'relationship',
+                                                                                   'scenario': 'Held work needs '
+                                                                                               'separate resume '
+                                                                                               'decision',
+                                                                                   'source_kind': 'delta'},
+                                                                                  {'capability': 'waiver-policy',
+                                                                                   'requirement': 'Stop and deviation '
+                                                                                                  'exception '
+                                                                                                  'relationship',
+                                                                                   'scenario': 'Expired exception is '
+                                                                                               'visible',
+                                                                                   'source_kind': 'delta'}],
+ 'test_only_eligible_artifact_accepts_a_current_human_approved_waiver': [{'capability': 'change-artifact-contracts',
+                                                                          'requirement': 'Artifact waiver eligibility',
+                                                                          'scenario': 'No-spec-change rationale is '
+                                                                                      'limited',
+                                                                          'source_kind': 'delta'},
+                                                                         {'capability': 'change-artifact-contracts',
+                                                                          'requirement': 'Artifact waiver eligibility',
+                                                                          'scenario': 'No-spec-change rationale '
+                                                                                      'cannot hide behavior change',
+                                                                          'source_kind': 'delta'},
+                                                                         {'capability': 'change-artifact-contracts',
+                                                                          'requirement': 'Artifact waiver eligibility',
+                                                                          'scenario': 'QA or automation artifact can '
+                                                                                      'be waived with approved '
+                                                                                      'evidence',
+                                                                          'source_kind': 'delta'},
+                                                                         {'capability': 'readiness-completion-gates',
+                                                                          'requirement': 'Archive readiness and '
+                                                                                         'archive approval',
+                                                                          'scenario': 'Archive remains human-approved',
+                                                                          'source_kind': 'delta'}],
+ 'test_release_not_applicable_is_approved_and_does_not_infer_external_done': [{'capability': 'readiness-completion-gates',
+                                                                               'requirement': 'External delivered or '
+                                                                                              'done state remains '
+                                                                                              'distinct',
+                                                                               'scenario': 'Archive does not close '
+                                                                                           'Jira automatically',
+                                                                               'source_kind': 'delta'},
+                                                                              {'capability': 'readiness-completion-gates',
+                                                                               'requirement': 'External delivered or '
+                                                                                              'done state remains '
+                                                                                              'distinct',
+                                                                               'scenario': 'Tracker Done has '
+                                                                                           'configured evidence',
+                                                                               'source_kind': 'delta'},
+                                                                              {'capability': 'readiness-completion-gates',
+                                                                               'requirement': 'Release and transfer '
+                                                                                              'readiness',
+                                                                               'scenario': 'Release package is '
+                                                                                           'complete',
+                                                                               'source_kind': 'delta'}],
+ 'test_required_artifact_must_be_substantive_current_and_source_linked': [{'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Artifact waiver '
+                                                                                          'eligibility',
+                                                                           'scenario': 'Core source artifacts cannot '
+                                                                                       'be waived',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Legacy baseline artifact '
+                                                                                          'mode',
+                                                                           'scenario': 'Legacy change records '
+                                                                                       'observed behavior',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Legacy baseline artifact '
+                                                                                          'mode',
+                                                                           'scenario': 'Historical changes do not '
+                                                                                       'require retroactive target '
+                                                                                       'package',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Major change artifact '
+                                                                                          'contract',
+                                                                           'scenario': 'Major change expands required '
+                                                                                       'evidence',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Minor change artifact '
+                                                                                          'contract',
+                                                                           'scenario': 'Minor change has minimum '
+                                                                                       'reviewable evidence',
+                                                                           'source_kind': 'delta'}]}

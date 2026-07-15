@@ -40,7 +40,7 @@ The raw artifact reference contains:
 
 ## Coverage And Residual Gaps
 
-`process/certification/coverage.yaml` composes all accepted capability specs and both active delta trees by exact capability, requirement, and scenario headings. `MODIFIED` replaces the accepted requirement scenarios and `REMOVED` removes them; duplicate change ownership and unknown targets fail closed. `evidence-manifest.yaml` contains one explicit row per applicable effective selector. `tests/certification-evidence-bindings.yaml` independently binds that selector and binding ID to exact pytest node(s), certification cases, or manual evidence. Bare pytest-file references, unrelated existing-node substitution, missing rows, and binding disagreement fail closed.
+`process/certification/coverage.yaml` composes all accepted capability specs and both active delta trees by exact capability, requirement, and scenario headings. `MODIFIED` replaces the accepted requirement scenarios and `REMOVED` removes them; duplicate change ownership and unknown targets fail closed. `evidence-manifest.yaml` contains one explicit row per applicable effective selector. Exact pytest evidence is independently owned by a literal `SCENARIO_COVERAGE` marker beside the named test function in the configured source file; there is no duplicate binding table. Bare pytest-file references, unrelated node substitution, duplicate or unknown markers, unused markers, missing rows, and marker disagreement fail closed.
 
 There is no aggregate default evidence. An allowed residual gap contains all five non-empty fields: `owner`, `risk`, `reason`, `compensation`, and `follow_up`, wins over any capability rule, increments the gap count, and makes report status `gaps`. Structured future-work selectors remove unperformed 2.11-2.14 scenarios from covered/gap rows and count them separately.
 
@@ -48,7 +48,7 @@ The CLI exposes one canonical JSON representation only; it does not maintain a s
 
 The eight NIS feedback/publication-boundary scenarios use `process/feedback_policy.py` and exact nodes in `tests/test_feedback_policy.py`. This pure check validates SLA configuration/defaults, comment dispositions/follow-up, no fabricated core-route evidence, future class-aware ownership, read-only legacy input, and corporate generated-view selection. It does not call Confluence or publish anything.
 
-Concrete analyst/minor, developer/major, QA/hotfix, and Tech Lead/major expected-output goldens live under `process/certification/expected-role-outputs/`. The catalog binds each by path and SHA-256; schema and semantic role/class checks run before certification. All remain `executed: false`.
+Concrete analyst/minor, developer/major, QA/hotfix, and Tech Lead/major expected-output goldens live under `process/certification/expected-role-outputs/`. The catalog binds each fixture by path and SHA-256, and every golden binds its repository-bounded OpenSpec canonical source by a recomputed SHA-256. Schema, semantic role/class, path/link/privacy, and both hash checks run before certification. All remain `executed: false`.
 
 ## Manual Review
 

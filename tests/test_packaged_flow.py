@@ -309,3 +309,96 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert (installed / "VERSION").read_bytes() == installed_before
     assert config_path.read_bytes() == config_before
     assert history.read_bytes() == history_before
+
+
+SCENARIO_COVERAGE = {'test_spec_pr_and_archive_preparation_collect_evidence_without_authority': [{'capability': 'traceability-contract',
+                                                                              'requirement': 'Archive-readiness '
+                                                                                             'traceability',
+                                                                              'scenario': 'Major package archive '
+                                                                                          'checks expanded evidence',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'traceability-contract',
+                                                                              'requirement': 'Archive-readiness '
+                                                                                             'traceability',
+                                                                              'scenario': 'Minor package accepts '
+                                                                                          'practical evidence',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'traceability-contract',
+                                                                              'requirement': 'Archive-readiness '
+                                                                                             'traceability',
+                                                                              'scenario': 'Verification evidence '
+                                                                                          'remains source-linked',
+                                                                              'source_kind': 'delta'}],
+ 'test_traceability_allows_conditional_links_pending_before_archive': [{'capability': 'traceability-contract',
+                                                                        'requirement': 'Archive-readiness '
+                                                                                       'traceability',
+                                                                        'scenario': 'Hotfix package links '
+                                                                                    'reconciliation',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Archive-readiness '
+                                                                                       'traceability',
+                                                                        'scenario': 'Pending traceability is allowed '
+                                                                                    'before archive readiness',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Archive-readiness '
+                                                                                       'traceability',
+                                                                        'scenario': 'Pending downstream link blocks '
+                                                                                    'archive readiness',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Corporate governance '
+                                                                                       'traceability',
+                                                                        'scenario': 'Gate result links evidence and '
+                                                                                    'owner',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Future journey and screen '
+                                                                                       'traceability',
+                                                                        'scenario': 'Journey view links product path '
+                                                                                    'to evidence',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Future journey and screen '
+                                                                                       'traceability',
+                                                                        'scenario': 'Screen catalog preserves '
+                                                                                    'requirement links',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'traceability-contract',
+                                                                        'requirement': 'Future journey and screen '
+                                                                                       'traceability',
+                                                                        'scenario': 'Deferred hotfix screen evidence '
+                                                                                    'remains pending',
+                                                                        'source_kind': 'delta'}],
+ 'test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids': [{'capability': 'traceability-contract',
+                                                                                'requirement': 'Corporate governance '
+                                                                                               'traceability',
+                                                                                'scenario': 'Classification decision '
+                                                                                            'is source-linked',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'traceability-contract',
+                                                                                'requirement': 'Corporate governance '
+                                                                                               'traceability',
+                                                                                'scenario': 'Stop and resume history '
+                                                                                            'remains visible',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'traceability-contract',
+                                                                                'requirement': 'Corporate governance '
+                                                                                               'traceability',
+                                                                                'scenario': 'Release package links '
+                                                                                            'canonical scope',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'traceability-contract',
+                                                                                'requirement': 'Corporate governance '
+                                                                                               'traceability',
+                                                                                'scenario': 'Failed attempts remain '
+                                                                                            'traceable after retry',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'traceability-contract',
+                                                                                'requirement': 'Future journey and '
+                                                                                               'screen traceability',
+                                                                                'scenario': 'Non-UI minor does not '
+                                                                                            'require journey '
+                                                                                            'traceability',
+                                                                                'source_kind': 'delta'}]}

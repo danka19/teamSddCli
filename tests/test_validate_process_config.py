@@ -846,3 +846,51 @@ def test_malformed_registry_has_human_json_usage_parity(tmp_path: Path) -> None:
     assert diagnostic_codes(json_stdout) == ["usage.registry"]
     assert json.loads(json_stdout)["status"] == "invalid"
     assert "[usage.registry]" in human_stderr
+
+
+SCENARIO_COVERAGE = {'test_invalid_owner_project_and_adapter_relations_are_reported': [{'capability': 'repo-topology-config',
+                                                                    'requirement': 'Corporate governance policy '
+                                                                                   'configuration',
+                                                                    'scenario': 'Project adapter cannot weaken '
+                                                                                'canonical minimums silently',
+                                                                    'source_kind': 'delta'}],
+ 'test_missing_corporate_policy_value_is_not_guessed': [{'capability': 'repo-topology-config',
+                                                         'requirement': 'Corporate configuration remains external to '
+                                                                        'reusable source',
+                                                         'scenario': 'Corporate adaptation supplies local values',
+                                                         'source_kind': 'delta'},
+                                                        {'capability': 'repo-topology-config',
+                                                         'requirement': 'Corporate configuration remains external to '
+                                                                        'reusable source',
+                                                         'scenario': 'Reusable correction returns upstream',
+                                                         'source_kind': 'delta'},
+                                                        {'capability': 'repo-topology-config',
+                                                         'requirement': 'Corporate governance policy configuration',
+                                                         'scenario': 'Config points to canonical policy versions',
+                                                         'source_kind': 'delta'},
+                                                        {'capability': 'repo-topology-config',
+                                                         'requirement': 'Corporate governance policy configuration',
+                                                         'scenario': 'Missing corporate value is not guessed',
+                                                         'source_kind': 'delta'}],
+ 'test_missing_registry_and_unsafe_reference_are_stable': [{'capability': 'repo-topology-config',
+                                                            'requirement': 'Tech lead ownership registry',
+                                                            'scenario': 'Tech lead mapping is resolvable',
+                                                            'source_kind': 'delta'},
+                                                           {'capability': 'repo-topology-config',
+                                                            'requirement': 'Tech lead ownership registry',
+                                                            'scenario': 'Conflicting authority is visible',
+                                                            'source_kind': 'delta'},
+                                                           {'capability': 'repo-topology-config',
+                                                            'requirement': 'Tech lead ownership registry',
+                                                            'scenario': 'Other role authority is preserved',
+                                                            'source_kind': 'delta'}],
+ 'test_valid_central_mode_reports_exact_compatibility_json': [{'capability': 'repo-topology-config',
+                                                               'requirement': 'External workflow mapping',
+                                                               'scenario': 'Mapping distinguishes archive and '
+                                                                           'delivered',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'repo-topology-config',
+                                                               'requirement': 'External workflow mapping',
+                                                               'scenario': 'Unmapped external status blocks '
+                                                                           'automation',
+                                                               'source_kind': 'delta'}]}

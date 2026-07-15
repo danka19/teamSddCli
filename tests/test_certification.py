@@ -307,6 +307,99 @@ def test_bare_pytest_file_reference_is_forbidden(tmp_path: Path) -> None:
         build_coverage_report(ROOT, custom)
 
 
+@pytest.mark.parametrize("kind,code", [("duplicate", "coverage.duplicate-marker-selector"), ("unknown", "coverage.unknown-marker-selector")])
+def test_source_owned_marker_rejects_duplicate_or_unknown_selector(tmp_path: Path, kind: str, code: str) -> None:
+    coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
+    selector = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")["coverage"][0]
+    if kind == "unknown":
+        selector = {**selector, "scenario": "Unknown synthetic scenario"}
+    marker_file = tmp_path / "test_marker_probe.py"
+    marker_file.write_text(
+        "SCENARIO_COVERAGE = " + repr({"test_probe": [{key: selector[key] for key in ("source_kind", "capability", "requirement", "scenario")}] * (2 if kind == "duplicate" else 1)}) + "\n\ndef test_probe():\n    assert True\n",
+        encoding="utf-8",
+    )
+    coverage["marker_sources"] = [marker_file.relative_to(ROOT).as_posix()]
+    custom = tmp_path / "coverage.yaml"
+    custom.write_text(yaml.safe_dump(coverage, sort_keys=False), encoding="utf-8")
+    with pytest.raises(CertificationError, match=code):
+        build_coverage_report(ROOT, custom)
+
+
+def test_role_output_rejects_placeholder_or_tampered_canonical_source_hash(tmp_path: Path) -> None:
+    source_root = tmp_path / "root"
+    shutil.copytree(ROOT / "process/schemas", source_root / "process/schemas")
+    shutil.copytree(ROOT / "process/certification/expected-role-outputs", source_root / "process/certification/expected-role-outputs")
+    catalog = load_yaml(CATALOG)
+    for role in catalog["planned_dimensions"]["roles"]:
+        source = ROOT / load_yaml(ROOT / role["fixture"])["canonical_sources"][0]["path"]
+        target = source_root / source.relative_to(ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    fixture_path = source_root / catalog["planned_dimensions"]["roles"][0]["fixture"]
+    fixture = load_yaml(fixture_path)
+    fixture["canonical_sources"][0]["sha256"] = "a" * 64
+    fixture_path.write_text(yaml.safe_dump(fixture, sort_keys=False), encoding="utf-8")
+    declaration = catalog["planned_dimensions"]["roles"][0]
+    declaration["sha256"] = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+    with pytest.raises(CertificationError, match="certification.role-output-source-hash"):
+        validate_role_output_fixtures(source_root, catalog)
+
+
+def test_role_output_detects_canonical_source_mutation(tmp_path: Path) -> None:
+    source_root = tmp_path / "root"
+    shutil.copytree(ROOT / "process/schemas", source_root / "process/schemas")
+    shutil.copytree(ROOT / "process/certification/expected-role-outputs", source_root / "process/certification/expected-role-outputs")
+    catalog = load_yaml(CATALOG)
+    for role in catalog["planned_dimensions"]["roles"]:
+        source = ROOT / load_yaml(ROOT / role["fixture"])["canonical_sources"][0]["path"]
+        target = source_root / source.relative_to(ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    validate_role_output_fixtures(source_root, catalog)
+    first_source = load_yaml(source_root / catalog["planned_dimensions"]["roles"][0]["fixture"])["canonical_sources"][0]["path"]
+    (source_root / first_source).write_text("mutated synthetic source", encoding="utf-8")
+    with pytest.raises(CertificationError, match="certification.role-output-source-hash"):
+        validate_role_output_fixtures(source_root, catalog)
+
+
+@pytest.mark.parametrize("unsafe_path", ["../private/spec.md", "openspec/private/spec.md", "C:/private/spec.md"])
+def test_role_output_rejects_unsafe_or_private_canonical_source_path(tmp_path: Path, unsafe_path: str) -> None:
+    source_root = tmp_path / "root"
+    shutil.copytree(ROOT / "process/schemas", source_root / "process/schemas")
+    shutil.copytree(ROOT / "process/certification/expected-role-outputs", source_root / "process/certification/expected-role-outputs")
+    catalog = load_yaml(CATALOG)
+    fixture_path = source_root / catalog["planned_dimensions"]["roles"][0]["fixture"]
+    fixture = load_yaml(fixture_path)
+    fixture["canonical_sources"][0]["path"] = unsafe_path
+    fixture_path.write_text(yaml.safe_dump(fixture, sort_keys=False), encoding="utf-8")
+    catalog["planned_dimensions"]["roles"][0]["sha256"] = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+    with pytest.raises(CertificationError, match="certification.privacy"):
+        validate_role_output_fixtures(source_root, catalog)
+
+
+def test_role_output_rejects_linked_canonical_source(tmp_path: Path) -> None:
+    source_root = tmp_path / "root"
+    shutil.copytree(ROOT / "process/schemas", source_root / "process/schemas")
+    shutil.copytree(ROOT / "process/certification/expected-role-outputs", source_root / "process/certification/expected-role-outputs")
+    catalog = load_yaml(CATALOG)
+    for role in catalog["planned_dimensions"]["roles"]:
+        source = ROOT / load_yaml(ROOT / role["fixture"])["canonical_sources"][0]["path"]
+        target = source_root / source.relative_to(ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    first_fixture = load_yaml(source_root / catalog["planned_dimensions"]["roles"][0]["fixture"])
+    linked_source = source_root / first_fixture["canonical_sources"][0]["path"]
+    external = tmp_path / "external-spec.md"
+    external.write_bytes(linked_source.read_bytes())
+    linked_source.unlink()
+    try:
+        linked_source.symlink_to(external)
+    except OSError:
+        pytest.skip("symlink creation is unavailable")
+    with pytest.raises(CertificationError, match="certification.role-output-source-missing"):
+        validate_role_output_fixtures(source_root, catalog)
+
+
 @pytest.mark.parametrize("mutation,code", [
     ("unknown-case", "coverage.unknown-case"),
     ("unknown-pytest", "coverage.unknown-pytest"),
@@ -319,15 +412,16 @@ def test_coverage_rejects_unknown_duplicates_invalid_gaps_and_delta_targets(
 ) -> None:
     coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
     manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
+    evidence_row = next(row for row in manifest["coverage"] if row.get("evidence"))
     if mutation == "unknown-case":
-        manifest["coverage"][0]["evidence"] = ["case:does-not-exist"]
+        evidence_row["evidence"] = ["case:does-not-exist"]
     elif mutation == "unknown-pytest":
-        manifest["coverage"][0]["evidence"] = ["pytest:tests/test_certification.py::does_not_exist"]
+        evidence_row["evidence"] = ["pytest:tests/test_certification.py::does_not_exist"]
     elif mutation == "duplicate":
         manifest["coverage"].append(copy.deepcopy(manifest["coverage"][0]))
     elif mutation == "gap-fields":
-        manifest["coverage"][0].pop("evidence"); manifest["coverage"][0].pop("binding_id")
-        manifest["coverage"][0]["gap"] = {"owner": "qa"}
+        evidence_row.pop("evidence")
+        evidence_row["gap"] = {"owner": "qa"}
     else:
         coverage["delta_targets"].append({"capability": "missing", "requirement": "Not real", "change": "define-transfer-ready-process-package", "kind": "MODIFIED"})
     custom_manifest = tmp_path / "evidence-manifest.yaml"

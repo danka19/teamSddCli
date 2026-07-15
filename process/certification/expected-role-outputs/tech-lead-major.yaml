@@ -9,5 +9,5 @@ output:
   summary: Advisory major governance review preserving human authority.
   required_fields: [sources_read, risks, recommendations, pending_human_decisions]
 canonical_sources:
-  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md, sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc}
+  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md, sha256: 11930f98d6b3fdb8a16ed9db21d03176ebf18743647b5cc3db0bcf101b98d640}
 validation: {expected_result: passed, expected_codes: []}

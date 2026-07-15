@@ -6,6 +6,7 @@ authority, or mutates canonical project state.
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import os
@@ -113,6 +114,7 @@ def _canonical_snapshot(root: Path) -> str:
 
 
 def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    root = root.resolve()
     schema = json.loads((root / "process/schemas/role-output-fixture.schema.json").read_text(encoding="utf-8"))
     validated: list[dict[str, Any]] = []
     for declaration in catalog.get("planned_dimensions", {}).get("roles", []):
@@ -128,6 +130,18 @@ def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[d
             raise CertificationError("certification.role-output-schema")
         if payload["role"] != declaration["role"] or payload["executed"] is not False:
             raise CertificationError("certification.role-output-binding")
+        for source in payload.get("canonical_sources", []):
+            source_relative = _safe_relative(str(source.get("path", "")), prefix="openspec")
+            if any(part.startswith(".") or part.lower() in {"private", "secrets"} for part in source_relative.parts):
+                raise CertificationError("certification.privacy")
+            source_path = root / Path(*source_relative.parts)
+            if (not source_path.is_file() or _is_link_or_reparse(source_path)
+                    or any(_is_link_or_reparse(root / Path(*source_relative.parts[:index]))
+                           for index in range(1, len(source_relative.parts)))):
+                raise CertificationError("certification.role-output-source-missing")
+            source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+            if source_hash != source.get("sha256"):
+                raise CertificationError("certification.role-output-source-hash")
         validated.append({"role": payload["role"], "change_class": payload["change_class"],
                           "fixture": str(relative), "sha256": actual_hash, "executed": False})
     return validated
@@ -355,6 +369,55 @@ def _pytest_node_exists(root: Path, node: str) -> bool:
     return not separator or bool(re.search(rf"^def {re.escape(test_name)}\b", path.read_text(encoding="utf-8"), re.MULTILINE))
 
 
+def _source_owned_markers(
+    root: Path, sources: Any, selectors: set[tuple[str, str, str, str]]
+) -> set[tuple[tuple[str, str, str, str], str]]:
+    if not isinstance(sources, list) or not sources:
+        raise CertificationError("coverage.invalid-marker-source")
+    bindings: set[tuple[tuple[str, str, str, str], str]] = set()
+    seen_selectors: set[tuple[str, str, str, str]] = set()
+    for value in sources:
+        relative = _safe_relative(str(value))
+        path = root / Path(*relative.parts)
+        if path.suffix != ".py" or not path.is_file() or _is_link_or_reparse(path):
+            raise CertificationError("coverage.invalid-marker-source")
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, SyntaxError) as error:
+            raise CertificationError("coverage.invalid-marker-source") from error
+        functions = {node.name for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        assignments = [
+            node for node in tree.body if isinstance(node, (ast.Assign, ast.AnnAssign))
+            and ((isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "SCENARIO_COVERAGE" for target in node.targets))
+                 or (isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) and node.target.id == "SCENARIO_COVERAGE"))
+        ]
+        if len(assignments) != 1:
+            raise CertificationError("coverage.invalid-marker-source")
+        try:
+            marker = ast.literal_eval(assignments[0].value)  # type: ignore[arg-type]
+        except (ValueError, TypeError) as error:
+            raise CertificationError("coverage.invalid-marker-source") from error
+        if not isinstance(marker, dict):
+            raise CertificationError("coverage.invalid-marker-source")
+        for function, rows in marker.items():
+            if not isinstance(function, str) or function not in functions or not isinstance(rows, list) or not rows:
+                raise CertificationError("coverage.invalid-marker-source")
+            node_id = f"pytest:{relative.as_posix()}::{function}"
+            for row in rows:
+                if not isinstance(row, dict) or set(row) != {"source_kind", "capability", "requirement", "scenario"}:
+                    raise CertificationError("coverage.invalid-marker-source")
+                key = tuple(row[name] for name in ("source_kind", "capability", "requirement", "scenario"))
+                if not all(isinstance(part, str) and part for part in key):
+                    raise CertificationError("coverage.invalid-marker-source")
+                if key in seen_selectors:
+                    raise CertificationError("coverage.duplicate-marker-selector")
+                seen_selectors.add(key)
+                if key not in selectors:
+                    raise CertificationError("coverage.unknown-marker-selector")
+                bindings.add((key, node_id))
+    return bindings
+
+
 def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[str, Any]:
     root = repository_root.resolve()
     inventory = _load_yaml(inventory_path.resolve())
@@ -398,19 +461,14 @@ def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[s
     if len(discovered_keys) != len(set(discovered_keys)):
         raise CertificationError("coverage.duplicate-selector")
     manifest_relative = _safe_relative(str(inventory.get("evidence_manifest", "")))
-    binding_relative = _safe_relative(str(inventory.get("binding_manifest", "")))
     manifest = _load_yaml(root / Path(*manifest_relative.parts))
-    binding_manifest = _load_yaml(root / Path(*binding_relative.parts))
     declared_rows = manifest.get("coverage", [])
     declared_keys = [(r.get("source_kind"), r.get("capability"), r.get("requirement"), r.get("scenario")) for r in declared_rows]
     if len(declared_keys) != len(set(declared_keys)):
         raise CertificationError("coverage.duplicate-selector")
     by_key = {key: row for key, row in zip(declared_keys, declared_rows)}
-    binding_rows = binding_manifest.get("bindings", [])
-    binding_ids = [row.get("binding_id") for row in binding_rows]
-    if len(binding_ids) != len(set(binding_ids)):
-        raise CertificationError("coverage.duplicate-binding")
-    bindings = {row["binding_id"]: row for row in binding_rows}
+    marker_bindings = _source_owned_markers(root, inventory.get("marker_sources"), set(discovered_keys))
+    used_marker_bindings: set[tuple[tuple[str, str, str, str], str]] = set()
     future_declarations = inventory.get("future_work", [])
     future_matches = [0] * len(future_declarations)
     coverage: list[dict[str, Any]] = []
@@ -446,18 +504,20 @@ def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[s
                         raise CertificationError("coverage.bare-pytest-file")
                     if not _pytest_node_exists(root, reference):
                         raise CertificationError("coverage.unknown-pytest")
+                    marker_binding = (key, reference)
+                    if marker_binding not in marker_bindings:
+                        raise CertificationError("coverage.binding-mismatch")
+                    used_marker_bindings.add(marker_binding)
                 if not reference.startswith(("case:", "pytest:", "manual:")):
                     raise CertificationError("coverage.invalid-evidence")
-            binding = bindings.get(declared.get("binding_id"))
-            binding_key = None if not binding else tuple(binding.get(name) for name in ("source_kind", "capability", "requirement", "scenario"))
-            if binding_key != key or binding.get("evidence") != evidence:
-                raise CertificationError("coverage.binding-mismatch")
         coverage.append({**row, **({"evidence": evidence} if evidence else {"gap": gap})})
         by_key.pop(key, None)
     if by_key:
         raise CertificationError("coverage.unknown-selector")
     if any(count == 0 for count in future_matches):
         raise CertificationError("coverage.unknown-future-selector")
+    if marker_bindings != used_marker_bindings:
+        raise CertificationError("coverage.unused-marker")
 
     accepted_requirements: dict[str, set[str]] = {}
     for source in inventory.get("sources", []):

@@ -9,5 +9,5 @@ output:
   summary: Hotfix QA evidence review retaining minimum safety and follow-up.
   required_fields: [sources_read, verification_results, reconciliation_follow_up, human_stop]
 canonical_sources:
-  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md, sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+  - {stable_id: synthetic-source, path: openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md, sha256: 09b93ce30ced55540f0dd602c1e1967b6ba4fe7b9c867f06c1596e73bc7a1b3e}
 validation: {expected_result: passed, expected_codes: []}

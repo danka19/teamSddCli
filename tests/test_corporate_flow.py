@@ -611,3 +611,187 @@ def test_cli_rejects_and_redacts_inline_secret_material(tmp_path: Path, capsys) 
     assert code == 3
     assert "secret.recognizable-token" in output
     assert "AKIAABCDEFGHIJKLMNOP" not in output
+
+
+SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_semantically_bound': [{'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Quality strategy before '
+                                                                                             'implementation',
+                                                                              'scenario': 'Quality strategy covers '
+                                                                                          'verification contours',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Quality strategy before '
+                                                                                             'implementation',
+                                                                              'scenario': 'QA owner confirms quality '
+                                                                                          'strategy sufficiency',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Quality strategy before '
+                                                                                             'implementation',
+                                                                              'scenario': 'Hotfix reconciles deferred '
+                                                                                          'planning',
+                                                                              'source_kind': 'delta'}],
+ 'test_existing_control_ledger_is_authoritative_and_exception_cannot_clear_hold': [{'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Stop, hold, '
+                                                                                                   'escalation, '
+                                                                                                   'resume, and '
+                                                                                                   'deviation records',
+                                                                                    'scenario': 'Stop record is '
+                                                                                                'actionable',
+                                                                                    'source_kind': 'delta'},
+                                                                                   {'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Stop, hold, '
+                                                                                                   'escalation, '
+                                                                                                   'resume, and '
+                                                                                                   'deviation records',
+                                                                                    'scenario': 'Canonical production '
+                                                                                                'stop triggers cannot '
+                                                                                                'be disabled silently',
+                                                                                    'source_kind': 'delta'},
+                                                                                   {'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Stop, hold, '
+                                                                                                   'escalation, '
+                                                                                                   'resume, and '
+                                                                                                   'deviation records',
+                                                                                    'scenario': 'Resume is auditable',
+                                                                                    'source_kind': 'delta'},
+                                                                                   {'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Stop, hold, '
+                                                                                                   'escalation, '
+                                                                                                   'resume, and '
+                                                                                                   'deviation records',
+                                                                                    'scenario': 'Approved deviation '
+                                                                                                'remains traceable',
+                                                                                    'source_kind': 'delta'}],
+ 'test_failed_retry_cannot_erase_or_forge_predecessor': [{'capability': 'corporate-flow-controls',
+                                                          'requirement': 'Failed-run evidence retention',
+                                                          'scenario': 'Successful retry does not erase failure',
+                                                          'source_kind': 'delta'}],
+ 'test_material_scope_drift_requires_complete_human_reassessment': [{'capability': 'corporate-flow-controls',
+                                                                     'requirement': 'Fixed input and scope-change '
+                                                                                    'control',
+                                                                     'scenario': 'Material scope drift triggers '
+                                                                                 'reassessment',
+                                                                     'source_kind': 'delta'}],
+ 'test_pilot_safety_locked_risks_and_failed_operational_flags_block': [{'capability': 'corporate-flow-controls',
+                                                                        'requirement': 'Failed-run evidence retention',
+                                                                        'scenario': 'Failed run can trigger '
+                                                                                    'operational control',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'corporate-flow-controls',
+                                                                        'requirement': 'Monitored-pilot safety '
+                                                                                       'boundary',
+                                                                        'scenario': 'Pilot risk register covers '
+                                                                                    'operational boundaries',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'corporate-flow-controls',
+                                                                        'requirement': 'Monitored-pilot safety '
+                                                                                       'boundary',
+                                                                        'scenario': 'AI-disabled path is certified',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'corporate-flow-controls',
+                                                                        'requirement': 'Monitored-pilot safety '
+                                                                                       'boundary',
+                                                                        'scenario': 'Operational pilot stop is '
+                                                                                    'testable',
+                                                                        'source_kind': 'delta'}],
+ 'test_regression_gap_stale_or_wrong_qa_authority_blocks': [{'capability': 'corporate-flow-controls',
+                                                             'requirement': 'Regression matrix',
+                                                             'scenario': 'Matrix links impact to checks',
+                                                             'source_kind': 'delta'},
+                                                            {'capability': 'corporate-flow-controls',
+                                                             'requirement': 'Regression matrix',
+                                                             'scenario': 'Missing applicable regression row is '
+                                                                         'visible',
+                                                             'source_kind': 'delta'},
+                                                            {'capability': 'corporate-flow-controls',
+                                                             'requirement': 'Regression matrix',
+                                                             'scenario': 'QA owner dispositions regression results',
+                                                             'source_kind': 'delta'}],
+ 'test_release_chain_requires_real_or_approved_substitute_artifact_evidence': [{'capability': 'corporate-flow-controls',
+                                                                                'requirement': 'Corporate '
+                                                                                               'system-of-record '
+                                                                                               'links',
+                                                                                'scenario': 'Evidence chain crosses '
+                                                                                            'systems by identifier',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'corporate-flow-controls',
+                                                                                'requirement': 'Corporate '
+                                                                                               'system-of-record '
+                                                                                               'links',
+                                                                                'scenario': 'Missing artifact '
+                                                                                            'repository is explicit',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'corporate-flow-controls',
+                                                                                'requirement': 'Release-package '
+                                                                                               'handoff',
+                                                                                'scenario': 'Handoff is reproducible',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'corporate-flow-controls',
+                                                                                'requirement': 'Release-package '
+                                                                                               'handoff',
+                                                                                'scenario': 'Consumer acceptance is '
+                                                                                            'recorded separately',
+                                                                                'source_kind': 'delta'},
+                                                                               {'capability': 'corporate-flow-controls',
+                                                                                'requirement': 'Role-understanding '
+                                                                                               'verification',
+                                                                                'scenario': 'Role walkthrough tests '
+                                                                                            'real decisions',
+                                                                                'source_kind': 'delta'}],
+ 'test_release_substitute_decision_is_active_scoped_linked_and_human_authorized': [{'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Human decision '
+                                                                                                   'and AI execution '
+                                                                                                   'evidence',
+                                                                                    'scenario': 'Human decision log '
+                                                                                                'is explicit',
+                                                                                    'source_kind': 'delta'},
+                                                                                   {'capability': 'corporate-flow-controls',
+                                                                                    'requirement': 'Human decision '
+                                                                                                   'and AI execution '
+                                                                                                   'evidence',
+                                                                                    'scenario': 'AI run evidence is '
+                                                                                                'reproducible',
+                                                                                    'source_kind': 'delta'}],
+ 'test_role_map_wip_and_pilot_selection_fail_closed': [{'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Portable corporate role map',
+                                                        'scenario': 'Governed roles are mapped explicitly',
+                                                        'source_kind': 'delta'},
+                                                       {'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Portable corporate role map',
+                                                        'scenario': 'Missing role is not assigned to AI',
+                                                        'source_kind': 'delta'},
+                                                       {'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Portable corporate role map',
+                                                        'scenario': 'Team-specific hierarchy is excluded',
+                                                        'source_kind': 'delta'},
+                                                       {'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Portfolio WIP and pilot-selection controls',
+                                                        'scenario': 'Pilot selection is justified',
+                                                        'source_kind': 'delta'},
+                                                       {'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Portfolio WIP and pilot-selection controls',
+                                                        'scenario': 'Excessive WIP is visible',
+                                                        'source_kind': 'delta'},
+                                                       {'capability': 'corporate-flow-controls',
+                                                        'requirement': 'Role-understanding verification',
+                                                        'scenario': 'Checklist completion alone is insufficient',
+                                                        'source_kind': 'delta'}],
+ 'test_triage_supports_all_outcomes_but_only_proceed_requires_baseline': [{'capability': 'corporate-flow-controls',
+                                                                           'requirement': 'Fixed input and '
+                                                                                          'scope-change control',
+                                                                           'scenario': 'Approved baseline is '
+                                                                                       'identifiable',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'corporate-flow-controls',
+                                                                           'requirement': 'Preliminary initiative '
+                                                                                          'triage',
+                                                                           'scenario': 'Triage records decision '
+                                                                                       'inputs',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'corporate-flow-controls',
+                                                                           'requirement': 'Preliminary initiative '
+                                                                                          'triage',
+                                                                           'scenario': 'Triage is not implementation '
+                                                                                       'approval',
+                                                                           'source_kind': 'delta'}]}

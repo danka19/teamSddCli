@@ -1,10 +1,10 @@
 schema_version: "1.0"
 planned_dimensions:
   roles:
-    - {role: analyst, expected_output: bounded requirements draft, fixture: process/certification/expected-role-outputs/analyst-minor.yaml, sha256: d16e94137dffe00679caa6aba4b22bcf03ae12d70ef86db0458b0d7772ba981c, executed: false}
-    - {role: developer, expected_output: implementation-preparation draft, fixture: process/certification/expected-role-outputs/developer-major.yaml, sha256: 0b1309c43c178f810d7ce5455390281b1be6e4e8c8be7e745572fd6056576693, executed: false}
-    - {role: qa, expected_output: source-linked QA evidence review, fixture: process/certification/expected-role-outputs/qa-hotfix.yaml, sha256: 662e59e147f4c54f1bc4a0e43c54021bdfa623ce3171e7fd863b188eb3c36c25, executed: false}
-    - {role: tech-lead, expected_output: advisory governance review, fixture: process/certification/expected-role-outputs/tech-lead-major.yaml, sha256: fccf62449585b75099daf1664277cf79aa8be10b7031e098dc38696ef0bf2590, executed: false}
+    - {role: analyst, expected_output: bounded requirements draft, fixture: process/certification/expected-role-outputs/analyst-minor.yaml, sha256: 361b3c177cc55930a31ab4f30c949caa1afe6eee51925995ece73f96b8b9d708, executed: false}
+    - {role: developer, expected_output: implementation-preparation draft, fixture: process/certification/expected-role-outputs/developer-major.yaml, sha256: b39786c9e042854a3e58f5194bb04b22900ae62650fab292f05992a1ec9a95b5, executed: false}
+    - {role: qa, expected_output: source-linked QA evidence review, fixture: process/certification/expected-role-outputs/qa-hotfix.yaml, sha256: cbfd311a19b3fecf746ede7f134b63ea37ab62b61fb0474eb413f4ea5427041d, executed: false}
+    - {role: tech-lead, expected_output: advisory governance review, fixture: process/certification/expected-role-outputs/tech-lead-major.yaml, sha256: 93017d56544e2a36723df953b2c7a9dabc331749e9f2e2136553c2cdaa378e94, executed: false}
   classes:
     - {change_class: minor, executed: false}
     - {change_class: major, executed: false}

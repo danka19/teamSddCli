@@ -314,3 +314,57 @@ def test_both_clis_render_json_usage_errors_with_exit_two(capsys) -> None:
     assert migrate_main(["apply", "missing.yaml", "--json"]) == 2
     migrate_payload = json.loads(capsys.readouterr().out)
     assert migrate_payload["status"] == "usage"
+
+
+SCENARIO_COVERAGE = {'test_apply_requires_matching_valid_plan_and_preserves_metadata_and_comments': [{'capability': 'change-package-foundation',
+                                                                                  'requirement': 'Deterministic '
+                                                                                                 'classification '
+                                                                                                 'migration command',
+                                                                                  'scenario': 'Apply mode preserves '
+                                                                                              'unrelated metadata',
+                                                                                  'source_kind': 'delta'}],
+ 'test_archived_or_accepted_history_is_reported_but_never_rewritten': [{'capability': 'change-package-foundation',
+                                                                        'requirement': 'Deterministic classification '
+                                                                                       'migration command',
+                                                                        'scenario': 'Archived history is excluded',
+                                                                        'source_kind': 'delta'}],
+ 'test_check_is_non_mutating_stable_and_never_proposes_hotfix': [{'capability': 'change-package-foundation',
+                                                                  'requirement': 'Classification-aware placeholder '
+                                                                                 'validation',
+                                                                  'scenario': 'Real package rejects undecided '
+                                                                              'classification',
+                                                                  'source_kind': 'delta'},
+                                                                 {'capability': 'change-package-foundation',
+                                                                  'requirement': 'Deterministic classification '
+                                                                                 'migration command',
+                                                                  'scenario': 'Check mode is non-mutating',
+                                                                  'source_kind': 'delta'}],
+ 'test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation': [{'capability': 'change-package-foundation',
+                                                                                'requirement': 'Classification-aware '
+                                                                                               'placeholder '
+                                                                                               'validation',
+                                                                                'scenario': 'Target route examples '
+                                                                                            'validate structurally',
+                                                                                'source_kind': 'delta'}],
+ 'test_conflict_and_ambiguous_legacy_metadata_are_refused': [{'capability': 'change-package-foundation',
+                                                              'requirement': 'Bounded legacy compatibility',
+                                                              'scenario': 'Legacy package receives deprecation result',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'change-package-foundation',
+                                                              'requirement': 'Bounded legacy compatibility',
+                                                              'scenario': 'Conflicting metadata is rejected',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'change-package-foundation',
+                                                              'requirement': 'Bounded legacy compatibility',
+                                                              'scenario': 'Compatibility end is versioned',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'change-package-foundation',
+                                                              'requirement': 'Versioned corporate classification '
+                                                                             'metadata',
+                                                              'scenario': 'Version 2 metadata is explicit',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'change-package-foundation',
+                                                              'requirement': 'Versioned corporate classification '
+                                                                             'metadata',
+                                                              'scenario': 'New writer does not emit legacy mode',
+                                                              'source_kind': 'delta'}]}

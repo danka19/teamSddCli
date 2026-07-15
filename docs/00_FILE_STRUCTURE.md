@@ -100,7 +100,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification.py` | Pure deterministic fixture runner, allowlisted validator dispatch, normalized/raw evidence boundary, and exact OpenSpec coverage inventory |
 | `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
-| `tests/certification-evidence-bindings.yaml` | Test-owned exact selector-to-pytest/case binding manifest used to reject unrelated evidence substitution |
+| `tests/test_*.py` `SCENARIO_COVERAGE` markers | Test-source-owned exact selector-to-pytest-node bindings used to reject duplicate, unknown, unused, or unrelated evidence substitution |
 | `tests/test_feedback_policy.py` | Eight exact deterministic scenarios for the modified NIS feedback/publication-boundary requirement |
 | `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
 | `scripts/certify_process_release.py` | Thin CWD-independent fixture-certification and coverage entry point; actual model/cross-platform execution remains later work |

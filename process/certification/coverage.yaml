@@ -1,44 +1,147 @@
-schema_version: "1.0"
+schema_version: '1.0'
 sources:
-  - {kind: accepted, capability: change-artifact-contracts, path: openspec/specs/change-artifact-contracts/spec.md}
-  - {kind: accepted, capability: change-lifecycle, path: openspec/specs/change-lifecycle/spec.md}
-  - {kind: accepted, capability: change-package-foundation, path: openspec/specs/change-package-foundation/spec.md}
-  - {kind: accepted, capability: confluence-feedback-loop, path: openspec/specs/confluence-feedback-loop/spec.md}
-  - {kind: accepted, capability: documentation-governance, path: openspec/specs/documentation-governance/spec.md}
-  - {kind: accepted, capability: repo-topology-config, path: openspec/specs/repo-topology-config/spec.md}
-  - {kind: accepted, capability: traceability-contract, path: openspec/specs/traceability-contract/spec.md}
-  - {kind: accepted, capability: waiver-policy, path: openspec/specs/waiver-policy/spec.md}
-  - {kind: delta, capability: transfer-readiness, path: openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md}
-  - {kind: delta, capability: weak-model-guardrails, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md}
-  - {kind: delta, capability: change-artifact-contracts, path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-artifact-contracts/spec.md}
-  - {kind: delta, capability: change-lifecycle, path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md}
-  - {kind: delta, capability: change-package-foundation, path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-package-foundation/spec.md}
-  - {kind: delta, capability: confluence-feedback-loop, path: openspec/changes/adopt-nis-corporate-process-governance/specs/confluence-feedback-loop/spec.md}
-  - {kind: delta, capability: corporate-change-classification, path: openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md}
-  - {kind: delta, capability: corporate-flow-controls, path: openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md}
-  - {kind: delta, capability: readiness-completion-gates, path: openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md}
-  - {kind: delta, capability: repo-topology-config, path: openspec/changes/adopt-nis-corporate-process-governance/specs/repo-topology-config/spec.md}
-  - {kind: delta, capability: tech-lead-workflow, path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md}
-  - {kind: delta, capability: traceability-contract, path: openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md}
-  - {kind: delta, capability: waiver-policy, path: openspec/changes/adopt-nis-corporate-process-governance/specs/waiver-policy/spec.md}
+- kind: accepted
+  capability: change-artifact-contracts
+  path: openspec/specs/change-artifact-contracts/spec.md
+- kind: accepted
+  capability: change-lifecycle
+  path: openspec/specs/change-lifecycle/spec.md
+- kind: accepted
+  capability: change-package-foundation
+  path: openspec/specs/change-package-foundation/spec.md
+- kind: accepted
+  capability: confluence-feedback-loop
+  path: openspec/specs/confluence-feedback-loop/spec.md
+- kind: accepted
+  capability: documentation-governance
+  path: openspec/specs/documentation-governance/spec.md
+- kind: accepted
+  capability: repo-topology-config
+  path: openspec/specs/repo-topology-config/spec.md
+- kind: accepted
+  capability: traceability-contract
+  path: openspec/specs/traceability-contract/spec.md
+- kind: accepted
+  capability: waiver-policy
+  path: openspec/specs/waiver-policy/spec.md
+- kind: delta
+  capability: transfer-readiness
+  path: openspec/changes/define-transfer-ready-process-package/specs/transfer-readiness/spec.md
+- kind: delta
+  capability: weak-model-guardrails
+  path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md
+- kind: delta
+  capability: change-artifact-contracts
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-artifact-contracts/spec.md
+- kind: delta
+  capability: change-lifecycle
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-lifecycle/spec.md
+- kind: delta
+  capability: change-package-foundation
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-package-foundation/spec.md
+- kind: delta
+  capability: confluence-feedback-loop
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/confluence-feedback-loop/spec.md
+- kind: delta
+  capability: corporate-change-classification
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-change-classification/spec.md
+- kind: delta
+  capability: corporate-flow-controls
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/corporate-flow-controls/spec.md
+- kind: delta
+  capability: readiness-completion-gates
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/readiness-completion-gates/spec.md
+- kind: delta
+  capability: repo-topology-config
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/repo-topology-config/spec.md
+- kind: delta
+  capability: tech-lead-workflow
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/tech-lead-workflow/spec.md
+- kind: delta
+  capability: traceability-contract
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/traceability-contract/spec.md
+- kind: delta
+  capability: waiver-policy
+  path: openspec/changes/adopt-nis-corporate-process-governance/specs/waiver-policy/spec.md
 evidence_manifest: process/certification/evidence-manifest.yaml
-binding_manifest: tests/certification-evidence-bindings.yaml
 future_work:
-  - {capability: weak-model-guardrails, requirement: Actual weak-model certification, work_item: "2.11", reason: actual model runtimes are intentionally not executed by fixture certification}
-  - {capability: transfer-readiness, requirement: External release acceptance gate, work_item: "2.11/2.14", reason: AI-disabled and model runs plus human acceptance remain future work}
-  - {capability: transfer-readiness, requirement: Reproducible bootstrap and maintenance, scenario: Supported desktop hosts produce equivalent governed behavior, work_item: "2.12", reason: cross-platform execution remains future work}
-  - {capability: transfer-readiness, requirement: Corporate adaptation boundary, work_item: "2.13", reason: corporate adaptation remains future work}
-  - {capability: transfer-readiness, requirement: Corporate pilot entry and acceptance, work_item: "2.13/Phase 3", reason: pilot work is outside this item}
+- capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  work_item: '2.11'
+  reason: actual model runtimes are intentionally not executed by fixture certification
+- capability: transfer-readiness
+  requirement: External release acceptance gate
+  work_item: 2.11/2.14
+  reason: AI-disabled and model runs plus human acceptance remain future work
+- capability: transfer-readiness
+  requirement: Reproducible bootstrap and maintenance
+  scenario: Supported desktop hosts produce equivalent governed behavior
+  work_item: '2.12'
+  reason: cross-platform execution remains future work
+- capability: transfer-readiness
+  requirement: Corporate adaptation boundary
+  work_item: '2.13'
+  reason: corporate adaptation remains future work
+- capability: transfer-readiness
+  requirement: Corporate pilot entry and acceptance
+  work_item: 2.13/Phase 3
+  reason: pilot work is outside this item
 delta_targets:
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: traceability-contract, requirement: Archive-readiness traceability}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: traceability-contract, requirement: Future journey and screen traceability}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-lifecycle, requirement: Lifecycle states}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-lifecycle, requirement: Deterministic transition gates}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-lifecycle, requirement: MVP boundary for lifecycle automation}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-artifact-contracts, requirement: Artifact waiver eligibility}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-artifact-contracts, requirement: Artifact matrix baseline status}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-artifact-contracts, requirement: Future journey and screen artifacts}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: change-artifact-contracts, requirement: Legacy baseline artifact mode}
-  - {change: adopt-nis-corporate-process-governance, kind: REMOVED, capability: change-artifact-contracts, requirement: Thin change artifact contract}
-  - {change: adopt-nis-corporate-process-governance, kind: REMOVED, capability: change-artifact-contracts, requirement: Full package artifact contract}
-  - {change: adopt-nis-corporate-process-governance, kind: MODIFIED, capability: confluence-feedback-loop, requirement: Unresolved feedback and publication blockers}
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: traceability-contract
+  requirement: Archive-readiness traceability
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: traceability-contract
+  requirement: Future journey and screen traceability
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-lifecycle
+  requirement: Lifecycle states
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-lifecycle
+  requirement: Deterministic transition gates
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-lifecycle
+  requirement: MVP boundary for lifecycle automation
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-artifact-contracts
+  requirement: Artifact waiver eligibility
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-artifact-contracts
+  requirement: Artifact matrix baseline status
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-artifact-contracts
+  requirement: Future journey and screen artifacts
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: change-artifact-contracts
+  requirement: Legacy baseline artifact mode
+- change: adopt-nis-corporate-process-governance
+  kind: REMOVED
+  capability: change-artifact-contracts
+  requirement: Thin change artifact contract
+- change: adopt-nis-corporate-process-governance
+  kind: REMOVED
+  capability: change-artifact-contracts
+  requirement: Full package artifact contract
+- change: adopt-nis-corporate-process-governance
+  kind: MODIFIED
+  capability: confluence-feedback-loop
+  requirement: Unresolved feedback and publication blockers
+marker_sources:
+- tests/test_artifact_gates.py
+- tests/test_classification.py
+- tests/test_classification_migration.py
+- tests/test_corporate_flow.py
+- tests/test_feedback_policy.py
+- tests/test_lifecycle_gates.py
+- tests/test_packaged_flow.py
+- tests/test_tech_lead_review.py
+- tests/test_validate_process_config.py

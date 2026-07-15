@@ -9,5 +9,5 @@ output:
   summary: Bounded minor requirement draft awaiting human review.
   required_fields: [sources_read, requirement_scenarios, unresolved_inputs, human_stop]
 canonical_sources:
-  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: 639e127f1882145e34d384f395f4373551254310e1ed10c1ee0e575a49906533}
 validation: {expected_result: passed, expected_codes: []}

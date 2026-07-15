@@ -387,3 +387,125 @@ def test_real_entry_points_import_package_from_any_working_directory(
     assert completed.returncode == 2
     assert json.loads(completed.stdout)["status"] == "usage"
     assert completed.stderr == ""
+
+
+SCENARIO_COVERAGE = {'test_control_records_reject_duplicate_ids_and_out_of_order_sources': [{'capability': 'tech-lead-workflow',
+                                                                         'requirement': 'Deterministic tech lead '
+                                                                                        'decision support',
+                                                                         'scenario': 'Role inbox waits for '
+                                                                                     'authoritative sources',
+                                                                         'source_kind': 'delta'},
+                                                                        {'capability': 'tech-lead-workflow',
+                                                                         'requirement': 'Tech lead classification '
+                                                                                        'control',
+                                                                         'scenario': 'Tech lead receives '
+                                                                                     'classification evidence',
+                                                                         'source_kind': 'delta'},
+                                                                        {'capability': 'tech-lead-workflow',
+                                                                         'requirement': 'Tech lead classification '
+                                                                                        'control',
+                                                                         'scenario': 'Tech lead cannot approve a '
+                                                                                     'lower class',
+                                                                         'source_kind': 'delta'},
+                                                                        {'capability': 'tech-lead-workflow',
+                                                                         'requirement': 'Tech lead readiness and '
+                                                                                        'architecture control',
+                                                                         'scenario': 'Architecture decision is '
+                                                                                     'explicit',
+                                                                         'source_kind': 'delta'}],
+ 'test_policy_compiles_to_immutable_source_bound_contract': [{'capability': 'tech-lead-workflow',
+                                                              'requirement': 'Deterministic tech lead decision '
+                                                                             'support',
+                                                              'scenario': 'Finding shape is policy-bound',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'tech-lead-workflow',
+                                                              'requirement': 'Deterministic tech lead decision '
+                                                                             'support',
+                                                              'scenario': 'Cadence is configuration rather than '
+                                                                          'universal policy',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'tech-lead-workflow',
+                                                              'requirement': 'Tech lead governance responsibilities',
+                                                              'scenario': 'Business ownership remains separate',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'tech-lead-workflow',
+                                                              'requirement': 'Tech lead readiness and architecture '
+                                                                             'control',
+                                                              'scenario': 'Readiness pack is bounded and '
+                                                                          'source-linked',
+                                                              'source_kind': 'delta'}],
+ 'test_resume_rejects_mixed_snapshot_ai_approval_and_incomplete_evidence': [{'capability': 'tech-lead-workflow',
+                                                                             'requirement': 'Tech lead completion and '
+                                                                                            'release recommendation',
+                                                                             'scenario': 'Recommendation is not final '
+                                                                                         'approval',
+                                                                             'source_kind': 'delta'}],
+ 'test_review_exposes_all_views_and_never_mutates_or_substitutes_approvals': [{'capability': 'tech-lead-workflow',
+                                                                               'requirement': 'Deterministic tech '
+                                                                                              'lead decision support',
+                                                                               'scenario': 'Required deterministic '
+                                                                                           'views are available',
+                                                                               'source_kind': 'delta'},
+                                                                              {'capability': 'tech-lead-workflow',
+                                                                               'requirement': 'Tech lead completion '
+                                                                                              'and release '
+                                                                                              'recommendation',
+                                                                               'scenario': 'Completion report exposes '
+                                                                                           'unresolved obligations',
+                                                                               'source_kind': 'delta'},
+                                                                              {'capability': 'tech-lead-workflow',
+                                                                               'requirement': 'Tech lead governance '
+                                                                                              'responsibilities',
+                                                                               'scenario': 'Tech lead review covers '
+                                                                                           'required decisions',
+                                                                               'source_kind': 'delta'}],
+ 'test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it': [{'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'AI advisory boundary for tech '
+                                                                                    'lead automation',
+                                                                     'scenario': 'AI may draft analysis',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'AI advisory boundary for tech '
+                                                                                    'lead automation',
+                                                                     'scenario': 'AI may not approve',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Tech lead stop, hold, '
+                                                                                    'escalation, and resume control',
+                                                                     'scenario': 'Stop condition creates a hold '
+                                                                                 'record',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Tech lead stop, hold, '
+                                                                                    'escalation, and resume control',
+                                                                     'scenario': 'Invalid control evidence fails '
+                                                                                 'closed',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Tech lead stop, hold, '
+                                                                                    'escalation, and resume control',
+                                                                     'scenario': 'Control timestamps use canonical '
+                                                                                 'UTC instants',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Tech lead stop, hold, '
+                                                                                    'escalation, and resume control',
+                                                                     'scenario': 'Resume requires resolved evidence',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Tech lead stop, hold, '
+                                                                                    'escalation, and resume control',
+                                                                     'scenario': 'AI cannot resume held work',
+                                                                     'source_kind': 'delta'}],
+ 'test_thin_review_and_control_clis_are_deterministic_and_non_mutating': [{'capability': 'tech-lead-workflow',
+                                                                           'requirement': 'Deterministic tech lead '
+                                                                                          'decision support',
+                                                                           'scenario': 'Configured control checkpoint '
+                                                                                       'exposes flow risks',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'tech-lead-workflow',
+                                                                           'requirement': 'Deterministic tech lead '
+                                                                                          'decision support',
+                                                                           'scenario': 'Checkpoint identity is '
+                                                                                       'canonical',
+                                                                           'source_kind': 'delta'}]}
