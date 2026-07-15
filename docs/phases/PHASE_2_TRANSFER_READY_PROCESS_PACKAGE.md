@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.9 are closed after all required gates; work item 2.10 is in progress under the worker/reviewer workflow.
+Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is ready.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.9 are closed; work item 2.10 is in progress under the worker/reviewer workflow.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is ready.
 
 ## Planning Acceptance Gate
 
@@ -142,7 +142,7 @@ Affected specs: Existing adopt-nis-corporate-process-governance confluence-feedb
 Affected architecture: Add only a pure deterministic policy/config boundary and synthetic fixtures; do not implement Confluence integration, publication, remote access, or corporate generated-view selection.
 Data contract impact: Add a closed synthetic feedback-policy/evaluation contract with explicit SLA enable/disable, defaults/overrides, dispositions/follow-up, evidence-boundary, source-mode, and generated-view ownership fields.
 Verification impact: Eight exact pytest nodes bind one-to-one to the eight delta scenarios, plus negative privacy/schema/package regression and the combined certification coverage gate.
-Status: adopted for work item 2.10 hardening pending independent re-review; task/status closure remains coordinator-owned.
+Status: adopted and reconciled through work item 2.10 hardening. The earlier independent review findings were closed, and final semantic remapping and verification were completed by the coordinator after the human requested no further subagent work.
 ```
 
 ```text
@@ -424,7 +424,7 @@ Exit criteria: AI can accelerate bounded independent work while deterministic la
 
 ### 2.10 Certification Fixtures, Coverage, And Runner
 
-Status: in_progress.
+Status: closed.
 
 Dependency status: sequential after 2.9.
 
@@ -444,7 +444,7 @@ Exit criteria: certification is repeatable, source-linked, privacy-safe, and exp
 
 ### 2.11 AI-Disabled And Weak-Model Certification
 
-Status: planned.
+Status: ready.
 
 Dependency status: sequential after 2.10.
 
@@ -591,7 +591,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-No current design or planning decision blocks active work item 2.10.
+No current design or planning decision blocks ready work item 2.11. Actual Qwen-class and DeepSeek-class runtimes must be available before its model-run evidence can close.
 
 Mandatory later evidence, not design decisions:
 

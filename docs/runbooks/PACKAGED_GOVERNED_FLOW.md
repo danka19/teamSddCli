@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work items 2.8-2.9 are closed after combined review and TDD hardening. Work item 2.10 is ready but has not started.
+Status: work items 2.8-2.10 are closed after review and TDD hardening. Work item 2.11 is ready for AI-disabled and actual weak-model certification.
 
 ## Boundary
 

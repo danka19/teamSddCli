@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.9 are closed; work item 2.10 is in progress under the worker/reviewer workflow.
+Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is ready.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -441,7 +441,7 @@ Status: closed after implementation, combined requirements/architecture/verifica
 
 ## Work Item 2.9: Weak-Model Role Kit And Safe Parallel Execution
 
-Status: closed after implementation, combined review, two hardening rounds, final targeted review, and coordinator reconciliation. Transfer tasks 3.1-3.6 are complete; work item 2.10 is ready but not started.
+Status: closed after implementation, combined review, two hardening rounds, final targeted review, and coordinator reconciliation. Transfer tasks 3.1-3.6 are complete; at this checkpoint work item 2.10 became ready.
 
 ### Worker Implementation Evidence
 
@@ -477,13 +477,13 @@ Status: closed after implementation, combined review, two hardening rounds, fina
 - Focused plus packaged-flow/package regression: 79 passed. Final focused adversarial suite: 39 passed. Fresh full serial suite on the exact final tree: 352 passed in 87.52 seconds. No transfer task or work-item status changed at this hardening checkpoint.
 - Final bypass hardening `774ac99` requires a canonical source and exact pack-launch-evidence manifest binding, uses a closed structured safe-claim contract, rejects Windows drive/UNC/absolute parallel paths, requires one-to-one unique focused/combined results, and stops malformed nested CLI input at the schema boundary with redacted exit 3. Verification passed 45 focused, 105 regression, 358 full, compilation, governance 0/0, and strict OpenSpec 10/10.
 - Final targeted reviewer verdict: Approved for `f2afa24..774ac99`; 45 focused tests and `git diff --check` passed, all four remaining reproductions are closed, and no Phase 2.10 work was performed.
-- Coordinator reconciliation marks transfer tasks 3.1-3.6 complete, moving the transfer inventory from 8/33 to 14/33 while NIS remains 35/43. Work item 2.9 is `closed`; work item 2.10 is `ready` and intentionally not started.
+- Coordinator reconciliation marked transfer tasks 3.1-3.6 complete, moving the transfer inventory from 8/33 to 14/33 while NIS remained 35/43. At that checkpoint work item 2.9 was `closed` and work item 2.10 became `ready`.
 
 ## Work Item 2.10: Certification Fixtures, Coverage, And Runner
 
-Status: implementation draft; independent review and coordinator acceptance remain required. No OpenSpec task or work-item closure is claimed here.
+Status: closed after implementation, independent architecture/review hardening, semantic evidence remapping, and final coordinator verification. Transfer tasks 4.1-4.3 and 4.6 plus NIS task 8.1 are complete; work item 2.11 is ready.
 
-### Worker Implementation Evidence Draft
+### Implementation Evidence
 
 - Pure runner and coverage inventory: `process/certification.py`; thin entry point: `scripts/certify_process_release.py`.
 - Closed contracts: `certification-case.schema.json`, `certification-evidence.schema.json`, and `coverage-report.schema.json`, registered in the exact package/distribution inventory.
@@ -492,26 +492,37 @@ Status: implementation draft; independent review and coordinator acceptance rema
 - Coverage inventory composes all eight accepted capability specs and both active delta trees, resolves exact requirement/scenario headings, validates case/pytest evidence references, checks declared MODIFIED/REMOVED targets, and requires owner/risk/reason/compensation/follow-up for residual gaps.
 - Explicit limitation: evidence is deterministic fixture evidence with `actual_model_run=false` and model/runtime `not-executed`. Work items 2.11-2.14 remain future work; no AI-disabled walkthrough, Qwen/DeepSeek run, cross-platform run, migration/update/rollback rehearsal, release acceptance, corporate adaptation, or pilot was executed.
 
-### TDD Draft
+### TDD Evidence
 
 - Initial RED: `tests/test_certification.py` failed collection because `process.certification` did not exist.
 - Integration RED: the first implementation pass exposed output-boundary/privacy overreach and a malformed schema; the package regression then exposed the exact schema inventory omission.
 - Focused GREEN before final verification: 23 passed and one Windows symlink-privilege skip; combined certification/package/packaged-flow/weak-model regression reached 92 passed with only the expected inventory RED before reconciliation.
 - Final worker verification: certification plus exact package contract passed 38 tests with the same environment-dependent symlink skip; the full serial suite passed 381 tests with one skip. Compilation, direct CLI/check-mode, privacy/package, roadmap/OpenSpec, strict OpenSpec, and diff checks are recorded in the worker handoff and implementation commit.
 
-### Review Hardening Draft
+### Review Hardening
 
 - Reviewer reproductions removed aggregate false coverage: effective accepted+delta composition now replaces MODIFIED requirements, suppresses REMOVED requirements, rejects collisions/unknown targets, and separates covered, explicit residual-gap, and future-work scenario counts. There is no `default_evidence`.
 - The evidence schema is future-compatible with actual-model evidence while deterministic runs remain explicitly `actual_model_run=false`. It records run/case/evidence identity, role/class dimensions and expected outputs, model/adapter/package/read-pack boundary, operation hashes, validation, intervention, authority/stop checks, limitations, normalized hash, raw checksum, and derived canonical-tree mutation state.
 - Negative cases are payload-driven guard evaluations rather than family/signal self-fulfilment. Replacing a negative payload with the positive fixture produces a pass and golden mismatch. All eight families use exact stable diagnostics.
 - Every output under or equal to the repository root is rejected in check and create modes. Fixture content uses an explicit synthetic/example namespace and rejects secret, corporate/internal/production, URL, email, and IP material without echoing raw values.
-- Hardening verification and commit remain pending at this draft checkpoint; task/status closure remains coordinator-owned.
 - First hardening full serial verification passed 397 tests with one environment-dependent Windows symlink-privilege skip. Focused certification/package/weak-model/packaged-flow verification passed 109 tests with the same skip.
 
-### Second Review Hardening Draft
+### Exact Evidence And Semantic Remapping
 
 - Capability-wide and bare-file evidence rules were removed. The product manifest contains one explicit row for every applicable effective selector, while literal source-owned `SCENARIO_COVERAGE` markers independently bind each asserted product selector to one exact pytest node without a duplicate table. Missing rows, duplicate/unknown/unused markers, unrelated existing-node substitution, bare test files, and marker disagreement fail closed.
 - A pure feedback-policy boundary plus eight exact tests closes all eight NIS `Unresolved feedback and publication blockers` delta scenarios without implementing Confluence access or publication. Defaults remain 1/3 working days; editable/disabled SLA, blocker/non-blocker dispositions, core-route evidence boundary, future class-aware selection, read-only corpus, and corporate generated-view ownership are deterministic.
 - Four concrete expected-output goldens cover analyst/minor, developer/major, QA/hotfix, and Tech Lead/major. Closed schema, semantic role/class checks, and catalog SHA-256 bindings run before fixture certification; every golden remains explicitly unexecuted.
 - The actual-model schema rejects partial forgeries: actual model/adapter identifiers cannot be `not-executed`, all cases require actual execution/read-pack identities, planned dimensions must be executed and represented by cases, and deterministic evidence remains locked to unexecuted fixture semantics.
-- Final hardening coverage is 327 effective scenarios: 193 covered by exact evidence, 116 explicit allowed gaps, and 18 future-work scenarios. All 185 active NIS delta scenarios have source-owned exact pytest evidence and zero gaps; uncertain accepted and transfer-readiness claims remain honest gaps rather than capability-wide assertions. Role-output goldens also bind actual canonical-source bytes, so placeholder/tampered hashes and later source mutation fail closed. Final verification and commit are recorded in the worker handoff; work-item/task statuses remain unchanged for re-review.
+- The first exact-marker pass exposed semantically overbroad mappings despite structural validity. The final remap moved 84 claims to tests that assert the named behavior, added three narrow scenario tests, and classified conditional journey/screen behavior plus real corporate adaptation as later-phase evidence instead of inventing Phase 2 fixture proof.
+- Final coverage is 327 effective scenarios: 184 covered by exact source-owned pytest evidence, 116 explicit allowed gaps, and 27 future-work scenarios. All 176 currently applicable NIS delta scenarios have exact evidence and zero gaps; the three later NIS selector groups are explicitly routed to Phase 3 or Phase 4. Uncertain accepted and transfer-readiness claims remain visible gaps with owner, risk, compensation, and follow-up.
+- Role-output goldens bind actual canonical-source bytes, so placeholder or tampered hashes and later source mutation fail closed.
+
+### Final Coordinator Verification And Reconciliation
+
+- The human requested completion without further subagents after earlier architect/reviewer findings had driven the hardening. The coordinator therefore performed the final semantic review, removed two unused markers that referred only to future corporate-adaptation evidence, and completed all closure checks directly.
+- Focused final verification across certification and every modified evidence-owner suite: `300 passed, 2 skipped`; both skips are environment-dependent Windows symlink-creation cases.
+- Fresh full serial suite on the reconciled tree: `418 passed, 2 skipped` in 132.85 seconds. Python compilation, direct legacy-template validation, roadmap/OpenSpec governance (0 errors, 0 warnings), and strict OpenSpec validation (10 passed) also succeeded.
+- Direct check-only runner: `scripts/certify_process_release.py` exited 0 with status `passed` and the final 184/116/27 coverage summary; raw output remained outside the repository.
+- OpenSpec reconciliation marks transfer tasks 4.1-4.3 and 4.6 complete, moving that inventory from 14/33 to 18/33. NIS task 8.1 is complete, moving that inventory from 35/43 to 36/43.
+- No AI-disabled operation matrix, actual Qwen/DeepSeek execution, cross-platform rehearsal, release-candidate acceptance, corporate adaptation, or pilot is claimed. Those boundaries remain owned by work items 2.11-2.14 and Phase 3.
+- Work item 2.10 is `closed`; work item 2.11 is `ready`.

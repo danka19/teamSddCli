@@ -1,6 +1,6 @@
 # Weak-Model Operating Kit And Safe Parallel Work
 
-Status: work item 2.9 is closed after combined review and two TDD hardening rounds. This is not actual Qwen/DeepSeek certification; work item 2.10 is ready but has not started, and actual model certification belongs to 2.11.
+Status: work items 2.9-2.10 are closed after review and TDD hardening. Deterministic fixture certification is not actual Qwen/DeepSeek certification; actual model certification belongs to ready work item 2.11.
 
 ## Boundary
 

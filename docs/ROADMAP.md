@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work item 2.9 is closed; work item 2.10 is in progress under the worker/reviewer workflow.
+- Current roadmap focus: work item 2.10 is closed; work item 2.11 is ready for AI-disabled and actual weak-model certification.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -71,7 +71,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.9 are closed; work item 2.10 is in progress under the worker/reviewer workflow.
+Work items 2.1-2.10 are closed; work item 2.11 is ready.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
