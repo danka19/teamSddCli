@@ -28,6 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--raw-output", type=Path, required=True)
     parser.add_argument("--phase", choices=("ai-disabled", "runtime-probe", "preflight", "matrix"), required=True)
+    parser.add_argument("--model-family", choices=("qwen-class", "deepseek-class"), default="qwen-class")
     args = parser.parse_args(argv)
     root = args.root.resolve()
     catalog_name = "ai-disabled-walkthroughs.yaml" if args.phase == "ai-disabled" else "qwen-matrix.yaml"
@@ -38,9 +39,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.phase == "ai-disabled":
             evidence = execute_ai_disabled(root, catalog, args.raw_output)
         elif args.phase == "runtime-probe":
-            evidence = probe_ollama(root, catalog, args.raw_output)
+            evidence = probe_ollama(root, catalog, args.raw_output, model_family=args.model_family)
         else:
-            evidence = execute_model_catalog(root, root / "process", catalog, args.raw_output, phase=args.phase)
+            evidence = execute_model_catalog(root, root / "process", catalog, args.raw_output, phase=args.phase, model_family=args.model_family)
     except (OSError, UnicodeError, yaml.YAMLError, ActualCertificationError) as error:
         print(json.dumps({"status": "blocked", "diagnostic": str(error)}, sort_keys=True))
         return 3

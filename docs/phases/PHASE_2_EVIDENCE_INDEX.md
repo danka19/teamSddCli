@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 has a passing AI-disabled baseline and a partially certified, unreliable Qwen-family proxy with explicit fallbacks, and awaits DeepSeek-family certification plus human fallback disposition.
+Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is `pending_acceptance` after complete AI-disabled, Qwen-family, and DeepSeek-family execution with explicit fallbacks.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -527,9 +527,9 @@ Status: closed after implementation, independent architecture/review hardening, 
 - No AI-disabled operation matrix, actual Qwen/DeepSeek execution, cross-platform rehearsal, release-candidate acceptance, corporate adaptation, or pilot is claimed. Those boundaries remain owned by work items 2.11-2.14 and Phase 3.
 - Work item 2.10 is `closed`; at its closure checkpoint work item 2.11 became `ready`. Its current partial-execution status is recorded below.
 
-## Work Item 2.11: AI-Disabled And Qwen-Family Certification Slice
+## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `in_progress`. The AI-disabled baseline passed; the honest non-leading Qwen-family proxy produced explicit failures and fallback routes, and mandatory DeepSeek-family certification remains incomplete. Transfer task 4.4 and NIS task 8.2 are complete. Transfer task 4.5 and NIS task 8.3 remain unchecked.
+Status: `pending_acceptance`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are complete; human acceptance or rejection of the explicit Qwen/DeepSeek fallback dispositions remains mandatory before 2.12.
 
 ### Evidence And Scope
 
@@ -548,8 +548,8 @@ Status: `in_progress`. The AI-disabled baseline passed; the honest non-leading Q
 - The initial AI-disabled run retained a package-schema failure before the new catalog fields were registered; the successful retry lives under a separate append-only raw group.
 - Thinking with `num_predict=32` retained an empty response with `done_reason=length`; no-think/64 returned exact `QWEN_PREFLIGHT_OK`.
 - Two overlong contract approaches and one echo/truncation response were retained rather than overwritten. The accepted bounded contract makes the model return a compact safety decision; deterministic trusted code supplies source binding and validates the full existing operation-evidence record.
-- Deterministic validators and named human decisions remain mandatory fallbacks for every case.
+- Deterministic validators plus the catalog-owned case-specific human owner and concrete disposition action remain mandatory fallbacks for every case; generic routing is rejected.
 
 ### Limitation And Next Gate
 
-`qwen3.5:9b` is only a family-level proxy for corporate Qwen3.6-35B, not equivalence proof. DeepSeek-family certification is still mandatory. Therefore work item 2.11 is not closed, both active changes remain open, work items 2.12-2.14 are untouched, and no release acceptance, archive, PR, or pilot is claimed.
+`qwen3.5:9b` and `deepseek-r1:8b` are local family-level proxies, not corporate-runtime equivalence proof. DeepSeek passed 0/5 preflight and 0/15 matrix cases; Qwen passed 0/5 and 1/15. Normalized DeepSeek evidence is `process/certification/evidence/phase-2-11-deepseek-2026-07-15.yaml`; the dated audit is `docs/audits/PHASE_2_WORK_ITEM_2_11_DEEPSEEK_CERTIFICATION_AUDIT_2026-07-15.md`. Work item 2.11 is not closed, both active changes remain open, 2.12-2.14 are untouched, and no release acceptance, archive, PR, or pilot is claimed.

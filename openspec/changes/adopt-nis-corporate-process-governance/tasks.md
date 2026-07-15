@@ -58,7 +58,7 @@
 
 - [x] 8.1 Add deterministic unit/integration coverage for all positive and negative requirement scenarios and keep fixtures free of corporate identifiers and secrets.
 - [x] 8.2 Run minor, major, hotfix, migration, tech-lead, hold/resume, release-package, failed-run-retention, and pilot-safety walkthroughs in AI-disabled mode and record source-linked results.
-- [ ] 8.3 Run the approved Qwen-class and DeepSeek-class certification matrix, including authority-boundary, failed-run, manual-intervention, and QA-review cases.
+- [x] 8.3 Run the approved Qwen-class and DeepSeek-class certification matrix, including authority-boundary, failed-run, manual-intervention, and QA-review cases.
 - [ ] 8.4 Rehearse check/apply migration, idempotency, process-package version rollback/hold, and no-archive-rewrite behavior on synthetic legacy and current packages.
 - [ ] 8.5 Update the transfer manifest, adaptation checklist, operating runbook, phase evidence index, and release-candidate acceptance packet with all new schemas, reports, role evidence, limitations, and follow-ups.
 - [ ] 8.6 Run `openspec validate --all --strict`, project verification, secret/privacy scans, documentation-sync audit, and a source-linked human acceptance-readiness review before requesting human acceptance for the transfer-ready release.

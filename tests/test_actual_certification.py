@@ -13,6 +13,8 @@ from process.actual_certification import (
     expand_compact_output,
     parse_compact_output,
     parse_model_output,
+    select_model_profile,
+    split_reasoning_envelope,
     validate_ai_disabled_catalog,
     validate_model_catalog,
     validate_model_output,
@@ -45,7 +47,7 @@ def test_ai_disabled_catalog_covers_every_required_walkthrough_with_exact_nodes(
     assert all(case["canonical_sources"] and case["pytest_node"].startswith("tests/") for case in catalog["cases"])
 
 
-def test_qwen_catalog_has_preflight_before_pairwise_matrix_and_leaves_deepseek_planned() -> None:
+def test_frozen_catalog_has_shared_cases_and_exact_qwen_deepseek_profiles() -> None:
     catalog = _yaml(QWEN_MATRIX)
     assert validate_model_catalog(ROOT, catalog) == []
     assert catalog["model"] == {
@@ -55,7 +57,18 @@ def test_qwen_catalog_has_preflight_before_pairwise_matrix_and_leaves_deepseek_p
         "runtime": "Ollama",
         "runtime_version": "0.30.11",
     }
-    assert catalog["deepseek_status"] == "planned-not-executed"
+    assert select_model_profile(catalog, "deepseek-class") == {
+        "family": "deepseek-class",
+        "name": "deepseek-r1:8b",
+        "digest": "6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763",
+        "runtime": "Ollama",
+        "runtime_version": "0.30.11",
+        "architecture": "qwen3",
+        "parameter_size": "8.2B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 131072,
+        "limitation": "deepseek-r1:8b is a frozen DeepSeek-family local proxy; target-environment runtime equivalence is not established",
+    }
     preflight = [case for case in catalog["cases"] if case["phase"] == "preflight"]
     matrix = [case for case in catalog["cases"] if case["phase"] == "matrix"]
     assert {case["contract"] for case in preflight} >= {
@@ -70,6 +83,25 @@ def test_qwen_catalog_has_preflight_before_pairwise_matrix_and_leaves_deepseek_p
         "conflicting-context", "skipped-stop-point", "forbidden-approval",
         "forbidden-lifecycle-transition",
     }
+    routes = catalog["fallback_routes"]
+    assert set(routes) == {case["id"] for case in catalog["cases"]}
+    assert routes["fabricated-evidence"] == {
+        "mandatory_human_owner": "human evidence reviewer or configured QA owner",
+        "mandatory_human_decision": "reject the unsupported evidence or correct it from independently verified evidence",
+    }
+    assert routes["unsafe-resume"]["mandatory_human_owner"] == "authorized human Tech Lead or configured decision owner"
+
+
+def test_catalog_rejects_missing_or_generic_human_fallback_routes() -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    catalog["fallback_routes"].pop("unsafe-resume")
+    assert "actual-model.missing-fallback-route" in validate_model_catalog(ROOT, catalog)
+    catalog = _yaml(QWEN_MATRIX)
+    catalog["fallback_routes"]["unsafe-resume"] = {
+        "mandatory_human_owner": "human",
+        "mandatory_human_decision": "named human decision",
+    }
+    assert "actual-model.generic-fallback-route" in validate_model_catalog(ROOT, catalog)
 
 
 def _context(role: str = "analyst", change_class: str = "minor") -> tuple[dict, dict, dict]:
@@ -217,6 +249,21 @@ def test_raw_attempt_writer_is_append_only_and_hash_bound(tmp_path: Path) -> Non
         write_raw_attempt(tmp_path, "qwen-preflight-001", raw)
 
 
+def test_deepseek_runtime_envelope_keeps_thinking_separate_from_final_response() -> None:
+    raw = {
+        "model": "deepseek-r1:8b",
+        "thinking": "private reasoning envelope",
+        "response": "",
+        "done_reason": "length",
+    }
+    assert raw["thinking"]
+    with pytest.raises(ActualCertificationError, match="actual-model.output-not-exact-json"):
+        parse_compact_output(raw["response"])
+    reasoning, final = split_reasoning_envelope("<think>bounded reasoning</think>\n{\"case_id\":\"x\"}", "")
+    assert reasoning == "bounded reasoning"
+    assert final == '{"case_id":"x"}'
+
+
 def test_package_registers_actual_certification_module_and_catalogs() -> None:
     package = _yaml(PROCESS / "package.yaml")
     assert "actual_certification.py" in package["distribution"]["files"]
@@ -271,3 +318,27 @@ def test_normalized_qwen_evidence_is_complete_private_path_free_and_raw_hash_bou
     assert ai_failure["outcome"] == {"exit_code": 1}
     assert ai_failure["raw_logical_artifact_id"] == "ai-disabled-minor-flow"
     assert ai_failure["human_intervention"] and ai_failure["fallback"]
+
+
+def test_normalized_deepseek_evidence_covers_every_raw_attempt_and_reasoning_boundary() -> None:
+    evidence_path = PROCESS / "certification/evidence/phase-2-11-deepseek-2026-07-15.yaml"
+    artifact = ROOT.parent / "teamSsdCli-release-artifacts/raw-artifact-v0.2.0-deepseek-2026-07-15"
+    if not artifact.is_dir():
+        pytest.skip("external DeepSeek raw certification artifact is required")
+    evidence = _yaml(evidence_path)
+    assert validate_normalized_evidence(evidence, artifact) == []
+    rows = evidence["preflight"]["cases"] + evidence["matrix"]["cases"]
+    assert len(rows) == 20
+    assert all(row["actual_model_run"] is True for row in rows)
+    assert all("thinking_present" in row and "final_response_present" in row for row in rows)
+    exact = [row for row in evidence["failed_attempts"] if row["raw_group"] == "exact-output-preflight-001"]
+    assert len(exact) == 2
+    assert all(row["result"] == "failed" and row["disposition"] == "failed-retained" and row["done_reason"] == "length" for row in exact)
+    assert all(row["mandatory_human_owner"] == "certification operator or certification owner" for row in exact)
+    by_case = {row["case_id"]: row for row in rows}
+    assert by_case["insufficient-qa-evidence"]["mandatory_human_owner"] == "configured QA or test owner"
+    assert "evidence sufficiency" in by_case["insufficient-qa-evidence"]["mandatory_human_decision"]
+
+    broken = yaml.safe_load(yaml.safe_dump(evidence))
+    broken["matrix"]["cases"][0]["mandatory_human_owner"] = "human"
+    assert "actual-model.generic-fallback-route" in validate_normalized_evidence(broken, artifact)

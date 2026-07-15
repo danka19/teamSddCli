@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is in progress after a passing AI-disabled baseline and a partially failing Qwen-family proxy run, and awaits mandatory DeepSeek-family certification plus later acceptance of explicit fallback dispositions.
+Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is pending acceptance after the AI-disabled, Qwen-family, and DeepSeek-family execution slices completed with explicit fallback dispositions.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is in progress and awaits mandatory DeepSeek-family certification.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is pending acceptance after complete execution and awaits human fallback disposition.
 
 ## Planning Acceptance Gate
 
@@ -444,7 +444,7 @@ Exit criteria: certification is repeatable, source-linked, privacy-safe, and exp
 
 ### 2.11 AI-Disabled And Weak-Model Certification
 
-Status: in_progress.
+Status: pending_acceptance.
 
 Dependency status: sequential after 2.10.
 
@@ -462,7 +462,7 @@ Documentation: exact model/runtime/adapter versions, interventions, limitations,
 
 Exit criteria: mandatory operations pass or have an explicit deterministic/mandatory-human fallback accepted for release.
 
-Partial evidence on 2026-07-15: all 11 AI-disabled walkthrough records passed. After reviewer-invalidated leading prompts were removed and exact catalog semantics were enforced, frozen non-leading Qwen-family bytes passed 0/5 preflight and 1/15 matrix cases; failed operations retain deterministic or mandatory-human fallbacks. `qwen3.5:9b` is a family-level proxy for corporate Qwen3.6-35B, not equivalence proof. DeepSeek-family certification and human fallback disposition remain mandatory, so transfer task 4.5, NIS task 8.3, and work item 2.11 remain incomplete.
+Execution evidence on 2026-07-15: all 11 AI-disabled walkthrough records passed. Frozen non-leading Qwen-family bytes passed 0/5 preflight and 1/15 matrix cases; frozen DeepSeek-family bytes passed 0/5 preflight and 0/15 matrix cases. Every DeepSeek failure retains deterministic validation plus a catalog-owned case-specific human owner and concrete disposition action. Transfer task 4.5 and NIS task 8.3 are execution-complete. Work item 2.11 remains at `pending_acceptance` until the human owner accepts or rejects both family fallback dispositions; 2.12 remains blocked.
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
 
@@ -593,11 +593,11 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-No current design or planning decision blocks work item 2.11. Its AI-disabled slice passed; the Qwen-family proxy has explicit non-leading failures and fallbacks, and an actual DeepSeek-family runtime remains required before its model-run evidence can close.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution evidence for work item 2.11 is complete. The remaining mandatory gate is explicit human acceptance or rejection of the recorded Qwen and DeepSeek fallback dispositions; until then 2.11 remains `pending_acceptance` and 2.12 remains blocked.
 
 Mandatory later evidence, not design decisions:
 
-- Exact Qwen-class and DeepSeek-class model/runtime identifiers.
+- Human disposition of the exact recorded Qwen-class and DeepSeek-class fallback routes.
 - Exact supported Windows, Linux, and macOS versions/architectures and dependency versions used for certification.
 - Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.10 closed the versioned foundation; work item 2.11 has a passing AI-disabled baseline and a partially certified, unreliable Qwen-family proxy with deterministic or mandatory-human fallback, and still awaits mandatory DeepSeek-family certification plus human fallback disposition. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.10 closed the versioned foundation; work item 2.11 is pending acceptance after complete AI-disabled, Qwen-family, and DeepSeek-family execution with deterministic or mandatory-human fallbacks. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates.
 
 ## Scope
 

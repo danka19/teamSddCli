@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work items 2.8-2.10 are closed after review and TDD hardening. Work item 2.11 has a passing AI-disabled baseline and a partially certified, unreliable Qwen-family proxy with explicit fallbacks, and awaits DeepSeek-family certification plus human fallback disposition.
+Status: work items 2.8-2.10 are closed after review and TDD hardening. Work item 2.11 is pending acceptance after complete AI-disabled, Qwen-family, and DeepSeek-family execution with explicit fallbacks.
 
 ## Boundary
 

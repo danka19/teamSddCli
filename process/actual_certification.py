@@ -43,6 +43,31 @@ REQUIRED_RISKS = {
 OLLAMA_ENDPOINT = "http://127.0.0.1:11434"
 NORMALIZED_ENDPOINT = "local-ollama-loopback"
 ADAPTER_VERSION = "1.0"
+GENERIC_FALLBACK_VALUES = {"human", "human owner", "named human", "named human decision", "mandatory human", "manual decision"}
+
+
+def _valid_fallback_route(route: Any) -> bool:
+    if not isinstance(route, dict) or set(route) != {"mandatory_human_owner", "mandatory_human_decision"}:
+        return False
+    owner = str(route.get("mandatory_human_owner", "")).strip()
+    decision = str(route.get("mandatory_human_decision", "")).strip()
+    if any(not value or len(value) < 12 or value.lower() in GENERIC_FALLBACK_VALUES for value in (owner, decision)):
+        return False
+    return bool(re.search(r"(?i)\b(?:analyst|owner|tech lead|qa|test|developer|approver|operator|reviewer)\b", owner)
+                and re.search(r"(?i)\b(?:accept|reject|revise|escalate|supply|correct|proceed|hold|resume|authorize|restore|resolve|choose|decide|keep|clear|require)\b", decision))
+
+
+def select_model_profile(catalog: dict[str, Any], family: str) -> dict[str, Any]:
+    """Select an explicitly frozen runtime profile without changing case semantics."""
+    profiles = catalog.get("models")
+    if isinstance(profiles, list):
+        match = next((item for item in profiles if isinstance(item, dict) and item.get("family") == family), None)
+    else:
+        model = catalog.get("model")
+        match = model if isinstance(model, dict) and model.get("family") == family else None
+    if not isinstance(match, dict):
+        raise ActualCertificationError("actual-model.unknown-family")
+    return match
 
 
 def _safe_source(root: Path, value: str) -> bool:
@@ -99,8 +124,9 @@ def validate_model_catalog(root: Path, catalog: dict[str, Any]) -> list[str]:
     cases = catalog.get("cases")
     if catalog.get("schema_version") != "1.1" or not isinstance(cases, list):
         return ["actual-model.invalid-catalog"]
-    if catalog.get("deepseek_status") != "planned-not-executed":
-        diagnostics.append("actual-model.deepseek-status")
+    profiles = catalog.get("models")
+    if not isinstance(profiles, list) or {item.get("family") for item in profiles if isinstance(item, dict)} != {"qwen-class", "deepseek-class"}:
+        diagnostics.append("actual-model.invalid-model-profiles")
     ids: list[str] = []
     for case in cases:
         if not isinstance(case, dict):
@@ -123,6 +149,13 @@ def validate_model_catalog(root: Path, catalog: dict[str, Any]) -> list[str]:
             diagnostics.append("actual-model.invalid-reason-binding")
     if len(ids) != len(set(ids)) or any(not SAFE_ID.fullmatch(value) for value in ids):
         diagnostics.append("actual-model.invalid-id")
+    routes = catalog.get("fallback_routes")
+    if not isinstance(routes, dict) or set(routes) != set(ids):
+        diagnostics.append("actual-model.missing-fallback-route")
+    if isinstance(routes, dict) and any(not _valid_fallback_route(route) for route in routes.values()):
+        diagnostics.append("actual-model.generic-fallback-route")
+    if not _valid_fallback_route(catalog.get("exact_output_fallback_route")):
+        diagnostics.append("actual-model.generic-fallback-route")
     matrix = [case for case in cases if isinstance(case, dict) and case.get("phase") == "matrix"]
     if {case.get("role") for case in matrix} < ROLES or {case.get("change_class") for case in matrix} != CLASSES:
         diagnostics.append("actual-model.incomplete-dimensions")
@@ -158,6 +191,20 @@ def parse_compact_output(text: str) -> dict[str, Any]:
     if value.get("role_output") is not None and not isinstance(value["role_output"], dict):
         raise ActualCertificationError("actual-model.compact-contract")
     return value
+
+
+def split_reasoning_envelope(response: str, thinking: str) -> tuple[str, str]:
+    """Separate Ollama/DeepSeek reasoning bytes without promoting them to final output."""
+    response = str(response or "")
+    thinking = str(thinking or "")
+    stripped = response.lstrip()
+    if stripped.startswith("<think>"):
+        end = stripped.find("</think>")
+        if end < 0:
+            return stripped[len("<think>"):], ""
+        embedded = stripped[len("<think>"):end]
+        return thinking or embedded.strip(), stripped[end + len("</think>"):].strip()
+    return thinking, response.strip()
 
 
 def _source_manifest_by_id(launch: dict[str, Any]) -> dict[str, dict[str, str]]:
@@ -321,12 +368,13 @@ def _read_json_url(url: str, body: dict[str, Any] | None = None, timeout: int = 
     return value
 
 
-def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path) -> dict[str, Any]:
-    model = catalog["model"]
+def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path, *, model_family: str = "qwen-class") -> dict[str, Any]:
+    model = select_model_profile(catalog, model_family)
     endpoint = str(model.get("endpoint", OLLAMA_ENDPOINT)).rstrip("/")
     try:
         version = _read_json_url(endpoint + "/api/version")
         tags = _read_json_url(endpoint + "/api/tags")
+        running = _read_json_url(endpoint + "/api/ps")
     except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
         raise ActualCertificationError("actual-model.runtime-probe-failure") from error
     match = next((item for item in tags.get("models", []) if isinstance(item, dict) and item.get("name") == model["name"]), None)
@@ -334,10 +382,11 @@ def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path) -> di
     probe = {
         "probe_kind": "ollama-execution-identity", "endpoint": endpoint, "runtime_version": version.get("version"),
         "model_tag": model["name"], "model_digest": match.get("digest") if match else None,
-        "model_details": match.get("details") if match else None, "adapter_family": "qwen-class",
+        "model_details": match.get("details") if match else None, "running_models": running.get("models"),
+        "adapter_family": model["family"],
         "adapter_version": ADAPTER_VERSION, "process_package_version": package_version,
     }
-    reference = write_raw_attempt(raw_directory, "ollama-runtime-probe", probe)
+    reference = write_raw_attempt(raw_directory, f"{model['family'].removesuffix('-class')}-runtime-probe", probe)
     expected_digest = str(model["digest"])
     passed = version.get("version") == model["runtime_version"] and isinstance(probe["model_digest"], str) and probe["model_digest"].startswith(expected_digest)
     return {
@@ -348,15 +397,18 @@ def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path) -> di
     }
 
 
-def invoke_ollama(endpoint: str, model: str, prompt: str, *, think: bool, num_predict: int) -> dict[str, Any]:
-    request_body = {"model": model, "prompt": prompt, "stream": False, "think": think, "options": {"temperature": 0, "num_predict": num_predict}}
+def invoke_ollama(endpoint: str, model: str, prompt: str, *, think: bool, num_predict: int, num_ctx: int | None = None) -> dict[str, Any]:
+    options = {"temperature": 0, "num_predict": num_predict}
+    if num_ctx is not None:
+        options["num_ctx"] = num_ctx
+    request_body = {"model": model, "prompt": prompt, "stream": False, "think": think, "options": options}
     started = time.monotonic()
     try:
         payload = _read_json_url(endpoint.rstrip("/") + "/api/generate", request_body, timeout=300)
     except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
         raise ActualCertificationError("actual-model.runtime-failure") from error
     payload["client_duration_ms"] = round((time.monotonic() - started) * 1000, 3)
-    payload["request_contract"] = {"model": model, "think": think, "temperature": 0, "num_predict": num_predict}
+    payload["request_contract"] = {"model": model, "think": think, **options}
     return payload
 
 
@@ -381,7 +433,8 @@ def evaluate_frozen_model_output(
     output: dict[str, Any] | None = None
     diagnostics: list[dict[str, str]] = []
     try:
-        compact = parse_compact_output(str(raw_response.get("response", "")))
+        _, final_response = split_reasoning_envelope(str(raw_response.get("response", "")), str(raw_response.get("thinking", "")))
+        compact = parse_compact_output(final_response)
         output = expand_compact_output(compact, case, launch, pack)
         diagnostics = validate_model_output(output, case, launch, pack, process_root, compact)
     except ActualCertificationError as error:
@@ -408,21 +461,23 @@ def execute_ai_disabled(root: Path, catalog: dict[str, Any], raw_directory: Path
     return {"schema_version": "1.0", "evidence_kind": "ai-disabled-walkthrough", "actual_model_run": False, "process_package_version": (root / "process/VERSION").read_text().strip(), "status": "passed" if all(row["result"] == "passed" for row in results) else "failed", "cases": results, "limitations": ["Windows-host deterministic walkthrough; cross-platform certification remains work item 2.12"]}
 
 
-def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any], raw_directory: Path, *, phase: str) -> dict[str, Any]:
+def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any], raw_directory: Path, *, phase: str, model_family: str = "qwen-class") -> dict[str, Any]:
     diagnostics = validate_model_catalog(root, catalog)
     if diagnostics:
         raise ActualCertificationError(diagnostics[0])
     selected = [case for case in catalog["cases"] if case["phase"] == phase]
     results: list[dict[str, Any]] = []
-    model = catalog["model"]
+    model = select_model_profile(catalog, model_family)
+    prefix = model_family.removesuffix("-class")
     package_version = (root / "process/VERSION").read_text(encoding="utf-8").strip()
     identity = {
         "model_family": model["family"], "model_tag": model["name"], "model_digest": model["digest"],
         "runtime": model["runtime"], "runtime_version": model["runtime_version"], "endpoint": NORMALIZED_ENDPOINT,
-        "adapter_family": "qwen-class", "adapter_version": ADAPTER_VERSION, "process_package_version": package_version,
+        "adapter_family": model_family, "adapter_version": ADAPTER_VERSION, "process_package_version": package_version,
     }
     run_group = raw_directory.name
     for case in selected:
+        route = catalog["fallback_routes"][case["id"]]
         pack, launch = case_read_pack(root, process_root, case)
         prompt = build_model_prompt(case, launch, pack)
         raw_response = invoke_ollama(str(model.get("endpoint", OLLAMA_ENDPOINT)), model["name"], prompt, think=False, num_predict=int(case.get("num_predict", 480)))
@@ -430,7 +485,8 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
         output: dict[str, Any] | None = None
         diagnostics_out: list[dict[str, str]] = []
         try:
-            compact = parse_compact_output(str(raw_response.get("response", "")))
+            _, final_response = split_reasoning_envelope(str(raw_response.get("response", "")), str(raw_response.get("thinking", "")))
+            compact = parse_compact_output(final_response)
             output = expand_compact_output(compact, case, launch, pack)
             diagnostics_out = validate_model_output(output, case, launch, pack, process_root, compact)
         except ActualCertificationError as error:
@@ -444,7 +500,7 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
             "parsed_model_decision": compact, "normalized_operation_evidence": output,
             "validation": {"result": "passed" if passed else "failed", "diagnostics": diagnostics_out},
         }
-        reference = write_raw_attempt(raw_directory, f"qwen-{case['id']}", raw)
+        reference = write_raw_attempt(raw_directory, f"{prefix}-{case['id']}", raw)
         results.append({
             "case_id": case["id"], "phase": phase, "operation": case["operation"], "actual_model_run": True,
             "role": case["role"], "change_class": case["change_class"], "risk_case": case.get("risk_case", "none"),
@@ -453,17 +509,18 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
             "raw_logical_artifact_id": reference["logical_artifact_id"], "raw_filename": reference["filename"], "raw_sha256": reference["sha256"],
             "deterministic_validation_result": "passed" if passed else "failed", "diagnostics": diagnostics_out,
             "human_intervention": "none" if passed else "mandatory-human-fallback", "forbidden_action_result": "none-observed" if passed else "rejected-or-unreliable",
-            "limitation": "qwen3.5:9b is a family-level proxy for corporate Qwen3.6-35B, not equivalence proof",
-            "fallback": "deterministic validator and named human decision remain mandatory",
+            "limitation": model.get("limitation", "family-level proxy; corporate-runtime equivalence is not established"),
+            "fallback": f"deterministic validator plus {route['mandatory_human_owner']}: {route['mandatory_human_decision']}",
+            **route,
             "duration_ms": raw_response.get("client_duration_ms"), "prompt_tokens": raw_response.get("prompt_eval_count"),
             "output_tokens": raw_response.get("eval_count"), "done_reason": raw_response.get("done_reason"),
         })
     return {
         "schema_version": "1.1", "evidence_kind": f"actual-model-{phase}", "actual_model_run": True,
-        "process_package_version": package_version, "model": model, "adapter": {"family": "qwen-class", "version": ADAPTER_VERSION},
+        "process_package_version": package_version, "model": model, "adapter": {"family": model_family, "version": ADAPTER_VERSION},
         "status": "passed" if all(row["deterministic_validation_result"] == "passed" for row in results) else "partial",
-        "cases": results, "deepseek_status": catalog["deepseek_status"],
-        "limitations": ["qwen3.5:9b is a family-level proxy for corporate Qwen3.6-35B, not equivalence proof", "DeepSeek-family certification remains mandatory before work item 2.11 can close"],
+        "cases": results,
+        "limitations": [model.get("limitation", "family-level proxy; corporate-runtime equivalence is not established")],
     }
 
 
@@ -478,6 +535,7 @@ def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) 
     process_root = repository_root / "process"
     catalog_value = yaml.safe_load((process_root / "certification/qwen-matrix.yaml").read_text(encoding="utf-8"))
     catalog_cases = {case["id"]: case for case in catalog_value.get("cases", []) if isinstance(case, dict)}
+    fallback_routes = catalog_value.get("fallback_routes", {})
     expected_identity = {
         "model_family": model.get("family"), "model_tag": model.get("name"), "model_digest": model.get("digest"),
         "runtime": model.get("runtime"), "runtime_version": model.get("runtime_version"), "endpoint": NORMALIZED_ENDPOINT,
@@ -513,10 +571,27 @@ def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) 
         if not {"actual_model_run", "disposition", "fallback", "human_intervention"} <= set(row):
             diagnostics.append("actual-model.failed-ledger-fields-missing")
         check_reference(row, str(row.get("raw_group", "root")))
+        if model.get("family") == "deepseek-class" and str(row.get("raw_group")) == "exact-output-preflight-001":
+            expected_route = catalog_value.get("exact_output_fallback_route")
+            actual_route = {name: row.get(name) for name in ("mandatory_human_owner", "mandatory_human_decision")}
+            if not _valid_fallback_route(actual_route):
+                diagnostics.append("actual-model.generic-fallback-route")
+            elif actual_route != expected_route:
+                diagnostics.append("actual-model.fallback-route-mismatch")
     probe = evidence.get("runtime_probe", {})
     probe_raw = check_reference(probe, str(probe.get("raw_group", "root"))) if isinstance(probe, dict) else None
     if not probe_raw or probe.get("result") != "passed" or probe.get("endpoint") != OLLAMA_ENDPOINT or probe_raw.get("runtime_version") != expected_identity["runtime_version"] or not str(probe_raw.get("model_digest", "")).startswith(str(expected_identity["model_digest"])) or probe_raw.get("model_tag") != expected_identity["model_tag"] or probe_raw.get("endpoint") != OLLAMA_ENDPOINT:
         diagnostics.append("actual-model.runtime-probe-mismatch")
+    if model.get("family") == "deepseek-class":
+        details = probe_raw.get("model_details", {}) if isinstance(probe_raw, dict) else {}
+        if details.get("family") != model.get("architecture") or details.get("parameter_size") != model.get("parameter_size") or details.get("quantization_level") != model.get("quantization_level"):
+            diagnostics.append("actual-model.runtime-details-mismatch")
+    model_show = probe.get("model_show") if isinstance(probe, dict) else None
+    if model.get("family") == "deepseek-class":
+        show_raw = check_reference(model_show, str(model_show.get("raw_group", "root"))) if isinstance(model_show, dict) else None
+        if (not show_raw or model_show.get("result") != "passed" or model_show.get("architecture") != model.get("architecture")
+                or model_show.get("context_length") != model.get("context_length") or model_show.get("quantization_level") != model.get("quantization_level")):
+            diagnostics.append("actual-model.runtime-show-mismatch")
     for group_name in ("preflight", "matrix"):
         group = evidence.get(group_name, {})
         rows = group.get("cases", []) if isinstance(group, dict) else []
@@ -530,9 +605,17 @@ def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) 
                 "deterministic_validation_result", "human_intervention", "forbidden_action_result", "limitation", "fallback",
                 "duration_ms", "prompt_tokens", "output_tokens", "done_reason", "endpoint", "runtime_probe_sha256",
             }
+            if model.get("family") == "deepseek-class":
+                required |= {"thinking_present", "final_response_present"}
             if not isinstance(row, dict) or not required <= set(row):
                 diagnostics.append("actual-model.evidence-fields-missing")
                 continue
+            if model.get("family") == "deepseek-class" and row.get("deterministic_validation_result") == "failed":
+                actual_route = {name: row.get(name) for name in ("mandatory_human_owner", "mandatory_human_decision")}
+                if not _valid_fallback_route(actual_route):
+                    diagnostics.append("actual-model.generic-fallback-route")
+                elif actual_route != fallback_routes.get(str(row.get("case_id"))):
+                    diagnostics.append("actual-model.fallback-route-mismatch")
             raw = check_reference(row, str(group.get("raw_group", "root")))
             if row.get("actual_model_run") is not True or row.get("execution_identity") != expected_identity or row.get("run_group") != group.get("raw_group"):
                 diagnostics.append("actual-model.row-identity-mismatch")
@@ -553,6 +636,9 @@ def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) 
                     ollama.get("prompt_eval_count") == row.get("prompt_tokens"), ollama.get("eval_count") == row.get("output_tokens"),
                     ollama.get("done_reason") == row.get("done_reason"),
                 )
+                if model.get("family") == "deepseek-class":
+                    reasoning, final_response = split_reasoning_envelope(ollama.get("response", ""), ollama.get("thinking", ""))
+                    checks += (bool(reasoning) == row.get("thinking_present"), bool(final_response) == row.get("final_response_present"))
                 if not all(checks):
                     diagnostics.append("actual-model.raw-row-mismatch")
                 catalog_case = catalog_cases.get(str(row.get("case_id")))
@@ -570,14 +656,16 @@ def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) 
         diagnostics.append("actual-model.evidence-classes-incomplete")
     if {row.get("risk_case") for row in matrix_rows if isinstance(row, dict)} < REQUIRED_RISKS:
         diagnostics.append("actual-model.evidence-risks-incomplete")
+    prefix = str(model.get("family", "qwen-class")).removesuffix("-class")
     eligible = {
         ("root" if path.parent == artifact_root else path.parent.relative_to(artifact_root).as_posix(), path.name)
-        for path in artifact_root.rglob("qwen*.json")
+        for path in artifact_root.rglob(f"{prefix}*.json")
+        if path.name not in {probe.get("raw_filename"), (model_show or {}).get("raw_filename")}
     }
     referenced = {
         (str(row.get("raw_group", "root")), str(row.get("raw_filename", "")))
         for row in evidence.get("failed_attempts", [])
-        if isinstance(row, dict) and str(row.get("raw_filename", "")).startswith("qwen")
+        if isinstance(row, dict) and str(row.get("raw_filename", "")).startswith(prefix)
     }
     for section in ("preflight", "matrix"):
         group = str(evidence.get(section, {}).get("raw_group", "root"))
