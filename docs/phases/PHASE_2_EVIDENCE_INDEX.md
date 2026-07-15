@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.8 are closed; work item 2.9 is active.
+Status: in_progress. Work items 2.1-2.9 are closed; work item 2.10 is ready and has not started.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -441,7 +441,7 @@ Status: closed after implementation, combined requirements/architecture/verifica
 
 ## Work Item 2.9: Weak-Model Role Kit And Safe Parallel Execution
 
-Status: worker implementation complete; transfer tasks 3.1-3.6 intentionally remain unchecked until independent task review, architecture review, final verification, and coordinator reconciliation.
+Status: closed after implementation, combined review, two hardening rounds, final targeted review, and coordinator reconciliation. Transfer tasks 3.1-3.6 are complete; work item 2.10 is ready but not started.
 
 ### Worker Implementation Evidence
 
@@ -465,7 +465,7 @@ Status: worker implementation complete; transfer tasks 3.1-3.6 intentionally rem
 - Focused: `python -m pytest tests/test_weak_model_kit.py -q` -> 27 passed.
 - Full serial after package-inventory correction: `python -m pytest -q` -> 340 passed in 89.11 seconds.
 - Python compilation passed. Roadmap/OpenSpec governance remained 0 errors and 0 warnings; strict OpenSpec validation passed 10/10. `git diff --check` passed with only non-blocking Windows line-ending notices.
-- Transfer tasks 3.1-3.6 remain unchecked and work item 2.9 remains active for independent gates.
+- The worker checkpoint intentionally left tasks 3.1-3.6 unchecked; later review and reconciliation evidence below closes them.
 
 ### Review Hardening Checkpoint
 
@@ -475,3 +475,6 @@ Status: worker implementation complete; transfer tasks 3.1-3.6 intentionally rem
 - Parallel plans normalize Windows/POSIX case/separators, require unique task/evidence/write boundaries, and distinguish safe launch from promotion. Promotion requires passed structured evidence for every declared focused check and all integration, traceability, review, and conflict checks.
 - All four CLIs use closed nested schemas, repository/CWD-independent defaults, stable usage/contract exits, redacted diagnostics, and no traceback. Role instructions now require the applicable canonical class/matrix IDs and exact operation-evidence fields without copying policy rules.
 - Focused plus packaged-flow/package regression: 79 passed. Final focused adversarial suite: 39 passed. Fresh full serial suite on the exact final tree: 352 passed in 87.52 seconds. No transfer task or work-item status changed at this hardening checkpoint.
+- Final bypass hardening `774ac99` requires a canonical source and exact pack-launch-evidence manifest binding, uses a closed structured safe-claim contract, rejects Windows drive/UNC/absolute parallel paths, requires one-to-one unique focused/combined results, and stops malformed nested CLI input at the schema boundary with redacted exit 3. Verification passed 45 focused, 105 regression, 358 full, compilation, governance 0/0, and strict OpenSpec 10/10.
+- Final targeted reviewer verdict: Approved for `f2afa24..774ac99`; 45 focused tests and `git diff --check` passed, all four remaining reproductions are closed, and no Phase 2.10 work was performed.
+- Coordinator reconciliation marks transfer tasks 3.1-3.6 complete, moving the transfer inventory from 8/33 to 14/33 while NIS remains 35/43. Work item 2.9 is `closed`; work item 2.10 is `ready` and intentionally not started.

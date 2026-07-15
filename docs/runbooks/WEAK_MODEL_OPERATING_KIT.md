@@ -1,6 +1,6 @@
 # Weak-Model Operating Kit And Safe Parallel Work
 
-Status: work item 2.9 worker implementation is complete and awaits independent review, architecture review, verification, and coordinator reconciliation. This is not actual Qwen/DeepSeek certification; that belongs to work items 2.10-2.11.
+Status: work item 2.9 is closed after combined review and two TDD hardening rounds. This is not actual Qwen/DeepSeek certification; work item 2.10 is ready but has not started, and actual model certification belongs to 2.11.
 
 ## Boundary
 

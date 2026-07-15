@@ -154,7 +154,7 @@ No package may claim zero production risk. Pilot evidence includes data/privacy,
 
 ### 11. Place the change before the real pilot without invalidating the package foundation
 
-Phase 2 work items 2.1-2.8 are closed with the versioned foundation through the reviewed packaged deterministic governed flow required by both active changes. Work item 2.9 is ready for the weak-model operating kit and safe parallel execution; later sequential work adds certification, release-candidate acceptance, and Phase 3 pilot entry.
+Phase 2 work items 2.1-2.9 are closed with the versioned foundation through the reviewed weak-model operating kit and safe parallel-execution contracts required by both active changes. Work item 2.10 is ready but has not started; later sequential work adds certification, release-candidate acceptance, and Phase 3 pilot entry.
 
 The existing transfer-readiness change may continue through foundation work that does not encode `thin/full` as permanent behavior. Before the packaged reference flow, role kit, certification, manifest, and release acceptance are finalized, they must consume the accepted outcome of this change or explicitly remain blocked.
 

@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.8 are closed. Work item 2.9 worker implementation adds the weak-model operating kit over the packaged governed flow and awaits independent gates.
+Status: work items 2.1-2.9 are closed. Work item 2.10 is ready but has not started.
 
 ## Contract Sources
 

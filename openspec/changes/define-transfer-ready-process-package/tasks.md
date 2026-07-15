@@ -14,12 +14,12 @@
 
 ## 3. Weak-Model Operating Kit
 
-- [ ] 3.1 Define the tool-agnostic task-launch contract, authority-labelled read-pack schema, operation evidence schema, and explicit blocked/missing-context behavior.
-- [ ] 3.2 Implement deterministic read-pack assembly from configured canonical sources, including source authority, stable paths or IDs, known traps, and unresolved inputs.
-- [ ] 3.3 Create bounded analyst, developer, QA, and Tech Lead class-aware role instructions with numbered steps, one-stage outputs, self-review, negative examples, and human stop points.
-- [ ] 3.4 Add thin adapter templates for Qwen/DeepSeek/GigaCode-class CLIs that package the selected instruction and read pack without owning process rules.
-- [ ] 3.5 Add deterministic checks that reject unsupported completion claims, AI-owned approvals or lifecycle transitions, missing evidence boundaries, and derived artifacts that lack canonical source references.
-- [ ] 3.6 Implement safe parallel-task planning and evidence contracts that permit concurrent AI work only for dependency-free, non-overlapping write scopes and require focused plus combined integration checks before promotion.
+- [x] 3.1 Define the tool-agnostic task-launch contract, authority-labelled read-pack schema, operation evidence schema, and explicit blocked/missing-context behavior.
+- [x] 3.2 Implement deterministic read-pack assembly from configured canonical sources, including source authority, stable paths or IDs, known traps, and unresolved inputs.
+- [x] 3.3 Create bounded analyst, developer, QA, and Tech Lead class-aware role instructions with numbered steps, one-stage outputs, self-review, negative examples, and human stop points.
+- [x] 3.4 Add thin adapter templates for Qwen/DeepSeek/GigaCode-class CLIs that package the selected instruction and read pack without owning process rules.
+- [x] 3.5 Add deterministic checks that reject unsupported completion claims, AI-owned approvals or lifecycle transitions, missing evidence boundaries, and derived artifacts that lack canonical source references.
+- [x] 3.6 Implement safe parallel-task planning and evidence contracts that permit concurrent AI work only for dependency-free, non-overlapping write scopes and require focused plus combined integration checks before promotion.
 
 ## 4. Certification Fixtures And Evidence
 

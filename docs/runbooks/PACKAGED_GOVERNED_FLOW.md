@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work item 2.8 is closed after combined review, TDD hardening, targeted re-review, and coordinator reconciliation. Work item 2.9 worker implementation is complete and awaits independent gates.
+Status: work items 2.8-2.9 are closed after combined review and TDD hardening. Work item 2.10 is ready but has not started.
 
 ## Boundary
 
