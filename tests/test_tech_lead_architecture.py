@@ -312,3 +312,41 @@ def test_malformed_resume_diagnostic_invalidates_surrounding_valid_sequence(
     assert expected_code in {item.code for item in result.diagnostics}
     assert result.control_state_mutated is False
     assert result.lifecycle_mutated is False
+
+
+SCENARIO_COVERAGE = {'test_checkpoint_must_match_canonical_policy_and_resolved_owner': [{'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Deterministic tech lead decision '
+                                                                                    'support',
+                                                                     'scenario': 'Configured control checkpoint '
+                                                                                 'exposes flow risks',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Deterministic tech lead decision '
+                                                                                    'support',
+                                                                     'scenario': 'Checkpoint identity is canonical',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'Deterministic tech lead decision '
+                                                                                    'support',
+                                                                     'scenario': 'Cadence is configuration rather '
+                                                                                 'than universal policy',
+                                                                     'source_kind': 'delta'}],
+ 'test_invalid_authoritative_control_record_never_returns_clear_exit_zero': [{'capability': 'tech-lead-workflow',
+                                                                              'requirement': 'Tech lead stop, hold, '
+                                                                                             'escalation, and resume '
+                                                                                             'control',
+                                                                              'scenario': 'Invalid control evidence '
+                                                                                          'fails closed',
+                                                                              'source_kind': 'delta'}],
+ 'test_locked_finding_fields_are_compiled_and_tampering_fails_closed': [{'capability': 'tech-lead-workflow',
+                                                                         'requirement': 'Deterministic tech lead '
+                                                                                        'decision support',
+                                                                         'scenario': 'Finding shape is policy-bound',
+                                                                         'source_kind': 'delta'}],
+ 'test_rfc3339_instants_are_utc_normalized_for_order_cutoff_and_provenance': [{'capability': 'tech-lead-workflow',
+                                                                               'requirement': 'Tech lead stop, hold, '
+                                                                                              'escalation, and resume '
+                                                                                              'control',
+                                                                               'scenario': 'Control timestamps use '
+                                                                                           'canonical UTC instants',
+                                                                               'source_kind': 'delta'}]}

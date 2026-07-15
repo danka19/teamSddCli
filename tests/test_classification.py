@@ -484,14 +484,13 @@ def test_target_template_examples_and_read_pack_offer_only_current_classes(capsy
     assert "thin" not in help_text and "full" not in help_text
 
 
-SCENARIO_COVERAGE = {'test_classifier_fails_closed_on_changed_class_and_route_policy_relationships': [{'capability': 'corporate-change-classification',
-                                                                                   'requirement': 'Canonical '
-                                                                                                  'corporate change '
-                                                                                                  'classification',
-                                                                                   'scenario': 'Unknown class is '
-                                                                                               'rejected',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'corporate-change-classification',
+SCENARIO_COVERAGE = {'test_audited_correction_recalculates_source_fact': [{'capability': 'corporate-change-classification',
+                                                       'requirement': 'Human-owned classification confirmation and '
+                                                                      'correction',
+                                                       'scenario': 'Erroneous source input is corrected and '
+                                                                   'recalculated',
+                                                       'source_kind': 'delta'}],
+ 'test_classifier_fails_closed_on_changed_class_and_route_policy_relationships': [{'capability': 'corporate-change-classification',
                                                                                    'requirement': 'Human-owned '
                                                                                                   'classification '
                                                                                                   'confirmation and '
@@ -500,22 +499,17 @@ SCENARIO_COVERAGE = {'test_classifier_fails_closed_on_changed_class_and_route_po
                                                                                                'only through policy '
                                                                                                'change',
                                                                                    'source_kind': 'delta'}],
- 'test_hotfix_eligible_change_may_use_reasoned_standard_major_route': [{'capability': 'corporate-change-classification',
-                                                                        'requirement': 'Accelerated hotfix route',
-                                                                        'scenario': 'Urgent harmful delay qualifies '
-                                                                                    'for hotfix assessment',
-                                                                        'source_kind': 'delta'},
-                                                                       {'capability': 'corporate-change-classification',
-                                                                        'requirement': 'Accelerated hotfix route',
-                                                                        'scenario': 'Convenience does not qualify as '
-                                                                                    'hotfix',
-                                                                        'source_kind': 'delta'},
-                                                                       {'capability': 'corporate-change-classification',
-                                                                        'requirement': 'Accelerated hotfix route',
-                                                                        'scenario': 'Hotfix preserves minimum safety '
-                                                                                    'evidence',
-                                                                        'source_kind': 'delta'}],
  'test_major_impact_hotfix_retains_major_and_hotfix_obligations': [{'capability': 'corporate-change-classification',
+                                                                    'requirement': 'Accelerated hotfix route',
+                                                                    'scenario': 'Urgent harmful delay qualifies for '
+                                                                                'hotfix assessment',
+                                                                    'source_kind': 'delta'},
+                                                                   {'capability': 'corporate-change-classification',
+                                                                    'requirement': 'Accelerated hotfix route',
+                                                                    'scenario': 'Hotfix preserves minimum safety '
+                                                                                'evidence',
+                                                                    'source_kind': 'delta'},
+                                                                   {'capability': 'corporate-change-classification',
                                                                     'requirement': 'Accelerated hotfix route',
                                                                     'scenario': 'Major-impact hotfix keeps risk '
                                                                                 'obligations visible',
@@ -527,61 +521,26 @@ SCENARIO_COVERAGE = {'test_classifier_fails_closed_on_changed_class_and_route_po
                                                                   {'capability': 'corporate-change-classification',
                                                                    'requirement': 'Conservative major triggers',
                                                                    'scenario': 'Multiple triggers remain visible',
+                                                                   'source_kind': 'delta'},
+                                                                  {'capability': 'corporate-change-classification',
+                                                                   'requirement': 'Human-owned classification '
+                                                                                  'confirmation and correction',
+                                                                   'scenario': 'Under-classification is rejected',
                                                                    'source_kind': 'delta'}],
  'test_minor_requires_every_condition_and_reports_sources': [{'capability': 'corporate-change-classification',
                                                               'requirement': 'Deterministic minor eligibility',
                                                               'scenario': 'Bounded low-impact change qualifies as '
                                                                           'minor',
                                                               'source_kind': 'delta'}],
- 'test_new_feature_metadata_cannot_hide_major_trigger_by_omitting_evidence': [{'capability': 'corporate-change-classification',
-                                                                               'requirement': 'Canonical corporate '
-                                                                                              'change classification',
-                                                                               'scenario': 'New package uses '
-                                                                                           'canonical classification',
-                                                                               'source_kind': 'delta'}],
  'test_pending_or_ai_confirmation_never_confirms_classification': [{'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Canonical corporate change '
-                                                                                   'classification',
-                                                                    'scenario': 'Work type remains separate',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
                                                                     'requirement': 'Human-owned classification '
                                                                                    'confirmation and correction',
                                                                     'scenario': 'AI recommendation is advisory',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Human-owned classification '
-                                                                                   'confirmation and correction',
-                                                                    'scenario': 'Under-classification is rejected',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Human-owned classification '
-                                                                                   'confirmation and correction',
-                                                                    'scenario': 'Erroneous source input is corrected '
-                                                                                'and recalculated',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Human-owned classification '
-                                                                                   'confirmation and correction',
-                                                                    'scenario': 'Stricter route may be selected',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Legacy classification migration',
-                                                                    'scenario': 'Legacy values map conservatively',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Legacy classification migration',
-                                                                    'scenario': 'Migration preview precedes mutation',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Legacy classification migration',
-                                                                    'scenario': 'Migration is idempotent',
-                                                                    'source_kind': 'delta'},
-                                                                   {'capability': 'corporate-change-classification',
-                                                                    'requirement': 'Legacy classification migration',
-                                                                    'scenario': 'Accepted archive history is '
-                                                                                'preserved',
                                                                     'source_kind': 'delta'}],
+ 'test_pseudo_hotfix_is_rejected_without_increasing_harm': [{'capability': 'corporate-change-classification',
+                                                             'requirement': 'Accelerated hotfix route',
+                                                             'scenario': 'Convenience does not qualify as hotfix',
+                                                             'source_kind': 'delta'}],
  'test_report_is_stable_and_includes_versions_reviewers_and_human_state': [{'capability': 'corporate-change-classification',
                                                                             'requirement': 'Explainable '
                                                                                            'classification report',
@@ -593,6 +552,14 @@ SCENARIO_COVERAGE = {'test_classifier_fails_closed_on_changed_class_and_route_po
                                                                             'scenario': 'Machine-readable result is '
                                                                                         'stable',
                                                                             'source_kind': 'delta'}],
+ 'test_stricter_route_is_allowed_but_authority_text_cannot_downgrade_major': [{'capability': 'corporate-change-classification',
+                                                                               'requirement': 'Human-owned '
+                                                                                              'classification '
+                                                                                              'confirmation and '
+                                                                                              'correction',
+                                                                               'scenario': 'Stricter route may be '
+                                                                                           'selected',
+                                                                               'source_kind': 'delta'}],
  'test_unknown_or_missing_minor_fact_blocks_minor': [{'capability': 'corporate-change-classification',
                                                       'requirement': 'Deterministic minor eligibility',
                                                       'scenario': 'Missing minor evidence blocks minor route',

@@ -310,3 +310,36 @@ def test_cli_rejects_invalid_as_of_with_stable_exit_3(
         assert cli(args) == 3
         payload = json.loads(capsys.readouterr().out)
         assert payload["diagnostics"] == [{"code": "tech-lead.as-of-invalid"}]
+
+
+SCENARIO_COVERAGE = {'test_non_green_source_reports_block_review_and_release_recommendation': [{'capability': 'tech-lead-workflow',
+                                                                            'requirement': 'Deterministic tech lead '
+                                                                                           'decision support',
+                                                                            'scenario': 'Role inbox waits for '
+                                                                                        'authoritative sources',
+                                                                            'source_kind': 'delta'},
+                                                                           {'capability': 'tech-lead-workflow',
+                                                                            'requirement': 'Tech lead classification '
+                                                                                           'control',
+                                                                            'scenario': 'Tech lead receives '
+                                                                                        'classification evidence',
+                                                                            'source_kind': 'delta'},
+                                                                           {'capability': 'tech-lead-workflow',
+                                                                            'requirement': 'Tech lead classification '
+                                                                                           'control',
+                                                                            'scenario': 'Tech lead cannot approve a '
+                                                                                        'lower class',
+                                                                            'source_kind': 'delta'},
+                                                                           {'capability': 'tech-lead-workflow',
+                                                                            'requirement': 'Tech lead readiness and '
+                                                                                           'architecture control',
+                                                                            'scenario': 'Readiness pack is bounded '
+                                                                                        'and source-linked',
+                                                                            'source_kind': 'delta'}],
+ 'test_resume_requires_condition_bound_evidence_for_every_targeted_record': [{'capability': 'tech-lead-workflow',
+                                                                              'requirement': 'Tech lead stop, hold, '
+                                                                                             'escalation, and resume '
+                                                                                             'control',
+                                                                              'scenario': 'Resume requires resolved '
+                                                                                          'evidence',
+                                                                              'source_kind': 'delta'}]}

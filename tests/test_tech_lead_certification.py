@@ -50,3 +50,15 @@ def test_synthetic_review_and_control_fixtures_satisfy_pinned_schemas() -> None:
         _yaml(FIXTURES / "ai-resume-invalid.yaml"), PROCESS
     )
     assert invalid[0]["code"] == "tech-lead.input-schema-invalid"
+
+
+SCENARIO_COVERAGE = {'test_role_instruction_is_bounded_source_linked_and_ai_advisory': [{'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'AI advisory boundary for tech '
+                                                                                    'lead automation',
+                                                                     'scenario': 'AI may draft analysis',
+                                                                     'source_kind': 'delta'},
+                                                                    {'capability': 'tech-lead-workflow',
+                                                                     'requirement': 'AI advisory boundary for tech '
+                                                                                    'lead automation',
+                                                                     'scenario': 'AI may not approve',
+                                                                     'source_kind': 'delta'}]}

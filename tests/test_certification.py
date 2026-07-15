@@ -294,6 +294,31 @@ def test_unrelated_existing_pytest_node_is_rejected_by_selector_binding(tmp_path
         build_coverage_report(ROOT, custom)
 
 
+def test_classification_migration_selectors_bind_only_to_exercising_nodes() -> None:
+    report = build_coverage_report(ROOT, PROCESS / "certification" / "coverage.yaml")
+    actual = {
+        row["scenario"]: row["evidence"]
+        for row in report["coverage"]
+        if row["capability"] == "corporate-change-classification"
+        and row["requirement"] == "Legacy classification migration"
+    }
+    assert actual == {
+        "Legacy values map conservatively": [
+            "pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix"
+        ],
+        "Migration preview precedes mutation": [
+            "pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix"
+        ],
+        "Migration is idempotent": [
+            "pytest:tests/test_classification_migration.py::test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup"
+        ],
+        "Accepted archive history is preserved": [
+            "pytest:tests/test_classification_migration.py::test_archived_or_accepted_history_is_reported_but_never_rewritten"
+        ],
+    }
+    assert not any("test_pending_or_ai_confirmation" in node for nodes in actual.values() for node in nodes)
+
+
 def test_bare_pytest_file_reference_is_forbidden(tmp_path: Path) -> None:
     coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
     manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")

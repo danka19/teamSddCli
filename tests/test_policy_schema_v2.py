@@ -566,3 +566,57 @@ def test_policy_integrity_rejects_missing_requires_before_cycle_detection(
 
     assert "policy.reference-missing" in diagnostic_codes(result)
     assert "policy.requirement-cycle" not in diagnostic_codes(result)
+
+
+SCENARIO_COVERAGE = {'test_change_v2_accepts_all_classes_and_preserves_decision_facts': [{'capability': 'change-package-foundation',
+                                                                      'requirement': 'Classification-aware '
+                                                                                     'placeholder validation',
+                                                                      'scenario': 'Target route examples validate '
+                                                                                  'structurally',
+                                                                      'source_kind': 'delta'},
+                                                                     {'capability': 'change-package-foundation',
+                                                                      'requirement': 'Versioned corporate '
+                                                                                     'classification metadata',
+                                                                      'scenario': 'Version 2 metadata is explicit',
+                                                                      'source_kind': 'delta'},
+                                                                     {'capability': 'change-package-foundation',
+                                                                      'requirement': 'Versioned corporate '
+                                                                                     'classification metadata',
+                                                                      'scenario': 'New writer does not emit legacy '
+                                                                                  'mode',
+                                                                      'source_kind': 'delta'},
+                                                                     {'capability': 'corporate-change-classification',
+                                                                      'requirement': 'Canonical corporate change '
+                                                                                     'classification',
+                                                                      'scenario': 'New package uses canonical '
+                                                                                  'classification',
+                                                                      'source_kind': 'delta'},
+                                                                     {'capability': 'corporate-change-classification',
+                                                                      'requirement': 'Canonical corporate change '
+                                                                                     'classification',
+                                                                      'scenario': 'Work type remains separate',
+                                                                      'source_kind': 'delta'}],
+ 'test_change_v2_rejects_unknown_class_and_legacy_mode': [{'capability': 'change-package-foundation',
+                                                           'requirement': 'Classification-aware placeholder '
+                                                                          'validation',
+                                                           'scenario': 'Real package rejects undecided classification',
+                                                           'source_kind': 'delta'},
+                                                          {'capability': 'corporate-change-classification',
+                                                           'requirement': 'Canonical corporate change classification',
+                                                           'scenario': 'Unknown class is rejected',
+                                                           'source_kind': 'delta'}],
+ 'test_policy_bundle_builds_immutable_provenance_snapshot': [{'capability': 'change-artifact-contracts',
+                                                              'requirement': 'Artifact matrix baseline status',
+                                                              'scenario': 'Future corrections use accepted-spec '
+                                                                          'workflow',
+                                                              'source_kind': 'delta'},
+                                                             {'capability': 'repo-topology-config',
+                                                              'requirement': 'Corporate governance policy '
+                                                                             'configuration',
+                                                              'scenario': 'Config points to canonical policy versions',
+                                                              'source_kind': 'delta'}],
+ 'test_policy_document_schema_requires_kind_specific_foundation_catalogs': [{'capability': 'change-artifact-contracts',
+                                                                             'requirement': 'Artifact matrix baseline '
+                                                                                            'status',
+                                                                             'scenario': 'Target matrix is versioned',
+                                                                             'source_kind': 'delta'}]}

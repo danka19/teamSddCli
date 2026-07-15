@@ -86,6 +86,21 @@ future_work:
   requirement: Corporate pilot entry and acceptance
   work_item: 2.13/Phase 3
   reason: pilot work is outside this item
+- capability: change-artifact-contracts
+  requirement: Future journey and screen artifacts
+  work_item: Phase 4
+  reason: conditional journey and screen artifacts are an explicitly planned later
+    layer, not Phase 2.10 product behavior
+- capability: traceability-contract
+  requirement: Future journey and screen traceability
+  work_item: Phase 4
+  reason: journey and screen traceability is an explicitly planned later layer and
+    must not be fabricated by fixture coverage
+- capability: repo-topology-config
+  requirement: Corporate configuration remains external to reusable source
+  work_item: Phase 3
+  reason: real corporate adaptation values and upstream corrections require Phase 3
+    evidence rather than synthetic fixture claims
 delta_targets:
 - change: adopt-nis-corporate-process-governance
   kind: MODIFIED
@@ -142,6 +157,12 @@ marker_sources:
 - tests/test_corporate_flow.py
 - tests/test_feedback_policy.py
 - tests/test_lifecycle_gates.py
+- tests/test_owner_governance.py
 - tests/test_packaged_flow.py
+- tests/test_packaged_flow_hardening.py
+- tests/test_policy_schema_v2.py
+- tests/test_tech_lead_architecture.py
+- tests/test_tech_lead_certification.py
+- tests/test_tech_lead_hardening.py
 - tests/test_tech_lead_review.py
 - tests/test_validate_process_config.py

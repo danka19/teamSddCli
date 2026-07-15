@@ -25,25 +25,25 @@ coverage:
   requirement: Artifact matrix baseline status
   scenario: Existing implementation evidence remains recorded
   evidence:
-  - pytest:tests/test_artifact_gates.py::test_ai_completion_text_is_never_implementation_evidence
+  - pytest:tests/test_artifact_gates.py::test_required_artifact_must_be_substantive_current_and_source_linked
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
   scenario: Target matrix is versioned
   evidence:
-  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_policy_schema_v2.py::test_policy_document_schema_requires_kind_specific_foundation_catalogs
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
   scenario: Deferred integrations are explicit
   evidence:
-  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_packaged_flow.py::test_manual_fallback_covers_unavailable_integrations_without_ai
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
   scenario: Future corrections use accepted-spec workflow
   evidence:
-  - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
+  - pytest:tests/test_policy_schema_v2.py::test_policy_bundle_builds_immutable_provenance_snapshot
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact waiver eligibility
@@ -217,13 +217,13 @@ coverage:
   requirement: Delivered state is external to archive state
   scenario: Archived spec may precede or follow delivery
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up
+  - pytest:tests/test_lifecycle_gates.py::test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive
 - source_kind: delta
   capability: change-lifecycle
   requirement: Delivered state is external to archive state
   scenario: Tracker transition uses mapping
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive
+  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Derived approval and verification display
@@ -283,13 +283,13 @@ coverage:
   requirement: Deterministic transition gates
   scenario: Draft cannot skip to approved
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_lifecycle_gates.py::test_other_skipped_backward_same_and_unknown_transitions_are_rejected
 - source_kind: delta
   capability: change-lifecycle
   requirement: Deterministic transition gates
   scenario: Draft cannot skip to archive readiness
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_dor_start_and_archive_require_transition_specific_human_approval
+  - pytest:tests/test_lifecycle_gates.py::test_other_skipped_backward_same_and_unknown_transitions_are_rejected
 - source_kind: delta
   capability: change-lifecycle
   requirement: Deterministic transition gates
@@ -301,7 +301,7 @@ coverage:
   requirement: Deterministic transition gates
   scenario: Lifecycle expiry remains due after rework
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_artifact_gates.py::test_lifecycle_expiry_remains_due_after_canonical_rework
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Human approval ownership
@@ -323,31 +323,31 @@ coverage:
   requirement: Lifecycle states
   scenario: Minor route remains compact
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_lifecycle_gates.py::test_class_routes_share_accountable_states_but_expand_applicable_gate_evidence
 - source_kind: delta
   capability: change-lifecycle
   requirement: Lifecycle states
   scenario: Major route uses expanded gates
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_lifecycle_gates.py::test_class_routes_share_accountable_states_but_expand_applicable_gate_evidence
 - source_kind: delta
   capability: change-lifecycle
   requirement: Lifecycle states
   scenario: Hotfix accelerates sequence but not accountability
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up
+  - pytest:tests/test_lifecycle_gates.py::test_class_routes_share_accountable_states_but_expand_applicable_gate_evidence
 - source_kind: delta
   capability: change-lifecycle
   requirement: MVP boundary for lifecycle automation
   scenario: Core process is AI-disabled and integration-independent
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_packaged_flow.py::test_manual_fallback_covers_unavailable_integrations_without_ai
 - source_kind: delta
   capability: change-lifecycle
   requirement: MVP boundary for lifecycle automation
   scenario: Deferred integration is not fabricated
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship
+  - pytest:tests/test_packaged_flow.py::test_manual_fallback_covers_unavailable_integrations_without_ai
 - source_kind: delta
   capability: change-lifecycle
   requirement: Named corporate business gates
@@ -371,7 +371,7 @@ coverage:
   requirement: Bounded legacy compatibility
   scenario: Legacy package receives deprecation result
   evidence:
-  - pytest:tests/test_classification_migration.py::test_conflict_and_ambiguous_legacy_metadata_are_refused
+  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
 - source_kind: delta
   capability: change-package-foundation
   requirement: Bounded legacy compatibility
@@ -383,7 +383,7 @@ coverage:
   requirement: Bounded legacy compatibility
   scenario: Compatibility end is versioned
   evidence:
-  - pytest:tests/test_classification_migration.py::test_conflict_and_ambiguous_legacy_metadata_are_refused
+  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Change package template
@@ -399,13 +399,13 @@ coverage:
   requirement: Classification-aware placeholder validation
   scenario: Target route examples validate structurally
   evidence:
-  - pytest:tests/test_classification_migration.py::test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: delta
   capability: change-package-foundation
   requirement: Classification-aware placeholder validation
   scenario: Real package rejects undecided classification
   evidence:
-  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_rejects_unknown_class_and_legacy_mode
 - source_kind: delta
   capability: change-package-foundation
   requirement: Deterministic classification migration command
@@ -499,13 +499,13 @@ coverage:
   requirement: Versioned corporate classification metadata
   scenario: Version 2 metadata is explicit
   evidence:
-  - pytest:tests/test_classification_migration.py::test_conflict_and_ambiguous_legacy_metadata_are_refused
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: delta
   capability: change-package-foundation
   requirement: Versioned corporate classification metadata
   scenario: New writer does not emit legacy mode
   evidence:
-  - pytest:tests/test_classification_migration.py::test_conflict_and_ambiguous_legacy_metadata_are_refused
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Confluence is generated publication
@@ -669,19 +669,19 @@ coverage:
   requirement: Accelerated hotfix route
   scenario: Urgent harmful delay qualifies for hotfix assessment
   evidence:
-  - pytest:tests/test_classification.py::test_hotfix_eligible_change_may_use_reasoned_standard_major_route
+  - pytest:tests/test_classification.py::test_major_impact_hotfix_retains_major_and_hotfix_obligations
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Accelerated hotfix route
   scenario: Convenience does not qualify as hotfix
   evidence:
-  - pytest:tests/test_classification.py::test_hotfix_eligible_change_may_use_reasoned_standard_major_route
+  - pytest:tests/test_classification.py::test_pseudo_hotfix_is_rejected_without_increasing_harm
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Accelerated hotfix route
   scenario: Hotfix preserves minimum safety evidence
   evidence:
-  - pytest:tests/test_classification.py::test_hotfix_eligible_change_may_use_reasoned_standard_major_route
+  - pytest:tests/test_classification.py::test_major_impact_hotfix_retains_major_and_hotfix_obligations
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Accelerated hotfix route
@@ -693,19 +693,19 @@ coverage:
   requirement: Canonical corporate change classification
   scenario: New package uses canonical classification
   evidence:
-  - pytest:tests/test_classification.py::test_new_feature_metadata_cannot_hide_major_trigger_by_omitting_evidence
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Canonical corporate change classification
   scenario: Work type remains separate
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Canonical corporate change classification
   scenario: Unknown class is rejected
   evidence:
-  - pytest:tests/test_classification.py::test_classifier_fails_closed_on_changed_class_and_route_policy_relationships
+  - pytest:tests/test_policy_schema_v2.py::test_change_v2_rejects_unknown_class_and_legacy_mode
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Conservative major triggers
@@ -753,19 +753,19 @@ coverage:
   requirement: Human-owned classification confirmation and correction
   scenario: Under-classification is rejected
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification.py::test_major_returns_every_trigger_and_rejects_minor_downgrade
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Human-owned classification confirmation and correction
   scenario: Erroneous source input is corrected and recalculated
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification.py::test_audited_correction_recalculates_source_fact
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Human-owned classification confirmation and correction
   scenario: Stricter route may be selected
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification.py::test_stricter_route_is_allowed_but_authority_text_cannot_downgrade_major
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Human-owned classification confirmation and correction
@@ -777,25 +777,25 @@ coverage:
   requirement: Legacy classification migration
   scenario: Legacy values map conservatively
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Legacy classification migration
   scenario: Migration preview precedes mutation
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification_migration.py::test_check_is_non_mutating_stable_and_never_proposes_hotfix
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Legacy classification migration
   scenario: Migration is idempotent
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification_migration.py::test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup
 - source_kind: delta
   capability: corporate-change-classification
   requirement: Legacy classification migration
   scenario: Accepted archive history is preserved
   evidence:
-  - pytest:tests/test_classification.py::test_pending_or_ai_confirmation_never_confirms_classification
+  - pytest:tests/test_classification_migration.py::test_archived_or_accepted_history_is_reported_but_never_rewritten
 - source_kind: delta
   capability: corporate-flow-controls
   requirement: Corporate system-of-record links
@@ -843,7 +843,7 @@ coverage:
   requirement: Human decision and AI execution evidence
   scenario: AI run evidence is reproducible
   evidence:
-  - pytest:tests/test_corporate_flow.py::test_release_substitute_decision_is_active_scoped_linked_and_human_authorized
+  - pytest:tests/test_corporate_flow.py::test_ai_run_and_role_walkthrough_require_reproducible_scenario_evidence
 - source_kind: delta
   capability: corporate-flow-controls
   requirement: Monitored-pilot safety boundary
@@ -957,13 +957,13 @@ coverage:
   requirement: Role-understanding verification
   scenario: Role walkthrough tests real decisions
   evidence:
-  - pytest:tests/test_corporate_flow.py::test_release_chain_requires_real_or_approved_substitute_artifact_evidence
+  - pytest:tests/test_corporate_flow.py::test_ai_run_and_role_walkthrough_require_reproducible_scenario_evidence
 - source_kind: delta
   capability: corporate-flow-controls
   requirement: Role-understanding verification
   scenario: Checklist completion alone is insufficient
   evidence:
-  - pytest:tests/test_corporate_flow.py::test_role_map_wip_and_pilot_selection_fail_closed
+  - pytest:tests/test_corporate_flow.py::test_ai_run_and_role_walkthrough_require_reproducible_scenario_evidence
 - source_kind: delta
   capability: corporate-flow-controls
   requirement: Stop, hold, escalation, resume, and deviation records
@@ -1301,25 +1301,25 @@ coverage:
   requirement: Corporate configuration remains external to reusable source
   scenario: Corporate adaptation supplies local values
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_corporate_policy_value_is_not_guessed
+  - pytest:tests/test_validate_process_config.py::test_valid_central_mode_reports_exact_compatibility_json
 - source_kind: delta
   capability: repo-topology-config
   requirement: Corporate configuration remains external to reusable source
   scenario: Reusable correction returns upstream
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_corporate_policy_value_is_not_guessed
+  - pytest:tests/test_policy_schema_v2.py::test_policy_bundle_builds_immutable_provenance_snapshot
 - source_kind: delta
   capability: repo-topology-config
   requirement: Corporate governance policy configuration
   scenario: Config points to canonical policy versions
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_corporate_policy_value_is_not_guessed
+  - pytest:tests/test_policy_schema_v2.py::test_policy_bundle_builds_immutable_provenance_snapshot
 - source_kind: delta
   capability: repo-topology-config
   requirement: Corporate governance policy configuration
   scenario: Project adapter cannot weaken canonical minimums silently
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_invalid_owner_project_and_adapter_relations_are_reported
+  - pytest:tests/test_validate_process_config.py::test_policy_weakening_has_human_json_parity_and_provenance
 - source_kind: delta
   capability: repo-topology-config
   requirement: Corporate governance policy configuration
@@ -1331,13 +1331,13 @@ coverage:
   requirement: External workflow mapping
   scenario: Mapping distinguishes archive and delivered
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_valid_central_mode_reports_exact_compatibility_json
+  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
 - source_kind: delta
   capability: repo-topology-config
   requirement: External workflow mapping
   scenario: Unmapped external status blocks automation
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_valid_central_mode_reports_exact_compatibility_json
+  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
 - source_kind: accepted
   capability: repo-topology-config
   requirement: First supported topology
@@ -1593,31 +1593,31 @@ coverage:
   requirement: Tech lead ownership registry
   scenario: Tech lead mapping is resolvable
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_registry_and_unsafe_reference_are_stable
+  - pytest:tests/test_owner_governance.py::test_valid_owner_governance_resolves_bounded_immutable_coverage
 - source_kind: delta
   capability: repo-topology-config
   requirement: Tech lead ownership registry
   scenario: Conflicting authority is visible
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_registry_and_unsafe_reference_are_stable
+  - pytest:tests/test_owner_governance.py::test_missing_and_conflicting_primary_fail_closed
 - source_kind: delta
   capability: repo-topology-config
   requirement: Tech lead ownership registry
   scenario: Other role authority is preserved
   evidence:
-  - pytest:tests/test_validate_process_config.py::test_missing_registry_and_unsafe_reference_are_stable
+  - pytest:tests/test_owner_governance.py::test_tech_lead_cannot_claim_independent_role_authority
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: AI advisory boundary for tech lead automation
   scenario: AI may draft analysis
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_certification.py::test_role_instruction_is_bounded_source_linked_and_ai_advisory
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: AI advisory boundary for tech lead automation
   scenario: AI may not approve
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_certification.py::test_role_instruction_is_bounded_source_linked_and_ai_advisory
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Deterministic tech lead decision support
@@ -1629,43 +1629,43 @@ coverage:
   requirement: Deterministic tech lead decision support
   scenario: Role inbox waits for authoritative sources
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_duplicate_ids_and_out_of_order_sources
+  - pytest:tests/test_tech_lead_hardening.py::test_non_green_source_reports_block_review_and_release_recommendation
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Deterministic tech lead decision support
   scenario: Configured control checkpoint exposes flow risks
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_thin_review_and_control_clis_are_deterministic_and_non_mutating
+  - pytest:tests/test_tech_lead_architecture.py::test_checkpoint_must_match_canonical_policy_and_resolved_owner
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Deterministic tech lead decision support
   scenario: Checkpoint identity is canonical
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_thin_review_and_control_clis_are_deterministic_and_non_mutating
+  - pytest:tests/test_tech_lead_architecture.py::test_checkpoint_must_match_canonical_policy_and_resolved_owner
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Deterministic tech lead decision support
   scenario: Finding shape is policy-bound
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_policy_compiles_to_immutable_source_bound_contract
+  - pytest:tests/test_tech_lead_architecture.py::test_locked_finding_fields_are_compiled_and_tampering_fails_closed
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Deterministic tech lead decision support
   scenario: Cadence is configuration rather than universal policy
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_policy_compiles_to_immutable_source_bound_contract
+  - pytest:tests/test_tech_lead_architecture.py::test_checkpoint_must_match_canonical_policy_and_resolved_owner
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead classification control
   scenario: Tech lead receives classification evidence
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_duplicate_ids_and_out_of_order_sources
+  - pytest:tests/test_tech_lead_hardening.py::test_non_green_source_reports_block_review_and_release_recommendation
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead classification control
   scenario: Tech lead cannot approve a lower class
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_duplicate_ids_and_out_of_order_sources
+  - pytest:tests/test_tech_lead_hardening.py::test_non_green_source_reports_block_review_and_release_recommendation
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead completion and release recommendation
@@ -1677,7 +1677,7 @@ coverage:
   requirement: Tech lead completion and release recommendation
   scenario: Recommendation is not final approval
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_resume_rejects_mixed_snapshot_ai_approval_and_incomplete_evidence
+  - pytest:tests/test_tech_lead_review.py::test_review_exposes_all_views_and_never_mutates_or_substitutes_approvals
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead governance responsibilities
@@ -1689,19 +1689,19 @@ coverage:
   requirement: Tech lead governance responsibilities
   scenario: Business ownership remains separate
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_policy_compiles_to_immutable_source_bound_contract
+  - pytest:tests/test_tech_lead_review.py::test_review_exposes_all_views_and_never_mutates_or_substitutes_approvals
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead readiness and architecture control
   scenario: Readiness pack is bounded and source-linked
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_policy_compiles_to_immutable_source_bound_contract
+  - pytest:tests/test_tech_lead_hardening.py::test_non_green_source_reports_block_review_and_release_recommendation
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead readiness and architecture control
   scenario: Architecture decision is explicit
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_control_records_reject_duplicate_ids_and_out_of_order_sources
+  - pytest:tests/test_tech_lead_review.py::test_mixed_snapshot_missing_context_scope_drift_and_expiry_fail_closed
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead stop, hold, escalation, and resume control
@@ -1713,19 +1713,19 @@ coverage:
   requirement: Tech lead stop, hold, escalation, and resume control
   scenario: Invalid control evidence fails closed
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_architecture.py::test_invalid_authoritative_control_record_never_returns_clear_exit_zero
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead stop, hold, escalation, and resume control
   scenario: Control timestamps use canonical UTC instants
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_architecture.py::test_rfc3339_instants_are_utc_normalized_for_order_cutoff_and_provenance
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead stop, hold, escalation, and resume control
   scenario: Resume requires resolved evidence
   evidence:
-  - pytest:tests/test_tech_lead_review.py::test_stop_persists_and_ai_or_incomplete_resume_cannot_clear_it
+  - pytest:tests/test_tech_lead_hardening.py::test_resume_requires_condition_bound_evidence_for_every_targeted_record
 - source_kind: delta
   capability: tech-lead-workflow
   requirement: Tech lead stop, hold, escalation, and resume control
@@ -1747,25 +1747,25 @@ coverage:
   requirement: Archive-readiness traceability
   scenario: Major package archive checks expanded evidence
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
+  - pytest:tests/test_packaged_flow_hardening.py::test_archive_traceability_fails_closed_for_class_obligations_and_pending_links
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
   scenario: Minor package accepts practical evidence
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
+  - pytest:tests/test_packaged_flow_hardening.py::test_minor_archive_traceability_accepts_practical_class_evidence
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
   scenario: Hotfix package links reconciliation
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_allows_conditional_links_pending_before_archive
+  - pytest:tests/test_packaged_flow_hardening.py::test_archive_traceability_fails_closed_for_class_obligations_and_pending_links
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
   scenario: Verification evidence remains source-linked
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
+  - pytest:tests/test_packaged_flow_hardening.py::test_traceability_derived_view_keeps_ids_versions_and_status_without_rules
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
@@ -1777,37 +1777,37 @@ coverage:
   requirement: Archive-readiness traceability
   scenario: Pending downstream link blocks archive readiness
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_allows_conditional_links_pending_before_archive
+  - pytest:tests/test_packaged_flow_hardening.py::test_archive_traceability_fails_closed_for_class_obligations_and_pending_links
 - source_kind: delta
   capability: traceability-contract
   requirement: Corporate governance traceability
   scenario: Classification decision is source-linked
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
+  - pytest:tests/test_corporate_flow.py::test_valid_governance_bundle_is_check_only_and_may_continue
 - source_kind: delta
   capability: traceability-contract
   requirement: Corporate governance traceability
   scenario: Gate result links evidence and owner
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_allows_conditional_links_pending_before_archive
+  - pytest:tests/test_corporate_flow.py::test_valid_governance_bundle_is_check_only_and_may_continue
 - source_kind: delta
   capability: traceability-contract
   requirement: Corporate governance traceability
   scenario: Stop and resume history remains visible
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
+  - pytest:tests/test_corporate_flow.py::test_existing_control_ledger_is_authoritative_and_exception_cannot_clear_hold
 - source_kind: delta
   capability: traceability-contract
   requirement: Corporate governance traceability
   scenario: Release package links canonical scope
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
+  - pytest:tests/test_corporate_flow.py::test_release_chain_requires_real_or_approved_substitute_artifact_evidence
 - source_kind: delta
   capability: traceability-contract
   requirement: Corporate governance traceability
   scenario: Failed attempts remain traceable after retry
   evidence:
-  - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
+  - pytest:tests/test_corporate_flow.py::test_failed_retry_cannot_erase_or_forge_predecessor
 - source_kind: delta
   capability: traceability-contract
   requirement: Future journey and screen traceability

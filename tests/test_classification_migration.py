@@ -327,44 +327,41 @@ SCENARIO_COVERAGE = {'test_apply_requires_matching_valid_plan_and_preserves_meta
                                                                         'requirement': 'Deterministic classification '
                                                                                        'migration command',
                                                                         'scenario': 'Archived history is excluded',
+                                                                        'source_kind': 'delta'},
+                                                                       {'capability': 'corporate-change-classification',
+                                                                        'requirement': 'Legacy classification '
+                                                                                       'migration',
+                                                                        'scenario': 'Accepted archive history is '
+                                                                                    'preserved',
                                                                         'source_kind': 'delta'}],
  'test_check_is_non_mutating_stable_and_never_proposes_hotfix': [{'capability': 'change-package-foundation',
-                                                                  'requirement': 'Classification-aware placeholder '
-                                                                                 'validation',
-                                                                  'scenario': 'Real package rejects undecided '
-                                                                              'classification',
+                                                                  'requirement': 'Bounded legacy compatibility',
+                                                                  'scenario': 'Legacy package receives deprecation '
+                                                                              'result',
+                                                                  'source_kind': 'delta'},
+                                                                 {'capability': 'change-package-foundation',
+                                                                  'requirement': 'Bounded legacy compatibility',
+                                                                  'scenario': 'Compatibility end is versioned',
                                                                   'source_kind': 'delta'},
                                                                  {'capability': 'change-package-foundation',
                                                                   'requirement': 'Deterministic classification '
                                                                                  'migration command',
                                                                   'scenario': 'Check mode is non-mutating',
+                                                                  'source_kind': 'delta'},
+                                                                 {'capability': 'corporate-change-classification',
+                                                                  'requirement': 'Legacy classification migration',
+                                                                  'scenario': 'Legacy values map conservatively',
+                                                                  'source_kind': 'delta'},
+                                                                 {'capability': 'corporate-change-classification',
+                                                                  'requirement': 'Legacy classification migration',
+                                                                  'scenario': 'Migration preview precedes mutation',
                                                                   'source_kind': 'delta'}],
- 'test_check_refuses_arbitrary_or_invalid_target_documents_without_mutation': [{'capability': 'change-package-foundation',
-                                                                                'requirement': 'Classification-aware '
-                                                                                               'placeholder '
-                                                                                               'validation',
-                                                                                'scenario': 'Target route examples '
-                                                                                            'validate structurally',
-                                                                                'source_kind': 'delta'}],
  'test_conflict_and_ambiguous_legacy_metadata_are_refused': [{'capability': 'change-package-foundation',
                                                               'requirement': 'Bounded legacy compatibility',
-                                                              'scenario': 'Legacy package receives deprecation result',
-                                                              'source_kind': 'delta'},
-                                                             {'capability': 'change-package-foundation',
-                                                              'requirement': 'Bounded legacy compatibility',
                                                               'scenario': 'Conflicting metadata is rejected',
-                                                              'source_kind': 'delta'},
-                                                             {'capability': 'change-package-foundation',
-                                                              'requirement': 'Bounded legacy compatibility',
-                                                              'scenario': 'Compatibility end is versioned',
-                                                              'source_kind': 'delta'},
-                                                             {'capability': 'change-package-foundation',
-                                                              'requirement': 'Versioned corporate classification '
-                                                                             'metadata',
-                                                              'scenario': 'Version 2 metadata is explicit',
-                                                              'source_kind': 'delta'},
-                                                             {'capability': 'change-package-foundation',
-                                                              'requirement': 'Versioned corporate classification '
-                                                                             'metadata',
-                                                              'scenario': 'New writer does not emit legacy mode',
-                                                              'source_kind': 'delta'}]}
+                                                              'source_kind': 'delta'}],
+ 'test_second_apply_is_idempotent_and_does_not_rewrite_or_add_backup': [{'capability': 'corporate-change-classification',
+                                                                         'requirement': 'Legacy classification '
+                                                                                        'migration',
+                                                                         'scenario': 'Migration is idempotent',
+                                                                         'source_kind': 'delta'}]}

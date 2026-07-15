@@ -250,3 +250,50 @@ def test_traceability_derived_view_keeps_ids_versions_and_status_without_rules()
     assert view["record_ids"] == ["trace-sample-001"]
     assert all(row["record_id"] and row["policy_version"] == "1.0.0" for row in view["evidence_links"])
     assert "rules" not in view
+
+
+def test_minor_archive_traceability_accepts_practical_class_evidence() -> None:
+    minor = _traceability("minor")
+    minor["links"][0]["evidence_links"] = [
+        row for row in minor["links"][0]["evidence_links"]
+        if row["kind"] not in {"automation", "architecture"}
+    ]
+
+    view = validate_traceability(minor)
+
+    assert view["status"] == "valid"
+    assert view["classification"] == "minor"
+
+
+SCENARIO_COVERAGE = {'test_archive_traceability_fails_closed_for_class_obligations_and_pending_links': [{'capability': 'traceability-contract',
+                                                                                     'requirement': 'Archive-readiness '
+                                                                                                    'traceability',
+                                                                                     'scenario': 'Major package '
+                                                                                                 'archive checks '
+                                                                                                 'expanded evidence',
+                                                                                     'source_kind': 'delta'},
+                                                                                    {'capability': 'traceability-contract',
+                                                                                     'requirement': 'Archive-readiness '
+                                                                                                    'traceability',
+                                                                                     'scenario': 'Hotfix package '
+                                                                                                 'links '
+                                                                                                 'reconciliation',
+                                                                                     'source_kind': 'delta'},
+                                                                                    {'capability': 'traceability-contract',
+                                                                                     'requirement': 'Archive-readiness '
+                                                                                                    'traceability',
+                                                                                     'scenario': 'Pending downstream '
+                                                                                                 'link blocks archive '
+                                                                                                 'readiness',
+                                                                                     'source_kind': 'delta'}],
+ 'test_minor_archive_traceability_accepts_practical_class_evidence': [{'capability': 'traceability-contract',
+                                                                       'requirement': 'Archive-readiness traceability',
+                                                                       'scenario': 'Minor package accepts practical '
+                                                                                   'evidence',
+                                                                       'source_kind': 'delta'}],
+ 'test_traceability_derived_view_keeps_ids_versions_and_status_without_rules': [{'capability': 'traceability-contract',
+                                                                                 'requirement': 'Archive-readiness '
+                                                                                                'traceability',
+                                                                                 'scenario': 'Verification evidence '
+                                                                                             'remains source-linked',
+                                                                                 'source_kind': 'delta'}]}

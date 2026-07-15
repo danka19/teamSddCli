@@ -563,12 +563,7 @@ def test_evidence_valid_through_is_inclusive_and_stale_on_the_next_day() -> None
         assert (expected_code in codes) if expected_code else not codes
 
 
-SCENARIO_COVERAGE = {'test_ai_completion_text_is_never_implementation_evidence': [{'capability': 'change-artifact-contracts',
-                                                               'requirement': 'Artifact matrix baseline status',
-                                                               'scenario': 'Existing implementation evidence remains '
-                                                                           'recorded',
-                                                               'source_kind': 'delta'},
-                                                              {'capability': 'readiness-completion-gates',
+SCENARIO_COVERAGE = {'test_ai_completion_text_is_never_implementation_evidence': [{'capability': 'readiness-completion-gates',
                                                                'requirement': 'Common Definition of Ready',
                                                                'scenario': 'Common readiness evidence is complete',
                                                                'source_kind': 'delta'},
@@ -633,47 +628,12 @@ SCENARIO_COVERAGE = {'test_ai_completion_text_is_never_implementation_evidence':
                                                                'requirement': 'Archive readiness and archive approval',
                                                                'scenario': 'Archive readiness checks canonical '
                                                                            'completion',
+                                                               'source_kind': 'delta'},
+                                                              {'capability': 'change-lifecycle',
+                                                               'requirement': 'Deterministic transition gates',
+                                                               'scenario': 'Lifecycle expiry remains due after rework',
                                                                'source_kind': 'delta'}],
  'test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations': [{'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Artifact matrix '
-                                                                                                  'baseline status',
-                                                                                   'scenario': 'Target matrix is '
-                                                                                               'versioned',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Artifact matrix '
-                                                                                                  'baseline status',
-                                                                                   'scenario': 'Deferred integrations '
-                                                                                               'are explicit',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Artifact matrix '
-                                                                                                  'baseline status',
-                                                                                   'scenario': 'Future corrections '
-                                                                                               'use accepted-spec '
-                                                                                               'workflow',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Future journey and '
-                                                                                                  'screen artifacts',
-                                                                                   'scenario': 'UI major package may '
-                                                                                               'require screen '
-                                                                                               'catalog',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Future journey and '
-                                                                                                  'screen artifacts',
-                                                                                   'scenario': 'Non-UI minor does not '
-                                                                                               'require screen '
-                                                                                               'catalog',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
-                                                                                   'requirement': 'Future journey and '
-                                                                                                  'screen artifacts',
-                                                                                   'scenario': 'Hotfix records '
-                                                                                               'deferred UI evidence',
-                                                                                   'source_kind': 'delta'},
-                                                                                  {'capability': 'change-artifact-contracts',
                                                                                    'requirement': 'Hotfix change '
                                                                                                   'artifact contract',
                                                                                    'scenario': 'Hotfix entry package '
@@ -857,4 +817,10 @@ SCENARIO_COVERAGE = {'test_ai_completion_text_is_never_implementation_evidence':
                                                                                           'contract',
                                                                            'scenario': 'Minor change has minimum '
                                                                                        'reviewable evidence',
+                                                                           'source_kind': 'delta'},
+                                                                          {'capability': 'change-artifact-contracts',
+                                                                           'requirement': 'Artifact matrix baseline '
+                                                                                          'status',
+                                                                           'scenario': 'Existing implementation '
+                                                                                       'evidence remains recorded',
                                                                            'source_kind': 'delta'}]}

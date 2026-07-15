@@ -347,7 +347,6 @@ def test_release_substitute_decision_is_active_scoped_linked_and_human_authorize
     assert "release.artifact-substitute-decision-invalid" in {
         row["code"] for row in _evaluate(bundle).as_dict()["findings"]
     }
-
     decision = _record("artifact-substitute-1", "human-decision", {
         "decision_type": "artifact-repository-substitute",
         "source_evidence": ["ev-artifact"], "decision": "approved",
@@ -373,6 +372,19 @@ def test_release_substitute_decision_is_active_scoped_linked_and_human_authorize
     assert "release.artifact-substitute-decision-invalid" in {
         row["code"] for row in _evaluate(bundle).as_dict()["findings"]
     }
+
+
+def test_ai_run_and_role_walkthrough_require_reproducible_scenario_evidence() -> None:
+    bundle = valid_bundle()
+    ai = next(row for row in bundle["records"] if row["record_type"] == "ai-execution")
+    walkthrough = next(row for row in bundle["records"] if row["record_type"] == "role-walkthrough")
+    ai["payload"].pop("model_runtime")
+    walkthrough["payload"]["scenario_evidence"] = []
+
+    codes = {row["code"] for row in _evaluate(bundle).as_dict()["findings"]}
+
+    assert "flow.ai-evidence-incomplete" in codes
+    assert "roles.walkthrough-evidence-missing" in codes
 
 
 def test_role_map_wip_and_pilot_selection_fail_closed() -> None:
@@ -613,7 +625,25 @@ def test_cli_rejects_and_redacts_inline_secret_material(tmp_path: Path, capsys) 
     assert "AKIAABCDEFGHIJKLMNOP" not in output
 
 
-SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_semantically_bound': [{'capability': 'corporate-flow-controls',
+SCENARIO_COVERAGE = {'test_ai_run_and_role_walkthrough_require_reproducible_scenario_evidence': [{'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Human decision and AI '
+                                                                                             'execution evidence',
+                                                                              'scenario': 'AI run evidence is '
+                                                                                          'reproducible',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Role-understanding '
+                                                                                             'verification',
+                                                                              'scenario': 'Role walkthrough tests '
+                                                                                          'real decisions',
+                                                                              'source_kind': 'delta'},
+                                                                             {'capability': 'corporate-flow-controls',
+                                                                              'requirement': 'Role-understanding '
+                                                                                             'verification',
+                                                                              'scenario': 'Checklist completion alone '
+                                                                                          'is insufficient',
+                                                                              'source_kind': 'delta'}],
+ 'test_baseline_quality_regression_and_qa_decision_are_semantically_bound': [{'capability': 'corporate-flow-controls',
                                                                               'requirement': 'Quality strategy before '
                                                                                              'implementation',
                                                                               'scenario': 'Quality strategy covers '
@@ -662,10 +692,22 @@ SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_seman
                                                                                                    'deviation records',
                                                                                     'scenario': 'Approved deviation '
                                                                                                 'remains traceable',
+                                                                                    'source_kind': 'delta'},
+                                                                                   {'capability': 'traceability-contract',
+                                                                                    'requirement': 'Corporate '
+                                                                                                   'governance '
+                                                                                                   'traceability',
+                                                                                    'scenario': 'Stop and resume '
+                                                                                                'history remains '
+                                                                                                'visible',
                                                                                     'source_kind': 'delta'}],
  'test_failed_retry_cannot_erase_or_forge_predecessor': [{'capability': 'corporate-flow-controls',
                                                           'requirement': 'Failed-run evidence retention',
                                                           'scenario': 'Successful retry does not erase failure',
+                                                          'source_kind': 'delta'},
+                                                         {'capability': 'traceability-contract',
+                                                          'requirement': 'Corporate governance traceability',
+                                                          'scenario': 'Failed attempts remain traceable after retry',
                                                           'source_kind': 'delta'}],
  'test_material_scope_drift_requires_complete_human_reassessment': [{'capability': 'corporate-flow-controls',
                                                                      'requirement': 'Fixed input and scope-change '
@@ -733,11 +775,11 @@ SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_seman
                                                                                 'scenario': 'Consumer acceptance is '
                                                                                             'recorded separately',
                                                                                 'source_kind': 'delta'},
-                                                                               {'capability': 'corporate-flow-controls',
-                                                                                'requirement': 'Role-understanding '
-                                                                                               'verification',
-                                                                                'scenario': 'Role walkthrough tests '
-                                                                                            'real decisions',
+                                                                               {'capability': 'traceability-contract',
+                                                                                'requirement': 'Corporate governance '
+                                                                                               'traceability',
+                                                                                'scenario': 'Release package links '
+                                                                                            'canonical scope',
                                                                                 'source_kind': 'delta'}],
  'test_release_substitute_decision_is_active_scoped_linked_and_human_authorized': [{'capability': 'corporate-flow-controls',
                                                                                     'requirement': 'Human decision '
@@ -745,13 +787,6 @@ SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_seman
                                                                                                    'evidence',
                                                                                     'scenario': 'Human decision log '
                                                                                                 'is explicit',
-                                                                                    'source_kind': 'delta'},
-                                                                                   {'capability': 'corporate-flow-controls',
-                                                                                    'requirement': 'Human decision '
-                                                                                                   'and AI execution '
-                                                                                                   'evidence',
-                                                                                    'scenario': 'AI run evidence is '
-                                                                                                'reproducible',
                                                                                     'source_kind': 'delta'}],
  'test_role_map_wip_and_pilot_selection_fail_closed': [{'capability': 'corporate-flow-controls',
                                                         'requirement': 'Portable corporate role map',
@@ -772,10 +807,6 @@ SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_seman
                                                        {'capability': 'corporate-flow-controls',
                                                         'requirement': 'Portfolio WIP and pilot-selection controls',
                                                         'scenario': 'Excessive WIP is visible',
-                                                        'source_kind': 'delta'},
-                                                       {'capability': 'corporate-flow-controls',
-                                                        'requirement': 'Role-understanding verification',
-                                                        'scenario': 'Checklist completion alone is insufficient',
                                                         'source_kind': 'delta'}],
  'test_triage_supports_all_outcomes_but_only_proceed_requires_baseline': [{'capability': 'corporate-flow-controls',
                                                                            'requirement': 'Fixed input and '
@@ -794,4 +825,13 @@ SCENARIO_COVERAGE = {'test_baseline_quality_regression_and_qa_decision_are_seman
                                                                                           'triage',
                                                                            'scenario': 'Triage is not implementation '
                                                                                        'approval',
-                                                                           'source_kind': 'delta'}]}
+                                                                           'source_kind': 'delta'}],
+ 'test_valid_governance_bundle_is_check_only_and_may_continue': [{'capability': 'traceability-contract',
+                                                                  'requirement': 'Corporate governance traceability',
+                                                                  'scenario': 'Classification decision is '
+                                                                              'source-linked',
+                                                                  'source_kind': 'delta'},
+                                                                 {'capability': 'traceability-contract',
+                                                                  'requirement': 'Corporate governance traceability',
+                                                                  'scenario': 'Gate result links evidence and owner',
+                                                                  'source_kind': 'delta'}]}
