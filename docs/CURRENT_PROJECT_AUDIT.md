@@ -8,10 +8,10 @@ Last status reconciliation: 2026-07-14.
 
 - Phase 0 is `closed`: its repository-foundation gate is satisfied, and its former Phase 1 decision items were resolved or explicitly deferred by the accepted Phase 1 package.
 - Phase 1 is `closed`: all 11 work items are reconciled, the human Option A decision supplies acceptance evidence, and eight changes were archived into accepted specs on 2026-07-09.
-- Phase 2 is `in_progress`: work items 2.1-2.9 are `closed`; work item 2.10 is ready and has not started.
+- Phase 2 is `in_progress`: work items 2.1-2.9 are `closed`; work item 2.10 is `in_progress` under the worker/reviewer workflow.
 - Phases 3-4 are `planned`: Phase 3 depends on human acceptance of the Phase 2 external release candidate; Phase 4 depends on real pilot evidence.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 14/33 tasks complete (1.1-3.6) and 19 remaining; `adopt-nis-corporate-process-governance` has 35/43 tasks complete (1.1-7.4) and 8 remaining. Task 7.5 and NIS task 8.8 remain Phase 3 work. `openspec/changes/archive/` retains the accepted Phase 1 source packages; `openspec/specs/` contains eight accepted specs.
-- Sequential work is not blocked by pending acceptance: Phase 2 work item 2.10 is ready but intentionally not started in this session.
+- Sequential work is not blocked by pending acceptance: Phase 2 work item 2.10 is `in_progress`.
 
 Last updated: 2026-07-14.
 
@@ -146,7 +146,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 | 2026-07-14 | Adopt two automation horizons: first prove the complete process without AI, then progressively automate bounded process work with AI after the process and pilot are stable. | See `docs/DECISIONS.md` (`D-014`). Deterministic checks remain the control plane and permanent fallback; human approvals and accountable decisions do not transfer implicitly. |
 | 2026-07-14 | Repair Phase 2 with clean renumbering from `2.3`, keep both active changes open through Phase 3, store normalized evidence in Git and raw outputs in a versioned artifact, make the human owner the final external acceptor with role evidence, use the risk-oriented Qwen/DeepSeek matrix, and support Windows, Linux, and macOS with prerequisites and MCP provisioned. | See `docs/DECISIONS.md` (`D-015`). `D-017` subsequently accepts the corrected plan and opens work item 2.1. |
 | 2026-07-14 | Increase reliability through broader risk-oriented tests and traceability, and increase speed through safe parallel AI work on independent tasks. | See `docs/DECISIONS.md` (`D-016`). Parallel tasks require explicit dependencies, owners, write scopes, evidence, and combined deterministic integration checks; process-effectiveness measurement remains excluded. |
-| 2026-07-14 | Accept the corrected Phase 2 plan and authorize implementation from work item 2.1. | See `docs/DECISIONS.md` (`D-017`). At acceptance time Phase 2 and 2.1 became `ready`; current status is Phase 2 `in_progress`, work items 2.1-2.9 are `closed`, and work item 2.10 is ready but not started. |
+| 2026-07-14 | Accept the corrected Phase 2 plan and authorize implementation from work item 2.1. | See `docs/DECISIONS.md` (`D-017`). At acceptance time Phase 2 and 2.1 became `ready`; current status is Phase 2 `in_progress`, work items 2.1-2.9 are `closed`, and work item 2.10 is `in_progress`. |
 
 ## Audit Rules
 

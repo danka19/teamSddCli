@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.9 are closed; work item 2.10 is ready and has not started.
+Status: in_progress. Work items 2.1-2.9 are closed; work item 2.10 is in progress under the worker/reviewer workflow.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
