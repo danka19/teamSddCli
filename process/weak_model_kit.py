@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import re
@@ -12,6 +13,25 @@ from jsonschema import Draft202012Validator
 
 AUTHORITIES = {"canonical", "supporting", "generated-advisory", "evidence"}
 ROLES = {"analyst", "developer", "qa", "tech_lead"}
+ROLE_PAYLOAD_KEYS = {
+    "analyst": "requirements_note",
+    "developer": "implementation_prep_note",
+    "qa": "qa_review_note",
+    "tech_lead": "advisory_review_note",
+}
+GLOBAL_ALLOWED_REASON_CODES = (
+    "authority-required",
+    "bounded-draft",
+    "conflicting-context",
+    "failed-run-missing",
+    "human-stop-required",
+    "lifecycle-authority-required",
+    "missing-context",
+    "qa-evidence-insufficient",
+    "reconciliation-missing",
+    "unsafe-resume",
+    "unsupported-evidence",
+)
 CLASSES = {"minor", "major", "hotfix"}
 ROLE_FILES = {
     "analyst": "roles/analyst.md",
@@ -211,6 +231,7 @@ def build_role_launch(
     read_pack: dict[str, Any],
     read_pack_path: str,
     evidence_path: str,
+    model_response_contract: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if _schema_errors(process_root, "read-pack.schema.json", read_pack):
         raise ContractError("read pack schema is invalid")
@@ -264,6 +285,20 @@ def build_role_launch(
         "human_stop_required": True,
         "next_action": "run deterministic checks and obtain the named human review",
     }
+    if model_response_contract is not None:
+        if set(model_response_contract) != {
+            "case_id",
+            "operation",
+            "role_payload_key",
+            "required_artifact_kind",
+            "allowed_reason_codes",
+        }:
+            raise ContractError("model response contract fields are invalid")
+        if model_response_contract.get("role_payload_key") != ROLE_PAYLOAD_KEYS.get(role):
+            raise ContractError("model response contract does not match launch role")
+        if model_response_contract.get("allowed_reason_codes") != list(GLOBAL_ALLOWED_REASON_CODES):
+            raise ContractError("model response contract reason-code vocabulary is invalid")
+        launch["model_response_contract"] = copy.deepcopy(model_response_contract)
     launch["identity"] = _digest(launch)
     if _schema_errors(process_root, "task-launch.schema.json", launch):
         raise ContractError("generated task launch is invalid")

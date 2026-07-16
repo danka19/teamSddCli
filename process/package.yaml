@@ -66,6 +66,7 @@ distribution:
     - actual_certification.py
     - certification.py
     - feedback_policy.py
+    - model_adapter.py
     - operation_cli.py
     - package.yaml
     - weak_model_kit.py

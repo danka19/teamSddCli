@@ -124,7 +124,7 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "feedback_policy.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
           "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]

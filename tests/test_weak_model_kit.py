@@ -90,6 +90,87 @@ def test_launcher_selects_instruction_and_stop_point_outside_model(tmp_path: Pat
     ]
 
 
+GLOBAL_REASON_CODES = [
+    "authority-required",
+    "bounded-draft",
+    "conflicting-context",
+    "failed-run-missing",
+    "human-stop-required",
+    "lifecycle-authority-required",
+    "missing-context",
+    "qa-evidence-insufficient",
+    "reconciliation-missing",
+    "unsafe-resume",
+    "unsupported-evidence",
+]
+
+
+def model_response_contract(**overrides: object) -> dict:
+    contract = {
+        "case_id": "analyst-minor",
+        "operation": "requirements-review",
+        "role_payload_key": "requirements_note",
+        "required_artifact_kind": "requirements-note",
+        "allowed_reason_codes": GLOBAL_REASON_CODES,
+    }
+    contract.update(overrides)
+    return contract
+
+
+def test_launcher_projection_is_closed_schema_valid_and_identity_bound() -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    projection = model_response_contract()
+    launch = build_role_launch(
+        ROOT,
+        PROCESS,
+        pack,
+        "scratch/read-pack.json",
+        "evidence/TASK.yaml",
+        model_response_contract=projection,
+    )
+    schema = json.loads((PROCESS / "schemas/task-launch.schema.json").read_text(encoding="utf-8"))
+    assert list(Draft202012Validator(schema).iter_errors(launch)) == []
+    assert launch["model_response_contract"] == projection
+
+    tampered = copy.deepcopy(launch)
+    tampered["model_response_contract"]["case_id"] = "tampered-case"
+    evidence, _, _ = evidence_context()
+    assert "evidence.invalid-launch" in {
+        item["code"] for item in validate_operation_evidence(evidence, tampered, pack)
+    }
+
+
+@pytest.mark.parametrize(
+    "projection",
+    [
+        model_response_contract(extra="forbidden"),
+        {key: value for key, value in model_response_contract().items() if key != "operation"},
+        model_response_contract(role_payload_key="qa_review_note"),
+        model_response_contract(allowed_reason_codes=["bounded-draft"]),
+        model_response_contract(required_source_ids=["weak-model-guardrails"]),
+    ],
+)
+def test_launcher_projection_fails_closed(projection: dict) -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    with pytest.raises(ContractError):
+        build_role_launch(
+            ROOT,
+            PROCESS,
+            pack,
+            "scratch/read-pack.json",
+            "evidence/TASK.yaml",
+            model_response_contract=projection,
+        )
+
+
+def test_launcher_without_projection_preserves_legacy_shape() -> None:
+    pack = build_read_pack(ROOT, PROCESS, request())
+    first = build_role_launch(ROOT, PROCESS, pack, "scratch/read-pack.json", "evidence/TASK.yaml")
+    second = build_role_launch(ROOT, PROCESS, pack, "scratch/read-pack.json", "evidence/TASK.yaml")
+    assert first == second
+    assert "model_response_contract" not in first
+
+
 def test_launcher_blocks_incomplete_read_pack() -> None:
     data = request()
     data["unresolved_inputs"] = ["Product owner must confirm the affected workflow."]
@@ -395,6 +476,7 @@ def test_package_exposes_all_role_instructions_adapters_and_contract_schemas() -
     assert set(package["role_instructions"]) == {"analyst", "developer", "qa", "tech_lead"}
     assert set(package["adapters"]) == {"qwen_class", "deepseek_class", "gigacode_class"}
     assert {"read_pack_request", "task_launch", "read_pack", "weak_model_operation_evidence", "parallel_plan"} <= set(package["schemas"])
+    assert "model_adapter.py" in package["distribution"]["files"]
 
 
 @pytest.mark.parametrize("role", ["analyst", "developer", "qa", "tech-lead"])
@@ -411,7 +493,11 @@ def test_adapter_templates_are_thin_and_cannot_own_process_rules(adapter: str) -
     assert data["inputs"] == ["instruction_path", "read_pack_path"]
     assert data["authority"] == "none"
     assert data["canonical_write"] is False
+    serialized = json.dumps(data, sort_keys=True)
     assert "policy" not in data and "transition" not in data
+    assert "policy_path" not in serialized
+    assert "expected_answer" not in serialized
+    assert "expected_output" not in serialized
 
 
 def test_clis_reject_malformed_nested_documents_without_traceback_from_other_cwd(tmp_path: Path) -> None:

@@ -20,6 +20,24 @@
     "canonical_mutation_allowed": {"const": false},
     "human_stop_required": {"const": true},
     "next_action": {"type": "string", "minLength": 1},
+    "model_response_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "operation", "role_payload_key", "required_artifact_kind", "allowed_reason_codes"],
+      "properties": {
+        "case_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+        "operation": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+        "role_payload_key": {"enum": ["requirements_note", "implementation_prep_note", "qa_review_note", "advisory_review_note"]},
+        "required_artifact_kind": {"enum": ["evidence-boundary-note", "implementation-prep-note", "qa-review-note", "requirements-note", "tech-lead-review-note"]},
+        "allowed_reason_codes": {"const": ["authority-required", "bounded-draft", "conflicting-context", "failed-run-missing", "human-stop-required", "lifecycle-authority-required", "missing-context", "qa-evidence-insufficient", "reconciliation-missing", "unsafe-resume", "unsupported-evidence"]}
+      }
+    },
     "identity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
-  }
+  },
+  "allOf": [
+    {"if": {"properties": {"role": {"const": "analyst"}, "model_response_contract": {"type": "object"}}, "required": ["model_response_contract"]}, "then": {"properties": {"model_response_contract": {"properties": {"role_payload_key": {"const": "requirements_note"}}}}}},
+    {"if": {"properties": {"role": {"const": "developer"}, "model_response_contract": {"type": "object"}}, "required": ["model_response_contract"]}, "then": {"properties": {"model_response_contract": {"properties": {"role_payload_key": {"const": "implementation_prep_note"}}}}}},
+    {"if": {"properties": {"role": {"const": "qa"}, "model_response_contract": {"type": "object"}}, "required": ["model_response_contract"]}, "then": {"properties": {"model_response_contract": {"properties": {"role_payload_key": {"const": "qa_review_note"}}}}}},
+    {"if": {"properties": {"role": {"const": "tech_lead"}, "model_response_contract": {"type": "object"}}, "required": ["model_response_contract"]}, "then": {"properties": {"model_response_contract": {"properties": {"role_payload_key": {"const": "advisory_review_note"}}}}}}
+  ]
 }
