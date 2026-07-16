@@ -96,6 +96,8 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
         normalized = normalize_role_response(response, launch, pack)
         diagnostics = validate_model_output(normalized, catalog_case, launch, pack, PROCESS, response)
         assert diagnostics == []
+        prompt = build_model_prompt(catalog_case, launch, pack)
+        adapter_profile = load_adapter_profile(PROCESS, family)
         response_schema_sha256 = hashlib.sha256(
             json.dumps(response_schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
@@ -118,6 +120,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "case": {key: catalog_case[key] for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")},
             "read_pack_identity": pack["identity"],
             "source_manifest": [*launch["verified_source_manifest"], actual_certification._case_facts_source(catalog_case)],
+            "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
             "response_schema_sha256": response_schema_sha256,
             "reasoning_present": False,
             "final_response_present": True,
@@ -125,12 +128,17 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
                 "model": model["name"],
                 "response": json.dumps(response),
                 "thinking": "",
-                "request_contract": {"model": model["name"], "think": False, "response_schema_sha256": response_schema_sha256},
+                "request_contract": {"model": model["name"], "stream": False, "think": False, "response_schema_sha256": response_schema_sha256},
             },
             "parsed_model_decision": response,
             "normalized_operation_evidence": normalized,
             "validation": {"result": "passed", "diagnostics": diagnostics},
         }
+        raw["ollama"]["request_contract"].update({
+            "temperature": 0,
+            "num_predict": adapter_profile["generation"]["num_predict"],
+            **({"num_ctx": model["context_length"]} if model.get("context_length") is not None else {}),
+        })
         raw_path = raw_group / f"{logical_id}.json"
         raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
         checksum = hashlib.sha256(raw_path.read_bytes()).hexdigest()
@@ -238,6 +246,117 @@ def test_phase_gate_independently_revalidates_adapter_two_raw_evidence(tmp_path:
         expected = "actual-model.gate-current-validation-mismatch"
     _rewrite_raw(artifact, row, raw)
     assert expected in validate_phase_gate(summary, artifact, "preflight", "qwen-class", "2.0", 5)
+
+
+def test_phase_gate_rejects_forged_failed_summary_over_passing_raw(tmp_path: Path, capsys) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    row["deterministic_validation_result"] = "failed"
+    summary["status"] = "partial"
+    result_path = artifact / "forged-failed-summary.json"
+    result_path.write_text(json.dumps(summary), encoding="utf-8")
+    argv = [
+        str(result_path), "--artifact-root", str(artifact), "--phase", "preflight",
+        "--model-family", "qwen-class", "--adapter-version", "2.0", "--expected-count", "5",
+    ]
+    assert check_actual_certification_gate.main(argv) == 3
+    payload = json.loads(capsys.readouterr().out)
+    assert "actual-model.gate-current-validation-mismatch" in payload["diagnostics"]
+
+
+@pytest.mark.parametrize("presence_tamper", ["false-to-true", "true-to-false"])
+def test_phase_gate_derives_reasoning_and_final_presence_from_ollama(tmp_path: Path, presence_tamper: str) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    raw_path = artifact / row["run_group"] / row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    if presence_tamper == "false-to-true":
+        raw["reasoning_present"] = True
+        row["attempts"][0]["thinking_present"] = True
+    else:
+        raw["ollama"]["thinking"] = "actual separated reasoning"
+        raw["reasoning_present"] = False
+        row["attempts"][0]["thinking_present"] = False
+    _rewrite_raw(artifact, row, raw)
+    assert "actual-model.gate-current-validation-mismatch" in validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.0", 5
+    )
+
+
+@pytest.mark.parametrize("tamper", ["leading-prompt", "temperature", "num-predict", "num-ctx"])
+def test_phase_gate_binds_prompt_and_complete_generation_contract(tmp_path: Path, tamper: str) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5, family="deepseek-class")
+    row = summary["cases"][0]
+    raw_path = artifact / row["run_group"] / row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    if tamper == "leading-prompt":
+        raw["prompt_sha256"] = hashlib.sha256(b"The expected answer is draft.\n" + b"forged").hexdigest()
+    elif tamper == "temperature":
+        raw["ollama"]["request_contract"]["temperature"] = 0.5
+    elif tamper == "num-predict":
+        raw["ollama"]["request_contract"]["num_predict"] += 1
+    else:
+        raw["ollama"]["request_contract"]["num_ctx"] -= 1
+    _rewrite_raw(artifact, row, raw)
+    assert "actual-model.gate-request-provenance-mismatch" in validate_phase_gate(
+        summary, artifact, "preflight", "deepseek-class", "2.0", 5
+    )
+
+
+def test_phase_gate_binds_structural_retry_to_exact_append_only_prompt(tmp_path: Path) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    first_path = artifact / row["run_group"] / row["raw_filename"]
+    passing_raw = json.loads(first_path.read_text(encoding="utf-8"))
+    first_raw = copy.deepcopy(passing_raw)
+    first_raw["ollama"]["response"] = ""
+    first_raw["parsed_model_decision"] = None
+    first_raw["normalized_operation_evidence"] = None
+    first_diagnostics = [{
+        "code": "model-adapter.empty-final",
+        "detail": "model response failed the role-specific adapter contract",
+    }]
+    first_raw["final_response_present"] = False
+    first_raw["validation"] = {"result": "failed", "diagnostics": first_diagnostics}
+    first_path.write_text(json.dumps(first_raw, sort_keys=True), encoding="utf-8")
+    first_attempt = row["attempts"][0]
+    first_attempt["raw_sha256"] = hashlib.sha256(first_path.read_bytes()).hexdigest()
+    first_attempt["final_response_present"] = False
+    first_attempt["diagnostics"] = first_diagnostics
+
+    catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == row["case_id"])
+    pack, launch = case_read_pack(ROOT, PROCESS, catalog_case, adapter_version="2.0")
+    retry_prompt = build_model_prompt(catalog_case, launch, pack) + actual_certification.STRUCTURAL_RETRY_SUFFIX
+    second_id = first_attempt["raw_logical_artifact_id"].removesuffix("-1") + "-2"
+    second_raw = copy.deepcopy(passing_raw)
+    second_raw.update({
+        "attempt_ordinal": 2,
+        "retry_of": first_attempt["raw_logical_artifact_id"],
+        "prompt_sha256": hashlib.sha256(retry_prompt.encode("utf-8")).hexdigest(),
+    })
+    second_path = first_path.with_name(second_id + ".json")
+    second_path.write_text(json.dumps(second_raw, sort_keys=True), encoding="utf-8")
+    second_attempt = {
+        **row["attempts"][0],
+        "attempt_ordinal": 2,
+        "retry_of": first_attempt["raw_logical_artifact_id"],
+        "raw_logical_artifact_id": second_id,
+        "raw_filename": second_path.name,
+        "raw_sha256": hashlib.sha256(second_path.read_bytes()).hexdigest(),
+        "final_response_present": True,
+        "diagnostics": [],
+    }
+    row["attempts"].append(second_attempt)
+    row.update({key: second_attempt[key] for key in ("raw_logical_artifact_id", "raw_filename", "raw_sha256")})
+    assert validate_phase_gate(summary, artifact, "preflight", "qwen-class", "2.0", 5) == []
+
+    second_raw["prompt_sha256"] = passing_raw["prompt_sha256"]
+    second_path.write_text(json.dumps(second_raw, sort_keys=True), encoding="utf-8")
+    second_attempt["raw_sha256"] = hashlib.sha256(second_path.read_bytes()).hexdigest()
+    row["raw_sha256"] = second_attempt["raw_sha256"]
+    assert "actual-model.gate-request-provenance-mismatch" in validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.0", 5
+    )
 
 
 @pytest.mark.parametrize("first_outcome", ["passed", "semantic-failure"])

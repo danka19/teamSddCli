@@ -220,8 +220,10 @@ def validate_phase_gate(
         catalog_bytes = catalog_path.read_bytes()
         catalog = yaml.safe_load(catalog_bytes)
         expected_model = select_model_profile(catalog, model_family)
+        adapter_profile = load_adapter_profile(Path(__file__).resolve().parent, model_family)
     except (OSError, UnicodeError, yaml.YAMLError, ActualCertificationError):
         expected_model = None
+        adapter_profile = None
         _append_once(diagnostics, "actual-model.gate-catalog-mismatch")
     if not isinstance(model, dict) or model.get("family") != model_family:
         _append_once(diagnostics, "actual-model.gate-family-mismatch")
@@ -370,6 +372,32 @@ def validate_phase_gate(
                 key: catalog_case[key]
                 for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")
             }
+            reasoning, final_response = split_reasoning_final(
+                ollama.get("response", ""), ollama.get("thinking", "")
+            )
+            attempt_prompt = build_model_prompt(catalog_case, launch, pack)
+            if ordinal == 2:
+                attempt_prompt += STRUCTURAL_RETRY_SUFFIX
+            expected_prompt_sha256 = _sha256_bytes(attempt_prompt.encode("utf-8"))
+            generation = adapter_profile.get("generation", {}) if isinstance(adapter_profile, dict) else {}
+            expected_request_contract = {
+                "model": model.get("name") if isinstance(model, dict) else None,
+                "stream": False,
+                "think": generation.get("think"),
+                "temperature": 0,
+                "num_predict": generation.get("num_predict"),
+                "response_schema_sha256": schema_sha256,
+                **(
+                    {"num_ctx": model["context_length"]}
+                    if isinstance(model, dict) and model.get("context_length") is not None
+                    else {}
+                ),
+            }
+            if (
+                raw.get("prompt_sha256") != expected_prompt_sha256
+                or ollama.get("request_contract") != expected_request_contract
+            ):
+                _append_once(diagnostics, "actual-model.gate-request-provenance-mismatch")
             raw_checks = (
                 raw.get("run_group") == group,
                 raw.get("execution_identity") == identity,
@@ -379,8 +407,8 @@ def validate_phase_gate(
                 raw.get("read_pack_identity") == pack["identity"] == row.get("read_pack_identity"),
                 raw.get("source_manifest") == expected_manifest == row.get("source_manifest"),
                 raw.get("response_schema_sha256") == attempt.get("response_schema_sha256") == schema_sha256,
-                raw.get("reasoning_present") == attempt.get("thinking_present"),
-                raw.get("final_response_present") == attempt.get("final_response_present"),
+                raw.get("reasoning_present") == attempt.get("thinking_present") == bool(reasoning),
+                raw.get("final_response_present") == attempt.get("final_response_present") == bool(final_response),
                 ollama.get("model") == (model.get("name") if isinstance(model, dict) else None),
                 ollama.get("request_contract", {}).get("model") == (model.get("name") if isinstance(model, dict) else None),
                 ollama.get("request_contract", {}).get("response_schema_sha256") == schema_sha256,
@@ -401,8 +429,15 @@ def validate_phase_gate(
         if not attempts_well_formed or not all(isinstance(item, dict) for item in attempts):
             continue
         final = attempts[-1]
-        if row.get("diagnostics") != final.get("diagnostics"):
-            _append_once(diagnostics, "actual-model.gate-raw-lineage-mismatch")
+        final_current_diagnostics = reevaluated_attempts[-1] if reevaluated_attempts else None
+        final_current_result = "passed" if final_current_diagnostics == [] else "failed"
+        if (
+            final_current_diagnostics is None
+            or row.get("deterministic_validation_result") != final_current_result
+            or row.get("diagnostics") != final.get("diagnostics")
+            or row.get("diagnostics") != final_current_diagnostics
+        ):
+            _append_once(diagnostics, "actual-model.gate-current-validation-mismatch")
         final_path = _safe_artifact_path(artifact_root, group, row.get("raw_filename"))
         if final_path is not None and final_path.is_file() and row.get("raw_sha256") != _sha256_bytes(final_path.read_bytes()):
             _append_once(diagnostics, "actual-model.gate-raw-checksum")
@@ -776,6 +811,7 @@ def invoke_ollama(
     )
     payload["request_contract"] = {
         "model": model,
+        "stream": False,
         "think": think,
         **options,
         "response_schema_sha256": schema_sha256,
