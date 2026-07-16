@@ -31,6 +31,18 @@ def _group(artifact_root: Path, path: Path) -> str:
     return "root" if path.parent == artifact_root else path.parent.relative_to(artifact_root).as_posix()
 
 
+def _result_reference(artifact_root: Path, path: Path) -> dict[str, str]:
+    resolved_root = artifact_root.resolve()
+    resolved_path = path.resolve(strict=True)
+    try:
+        relative = resolved_path.relative_to(resolved_root).as_posix()
+    except ValueError as error:
+        raise ActualCertificationError(
+            "actual-model.result-outside-artifact-root"
+        ) from error
+    return {"path": relative, "sha256": _sha(resolved_path)}
+
+
 def _reference(path: Path, group: str, reason: str, route: dict | None = None) -> dict:
     raw = json.loads(path.read_text(encoding="utf-8"))
     case = raw.get("case", {})
@@ -111,9 +123,10 @@ def normalize_remediation_evidence(
     matrix_result: Path | None,
     model_family: str,
     *,
+    runtime_result: Path | None = None,
     repository_root: Path | None = None,
 ) -> dict:
-    """Link immutable adapter 1.0 evidence to new adapter 2.0 phase summaries."""
+    """Link immutable baseline evidence to one versioned remediation run."""
     repository_root = (repository_root or Path(__file__).resolve().parents[1]).resolve()
     baseline_path = baseline_evidence.resolve()
     try:
@@ -124,7 +137,12 @@ def normalize_remediation_evidence(
     preflight = json.loads(preflight_result.read_text(encoding="utf-8"))
     if not isinstance(baseline, dict) or not isinstance(preflight, dict):
         raise ActualCertificationError("actual-model.normalization-input-malformed")
-    if baseline.get("adapter", {}).get("version") != "1.0":
+    adapter_version = preflight.get("adapter", {}).get("version")
+    if adapter_version not in {"2.0", "2.1"}:
+        raise ActualCertificationError("actual-model.remediation-identity-mismatch")
+    baseline_version = baseline.get("adapter", {}).get("version")
+    allowed_baselines = {"1.0"} if adapter_version == "2.0" else {"1.0", "2.0"}
+    if baseline_version not in allowed_baselines:
         raise ActualCertificationError("actual-model.baseline-adapter-mismatch")
     if (
         baseline.get("adapter", {}).get("family") != model_family
@@ -132,7 +150,7 @@ def normalize_remediation_evidence(
     ):
         raise ActualCertificationError("actual-model.baseline-family-mismatch")
     preflight_classification, preflight_diagnostics = classify_preflight_gate(
-        preflight, remediation_artifact_root, model_family, "2.0"
+        preflight, remediation_artifact_root, model_family, adapter_version
     )
     if preflight_diagnostics:
         raise ActualCertificationError(preflight_diagnostics[0])
@@ -148,7 +166,12 @@ def normalize_remediation_evidence(
         if not isinstance(matrix, dict):
             raise ActualCertificationError("actual-model.normalization-input-malformed")
         matrix_diagnostics = validate_phase_gate(
-            matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
+            matrix,
+            remediation_artifact_root,
+            "matrix",
+            model_family,
+            adapter_version,
+            15,
         )
         if matrix_diagnostics:
             raise ActualCertificationError(matrix_diagnostics[0])
@@ -156,7 +179,11 @@ def normalize_remediation_evidence(
         "schema_version": "1.2",
         "evidence_id": f"phase-2-11-{model_family.removesuffix('-class')}-remediation",
         "process_package_version": preflight.get("process_package_version"),
-        "adapter": {"family": model_family, "version": "2.0", "authority": "advisory-only"},
+        "adapter": {
+            "family": model_family,
+            "version": adapter_version,
+            "authority": "advisory-only",
+        },
         "model": preflight.get("model"),
         "observed_identity": preflight.get("observed_identity"),
         "source_catalog": preflight.get("source_catalog"),
@@ -165,9 +192,12 @@ def normalize_remediation_evidence(
             "path": baseline_relative,
             "sha256": _sha(baseline_path),
             "raw_logical_artifact_id": baseline.get("raw_artifact", {}).get("logical_id"),
-            "adapter_version": "1.0",
+            "adapter_version": baseline_version,
         },
-        "preflight": {"status": preflight.get("status"), "cases": preflight.get("cases", [])},
+        "preflight": {
+            "status": preflight.get("status"),
+            "cases": preflight.get("cases", []),
+        },
         "matrix": (
             {"status": "not-run", "cases": []}
             if matrix is None
@@ -178,6 +208,41 @@ def normalize_remediation_evidence(
     }
     if preflight_failed:
         document["matrix_not_run"] = "preflight-gate-failed"
+    if adapter_version == "2.1":
+        if runtime_result is None:
+            raise ActualCertificationError("actual-model.runtime-result-required")
+        runtime = json.loads(runtime_result.read_text(encoding="utf-8"))
+        if (
+            not isinstance(runtime, dict)
+            or runtime.get("result") != "passed"
+            or runtime.get("adapter_version") != "2.1"
+            or runtime.get("observed_identity") != preflight.get("observed_identity")
+        ):
+            raise ActualCertificationError("actual-model.runtime-result-mismatch")
+        runtime_raw_group = runtime_result.parent / "runtime-probe"
+        runtime_raw_path = runtime_raw_group / str(runtime.get("raw_filename", ""))
+        if (
+            not runtime_raw_path.is_file()
+            or runtime.get("raw_sha256") != _sha(runtime_raw_path)
+        ):
+            raise ActualCertificationError("actual-model.runtime-result-mismatch")
+        document["runtime_probe_result"] = {
+            **_result_reference(
+                remediation_artifact_root, runtime_result
+            ),
+            "raw_group": runtime_raw_group.relative_to(
+                remediation_artifact_root
+            ).as_posix(),
+            "raw_filename": runtime_raw_path.name,
+            "raw_sha256": _sha(runtime_raw_path),
+        }
+        document["preflight"]["result"] = _result_reference(
+            remediation_artifact_root, preflight_result
+        )
+        if matrix is not None and matrix_result is not None:
+            document["matrix"]["result"] = _result_reference(
+                remediation_artifact_root, matrix_result
+            )
     return document
 
 
@@ -191,6 +256,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--remediation-artifact-root", type=Path)
     parser.add_argument("--preflight-result", type=Path)
     parser.add_argument("--matrix-result", type=Path)
+    parser.add_argument("--runtime-result", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model-family", choices=("qwen-class", "deepseek-class"), default="qwen-class")
     args = parser.parse_args(argv)
@@ -205,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.preflight_result,
                 args.matrix_result,
                 args.model_family,
+                runtime_result=args.runtime_result,
                 repository_root=repository_root,
             )
             with args.output.open("x", encoding="utf-8", newline="\n") as handle:

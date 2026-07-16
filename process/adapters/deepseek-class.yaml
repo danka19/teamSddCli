@@ -1,4 +1,4 @@
-schema_version: "2.0"
+schema_version: "2.1"
 adapter_family: deepseek-class
 inputs: [instruction_path, read_pack_path]
 output: scratch_operation_evidence

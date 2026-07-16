@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "actual-certification-operational-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_kind",
+    "status",
+    "actual_model_run",
+    "phase",
+    "diagnostic",
+    "adapter"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evidence_kind": {"const": "actual-model-operational-result"},
+    "status": {"enum": ["blocked", "failed"]},
+    "actual_model_run": {"const": false},
+    "phase": {"enum": ["runtime-probe", "preflight", "matrix"]},
+    "diagnostic": {
+      "type": "string",
+      "pattern": "^actual-model\\.[a-z0-9-]+$"
+    },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "version"],
+      "properties": {
+        "family": {"enum": ["qwen-class", "deepseek-class"]},
+        "version": {"const": "2.1"}
+      }
+    },
+    "observed_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_family",
+        "model_tag",
+        "model_digest",
+        "runtime",
+        "runtime_version",
+        "endpoint"
+      ],
+      "properties": {
+        "model_family": {"enum": ["qwen-class", "deepseek-class"]},
+        "model_tag": {"type": "string", "minLength": 1},
+        "model_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "runtime": {"const": "Ollama"},
+        "runtime_version": {"type": "string", "minLength": 1},
+        "endpoint": {"const": "local-ollama-loopback"}
+      }
+    }
+  }
+}

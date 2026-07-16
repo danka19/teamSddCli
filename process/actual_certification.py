@@ -132,6 +132,78 @@ def validate_actual_certification_destinations(
     return raw, result
 
 
+def revalidate_actual_certification_destination(
+    repository_root: Path,
+    destination: Path,
+    *,
+    require_directory: bool,
+) -> Path:
+    root = repository_root.resolve(strict=True)
+    if _has_reparse_component(destination):
+        raise ActualCertificationError("actual-model.destination-reparse")
+    resolved = destination.resolve(strict=True)
+    if _is_relative_to(resolved, root):
+        raise ActualCertificationError("actual-model.destination-inside-repository")
+    if require_directory and not resolved.is_dir():
+        raise ActualCertificationError("actual-model.destination-unverifiable")
+    return resolved
+
+
+def create_actual_certification_directory(
+    repository_root: Path,
+    raw_output: Path,
+) -> Path:
+    """Exclusively establish one external phase directory."""
+    validated, _ = validate_actual_certification_destinations(
+        repository_root, raw_output, None
+    )
+    try:
+        validated.mkdir(parents=True, exist_ok=False)
+    except FileExistsError as error:
+        raise ActualCertificationError("actual-model.destination-exists") from error
+    return revalidate_actual_certification_destination(
+        repository_root, validated, require_directory=True
+    )
+
+
+def write_operational_result_exclusive(
+    result_output: Path,
+    phase: str,
+    family: str,
+    diagnostic: str,
+    observed_identity: dict[str, Any] | None = None,
+    *,
+    repository_root: Path | None = None,
+) -> dict[str, Any]:
+    """Retain one non-success operational outcome without promoting it to evidence."""
+    payload: dict[str, Any] = {
+        "schema_version": "1.0",
+        "evidence_kind": "actual-model-operational-result",
+        "status": "blocked",
+        "actual_model_run": False,
+        "phase": phase,
+        "diagnostic": diagnostic,
+        "adapter": {"family": family, "version": "2.1"},
+    }
+    if observed_identity is not None:
+        payload["observed_identity"] = observed_identity
+    data = (
+        json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=True) + "\n"
+    )
+    if repository_root is not None:
+        revalidate_actual_certification_destination(
+            repository_root, result_output.parent, require_directory=True
+        )
+        if result_output.exists() or result_output.is_symlink():
+            raise ActualCertificationError("actual-model.result-output-exists")
+    try:
+        with result_output.open("x", encoding="utf-8", newline="\n") as handle:
+            handle.write(data)
+    except FileExistsError as error:
+        raise ActualCertificationError("actual-model.result-output-exists") from error
+    return payload
+
+
 def load_runtime_identity(
     process_root: Path, family: str, model: dict[str, Any]
 ) -> dict[str, Any]:
@@ -206,7 +278,7 @@ def require_observed_identity(
 
 
 def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
-    """Load one exact runtime-only adapter 2.0 profile, rejecting expansion."""
+    """Load one exact current runtime-only adapter 2.1 profile."""
     path = process_root / "adapters" / f"{family}.yaml"
     try:
         value = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -227,7 +299,7 @@ def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
     valid = (
         isinstance(value, dict)
         and set(value) == required
-        and value.get("schema_version") == "2.0"
+        and value.get("schema_version") == "2.1"
         and value.get("adapter_family") == family
         and value.get("inputs") == ["instruction_path", "read_pack_path"]
         and value.get("output") == "scratch_operation_evidence"
@@ -517,7 +589,11 @@ def validate_phase_gate(
                 continue
             try:
                 pack, launch, response, output, current_diagnostics, schema_sha256 = evaluate_remediation_model_output(
-                    Path(__file__).resolve().parents[1], Path(__file__).resolve().parent, catalog_case, raw
+                    Path(__file__).resolve().parents[1],
+                    Path(__file__).resolve().parent,
+                    catalog_case,
+                    raw,
+                    adapter_version=adapter_version,
                 )
             except (ActualCertificationError, ModelAdapterError, TypeError, AttributeError, KeyError, ValueError):
                 _append_once(diagnostics, "actual-model.gate-raw-evidence-missing")
@@ -552,6 +628,11 @@ def validate_phase_gate(
                     else {}
                 ),
             }
+            if adapter_version == "2.1":
+                expected_request_contract.update(
+                    contract_version="2.1",
+                    launch_identity=launch["identity"],
+                )
             if (
                 raw.get("prompt_sha256") != expected_prompt_sha256
                 or ollama.get("request_contract") != expected_request_contract
@@ -569,6 +650,14 @@ def validate_phase_gate(
                 raw.get("retry_of") == previous_id,
                 raw_case == expected_raw_case,
                 raw.get("read_pack_identity") == pack["identity"] == row.get("read_pack_identity"),
+                (
+                    raw.get("launch_identity")
+                    == launch["identity"]
+                    == row.get("launch_identity")
+                    if adapter_version == "2.1"
+                    else "launch_identity" not in raw
+                    and "launch_identity" not in row
+                ),
                 raw.get("source_manifest") == expected_manifest == row.get("source_manifest"),
                 raw.get("response_schema_sha256") == attempt.get("response_schema_sha256") == schema_sha256,
                 raw.get("reasoning_present") == attempt.get("thinking_present") == bool(reasoning),
@@ -1003,10 +1092,21 @@ def build_compact_prompt(case: dict[str, Any], launch: dict[str, Any], read_pack
     return build_model_prompt(case, launch, read_pack)
 
 
-def write_raw_attempt(directory: Path, logical_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+def write_raw_attempt(
+    directory: Path,
+    logical_id: str,
+    payload: dict[str, Any],
+    *,
+    repository_root: Path | None = None,
+) -> dict[str, Any]:
     if not SAFE_ID.fullmatch(logical_id):
         raise ActualCertificationError("actual-model.invalid-raw-id")
-    directory.mkdir(parents=True, exist_ok=True)
+    if repository_root is not None:
+        revalidate_actual_certification_destination(
+            repository_root, directory, require_directory=True
+        )
+    elif not directory.is_dir():
+        raise ActualCertificationError("actual-model.destination-unverifiable")
     path = directory / f"{logical_id}.json"
     data = (json.dumps(payload, sort_keys=True, ensure_ascii=True, separators=(",", ":")) + "\n").encode("utf-8")
     try:
@@ -1027,7 +1127,14 @@ def _read_json_url(url: str, body: dict[str, Any] | None = None, timeout: int = 
     return value
 
 
-def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path, *, model_family: str = "qwen-class") -> dict[str, Any]:
+def probe_ollama(
+    root: Path,
+    catalog: dict[str, Any],
+    raw_directory: Path,
+    *,
+    model_family: str = "qwen-class",
+    destination_guard: bool = False,
+) -> dict[str, Any]:
     model = select_model_profile(catalog, model_family)
     adapter = load_adapter_profile(root / "process", model_family)
     endpoint = str(model.get("endpoint", OLLAMA_ENDPOINT)).rstrip("/")
@@ -1047,7 +1154,12 @@ def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path, *, mo
         "adapter_family": model["family"],
         "adapter_version": adapter["schema_version"], "process_package_version": package_version,
     }
-    reference = write_raw_attempt(raw_directory, f"{model['family'].removesuffix('-class')}-runtime-probe", probe)
+    reference = write_raw_attempt(
+        raw_directory,
+        f"{model['family'].removesuffix('-class')}-runtime-probe",
+        probe,
+        repository_root=root if destination_guard else None,
+    )
     passed = observed_identity == frozen_identity
     return {
         "result": "passed" if passed else "failed", "raw_logical_artifact_id": reference["logical_artifact_id"],
@@ -1067,6 +1179,8 @@ def invoke_ollama(
     think: bool,
     num_predict: int,
     num_ctx: int | None = None,
+    contract_version: str | None = None,
+    launch_identity: str | None = None,
 ) -> dict[str, Any]:
     options = {"temperature": 0, "num_predict": num_predict}
     if num_ctx is not None:
@@ -1095,6 +1209,10 @@ def invoke_ollama(
         **options,
         "response_schema_sha256": schema_sha256,
     }
+    if contract_version is not None:
+        payload["request_contract"]["contract_version"] = contract_version
+    if launch_identity is not None:
+        payload["request_contract"]["launch_identity"] = launch_identity
     return payload
 
 
@@ -1161,10 +1279,26 @@ def evaluate_frozen_model_output(
 
 
 def evaluate_remediation_model_output(
-    root: Path, process_root: Path, case: dict[str, Any], raw: dict[str, Any]
+    root: Path,
+    process_root: Path,
+    case: dict[str, Any],
+    raw: dict[str, Any],
+    *,
+    adapter_version: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None, dict[str, Any] | None, list[dict[str, str]], str]:
-    """Independently re-evaluate one adapter 2.0 raw attempt against current contracts."""
-    pack, launch = case_read_pack(root, process_root, case, adapter_version="2.0")
+    """Independently re-evaluate one versioned remediation raw attempt."""
+    recorded_identity = raw.get("execution_identity")
+    recorded_version = (
+        recorded_identity.get("adapter_version")
+        if isinstance(recorded_identity, dict)
+        else None
+    )
+    version = adapter_version or recorded_version
+    if version not in {"2.0", "2.1"}:
+        raise ActualCertificationError("actual-model.unsupported-adapter-version")
+    pack, launch = case_read_pack(
+        root, process_root, case, adapter_version=version
+    )
     schema = build_role_response_schema(launch)
     schema_sha256 = _sha256_bytes(
         json.dumps(schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -1189,7 +1323,13 @@ def evaluate_remediation_model_output(
     return pack, launch, response, output, diagnostics, schema_sha256
 
 
-def execute_ai_disabled(root: Path, catalog: dict[str, Any], raw_directory: Path) -> dict[str, Any]:
+def execute_ai_disabled(
+    root: Path,
+    catalog: dict[str, Any],
+    raw_directory: Path,
+    *,
+    destination_guard: bool = False,
+) -> dict[str, Any]:
     diagnostics = validate_ai_disabled_catalog(root, catalog)
     if diagnostics:
         raise ActualCertificationError(diagnostics[0])
@@ -1198,7 +1338,12 @@ def execute_ai_disabled(root: Path, catalog: dict[str, Any], raw_directory: Path
         started = time.monotonic()
         completed = subprocess.run([sys.executable, "-m", "pytest", case["pytest_node"], "-q"], cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=180, check=False)
         raw = {"case_id": case["id"], "argv": ["<python>", "-m", "pytest", case["pytest_node"], "-q"], "exit_code": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}
-        reference = write_raw_attempt(raw_directory, f"ai-disabled-{case['id']}", raw)
+        reference = write_raw_attempt(
+            raw_directory,
+            f"ai-disabled-{case['id']}",
+            raw,
+            repository_root=root if destination_guard else None,
+        )
         results.append({
             "case_id": case["id"], "operation": case["operation"], "role": case.get("role", "not-applicable"), "change_class": case.get("change_class", "not-applicable"),
             "source_refs": case["canonical_sources"], "pytest_node": case["pytest_node"], "result": "passed" if completed.returncode == 0 else "failed", "exit_code": completed.returncode,
@@ -1217,6 +1362,7 @@ def execute_model_catalog(
     phase: str,
     model_family: str = "qwen-class",
     preflight_observed_identity: dict[str, Any] | None = None,
+    destination_guard: bool = False,
 ) -> dict[str, Any]:
     diagnostics = validate_model_catalog(root, catalog)
     if diagnostics:
@@ -1274,6 +1420,8 @@ def execute_model_catalog(
                 think=generation["think"],
                 num_predict=generation["num_predict"],
                 num_ctx=model.get("context_length"),
+                contract_version=adapter["schema_version"],
+                launch_identity=launch["identity"],
             )
             reasoning, final_response = split_reasoning_final(
                 str(raw_response.get("response", "")), str(raw_response.get("thinking", ""))
@@ -1305,6 +1453,7 @@ def execute_model_catalog(
                     for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")
                 },
                 "read_pack_identity": pack["identity"],
+                "launch_identity": launch["identity"],
                 "source_manifest": [*launch["verified_source_manifest"], _case_facts_source(case)],
                 "prompt_sha256": _sha256_bytes(attempt_prompt.encode("utf-8")),
                 "response_schema_sha256": response_schema_sha256,
@@ -1315,7 +1464,12 @@ def execute_model_catalog(
                 "normalized_operation_evidence": output,
                 "validation": {"result": "passed" if passed else "failed", "diagnostics": diagnostics_out},
             }
-            reference = write_raw_attempt(raw_directory, logical_id, raw)
+            reference = write_raw_attempt(
+                raw_directory,
+                logical_id,
+                raw,
+                repository_root=root if destination_guard else None,
+            )
             attempt_rows.append(
                 {
                     "attempt_ordinal": attempt_ordinal,
@@ -1340,7 +1494,9 @@ def execute_model_catalog(
         results.append({
             "case_id": case["id"], "phase": phase, "operation": case["operation"], "actual_model_run": True,
             "role": case["role"], "change_class": case["change_class"], "risk_case": case.get("risk_case", "none"),
-            "execution_identity": identity, "run_group": run_group, "read_pack_identity": pack["identity"],
+            "execution_identity": identity, "run_group": run_group,
+            "read_pack_identity": pack["identity"],
+            "launch_identity": launch["identity"],
             "source_manifest": [*launch["verified_source_manifest"], _case_facts_source(case)], "source_hashes": {source["stable_id"]: source["sha256"] for source in [*launch["verified_source_manifest"], _case_facts_source(case)]},
             "raw_logical_artifact_id": reference["raw_logical_artifact_id"], "raw_filename": reference["raw_filename"], "raw_sha256": reference["raw_sha256"],
             "attempts": attempt_rows,
@@ -1395,10 +1551,15 @@ def _validate_remediation_evidence(
                 baseline = yaml.safe_load(baseline_path.read_text(encoding="utf-8"))
             except (OSError, UnicodeError, yaml.YAMLError):
                 baseline = None
+            baseline_version = (
+                baseline.get("adapter", {}).get("version")
+                if isinstance(baseline, dict)
+                else None
+            )
             if (
                 not isinstance(baseline, dict)
-                or baseline.get("adapter", {}).get("version") != "1.0"
-                or baseline_reference.get("adapter_version") != "1.0"
+                or baseline_version not in {"1.0", "2.0"}
+                or baseline_reference.get("adapter_version") != baseline_version
                 or baseline.get("raw_artifact", {}).get("logical_id") != baseline_reference.get("raw_logical_artifact_id")
             ):
                 _append_once(diagnostics, "actual-model.baseline-reference-invalid")
@@ -1416,7 +1577,7 @@ def _validate_remediation_evidence(
     if (
         not isinstance(adapter, dict)
         or not isinstance(model, dict)
-        or adapter.get("version") != "2.0"
+        or adapter.get("version") not in {"2.0", "2.1"}
         or model.get("family") != family
     ):
         _append_once(diagnostics, "actual-model.remediation-identity-mismatch")
@@ -1431,6 +1592,7 @@ def _validate_remediation_evidence(
     if matrix_not_run is None and evidence.get("status") != "passed":
         _append_once(diagnostics, "actual-model.remediation-status-mismatch")
     all_references: set[tuple[str, str]] = set()
+    adapter_version = str(adapter.get("version"))
     for phase, count in (("preflight", 5), ("matrix", 15)):
         section = evidence.get(phase, {})
         if not isinstance(section, dict):
@@ -1460,7 +1622,7 @@ def _validate_remediation_evidence(
                 summary,
                 artifact_root,
                 str(family),
-                "2.0",
+                adapter_version,
                 allow_legacy_observed_identity="observed_identity" not in evidence,
             )
             if classification != "failed":
@@ -1471,7 +1633,7 @@ def _validate_remediation_evidence(
                 artifact_root,
                 phase,
                 str(family),
-                "2.0",
+                adapter_version,
                 count,
                 allow_legacy_observed_identity="observed_identity" not in evidence,
             )
@@ -1487,6 +1649,78 @@ def _validate_remediation_evidence(
                 if key in all_references:
                     _append_once(diagnostics, "actual-model.gate-duplicate-raw-reference")
                 all_references.add(key)
+    if adapter_version == "2.1":
+        result_references: set[str] = set()
+        runtime_reference = evidence.get("runtime_probe_result")
+        if (
+            not isinstance(runtime_reference, dict)
+            or set(runtime_reference)
+            != {"path", "sha256", "raw_group", "raw_filename", "raw_sha256"}
+        ):
+            _append_once(diagnostics, "actual-model.result-reference-invalid")
+        else:
+            runtime_raw = _safe_artifact_path(
+                artifact_root,
+                runtime_reference.get("raw_group"),
+                runtime_reference.get("raw_filename"),
+            )
+            if (
+                runtime_raw is None
+                or not runtime_raw.is_file()
+                or _sha256_bytes(runtime_raw.read_bytes())
+                != runtime_reference.get("raw_sha256")
+            ):
+                _append_once(diagnostics, "actual-model.result-reference-invalid")
+            else:
+                all_references.add(
+                    (
+                        str(runtime_reference["raw_group"]),
+                        str(runtime_reference["raw_filename"]),
+                    )
+                )
+        for reference in (
+            runtime_reference,
+            evidence.get("preflight", {}).get("result"),
+            evidence.get("matrix", {}).get("result"),
+        ):
+            if reference is None:
+                continue
+            if (
+                not isinstance(reference, dict)
+                or not {"path", "sha256"} <= set(reference)
+                or not isinstance(reference.get("path"), str)
+            ):
+                _append_once(diagnostics, "actual-model.result-reference-invalid")
+                continue
+            relative = Path(reference["path"])
+            path = (artifact_root.resolve() / relative).resolve()
+            try:
+                path.relative_to(artifact_root.resolve())
+            except ValueError:
+                _append_once(diagnostics, "actual-model.result-reference-invalid")
+                continue
+            if (
+                relative.is_absolute()
+                or ".." in relative.parts
+                or not path.is_file()
+                or _sha256_bytes(path.read_bytes()) != reference.get("sha256")
+                or relative.as_posix() in result_references
+            ):
+                _append_once(diagnostics, "actual-model.result-reference-invalid")
+                continue
+            result_references.add(relative.as_posix())
+        if len(result_references) != (2 if failed_preflight else 3):
+            _append_once(diagnostics, "actual-model.result-reference-invalid")
+        referenced_inventory = {
+            (Path(group) / filename).as_posix()
+            for group, filename in all_references
+        } | result_references
+        eligible_inventory = {
+            path.relative_to(artifact_root).as_posix()
+            for path in artifact_root.rglob("*.json")
+        }
+        if referenced_inventory != eligible_inventory:
+            _append_once(diagnostics, "actual-model.result-inventory-mismatch")
     if evidence.get("raw_artifact", {}).get("logical_id") != artifact_root.name:
         _append_once(diagnostics, "actual-model.remediation-artifact-mismatch")
     return diagnostics

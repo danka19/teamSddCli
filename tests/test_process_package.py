@@ -59,6 +59,7 @@ SCHEMA_FILES = {
     "coverage_report": "coverage-report.schema.json",
     "feedback_policy": "feedback-policy.schema.json",
     "role_output_fixture": "role-output-fixture.schema.json",
+    "actual_certification_operational_result": "actual-certification-operational-result.schema.json",
 }
 
 SENSITIVE_PATTERNS = {
@@ -372,6 +373,29 @@ def test_synthetic_central_topology_is_coherent() -> None:
         assert (REPO_ROOT / source_path).is_file()
     for source_path in workflow["canonical_sources"]:
         assert (REPO_ROOT / source_path).is_file()
+
+    operational_schema = load_schema(
+        "actual_certification_operational_result"
+    )
+    operational_result = {
+        "schema_version": "1.0",
+        "evidence_kind": "actual-model-operational-result",
+        "status": "blocked",
+        "actual_model_run": False,
+        "phase": "preflight",
+        "diagnostic": "actual-model.runtime-failure",
+        "adapter": {"family": "qwen-class", "version": "2.1"},
+    }
+    assert list(
+        Draft202012Validator(operational_schema).iter_errors(
+            operational_result
+        )
+    ) == []
+    assert list(
+        Draft202012Validator(operational_schema).iter_errors(
+            {**operational_result, "unexpected": True}
+        )
+    )
 
     repo_paths = {path.relative_to(REPO_ROOT).as_posix() for path in REPO_ROOT.rglob("*")}
     manifest_paths = [asset["path"] for asset in release["included_assets"]]

@@ -5,13 +5,13 @@
 
 ## 2. Runtime And Evidence
 
-- [ ] 2.1 Version Qwen and DeepSeek profiles to `2.1`, bind contract/launch/request/raw/summary/normalization identity, load the matrix gate version from the closed profile, and retain one structural-only retry for branch/schema failures.
-- [ ] 2.2 Extend deterministic gate, failed-run retention, package schema, and evidence validation for adapter `2.1`, including exclusive phase creation, runtime-probe result checksum binding, operational failure summaries, and exact inventory rejection without weakening observed runtime identity, external destination, privacy, checksum, or lineage controls.
+- [x] 2.1 Version Qwen and DeepSeek profiles to `2.1`, bind contract/launch/request/raw/summary/normalization identity, load the matrix gate version from the closed profile, and retain one structural-only retry for branch/schema failures.
+- [x] 2.2 Extend deterministic gate, failed-run retention, package schema, and evidence validation for adapter `2.1`, including exclusive phase creation, runtime-probe result checksum binding, operational failure summaries, and exact inventory rejection without weakening observed runtime identity, external destination, privacy, checksum, or lineage controls.
 
 ## 3. Deterministic Verification
 
-- [ ] 3.1 Run focused adapter, certification, compatibility, package, authority, leakage, retry, and runtime-boundary tests with zero failures.
-- [ ] 3.2 Run the complete test suite, compilation, OpenSpec strict validation, roadmap validation, privacy scans, and diff checks with only documented environment-dependent skips.
+- [x] 3.1 Run focused adapter, certification, compatibility, package, authority, leakage, retry, and runtime-boundary tests with zero failures.
+- [x] 3.2 Run the complete test suite, compilation, OpenSpec strict validation, roadmap validation, privacy scans, and diff checks with only documented environment-dependent skips.
 - [ ] 3.3 Complete task/spec and architecture reviews; fix and re-review every Critical or Important finding before model execution.
 
 ## 4. Adapter 2.1 Certification

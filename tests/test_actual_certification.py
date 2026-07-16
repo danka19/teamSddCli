@@ -15,6 +15,7 @@ from process.actual_certification import (
     ActualCertificationError,
     build_model_prompt,
     case_read_pack,
+    create_actual_certification_directory,
     execute_model_catalog,
     expand_compact_output,
     invoke_ollama,
@@ -29,6 +30,7 @@ from process.actual_certification import (
     validate_model_output,
     validate_normalized_evidence,
     validate_phase_gate,
+    write_operational_result_exclusive,
     write_raw_attempt,
 )
 from process.weak_model_kit import build_read_pack, build_role_launch
@@ -85,7 +87,14 @@ def _yaml(path: Path) -> dict:
     return value
 
 
-def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwen-class") -> tuple[dict, Path]:
+def _phase_summary(
+    tmp_path: Path,
+    *,
+    phase: str,
+    count: int,
+    family: str = "qwen-class",
+    adapter_version: str = "2.0",
+) -> tuple[dict, Path]:
     artifact = tmp_path / "remediation-artifact"
     raw_group = artifact / phase
     raw_group.mkdir(parents=True)
@@ -97,7 +106,9 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
     for ordinal in range(count):
         case_id = phase_case_ids[ordinal]
         catalog_case = next(case for case in catalog["cases"] if case["id"] == case_id)
-        pack, launch = case_read_pack(ROOT, PROCESS, catalog_case, adapter_version="2.0")
+        pack, launch = case_read_pack(
+            ROOT, PROCESS, catalog_case, adapter_version=adapter_version
+        )
         response_schema = build_role_response_schema(launch)
         payload_key = launch["model_response_contract"]["role_payload_key"]
         decision = catalog_case["expected_decision"]
@@ -111,6 +122,8 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
                 "claims": [{"subject": "boundary", "summary": "Human review remains pending.", "source_id": source_id}],
                 "checks": [{"command": "source-review", "result": "source-reviewed", "evidence": "Supplied source reviewed.", "source_id": source_id}],
             }
+            if adapter_version == "2.1":
+                payload["artifact_kind"] = catalog_case["required_artifact_kind"]
         response = {
             "case_id": case_id,
             "decision": decision,
@@ -134,7 +147,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "execution_identity": {
                 **observed_identity,
                 "adapter_family": family,
-                "adapter_version": "2.0",
+                "adapter_version": adapter_version,
                 "process_package_version": "0.2.0",
             },
             "attempt_ordinal": 1,
@@ -162,6 +175,12 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "num_predict": adapter_profile["generation"]["num_predict"],
             **({"num_ctx": model["context_length"]} if model.get("context_length") is not None else {}),
         })
+        if adapter_version == "2.1":
+            raw["launch_identity"] = launch["identity"]
+            raw["ollama"]["request_contract"].update(
+                contract_version="2.1",
+                launch_identity=launch["identity"],
+            )
         raw_path = raw_group / f"{logical_id}.json"
         raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
         checksum = hashlib.sha256(raw_path.read_bytes()).hexdigest()
@@ -176,7 +195,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "final_response_present": True,
             "diagnostics": [],
         }
-        cases.append({
+        row = {
             "case_id": case_id,
             "phase": phase,
             "execution_identity": raw["execution_identity"],
@@ -189,7 +208,10 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "attempts": [attempt],
             "deterministic_validation_result": "passed",
             "diagnostics": [],
-        })
+        }
+        if adapter_version == "2.1":
+            row["launch_identity"] = launch["identity"]
+        cases.append(row)
     catalog_sha = hashlib.sha256(QWEN_MATRIX.read_bytes()).hexdigest()
     return ({
         "schema_version": "1.2",
@@ -198,7 +220,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
         "process_package_version": "0.2.0",
         "model": model,
         "observed_identity": observed_identity,
-        "adapter": {"family": family, "version": "2.0"},
+        "adapter": {"family": family, "version": adapter_version},
         "source_catalog": {"path": "process/certification/qwen-matrix.yaml", "sha256": catalog_sha},
         "raw_artifact": {"logical_id": artifact.name, "stored_in_git": False},
         "status": "passed",
@@ -530,7 +552,11 @@ def test_matrix_runner_rejects_failed_preflight_before_model_call(monkeypatch, t
     result = json.loads(capsys.readouterr().out)
     assert exit_code == 3
     assert result["diagnostic"] == "actual-model.preflight-gate"
-    assert not (artifact / "qwen-matrix-result.json").exists()
+    retained = json.loads(
+        (artifact / "qwen-matrix-result.json").read_text(encoding="utf-8")
+    )
+    assert retained["status"] == "blocked"
+    assert retained["diagnostic"] == "actual-model.preflight-gate"
 
 
 def test_preflight_runner_writes_summary_exclusively(monkeypatch, tmp_path: Path) -> None:
@@ -895,6 +921,72 @@ def test_remediation_normalizes_and_validates_honest_failed_preflight_without_ma
     assert normalize_actual_certification.main(argv) == 3
     assert json.loads(capsys.readouterr().out)["status"] == "blocked"
     assert output.read_bytes() == first_output
+
+
+def test_adapter_2_1_normalization_binds_runtime_and_phase_results_and_exact_inventory(
+    tmp_path: Path,
+) -> None:
+    preflight, artifact = _phase_summary(
+        tmp_path, phase="preflight", count=5, adapter_version="2.1"
+    )
+    matrix, _ = _phase_summary(
+        tmp_path, phase="matrix", count=15, adapter_version="2.1"
+    )
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "2.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-adapter-2-0", "stored_in_git": False},
+    }), encoding="utf-8")
+    runtime_raw_group = artifact / "runtime-probe"
+    runtime_raw_group.mkdir()
+    runtime_raw_path = runtime_raw_group / "qwen-runtime-probe.json"
+    runtime_raw_path.write_text(json.dumps({
+        "adapter_version": "2.1",
+        "observed_identity": preflight["observed_identity"],
+    }), encoding="utf-8")
+    runtime_path = artifact / "qwen-runtime-result.json"
+    runtime_path.write_text(json.dumps({
+        "result": "passed",
+        "adapter_version": "2.1",
+        "observed_identity": preflight["observed_identity"],
+        "raw_filename": runtime_raw_path.name,
+        "raw_sha256": hashlib.sha256(runtime_raw_path.read_bytes()).hexdigest(),
+    }), encoding="utf-8")
+    preflight_path = artifact / "qwen-preflight-result.json"
+    matrix_path = artifact / "qwen-matrix-result.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+
+    normalized = normalize_actual_certification.normalize_remediation_evidence(
+        baseline_path,
+        artifact,
+        preflight_path,
+        matrix_path,
+        "qwen-class",
+        runtime_result=runtime_path,
+        repository_root=tmp_path,
+    )
+
+    assert normalized["adapter"]["version"] == "2.1"
+    assert normalized["runtime_probe_result"] == {
+        "path": "qwen-runtime-result.json",
+        "sha256": hashlib.sha256(runtime_path.read_bytes()).hexdigest(),
+        "raw_group": "runtime-probe",
+        "raw_filename": "qwen-runtime-probe.json",
+        "raw_sha256": hashlib.sha256(runtime_raw_path.read_bytes()).hexdigest(),
+    }
+    assert normalized["preflight"]["result"]["path"] == "qwen-preflight-result.json"
+    assert normalized["matrix"]["result"]["path"] == "qwen-matrix-result.json"
+    assert validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    ) == []
+
+    extra = artifact / "unreferenced-result.json"
+    extra.write_text("{}", encoding="utf-8")
+    assert "actual-model.result-inventory-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    )
 
 
 def test_remediation_normalizer_rejects_forged_failed_preflight(tmp_path: Path) -> None:
@@ -1314,7 +1406,7 @@ def test_raw_attempt_writer_is_append_only_and_hash_bound(tmp_path: Path) -> Non
 def test_runtime_adapter_profiles_are_versioned_and_fail_closed(tmp_path: Path) -> None:
     qwen = load_adapter_profile(PROCESS, "qwen-class")
     deepseek = load_adapter_profile(PROCESS, "deepseek-class")
-    assert qwen["schema_version"] == deepseek["schema_version"] == "2.0"
+    assert qwen["schema_version"] == deepseek["schema_version"] == "2.1"
     assert qwen["generation"] == {
         "format": "json-schema",
         "think": False,
@@ -1341,6 +1433,179 @@ def test_runtime_adapter_profiles_are_versioned_and_fail_closed(tmp_path: Path) 
         (adapter_dir / "qwen-class.yaml").write_text(yaml.safe_dump(profile), encoding="utf-8")
         with pytest.raises(ActualCertificationError, match="actual-model.invalid-adapter-profile"):
             load_adapter_profile(tmp_path, "qwen-class")
+
+
+def test_adapter_2_1_phase_gate_accepts_exact_identity_and_rejects_any_downgrade(
+    tmp_path: Path,
+) -> None:
+    summary, artifact = _phase_summary(
+        tmp_path,
+        phase="preflight",
+        count=5,
+        adapter_version="2.1",
+    )
+    assert validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.1", 5
+    ) == []
+
+    mutations = (
+        lambda value, raw: value["adapter"].update(version="2.0"),
+        lambda value, raw: value["cases"][0]["execution_identity"].update(
+            adapter_version="2.0"
+        ),
+        lambda value, raw: raw["execution_identity"].update(adapter_version="2.0"),
+        lambda value, raw: raw["ollama"]["request_contract"].update(
+            contract_version="2.0"
+        ),
+    )
+    for mutation in mutations:
+        broken = copy.deepcopy(summary)
+        row = broken["cases"][0]
+        raw_path = artifact / row["run_group"] / row["raw_filename"]
+        raw = json.loads(raw_path.read_text(encoding="utf-8"))
+        mutation(broken, raw)
+        _rewrite_raw(artifact, row, raw)
+        assert validate_phase_gate(
+            broken, artifact, "preflight", "qwen-class", "2.1", 5
+        )
+
+
+def test_matrix_runner_loads_closed_profile_version_and_blocks_downgrade_before_call(
+    monkeypatch, capsys,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    summary, artifact = _phase_summary(
+        external_tmp,
+        phase="preflight",
+        count=5,
+        adapter_version="2.1",
+    )
+    preflight_result = artifact / "qwen-preflight-result.json"
+    preflight_result.write_text(json.dumps(summary), encoding="utf-8")
+    calls: list[str] = []
+    monkeypatch.setattr(
+        run_actual_certification,
+        "execute_model_catalog",
+        lambda *args, **kwargs: calls.append("called") or {"status": "passed"},
+    )
+
+    broken = copy.deepcopy(summary)
+    broken["adapter"]["version"] = "2.0"
+    preflight_result.write_text(json.dumps(broken), encoding="utf-8")
+    exit_code = run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(artifact / "matrix"),
+        "--phase", "matrix",
+        "--model-family", "qwen-class",
+        "--preflight-result", str(preflight_result),
+        "--result-output", str(artifact / "qwen-matrix-result.json"),
+    ])
+
+    assert exit_code == 3
+    assert calls == []
+    assert json.loads(capsys.readouterr().out)["diagnostic"] == (
+        "actual-model.preflight-gate"
+    )
+
+
+def test_phase_directory_and_operational_result_are_exclusive_and_external(
+    tmp_path: Path,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    raw = external_tmp / "artifact" / "preflight"
+    created = create_actual_certification_directory(ROOT, raw)
+    assert created == raw.resolve()
+    assert created.is_dir()
+    with pytest.raises(
+        ActualCertificationError, match="actual-model.destination-exists"
+    ):
+        create_actual_certification_directory(ROOT, raw)
+
+    result = external_tmp / "artifact" / "qwen-preflight-result.json"
+    payload = write_operational_result_exclusive(
+        result,
+        "preflight",
+        "qwen-class",
+        "actual-model.runtime-failure",
+    )
+    assert payload["status"] == "blocked"
+    assert payload["adapter"] == {"family": "qwen-class", "version": "2.1"}
+    assert json.loads(result.read_text(encoding="utf-8")) == payload
+    with pytest.raises(
+        ActualCertificationError, match="actual-model.result-output-exists"
+    ):
+        write_operational_result_exclusive(
+            result,
+            "preflight",
+            "qwen-class",
+            "actual-model.runtime-failure",
+        )
+
+
+def test_runtime_probe_requires_result_and_retains_failure_after_safe_setup(
+    monkeypatch, capsys,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    artifact = external_tmp / "artifact"
+    raw = artifact / "runtime-probe"
+    result = artifact / "qwen-runtime-result.json"
+
+    assert run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(raw),
+        "--phase", "runtime-probe",
+        "--model-family", "qwen-class",
+    ]) == 3
+    assert not raw.exists()
+
+    monkeypatch.setattr(
+        run_actual_certification,
+        "probe_ollama",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            ActualCertificationError("actual-model.runtime-probe-failure")
+        ),
+    )
+    assert run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(raw),
+        "--phase", "runtime-probe",
+        "--model-family", "qwen-class",
+        "--result-output", str(result),
+    ]) == 3
+    retained = json.loads(result.read_text(encoding="utf-8"))
+    assert retained["status"] == "blocked"
+    assert retained["diagnostic"] == "actual-model.runtime-probe-failure"
+    assert retained["phase"] == "runtime-probe"
+    assert raw.is_dir()
+    capsys.readouterr()
+
+
+def test_runner_retains_interrupted_model_call_after_safe_setup(
+    monkeypatch, capsys,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    artifact = external_tmp / "artifact"
+    raw = artifact / "preflight"
+    result = artifact / "qwen-preflight-result.json"
+    monkeypatch.setattr(
+        run_actual_certification,
+        "execute_model_catalog",
+        lambda *args, **kwargs: (_ for _ in ()).throw(KeyboardInterrupt()),
+    )
+
+    assert run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(raw),
+        "--phase", "preflight",
+        "--model-family", "qwen-class",
+        "--result-output", str(result),
+    ]) == 3
+
+    retained = json.loads(result.read_text(encoding="utf-8"))
+    assert retained["diagnostic"] == "actual-model.interrupted"
+    assert retained["status"] == "blocked"
+    assert raw.is_dir()
+    capsys.readouterr()
 
 
 def test_ollama_request_uses_generated_schema_and_runtime_only_profile(monkeypatch) -> None:

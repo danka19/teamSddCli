@@ -35,6 +35,7 @@ schemas:
   coverage_report: schemas/coverage-report.schema.json
   feedback_policy: schemas/feedback-policy.schema.json
   role_output_fixture: schemas/role-output-fixture.schema.json
+  actual_certification_operational_result: schemas/actual-certification-operational-result.schema.json
 templates:
   change_v2: templates/change-v2/change.yaml
   change_package: templates/change/change.yaml
