@@ -22,6 +22,7 @@ from process.actual_certification import (
     load_adapter_profile,
     parse_compact_output,
     parse_model_output,
+    validate_ai_disabled_artifact,
     validate_actual_certification_destinations,
     select_model_profile,
     split_reasoning_envelope,
@@ -2484,9 +2485,36 @@ def test_adapter_2_1_ai_disabled_walkthrough_passes_all_cases_without_authority_
     )
     _require_remediation_artifact(artifact)
 
-    raw_files = sorted(artifact.glob("ai-disabled-*.json"))
-    assert len(raw_files) == 11
-    rows = [json.loads(path.read_text(encoding="utf-8")) for path in raw_files]
-    assert all(row["exit_code"] == 0 for row in rows)
-    assert all(row["argv"][1:3] == ["-m", "pytest"] for row in rows)
-    assert all("passed" in row["stdout"] and not row["stderr"] for row in rows)
+    catalog = _yaml(AI_DISABLED)
+    evidence = validate_ai_disabled_artifact(ROOT, catalog, artifact)
+
+    assert evidence["status"] == "passed"
+    assert evidence["actual_model_run"] is False
+    assert len(evidence["cases"]) == len(catalog["cases"]) == 11
+    assert [row["case_id"] for row in evidence["cases"]] == [
+        case["id"] for case in catalog["cases"]
+    ]
+    assert all(row["canonical_mutated"] is False for row in evidence["cases"])
+    assert all(row["human_authority_substituted"] is False for row in evidence["cases"])
+
+
+def test_ai_disabled_artifact_validation_rejects_extra_inventory(tmp_path: Path) -> None:
+    catalog = _yaml(AI_DISABLED)
+    for case in catalog["cases"]:
+        path = tmp_path / f"ai-disabled-{case['id']}.json"
+        path.write_text(
+            json.dumps(
+                {
+                    "case_id": case["id"],
+                    "argv": ["<python>", "-m", "pytest", case["pytest_node"], "-q"],
+                    "exit_code": 0,
+                    "stdout": ". [100%]\n1 passed in 0.01s\n",
+                    "stderr": "",
+                }
+            ),
+            encoding="utf-8",
+        )
+    (tmp_path / "unexpected.json").write_text("{}", encoding="utf-8")
+
+    with pytest.raises(ActualCertificationError, match="ai-disabled.inventory-mismatch"):
+        validate_ai_disabled_artifact(ROOT, catalog, tmp_path)

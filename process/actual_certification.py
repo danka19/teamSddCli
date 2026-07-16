@@ -864,6 +864,77 @@ def validate_ai_disabled_catalog(root: Path, catalog: dict[str, Any]) -> list[st
     return sorted(set(diagnostics))
 
 
+def validate_ai_disabled_artifact(
+    root: Path,
+    catalog: dict[str, Any],
+    artifact_root: Path,
+) -> dict[str, Any]:
+    """Validate one retained AI-disabled walkthrough against its exact catalog."""
+    diagnostics = validate_ai_disabled_catalog(root, catalog)
+    if diagnostics:
+        raise ActualCertificationError(diagnostics[0])
+    if not artifact_root.is_dir():
+        raise ActualCertificationError("ai-disabled.artifact-missing")
+
+    cases = catalog["cases"]
+    expected_names = {f"ai-disabled-{case['id']}.json" for case in cases}
+    observed_entries = list(artifact_root.iterdir())
+    if (
+        any(not path.is_file() for path in observed_entries)
+        or {path.name for path in observed_entries} != expected_names
+    ):
+        raise ActualCertificationError("ai-disabled.inventory-mismatch")
+
+    rows: list[dict[str, Any]] = []
+    expected_raw_fields = {"case_id", "argv", "exit_code", "stdout", "stderr"}
+    success_output = re.compile(
+        r"^[.]+\s+\[100%\]\r?\n[1-9]\d* passed in \d+(?:\.\d+)?s\r?\n$"
+    )
+    for case in cases:
+        filename = f"ai-disabled-{case['id']}.json"
+        path = artifact_root / filename
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ActualCertificationError("ai-disabled.raw-malformed") from error
+        expected_argv = ["<python>", "-m", "pytest", case["pytest_node"], "-q"]
+        if (
+            not isinstance(raw, dict)
+            or set(raw) != expected_raw_fields
+            or raw.get("case_id") != case["id"]
+            or raw.get("argv") != expected_argv
+            or raw.get("exit_code") != 0
+            or not isinstance(raw.get("stdout"), str)
+            or success_output.fullmatch(raw["stdout"]) is None
+            or raw.get("stderr") != ""
+        ):
+            raise ActualCertificationError("ai-disabled.raw-mismatch")
+        rows.append(
+            {
+                "case_id": case["id"],
+                "operation": case["operation"],
+                "role": case.get("role", "not-applicable"),
+                "change_class": case.get("change_class", "not-applicable"),
+                "pytest_node": case["pytest_node"],
+                "source_refs": case["canonical_sources"],
+                "argv": expected_argv,
+                "exit_code": 0,
+                "result": "passed",
+                "raw_filename": filename,
+                "raw_sha256": _sha256_bytes(path.read_bytes()),
+                "canonical_mutated": False,
+                "human_authority_substituted": False,
+            }
+        )
+    return {
+        "schema_version": "1.0",
+        "evidence_kind": "ai-disabled-walkthrough",
+        "actual_model_run": False,
+        "status": "passed",
+        "cases": rows,
+    }
+
+
 def validate_model_catalog(root: Path, catalog: dict[str, Any]) -> list[str]:
     diagnostics: list[str] = []
     cases = catalog.get("cases")
