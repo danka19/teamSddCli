@@ -1,0 +1,29 @@
+## 1. Contract And Compatibility
+
+- [ ] 1.1 Add TDD coverage for decision-discriminated `draft` and `block` schemas, universal draft-vs-approval guidance, and validator-answer leakage across schema, prompt, initial request, and retry request.
+- [ ] 1.2 Implement adapter `2.1` schema generation and mechanical normalization while preserving authority checks and read-only adapter `1.0`/`2.0` compatibility.
+
+## 2. Runtime And Evidence
+
+- [ ] 2.1 Version Qwen and DeepSeek profiles to `2.1`, bind launch/request/raw/summary/normalization identity, and retain one structural-only retry for branch/schema failures.
+- [ ] 2.2 Extend deterministic gate, failed-run retention, package schema, and evidence validation for adapter `2.1` without weakening observed runtime identity, external destination, privacy, checksum, or lineage controls.
+
+## 3. Deterministic Verification
+
+- [ ] 3.1 Run focused adapter, certification, compatibility, package, authority, leakage, retry, and runtime-boundary tests with zero failures.
+- [ ] 3.2 Run the complete test suite, compilation, OpenSpec strict validation, roadmap validation, privacy scans, and diff checks with only documented environment-dependent skips.
+- [ ] 3.3 Complete task/spec and architecture reviews; fix and re-review every Critical or Important finding before model execution.
+
+## 4. Adapter 2.1 Certification
+
+- [ ] 4.1 Verify exact observed Ollama, Qwen, and DeepSeek identities and create new append-only adapter `2.1` runtime/preflight artifact roots outside Git.
+- [ ] 4.2 Run each five-case preflight and execute that family's fifteen-case matrix only after a five-of-five deterministic gate.
+- [ ] 4.3 Normalize each success or honest failed preflight into new Git evidence, bind exact raw checksums and baseline references, and keep all raw attempts outside Git.
+- [ ] 4.4 Re-run the AI-disabled eleven-case walkthrough in a new external artifact root.
+
+## 5. Reconciliation And Acceptance Evidence
+
+- [ ] 5.1 Create a dated adapter `2.1` outcome audit with the ten-error baseline classification, exact new results, retries, diagnostics, identities, checksums, limitations, and comparison without process-effectiveness claims.
+- [ ] 5.2 Update Phase 2, roadmap, current audit, evidence index, file structure, and operator runbooks to the actual success or failure path.
+- [ ] 5.3 Complete final spec/status, architecture, and verification reviews with fresh raw/normalized cross-checks.
+- [ ] 5.4 Mark transfer task 4.9 complete and move work item 2.11 to `pending_acceptance` only if both families pass five-of-five and fifteen-of-fifteen; otherwise keep 4.9 open, 2.11 `in_progress`, and 2.12 blocked.
