@@ -2421,3 +2421,72 @@ def test_remediation_evidence_binds_failed_preflight_and_immutable_baseline(
     baseline = evidence["baseline_reference"]
     baseline_path = ROOT / baseline["path"]
     assert hashlib.sha256(baseline_path.read_bytes()).hexdigest() == baseline["sha256"]
+
+
+@pytest.mark.parametrize(
+    ("family", "evidence_name", "artifact_name", "passed_count"),
+    [
+        (
+            "qwen-class",
+            "phase-2-11-qwen-adapter-2-1-2026-07-16.yaml",
+            "raw-artifact-v0.2.1-qwen-remediation-2026-07-16",
+            2,
+        ),
+        (
+            "deepseek-class",
+            "phase-2-11-deepseek-adapter-2-1-2026-07-16.yaml",
+            "raw-artifact-v0.2.1-deepseek-remediation-2026-07-16",
+            0,
+        ),
+    ],
+)
+def test_adapter_2_1_evidence_binds_runtime_failed_preflight_and_exact_inventory(
+    family: str, evidence_name: str, artifact_name: str, passed_count: int
+) -> None:
+    evidence = _yaml(PROCESS / "certification/evidence" / evidence_name)
+    artifact = ROOT.parent / "teamSsdCli-release-artifacts" / artifact_name
+
+    _require_remediation_artifact(artifact)
+    assert validate_normalized_evidence(evidence, artifact) == []
+    assert evidence["adapter"] == {
+        "family": family,
+        "version": "2.1",
+        "authority": "advisory-only",
+    }
+    assert evidence["status"] == "failed"
+    assert evidence["matrix_not_run"] == "preflight-gate-failed"
+    assert evidence["matrix"] == {"status": "not-run", "cases": []}
+
+    rows = evidence["preflight"]["cases"]
+    assert len(rows) == 5
+    assert sum(row["deterministic_validation_result"] == "passed" for row in rows) == passed_count
+    assert all(row["execution_identity"]["adapter_version"] == "2.1" for row in rows)
+    assert all(len(row["attempts"]) == 1 for row in rows)
+
+    for result_reference in (
+        evidence["runtime_probe_result"],
+        evidence["preflight"]["result"],
+    ):
+        result_path = artifact / result_reference["path"]
+        assert hashlib.sha256(result_path.read_bytes()).hexdigest() == result_reference["sha256"]
+
+    baseline = evidence["baseline_reference"]
+    baseline_path = ROOT / baseline["path"]
+    assert baseline["adapter_version"] == "2.0"
+    assert hashlib.sha256(baseline_path.read_bytes()).hexdigest() == baseline["sha256"]
+
+
+def test_adapter_2_1_ai_disabled_walkthrough_passes_all_cases_without_authority_substitution() -> None:
+    artifact = (
+        ROOT.parent
+        / "teamSsdCli-release-artifacts"
+        / "raw-artifact-v0.2.1-ai-disabled-remediation-2026-07-16"
+    )
+    _require_remediation_artifact(artifact)
+
+    raw_files = sorted(artifact.glob("ai-disabled-*.json"))
+    assert len(raw_files) == 11
+    rows = [json.loads(path.read_text(encoding="utf-8")) for path in raw_files]
+    assert all(row["exit_code"] == 0 for row in rows)
+    assert all(row["argv"][1:3] == ["-m", "pytest"] for row in rows)
+    assert all("passed" in row["stdout"] and not row["stderr"] for row in rows)

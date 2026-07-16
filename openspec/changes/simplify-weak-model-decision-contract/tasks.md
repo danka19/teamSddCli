@@ -16,10 +16,10 @@
 
 ## 4. Adapter 2.1 Certification
 
-- [ ] 4.1 Verify exact observed Ollama, Qwen, and DeepSeek identities and create new append-only adapter `2.1` runtime/preflight artifact roots outside Git.
-- [ ] 4.2 Run each five-case preflight and execute that family's fifteen-case matrix only after a five-of-five deterministic gate.
-- [ ] 4.3 Normalize each success or honest failed preflight into new Git evidence, bind exact raw checksums and baseline references, and keep all raw attempts outside Git.
-- [ ] 4.4 Re-run the AI-disabled eleven-case walkthrough in a new external artifact root.
+- [x] 4.1 Verify exact observed Ollama, Qwen, and DeepSeek identities and create new append-only adapter `2.1` runtime/preflight artifact roots outside Git.
+- [x] 4.2 Run each five-case preflight and execute that family's fifteen-case matrix only after a five-of-five deterministic gate.
+- [x] 4.3 Normalize each success or honest failed preflight into new Git evidence, bind exact raw checksums and baseline references, and keep all raw attempts outside Git.
+- [x] 4.4 Re-run the AI-disabled eleven-case walkthrough in a new external artifact root.
 
 ## 5. Reconciliation And Acceptance Evidence
 
