@@ -67,4 +67,29 @@ The non-leading prompt supplies bounded role/class/operation identity, exact cas
 
 `--phase runtime-probe` records the exact Ollama version, model tag/digest, loopback endpoint, adapter version, and package version. `scripts/normalize_actual_certification.py` cross-links each model row to its append-only raw artifact. Normalized validation then cross-checks operation, case, role, class, group identity, model/runtime identity, source hashes, token/duration metrics, and deterministic result against raw bytes. Failed and superseded attempts remain immutable.
 
-The 2026-07-15 Qwen evidence uses Ollama `0.30.11`, `qwen3.5:9b` digest `6488c96fa5fa`, and adapter `1.0`; it passed 0/5 preflight and 1/15 matrix cases. The DeepSeek evidence uses the same frozen semantics with `deepseek-r1:8b`, full digest `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`, architecture `qwen3`, 8.2B profile, `Q4_K_M`, context `131072`, Ollama `0.30.11`, and adapter `1.0`; it passed 0/5 and 0/15. DeepSeek reasoning is retained separately from the final-response boundary and never becomes authority or a pass. Every failed operation routes to deterministic validation plus the case-specific catalog-owned human role and concrete disposition action; generic owner/decision text fails normalized validation. Both are local family proxies, not corporate-runtime equivalence proof. Work item 2.11 remains `pending_acceptance` until the human owner accepts or rejects the fallback dispositions.
+The 2026-07-15 Qwen evidence uses Ollama `0.30.11`, `qwen3.5:9b` digest `6488c96fa5fa`, and adapter `1.0`; it passed 0/5 preflight and 1/15 matrix cases. The DeepSeek evidence uses the same frozen semantics with `deepseek-r1:8b`, full digest `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`, architecture `qwen3`, 8.2B profile, `Q4_K_M`, context `131072`, Ollama `0.30.11`, and adapter `1.0`; it passed 0/5 and 0/15. These files remain immutable baseline evidence.
+
+Adapter `2.0` adds generated closed role schemas, reasoning/final separation,
+mechanical normalization, append-only attempt lineage, and one structural retry
+only for empty/invalid/schema-invalid final output. `run_actual_certification.py`
+writes phase summaries; `check_actual_certification_gate.py` independently
+requires exact identity, raw hashes, adapter version, expected count, and every
+case passing. A preflight gate must exit `0` before a matrix command is permitted.
+Failed preflight normalization omits `--matrix-result` and records
+`matrix_not_run: preflight-gate-failed`.
+
+The 2026-07-16 remediation evidence is stored separately at
+`phase-2-11-qwen-remediation-2026-07-16.yaml` and
+`phase-2-11-deepseek-remediation-2026-07-16.yaml`. Each family completed five
+structurally valid attempts, failed 0/5 with `model-adapter.semantic`, used no
+retry, and had gate exit `1`; neither matrix ran. Both normalized documents bind
+their adapter `1.0` baseline by SHA-256 and validate one-to-one against their
+external raw roots. The fresh AI-disabled remediation artifact passed 11/11.
+
+DeepSeek reasoning is retained separately from the final-response boundary and
+never becomes authority or a pass. Every failed operation routes to deterministic
+validation plus the case-specific catalog-owned human role and concrete
+disposition action; generic owner/decision text fails normalized validation. Both
+models are local family proxies, not corporate-runtime equivalence proof. Work
+item 2.11 remains `in_progress`, task 4.9 remains open, and 2.12 remains blocked
+pending a new human disposition.

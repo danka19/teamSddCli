@@ -529,7 +529,7 @@ Status: closed after implementation, independent architecture/review hardening, 
 
 ## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 remain complete; transfer tasks 4.7-4.9 now own bounded adapter remediation and append-only recertification. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
+Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5, 4.7-4.8 and NIS tasks 8.2-8.3 are complete; transfer task 4.9 remains open after both adapter `2.0` preflight gates failed. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
 
 ### Evidence And Scope
 
@@ -554,4 +554,36 @@ Status: `in_progress`. The AI-disabled baseline and both frozen non-leading mode
 
 `qwen3.5:9b` and `deepseek-r1:8b` are local family-level proxies, not corporate-runtime equivalence proof. As the immutable 2026-07-15 baseline, DeepSeek passed 0/5 preflight and 0/15 matrix cases while Qwen passed 0/5 and 1/15. Normalized DeepSeek evidence is `process/certification/evidence/phase-2-11-deepseek-2026-07-15.yaml`; the dated audit is `docs/audits/PHASE_2_WORK_ITEM_2_11_DEEPSEEK_CERTIFICATION_AUDIT_2026-07-15.md`. Both dated 2026-07-15 audits remain historical evidence and are not rewritten.
 
-The next gate is new append-only remediation certification under transfer tasks 4.7-4.9: each family must pass all five frozen preflight cases with one adapter version before its fifteen-case matrix may start. If either family fails preflight after the permitted technical retry, its matrix is not run and the exact residual incompatibility returns for human disposition. Work item 2.11 remains open, both active changes remain open, 2.12 is planned and blocked, and no release acceptance, archive, PR, or pilot is claimed.
+### Adapter 2.0 Remediation Outcome
+
+- Contract and implementation: `process/model_adapter.py` builds generated closed
+  role-specific schemas, separates reasoning from final output, parses the exact
+  response, and mechanically adds only launcher-owned identity/invariant fields.
+  Existing semantic validation remains the fail-closed authority.
+- Retry boundary: one append-only retry is possible only for empty final output,
+  invalid JSON, or schema failure. All ten remediation outputs were structurally
+  valid semantic failures, so every case has one attempt and no retry.
+- Qwen: `qwen3.5:9b`, digest `6488c96fa5fa`, Ollama `0.30.11`, adapter
+  `2.0`; 0/5 preflight, five `model-adapter.semantic` diagnostics, gate exit
+  `1`, matrix not run.
+- DeepSeek: `deepseek-r1:8b`, full digest
+  `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`,
+  Ollama `0.30.11`, adapter `2.0`; 0/5 preflight, five
+  `model-adapter.semantic` diagnostics, gate exit `1`, matrix not run.
+- Normalized evidence:
+  `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml`
+  and
+  `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml`.
+  Both retain the immutable adapter `1.0` baseline reference, have
+  `status: failed`, and pass raw/hash/reference validation.
+- AI-disabled regression:
+  `raw-artifact-v0.2.0-ai-disabled-remediation-2026-07-16` outside Git was
+  created once and passed 11/11 with no canonical mutation or substituted human
+  authority.
+- Durable result:
+  `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md`.
+
+Transfer progress is 22/36. Task 4.9 remains unchecked, work item 2.11 remains
+open, both active changes remain open, 2.12 is planned and blocked, and no model
+certification, release acceptance, archive, PR, or pilot is claimed. The next
+gate is a new human disposition for the exact residual semantic incompatibility.

@@ -50,6 +50,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md` | Evidence-backed audit of phase status, deterministic baseline, weak-model readiness, transfer gaps, and the accepted remediation boundary |
 | `docs/audits/PHASE_2_PLAN_COMPLETENESS_AUDIT_2026-07-13.md` | Evidence-backed audit of Phase 2 scope coverage, statuses, task ownership, dependency cycles, OpenSpec mapping, verification specificity, and planning drift |
 | `docs/audits/PHASE_2_EXECUTION_PREFLIGHT_AUDIT_2026-07-14.md` | Reproducible Phase 2 execution-entry audit covering statuses, dependency gates, OpenSpec readiness, baseline tests, branch safety, and later certification limitations |
+| `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md` | Dated adapter `2.0` remediation outcome, exact Qwen/DeepSeek failure evidence, AI-disabled regression, raw checksums, and residual human decision |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
@@ -98,12 +99,16 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/adapters/*.yaml` | Thin Qwen/DeepSeek/GigaCode-class packaging templates with no policy, transition, canonical-write, or human authority |
 | `process/weak_model_kit.py` | Pure authority-labelled read-pack, deterministic launch, operation-evidence, and safe-parallel contract logic |
 | `process/certification.py` | Pure deterministic fixture runner, allowlisted validator dispatch, normalized/raw evidence boundary, and exact OpenSpec coverage inventory |
+| `process/model_adapter.py` | Generated closed role-specific response schemas, reasoning/final separation, exact parsing, structural retry classification, and mechanical normalization |
 | `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
+| `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml` | Normalized Qwen adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
+| `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml` | Normalized DeepSeek adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
 | `tests/test_*.py` `SCENARIO_COVERAGE` markers | Test-source-owned exact selector-to-pytest-node bindings used to reject duplicate, unknown, unused, or unrelated evidence substitution |
 | `tests/test_feedback_policy.py` | Eight exact deterministic scenarios for the modified NIS feedback/publication-boundary requirement |
 | `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
 | `scripts/certify_process_release.py` | Thin CWD-independent fixture-certification and coverage entry point; actual model/cross-platform execution remains later work |
+| `scripts/check_actual_certification_gate.py` | Read-only identity/hash/count/status gate that blocks a model-family matrix until its same-adapter 5/5 preflight passes |
 | `tests/test_weak_model_kit.py` | Scenario-first launch, missing context, authority, derived-output, adapter, role, and parallel-safety evidence |
 | `docs/runbooks/WEAK_MODEL_OPERATING_KIT.md` | Operator launch, evidence, adapter-failure, AI-disabled, and safe-parallel procedure |
 | `docs/runbooks/CERTIFICATION_EVIDENCE.md` | Fixture certification, raw/normalized storage boundary, privacy controls, coverage gaps, and future-work disclosure |
@@ -135,7 +140,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| Actual Qwen/DeepSeek and AI-disabled run evidence under the release evidence location | Work item 2.11 executes the matrix; current certification assets are deterministic fixtures only |
+| External `../teamSsdCli-release-artifacts/raw-artifact-v0.2.0-*-2026-07-*` roots | Immutable AI-disabled and actual Qwen/DeepSeek raw evidence outside Git; normalized evidence and checksums are committed, and work item 2.11 remains open after failed adapter `2.0` preflights |
 | Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 

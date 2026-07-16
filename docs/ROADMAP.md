@@ -20,6 +20,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions `D-014`, `D-015`, and `D-016` on 2026-07-14 establish the two-horizon automation strategy, Phase 2 remediation gate, and reliability/throughput direction: deterministic/AI-disabled operation is the foundation and fallback; the release package must cover Windows, Linux, and macOS; reliability grows through risk-oriented tests and traceability; speed grows through safe parallel AI work on independent tasks. `D-015` required explicit plan acceptance before implementation; `D-017` now closes that gate.
 - Human decision `D-017` on 2026-07-14 accepts the corrected `2.1-2.14` Phase 2 plan and opens work item 2.1 as the sequential implementation start.
 - Human decision on 2026-07-16 rejects fallback-only acceptance of the first Qwen/DeepSeek certification baseline and adopts bounded role-specific schema generation, reasoning/final separation, mechanical normalization, one append-only structural retry, and a 5/5 preflight gate before each 15/15 matrix. Work item 2.11 returns from `pending_acceptance` to `in_progress`; 2.12 remains blocked and Phase 3 does not start.
+- The 2026-07-16 remediation execution implemented and reviewed OpenSpec tasks 4.7-4.8, but both frozen proxies failed all five preflight cases with `model-adapter.semantic`; no structural retry or matrix was permitted. Transfer progress is 22/36, task 4.9 remains open, 2.11 remains `in_progress`, and 2.12 remains blocked pending a new human disposition.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -72,7 +73,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for the approved bounded adapter remediation. The completed 2026-07-15 certification remains historical baseline evidence, and 2.12 remains planned and blocked by 2.11.
+Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` after the bounded adapter remediation left both frozen proxies at 0/5 preflight with no matrices. The 2026-07-15 certification remains immutable historical baseline evidence, the fresh AI-disabled regression passes 11/11, and 2.12 remains planned and blocked by 2.11.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
