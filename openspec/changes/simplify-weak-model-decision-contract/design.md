@@ -103,6 +103,8 @@ Phase directories are created exclusively after destination validation and are r
 
 After destinations are safely validated, runtime, identity, network, and interrupted-call failures create an exclusive non-success operational result summary when a result path is available. Such a summary is retained for audit but cannot satisfy preflight or matrix gates. The gate rejects unexpected or unreferenced inventory.
 
+Operational summaries expose only stable `actual-model.*` diagnostics, validate against the registered closed schema before writing, and record model-call state as `false`, `true`, or `unknown` with observed identity when available. Matrix raw/result destinations are established only after the preflight gate and fresh identity check pass. Normalization and evidence validation parse runtime and phase result content, reconstruct the expected semantic documents, and reject checksum-consistent substitutions or any extra file-system inventory.
+
 ## Risks / Trade-offs
 
 - **The schema may improve compliance without improving reasoning.** → Certification continues to require semantic five-of-five and fifteen-of-fifteen gates; schema success alone has no acceptance value.

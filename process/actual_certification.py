@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator
 
 from process.model_adapter import (
     ModelAdapterError,
@@ -74,6 +75,20 @@ ROLE_ARTIFACT_KINDS = {
 STRUCTURAL_RETRY_SUFFIX = "\nReturn only one JSON object matching the unchanged supplied schema."
 GENERIC_FALLBACK_VALUES = {"human", "human owner", "named human", "named human decision", "mandatory human", "manual decision"}
 FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+FROZEN_ADAPTER_2_0_GENERATION = {
+    "qwen-class": {
+        "format": "json-schema",
+        "think": False,
+        "num_predict": 1200,
+        "technical_retries": 1,
+    },
+    "deepseek-class": {
+        "format": "json-schema",
+        "think": False,
+        "num_predict": 2400,
+        "technical_retries": 1,
+    },
+}
 
 
 def _is_relative_to(path: Path, parent: Path) -> bool:
@@ -173,6 +188,7 @@ def write_operational_result_exclusive(
     diagnostic: str,
     observed_identity: dict[str, Any] | None = None,
     *,
+    actual_model_run: bool | str = "unknown",
     repository_root: Path | None = None,
 ) -> dict[str, Any]:
     """Retain one non-success operational outcome without promoting it to evidence."""
@@ -180,13 +196,30 @@ def write_operational_result_exclusive(
         "schema_version": "1.0",
         "evidence_kind": "actual-model-operational-result",
         "status": "blocked",
-        "actual_model_run": False,
+        "actual_model_run": actual_model_run,
         "phase": phase,
-        "diagnostic": diagnostic,
+        "diagnostic": (
+            diagnostic
+            if re.fullmatch(r"actual-model\.[a-z0-9-]+", diagnostic)
+            else "actual-model.operational-failure"
+        ),
         "adapter": {"family": family, "version": "2.1"},
     }
     if observed_identity is not None:
         payload["observed_identity"] = observed_identity
+    try:
+        schema = json.loads(
+            (
+                Path(__file__).resolve().parent
+                / "schemas/actual-certification-operational-result.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ActualCertificationError(
+            "actual-model.operational-result-invalid"
+        ) from error
+    if list(Draft202012Validator(schema).iter_errors(payload)):
+        raise ActualCertificationError("actual-model.operational-result-invalid")
     data = (
         json.dumps(payload, sort_keys=True, indent=2, ensure_ascii=True) + "\n"
     )
@@ -277,6 +310,22 @@ def require_observed_identity(
         raise ActualCertificationError("actual-model.runtime-identity-mismatch")
 
 
+def preflight_model_execution_identity(
+    process_root: Path,
+    catalog: dict[str, Any],
+    model_family: str,
+    *,
+    preflight_observed_identity: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    model = select_model_profile(catalog, model_family)
+    frozen_identity = load_runtime_identity(process_root, model_family, model)
+    observed_identity = observe_ollama_identity(model)
+    require_observed_identity(
+        observed_identity, frozen_identity, preflight_observed_identity
+    )
+    return observed_identity
+
+
 def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
     """Load one exact current runtime-only adapter 2.1 profile."""
     path = process_root / "adapters" / f"{family}.yaml"
@@ -316,6 +365,19 @@ def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
     if not valid:
         raise ActualCertificationError("actual-model.invalid-adapter-profile")
     return value
+
+
+def adapter_generation_contract(
+    process_root: Path, family: str, adapter_version: str
+) -> dict[str, Any]:
+    if adapter_version == "2.0":
+        generation = FROZEN_ADAPTER_2_0_GENERATION.get(family)
+        if generation is None:
+            raise ActualCertificationError("actual-model.invalid-adapter-profile")
+        return dict(generation)
+    if adapter_version == "2.1":
+        return dict(load_adapter_profile(process_root, family)["generation"])
+    raise ActualCertificationError("actual-model.unsupported-adapter-version")
 
 
 def _valid_fallback_route(route: Any) -> bool:
@@ -426,13 +488,15 @@ def validate_phase_gate(
         catalog_bytes = catalog_path.read_bytes()
         catalog = yaml.safe_load(catalog_bytes)
         expected_model = select_model_profile(catalog, model_family)
-        adapter_profile = load_adapter_profile(Path(__file__).resolve().parent, model_family)
+        generation_contract = adapter_generation_contract(
+            Path(__file__).resolve().parent, model_family, adapter_version
+        )
         frozen_identity = load_runtime_identity(
             Path(__file__).resolve().parent, model_family, expected_model
         )
     except (OSError, UnicodeError, yaml.YAMLError, ActualCertificationError):
         expected_model = None
-        adapter_profile = None
+        generation_contract = None
         frozen_identity = None
         _append_once(diagnostics, "actual-model.gate-catalog-mismatch")
     if not isinstance(model, dict) or model.get("family") != model_family:
@@ -614,7 +678,11 @@ def validate_phase_gate(
             if ordinal == 2:
                 attempt_prompt += STRUCTURAL_RETRY_SUFFIX
             expected_prompt_sha256 = _sha256_bytes(attempt_prompt.encode("utf-8"))
-            generation = adapter_profile.get("generation", {}) if isinstance(adapter_profile, dict) else {}
+            generation = (
+                generation_contract
+                if isinstance(generation_contract, dict)
+                else {}
+            )
             expected_request_contract = {
                 "model": model.get("name") if isinstance(model, dict) else None,
                 "stream": False,
@@ -1363,6 +1431,8 @@ def execute_model_catalog(
     model_family: str = "qwen-class",
     preflight_observed_identity: dict[str, Any] | None = None,
     destination_guard: bool = False,
+    initial_observed_identity: dict[str, Any] | None = None,
+    operation_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     diagnostics = validate_model_catalog(root, catalog)
     if diagnostics:
@@ -1371,7 +1441,7 @@ def execute_model_catalog(
     results: list[dict[str, Any]] = []
     model = select_model_profile(catalog, model_family)
     frozen_identity = load_runtime_identity(process_root, model_family, model)
-    observed_identity = observe_ollama_identity(model)
+    observed_identity = initial_observed_identity or observe_ollama_identity(model)
     require_observed_identity(
         observed_identity,
         frozen_identity,
@@ -1387,6 +1457,10 @@ def execute_model_catalog(
         **observed_identity,
         "adapter_family": model_family, "adapter_version": adapter["schema_version"], "process_package_version": package_version,
     }
+    if operation_state is not None:
+        operation_state.update(
+            actual_model_run=False, observed_identity=observed_identity
+        )
     run_group = raw_directory.name
     for case in selected:
         route = catalog["fallback_routes"][case["id"]]
@@ -1405,13 +1479,24 @@ def execute_model_catalog(
         raw_response: dict[str, Any] = {}
         for attempt_ordinal in (1, 2):
             attempt_prompt = prompt if attempt_ordinal == 1 else prompt + STRUCTURAL_RETRY_SUFFIX
-            current_identity = observe_ollama_identity(model)
+            current_identity = (
+                observed_identity
+                if (
+                    initial_observed_identity is not None
+                    and attempt_ordinal == 1
+                    and not attempt_rows
+                )
+                else observe_ollama_identity(model)
+            )
             require_observed_identity(
                 current_identity,
                 frozen_identity,
                 observed_identity,
                 preflight_observed_identity if phase == "matrix" else None,
             )
+            if operation_state is not None:
+                operation_state["actual_model_run"] = "unknown"
+                operation_state["observed_identity"] = current_identity
             raw_response = invoke_ollama(
                 str(model.get("endpoint", OLLAMA_ENDPOINT)),
                 model["name"],
@@ -1423,6 +1508,8 @@ def execute_model_catalog(
                 contract_version=adapter["schema_version"],
                 launch_identity=launch["identity"],
             )
+            if operation_state is not None:
+                operation_state["actual_model_run"] = True
             reasoning, final_response = split_reasoning_final(
                 str(raw_response.get("response", "")), str(raw_response.get("thinking", ""))
             )
@@ -1518,6 +1605,67 @@ def execute_model_catalog(
         "status": "passed" if all(row["deterministic_validation_result"] == "passed" for row in results) else "partial",
         "cases": results,
         "limitations": [model.get("limitation", "family-level proxy; corporate-runtime equivalence is not established")],
+    }
+
+
+def _read_bound_json(
+    artifact_root: Path,
+    reference: Any,
+    diagnostics: list[str],
+    mismatch_code: str,
+) -> dict[str, Any] | None:
+    if (
+        not isinstance(reference, dict)
+        or not isinstance(reference.get("path"), str)
+        or not re.fullmatch(r"[0-9a-f]{64}", str(reference.get("sha256", "")))
+    ):
+        _append_once(diagnostics, mismatch_code)
+        return None
+    relative = Path(reference["path"])
+    path = (artifact_root.resolve() / relative).resolve()
+    try:
+        path.relative_to(artifact_root.resolve())
+    except ValueError:
+        _append_once(diagnostics, mismatch_code)
+        return None
+    if relative.is_absolute() or ".." in relative.parts or not path.is_file():
+        _append_once(diagnostics, mismatch_code)
+        return None
+    data = path.read_bytes()
+    if _sha256_bytes(data) != reference["sha256"]:
+        _append_once(diagnostics, mismatch_code)
+        return None
+    try:
+        value = json.loads(data)
+    except (UnicodeError, json.JSONDecodeError):
+        _append_once(diagnostics, mismatch_code)
+        return None
+    if not isinstance(value, dict):
+        _append_once(diagnostics, mismatch_code)
+        return None
+    return value
+
+
+def _expected_phase_result_from_normalized(
+    evidence: dict[str, Any], phase: str
+) -> dict[str, Any]:
+    section = evidence[phase]
+    return {
+        "schema_version": "1.2",
+        "evidence_kind": f"actual-model-{phase}",
+        "actual_model_run": True,
+        "process_package_version": evidence.get("process_package_version"),
+        "model": evidence.get("model"),
+        "adapter": {
+            "family": evidence.get("adapter", {}).get("family"),
+            "version": evidence.get("adapter", {}).get("version"),
+        },
+        "observed_identity": evidence.get("observed_identity"),
+        "source_catalog": evidence.get("source_catalog"),
+        "raw_artifact": evidence.get("raw_artifact"),
+        "status": section.get("status"),
+        "cases": section.get("cases"),
+        "limitations": evidence.get("limitations", []),
     }
 
 
@@ -1678,6 +1826,115 @@ def _validate_remediation_evidence(
                         str(runtime_reference["raw_filename"]),
                     )
                 )
+        runtime_result = _read_bound_json(
+            artifact_root,
+            runtime_reference,
+            diagnostics,
+            "actual-model.runtime-result-mismatch",
+        )
+        runtime_raw_value = None
+        if isinstance(runtime_reference, dict):
+            runtime_raw = _safe_artifact_path(
+                artifact_root,
+                runtime_reference.get("raw_group"),
+                runtime_reference.get("raw_filename"),
+            )
+            if runtime_raw is not None and runtime_raw.is_file():
+                try:
+                    runtime_raw_value = json.loads(
+                        runtime_raw.read_text(encoding="utf-8")
+                    )
+                except (OSError, UnicodeError, json.JSONDecodeError):
+                    runtime_raw_value = None
+        observed = evidence.get("observed_identity")
+        expected_runtime_raw = {
+            "adapter_family": family,
+            "adapter_version": "2.1",
+            "process_package_version": evidence.get("process_package_version"),
+            "runtime_version": observed.get("runtime_version")
+            if isinstance(observed, dict)
+            else None,
+            "model_tag": observed.get("model_tag")
+            if isinstance(observed, dict)
+            else None,
+            "model_digest": observed.get("model_digest")
+            if isinstance(observed, dict)
+            else None,
+        }
+        runtime_checks = (
+            isinstance(runtime_result, dict),
+            isinstance(runtime_raw_value, dict),
+            isinstance(observed, dict),
+            runtime_result.get("result") == "passed"
+            if isinstance(runtime_result, dict)
+            else False,
+            runtime_result.get("adapter_version") == "2.1"
+            if isinstance(runtime_result, dict)
+            else False,
+            runtime_result.get("process_package_version")
+            == evidence.get("process_package_version")
+            if isinstance(runtime_result, dict)
+            else False,
+            runtime_result.get("observed_identity") == observed
+            if isinstance(runtime_result, dict)
+            else False,
+            runtime_result.get("raw_filename")
+            == runtime_reference.get("raw_filename")
+            if isinstance(runtime_result, dict)
+            and isinstance(runtime_reference, dict)
+            else False,
+            runtime_result.get("raw_sha256")
+            == runtime_reference.get("raw_sha256")
+            if isinstance(runtime_result, dict)
+            and isinstance(runtime_reference, dict)
+            else False,
+            runtime_result.get("raw_logical_artifact_id")
+            == Path(str(runtime_reference.get("raw_filename", ""))).stem
+            if isinstance(runtime_result, dict)
+            and isinstance(runtime_reference, dict)
+            else False,
+            runtime_result.get("runtime_version")
+            == observed.get("runtime_version")
+            if isinstance(runtime_result, dict) and isinstance(observed, dict)
+            else False,
+            runtime_result.get("model_tag") == observed.get("model_tag")
+            if isinstance(runtime_result, dict) and isinstance(observed, dict)
+            else False,
+            runtime_result.get("model_digest") == observed.get("model_digest")
+            if isinstance(runtime_result, dict) and isinstance(observed, dict)
+            else False,
+            runtime_result.get("endpoint") == NORMALIZED_ENDPOINT
+            if isinstance(runtime_result, dict)
+            else False,
+            runtime_raw_value.get("probe_kind")
+            == "ollama-execution-identity"
+            if isinstance(runtime_raw_value, dict)
+            else False,
+            runtime_raw_value.get("endpoint") == OLLAMA_ENDPOINT
+            if isinstance(runtime_raw_value, dict)
+            else False,
+            all(
+                runtime_raw_value.get(key) == value
+                for key, value in expected_runtime_raw.items()
+            )
+            if isinstance(runtime_raw_value, dict)
+            else False,
+        )
+        if not all(runtime_checks):
+            _append_once(diagnostics, "actual-model.runtime-result-mismatch")
+        for phase in ("preflight", "matrix"):
+            if phase == "matrix" and failed_preflight:
+                continue
+            result_value = _read_bound_json(
+                artifact_root,
+                evidence.get(phase, {}).get("result"),
+                diagnostics,
+                "actual-model.result-content-mismatch",
+            )
+            if result_value != _expected_phase_result_from_normalized(
+                evidence, phase
+            ):
+                _append_once(diagnostics, "actual-model.result-content-mismatch")
         for reference in (
             runtime_reference,
             evidence.get("preflight", {}).get("result"),
@@ -1715,11 +1972,25 @@ def _validate_remediation_evidence(
             (Path(group) / filename).as_posix()
             for group, filename in all_references
         } | result_references
-        eligible_inventory = {
+        eligible_files = {
             path.relative_to(artifact_root).as_posix()
-            for path in artifact_root.rglob("*.json")
+            for path in artifact_root.rglob("*")
+            if path.is_file()
         }
-        if referenced_inventory != eligible_inventory:
+        eligible_directories = {
+            path.relative_to(artifact_root).as_posix()
+            for path in artifact_root.rglob("*")
+            if path.is_dir()
+        }
+        expected_directories = {
+            str(Path(path).parent.as_posix())
+            for path in referenced_inventory
+            if Path(path).parent.as_posix() != "."
+        }
+        if (
+            referenced_inventory != eligible_files
+            or eligible_directories != expected_directories
+        ):
             _append_once(diagnostics, "actual-model.result-inventory-mismatch")
     if evidence.get("raw_artifact", {}).get("logical_id") != artifact_root.name:
         _append_once(diagnostics, "actual-model.remediation-artifact-mismatch")

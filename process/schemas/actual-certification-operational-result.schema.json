@@ -16,7 +16,7 @@
     "schema_version": {"const": "1.0"},
     "evidence_kind": {"const": "actual-model-operational-result"},
     "status": {"enum": ["blocked", "failed"]},
-    "actual_model_run": {"const": false},
+    "actual_model_run": {"enum": [true, false, "unknown"]},
     "phase": {"enum": ["runtime-probe", "preflight", "matrix"]},
     "diagnostic": {
       "type": "string",

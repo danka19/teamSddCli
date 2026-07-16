@@ -85,10 +85,13 @@ Adapter `2.1` certification SHALL exclusively create phase destinations and reta
 #### Scenario: Runtime probe result is identity evidence
 - **WHEN** a runtime probe completes
 - **THEN** it exclusively creates a result summary whose checksum is referenced by normalized adapter `2.1` evidence
+- **AND** validation independently parses the runtime raw and result content and matches their identity and lineage to the normalized preflight identity
 
 #### Scenario: Operational failure creates a non-success result
 - **WHEN** runtime observation, identity comparison, network invocation, or model execution fails after destinations were safely validated and exclusively established
 - **THEN** the runner exclusively records a blocked or failed operational result with a stable diagnostic and no certification pass
+- **AND** the result records whether a model call is known not to have occurred, known to have occurred, or cannot be determined
+- **AND** it retains the observed identity when one was established
 
 #### Scenario: Unsafe destination fails before evidence creation
 - **WHEN** destination validation cannot prove a new external non-aliased path
@@ -97,3 +100,10 @@ Adapter `2.1` certification SHALL exclusively create phase destinations and reta
 #### Scenario: Gate rejects unexpected inventory
 - **WHEN** a phase artifact root contains an unreferenced, duplicated, or unexpected raw or result file
 - **THEN** deterministic validation rejects the evidence as unverifiable
+- **AND** referenced result JSON must semantically equal the normalized phase section rather than merely match a supplied checksum
+- **AND** unexpected non-JSON files and directories are rejected
+
+#### Scenario: Rejected matrix leaves destinations unused
+- **WHEN** the preflight gate or fresh matrix runtime identity check fails
+- **THEN** the matrix phase directory and matrix result are not created
+- **AND** no matrix model call occurs

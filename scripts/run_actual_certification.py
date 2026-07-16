@@ -18,6 +18,7 @@ from process.actual_certification import (
     execute_ai_disabled,
     execute_model_catalog,
     load_adapter_profile,
+    preflight_model_execution_identity,
     probe_ollama,
     revalidate_actual_certification_destination,
     validate_phase_gate,
@@ -42,6 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     catalog_name = "ai-disabled-walkthroughs.yaml" if args.phase == "ai-disabled" else "qwen-matrix.yaml"
     result_output: Path | None = None
     destination_established = False
+    operation_state: dict = {
+        "actual_model_run": False,
+        "observed_identity": None,
+    }
     try:
         if args.phase in {"runtime-probe", "preflight", "matrix"} and args.result_output is None:
             raise ActualCertificationError("actual-model.result-output-required")
@@ -50,11 +55,36 @@ def main(argv: list[str] | None = None) -> int:
         raw_output, result_output = validate_actual_certification_destinations(
             root, args.raw_output, args.result_output
         )
-        raw_output = create_actual_certification_directory(root, raw_output)
-        destination_established = True
         catalog = yaml.safe_load((root / "process/certification" / catalog_name).read_text(encoding="utf-8"))
         if not isinstance(catalog, dict):
             raise ActualCertificationError("actual-model.invalid-catalog")
+        preflight_observed_identity = None
+        initial_observed_identity = None
+        if args.phase == "matrix":
+            preflight = json.loads(args.preflight_result.read_text(encoding="utf-8"))
+            adapter_version = load_adapter_profile(
+                root / "process", args.model_family
+            )["schema_version"]
+            gate_diagnostics = validate_phase_gate(
+                preflight,
+                raw_output.parent,
+                "preflight",
+                args.model_family,
+                adapter_version,
+                5,
+            )
+            if gate_diagnostics:
+                raise ActualCertificationError("actual-model.preflight-gate")
+            preflight_observed_identity = preflight.get("observed_identity")
+            initial_observed_identity = preflight_model_execution_identity(
+                root / "process",
+                catalog,
+                args.model_family,
+                preflight_observed_identity=preflight_observed_identity,
+            )
+            operation_state["observed_identity"] = initial_observed_identity
+        raw_output = create_actual_certification_directory(root, raw_output)
+        destination_established = True
         if args.phase == "ai-disabled":
             evidence = execute_ai_disabled(
                 root, catalog, raw_output, destination_guard=True
@@ -68,23 +98,7 @@ def main(argv: list[str] | None = None) -> int:
                 destination_guard=True,
             )
         else:
-            preflight_observed_identity = None
-            if args.phase == "matrix":
-                preflight = json.loads(args.preflight_result.read_text(encoding="utf-8"))
-                adapter_version = load_adapter_profile(
-                    root / "process", args.model_family
-                )["schema_version"]
-                gate_diagnostics = validate_phase_gate(
-                    preflight,
-                    raw_output.parent,
-                    "preflight",
-                    args.model_family,
-                    adapter_version,
-                    5,
-                )
-                if gate_diagnostics:
-                    raise ActualCertificationError("actual-model.preflight-gate")
-                preflight_observed_identity = preflight.get("observed_identity")
+            operation_state["actual_model_run"] = "unknown"
             evidence = execute_model_catalog(
                 root,
                 root / "process",
@@ -94,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
                 model_family=args.model_family,
                 preflight_observed_identity=preflight_observed_identity,
                 destination_guard=True,
+                initial_observed_identity=initial_observed_identity,
+                operation_state=operation_state,
             )
         if result_output is not None:
             revalidate_actual_certification_destination(
@@ -122,6 +138,12 @@ def main(argv: list[str] | None = None) -> int:
                     args.phase,
                     args.model_family,
                     str(error),
+                    observed_identity=operation_state.get(
+                        "observed_identity"
+                    ),
+                    actual_model_run=operation_state.get(
+                        "actual_model_run", "unknown"
+                    ),
                     repository_root=root,
                 )
             except (OSError, ActualCertificationError):
@@ -140,6 +162,12 @@ def main(argv: list[str] | None = None) -> int:
                     args.phase,
                     args.model_family,
                     str(error),
+                    observed_identity=operation_state.get(
+                        "observed_identity"
+                    ),
+                    actual_model_run=operation_state.get(
+                        "actual_model_run", "unknown"
+                    ),
                     repository_root=root,
                 )
             except (OSError, ActualCertificationError):

@@ -552,11 +552,8 @@ def test_matrix_runner_rejects_failed_preflight_before_model_call(monkeypatch, t
     result = json.loads(capsys.readouterr().out)
     assert exit_code == 3
     assert result["diagnostic"] == "actual-model.preflight-gate"
-    retained = json.loads(
-        (artifact / "qwen-matrix-result.json").read_text(encoding="utf-8")
-    )
-    assert retained["status"] == "blocked"
-    assert retained["diagnostic"] == "actual-model.preflight-gate"
+    assert not (artifact / "matrix").exists()
+    assert not (artifact / "qwen-matrix-result.json").exists()
 
 
 def test_preflight_runner_writes_summary_exclusively(monkeypatch, tmp_path: Path) -> None:
@@ -942,16 +939,29 @@ def test_adapter_2_1_normalization_binds_runtime_and_phase_results_and_exact_inv
     runtime_raw_group.mkdir()
     runtime_raw_path = runtime_raw_group / "qwen-runtime-probe.json"
     runtime_raw_path.write_text(json.dumps({
+        "probe_kind": "ollama-execution-identity",
+        "adapter_family": "qwen-class",
         "adapter_version": "2.1",
-        "observed_identity": preflight["observed_identity"],
+        "process_package_version": preflight["process_package_version"],
+        "runtime_version": preflight["observed_identity"]["runtime_version"],
+        "model_tag": preflight["observed_identity"]["model_tag"],
+        "model_digest": preflight["observed_identity"]["model_digest"],
+        "endpoint": "http://127.0.0.1:11434",
+        "running_models": [],
     }), encoding="utf-8")
     runtime_path = artifact / "qwen-runtime-result.json"
     runtime_path.write_text(json.dumps({
         "result": "passed",
         "adapter_version": "2.1",
+        "process_package_version": preflight["process_package_version"],
         "observed_identity": preflight["observed_identity"],
+        "raw_logical_artifact_id": "qwen-runtime-probe",
         "raw_filename": runtime_raw_path.name,
         "raw_sha256": hashlib.sha256(runtime_raw_path.read_bytes()).hexdigest(),
+        "runtime_version": preflight["observed_identity"]["runtime_version"],
+        "model_tag": preflight["observed_identity"]["model_tag"],
+        "model_digest": preflight["observed_identity"]["model_digest"],
+        "endpoint": "local-ollama-loopback",
     }), encoding="utf-8")
     preflight_path = artifact / "qwen-preflight-result.json"
     matrix_path = artifact / "qwen-matrix-result.json"
@@ -987,6 +997,147 @@ def test_adapter_2_1_normalization_binds_runtime_and_phase_results_and_exact_inv
     assert "actual-model.result-inventory-mismatch" in validate_normalized_evidence(
         normalized, artifact, repository_root=tmp_path
     )
+
+
+def test_adapter_2_1_normalized_runtime_result_requires_semantic_identity_and_lineage(
+    tmp_path: Path,
+) -> None:
+    normalized, artifact, runtime_path, _, _ = _adapter_2_1_normalized_fixture(
+        tmp_path
+    )
+    runtime = json.loads(runtime_path.read_text(encoding="utf-8"))
+    runtime["observed_identity"]["model_digest"] = "f" * 64
+    runtime_path.write_text(json.dumps(runtime), encoding="utf-8")
+    normalized["runtime_probe_result"]["sha256"] = hashlib.sha256(
+        runtime_path.read_bytes()
+    ).hexdigest()
+    assert "actual-model.runtime-result-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    )
+
+    normalized, artifact, runtime_path, _, _ = _adapter_2_1_normalized_fixture(
+        tmp_path / "raw-mutation"
+    )
+    runtime_reference = normalized["runtime_probe_result"]
+    runtime_raw_path = (
+        artifact
+        / runtime_reference["raw_group"]
+        / runtime_reference["raw_filename"]
+    )
+    runtime_raw = json.loads(runtime_raw_path.read_text(encoding="utf-8"))
+    runtime_raw["model_digest"] = "e" * 64
+    runtime_raw_path.write_text(json.dumps(runtime_raw), encoding="utf-8")
+    runtime_reference["raw_sha256"] = hashlib.sha256(
+        runtime_raw_path.read_bytes()
+    ).hexdigest()
+    runtime = json.loads(runtime_path.read_text(encoding="utf-8"))
+    runtime["raw_sha256"] = runtime_reference["raw_sha256"]
+    runtime_path.write_text(json.dumps(runtime), encoding="utf-8")
+    runtime_reference["sha256"] = hashlib.sha256(
+        runtime_path.read_bytes()
+    ).hexdigest()
+    assert "actual-model.runtime-result-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path / "raw-mutation"
+    )
+
+    runtime_path.write_text("{}", encoding="utf-8")
+    normalized["runtime_probe_result"]["sha256"] = hashlib.sha256(
+        runtime_path.read_bytes()
+    ).hexdigest()
+    assert "actual-model.runtime-result-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path / "raw-mutation"
+    )
+
+
+@pytest.mark.parametrize("section", ["preflight", "matrix"])
+def test_adapter_2_1_normalized_phase_result_requires_semantic_equality(
+    tmp_path: Path, section: str
+) -> None:
+    normalized, artifact, _, preflight_path, matrix_path = (
+        _adapter_2_1_normalized_fixture(tmp_path)
+    )
+    result_path = preflight_path if section == "preflight" else matrix_path
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    result["cases"][0]["diagnostics"] = [
+        {"code": "forged", "detail": "mutated after normalization"}
+    ]
+    result_path.write_text(json.dumps(result), encoding="utf-8")
+    normalized[section]["result"]["sha256"] = hashlib.sha256(
+        result_path.read_bytes()
+    ).hexdigest()
+    assert "actual-model.result-content-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    )
+
+
+def test_adapter_2_1_inventory_rejects_unexpected_non_json_file_and_directory(
+    tmp_path: Path,
+) -> None:
+    normalized, artifact, _, _, _ = _adapter_2_1_normalized_fixture(tmp_path)
+    (artifact / "unexpected.txt").write_text("not evidence", encoding="utf-8")
+    (artifact / "unexpected-directory").mkdir()
+    assert "actual-model.result-inventory-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    )
+
+
+def _adapter_2_1_normalized_fixture(
+    tmp_path: Path,
+) -> tuple[dict, Path, Path, Path, Path]:
+    preflight, artifact = _phase_summary(
+        tmp_path, phase="preflight", count=5, adapter_version="2.1"
+    )
+    matrix, _ = _phase_summary(
+        tmp_path, phase="matrix", count=15, adapter_version="2.1"
+    )
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "2.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-adapter-2-0", "stored_in_git": False},
+    }), encoding="utf-8")
+    runtime_raw_group = artifact / "runtime-probe"
+    runtime_raw_group.mkdir()
+    runtime_raw_path = runtime_raw_group / "qwen-runtime-probe.json"
+    runtime_raw_path.write_text(json.dumps({
+        "probe_kind": "ollama-execution-identity",
+        "adapter_family": "qwen-class",
+        "adapter_version": "2.1",
+        "process_package_version": preflight["process_package_version"],
+        "runtime_version": preflight["observed_identity"]["runtime_version"],
+        "model_tag": preflight["observed_identity"]["model_tag"],
+        "model_digest": preflight["observed_identity"]["model_digest"],
+        "endpoint": "http://127.0.0.1:11434",
+        "running_models": [],
+    }), encoding="utf-8")
+    runtime_path = artifact / "qwen-runtime-result.json"
+    runtime_path.write_text(json.dumps({
+        "result": "passed",
+        "adapter_version": "2.1",
+        "process_package_version": preflight["process_package_version"],
+        "observed_identity": preflight["observed_identity"],
+        "raw_logical_artifact_id": "qwen-runtime-probe",
+        "raw_filename": runtime_raw_path.name,
+        "raw_sha256": hashlib.sha256(runtime_raw_path.read_bytes()).hexdigest(),
+        "runtime_version": preflight["observed_identity"]["runtime_version"],
+        "model_tag": preflight["observed_identity"]["model_tag"],
+        "model_digest": preflight["observed_identity"]["model_digest"],
+        "endpoint": "local-ollama-loopback",
+    }), encoding="utf-8")
+    preflight_path = artifact / "qwen-preflight-result.json"
+    matrix_path = artifact / "qwen-matrix-result.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+    normalized = normalize_actual_certification.normalize_remediation_evidence(
+        baseline_path,
+        artifact,
+        preflight_path,
+        matrix_path,
+        "qwen-class",
+        runtime_result=runtime_path,
+        repository_root=tmp_path,
+    )
+    return normalized, artifact, runtime_path, preflight_path, matrix_path
 
 
 def test_remediation_normalizer_rejects_forged_failed_preflight(tmp_path: Path) -> None:
@@ -1351,6 +1502,30 @@ def test_adapter_2_0_schema_prompt_and_launch_identity_remain_frozen() -> None:
     )
 
 
+def test_adapter_2_0_gate_reconstructs_frozen_generation_not_live_profile(
+    monkeypatch, tmp_path: Path,
+) -> None:
+    summary, artifact = _phase_summary(
+        tmp_path, phase="preflight", count=5, adapter_version="2.0"
+    )
+    live = load_adapter_profile(PROCESS, "qwen-class")
+    monkeypatch.setattr(
+        actual_certification,
+        "load_adapter_profile",
+        lambda *args, **kwargs: {
+            **live,
+            "generation": {
+                **live["generation"],
+                "num_predict": 9999,
+                "think": True,
+            },
+        },
+    )
+    assert validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.0", 5
+    ) == []
+
+
 def test_adapter_2_1_prompt_clarifies_draft_approval_and_block_boundaries() -> None:
     catalog = _yaml(QWEN_MATRIX)
     case = next(item for item in catalog["cases"] if item["id"] == "preflight-validator")
@@ -1542,6 +1717,36 @@ def test_phase_directory_and_operational_result_are_exclusive_and_external(
         )
 
 
+def test_operational_result_rejects_private_diagnostic_and_validates_registered_schema(
+    tmp_path: Path,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    result = external_tmp / "artifact" / "qwen-result.json"
+    result.parent.mkdir()
+    payload = write_operational_result_exclusive(
+        result,
+        "preflight",
+        "qwen-class",
+        "C:\\Users\\private\\secret.json",
+        actual_model_run="unknown",
+        repository_root=ROOT,
+    )
+    assert payload["diagnostic"] == "actual-model.operational-failure"
+    assert payload["actual_model_run"] == "unknown"
+    assert "C:\\Users\\" not in result.read_text(encoding="utf-8")
+
+    with pytest.raises(
+        ActualCertificationError, match="actual-model.operational-result-invalid"
+    ):
+        write_operational_result_exclusive(
+            external_tmp / "artifact" / "invalid-result.json",
+            "ai-disabled",
+            "qwen-class",
+            "actual-model.runtime-failure",
+            repository_root=ROOT,
+        )
+
+
 def test_runtime_probe_requires_result_and_retains_failure_after_safe_setup(
     monkeypatch, capsys,
 ) -> None:
@@ -1604,7 +1809,80 @@ def test_runner_retains_interrupted_model_call_after_safe_setup(
     retained = json.loads(result.read_text(encoding="utf-8"))
     assert retained["diagnostic"] == "actual-model.interrupted"
     assert retained["status"] == "blocked"
+    assert retained["actual_model_run"] == "unknown"
     assert raw.is_dir()
+    capsys.readouterr()
+
+
+def test_operational_failure_after_model_call_retains_true_run_and_observed_identity(
+    monkeypatch, capsys,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    artifact = external_tmp / "artifact"
+    raw = artifact / "preflight"
+    result = artifact / "qwen-preflight-result.json"
+    identity = actual_certification.load_runtime_identity(
+        PROCESS,
+        "qwen-class",
+        select_model_profile(_yaml(QWEN_MATRIX), "qwen-class"),
+    )
+
+    def fail_after_call(*args, **kwargs):
+        state = kwargs["operation_state"]
+        state.update(actual_model_run=True, observed_identity=identity)
+        raise ActualCertificationError("actual-model.runtime-failure")
+
+    monkeypatch.setattr(
+        run_actual_certification, "preflight_model_execution_identity",
+        lambda *args, **kwargs: identity,
+    )
+    monkeypatch.setattr(
+        run_actual_certification, "execute_model_catalog", fail_after_call
+    )
+    assert run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(raw),
+        "--phase", "preflight",
+        "--model-family", "qwen-class",
+        "--result-output", str(result),
+    ]) == 3
+    retained = json.loads(result.read_text(encoding="utf-8"))
+    assert retained["actual_model_run"] is True
+    assert retained["observed_identity"] == identity
+    capsys.readouterr()
+
+
+def test_matrix_runner_does_not_burn_destination_before_gate_or_identity(
+    monkeypatch, capsys,
+) -> None:
+    external_tmp = Path(tempfile.mkdtemp())
+    summary, artifact = _phase_summary(
+        external_tmp,
+        phase="preflight",
+        count=5,
+        adapter_version="2.1",
+    )
+    preflight_result = artifact / "qwen-preflight-result.json"
+    preflight_result.write_text(json.dumps(summary), encoding="utf-8")
+    matrix_raw = artifact / "matrix"
+    matrix_result = artifact / "qwen-matrix-result.json"
+    monkeypatch.setattr(
+        run_actual_certification,
+        "preflight_model_execution_identity",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            ActualCertificationError("actual-model.runtime-identity-mismatch")
+        ),
+    )
+    assert run_actual_certification.main([
+        "--root", str(ROOT),
+        "--raw-output", str(matrix_raw),
+        "--phase", "matrix",
+        "--model-family", "qwen-class",
+        "--preflight-result", str(preflight_result),
+        "--result-output", str(matrix_result),
+    ]) == 3
+    assert not matrix_raw.exists()
+    assert not matrix_result.exists()
     capsys.readouterr()
 
 

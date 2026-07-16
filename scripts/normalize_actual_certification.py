@@ -221,9 +221,34 @@ def normalize_remediation_evidence(
             raise ActualCertificationError("actual-model.runtime-result-mismatch")
         runtime_raw_group = runtime_result.parent / "runtime-probe"
         runtime_raw_path = runtime_raw_group / str(runtime.get("raw_filename", ""))
+        runtime_raw = (
+            json.loads(runtime_raw_path.read_text(encoding="utf-8"))
+            if runtime_raw_path.is_file()
+            else None
+        )
+        observed = preflight.get("observed_identity")
         if (
             not runtime_raw_path.is_file()
             or runtime.get("raw_sha256") != _sha(runtime_raw_path)
+            or not isinstance(runtime_raw, dict)
+            or not isinstance(observed, dict)
+            or runtime.get("process_package_version")
+            != preflight.get("process_package_version")
+            or runtime.get("raw_logical_artifact_id")
+            != runtime_raw_path.stem
+            or any(
+                runtime_raw.get(key) != value
+                for key, value in {
+                    "adapter_family": model_family,
+                    "adapter_version": "2.1",
+                    "process_package_version": preflight.get(
+                        "process_package_version"
+                    ),
+                    "runtime_version": observed.get("runtime_version"),
+                    "model_tag": observed.get("model_tag"),
+                    "model_digest": observed.get("model_digest"),
+                }.items()
+            )
         ):
             raise ActualCertificationError("actual-model.runtime-result-mismatch")
         document["runtime_probe_result"] = {
