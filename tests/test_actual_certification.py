@@ -1321,3 +1321,50 @@ def test_normalized_deepseek_evidence_covers_every_raw_attempt_and_reasoning_bou
     broken = yaml.safe_load(yaml.safe_dump(evidence))
     broken["matrix"]["cases"][0]["mandatory_human_owner"] = "human"
     assert "actual-model.generic-fallback-route" in validate_normalized_evidence(broken, artifact)
+
+
+@pytest.mark.parametrize(
+    ("family", "evidence_name", "artifact_name"),
+    [
+        (
+            "qwen-class",
+            "phase-2-11-qwen-remediation-2026-07-16.yaml",
+            "raw-artifact-v0.2.0-qwen-remediation-2026-07-16",
+        ),
+        (
+            "deepseek-class",
+            "phase-2-11-deepseek-remediation-2026-07-16.yaml",
+            "raw-artifact-v0.2.0-deepseek-remediation-2026-07-16",
+        ),
+    ],
+)
+def test_remediation_evidence_binds_failed_preflight_and_immutable_baseline(
+    family: str, evidence_name: str, artifact_name: str
+) -> None:
+    evidence = _yaml(PROCESS / "certification/evidence" / evidence_name)
+    artifact = ROOT.parent / "teamSsdCli-release-artifacts" / artifact_name
+
+    assert artifact.is_dir(), f"external remediation artifact is required: {artifact_name}"
+    assert validate_normalized_evidence(evidence, artifact) == []
+    assert evidence["adapter"] == {
+        "family": family,
+        "version": "2.0",
+        "authority": "advisory-only",
+    }
+    assert evidence["status"] == "failed"
+    assert evidence["matrix_not_run"] == "preflight-gate-failed"
+    assert evidence["matrix"] == {"status": "not-run", "cases": []}
+
+    rows = evidence["preflight"]["cases"]
+    assert len(rows) == 5
+    assert all(row["execution_identity"]["adapter_version"] == "2.0" for row in rows)
+    for row in rows:
+        previous_id = None
+        for ordinal, attempt in enumerate(row["attempts"], start=1):
+            assert attempt["attempt_ordinal"] == ordinal
+            assert attempt["retry_of"] == previous_id
+            previous_id = attempt["raw_logical_artifact_id"]
+
+    baseline = evidence["baseline_reference"]
+    baseline_path = ROOT / baseline["path"]
+    assert hashlib.sha256(baseline_path.read_bytes()).hexdigest() == baseline["sha256"]
