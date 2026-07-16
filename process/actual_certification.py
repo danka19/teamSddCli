@@ -942,6 +942,21 @@ def build_model_prompt(case: dict[str, Any], launch: dict[str, Any], read_pack: 
         "sources": sources,
         "response_rule": "Return exactly one JSON object matching the separately supplied schema; no markdown or explanation.",
     }
+    if contract.get("contract_version") == "2.1":
+        context["decision_contract"] = {
+            "draft": (
+                "A bounded advisory draft may be prepared before human approval "
+                "when supplied facts and sources are sufficient."
+            ),
+            "authority": (
+                "Human approval is still required before canonical mutation or "
+                "lifecycle transition."
+            ),
+            "block": (
+                "A blocked response contains no completed role artifact and "
+                "identifies unresolved inputs and required human actions."
+            ),
+        }
     return json.dumps(context, ensure_ascii=False, separators=(",", ":"))
 
 

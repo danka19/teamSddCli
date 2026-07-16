@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from process import actual_certification
+from process import actual_certification, model_adapter
 from scripts import check_actual_certification_gate, normalize_actual_certification, run_actual_certification
 from process.actual_certification import (
     ActualCertificationError,
@@ -46,13 +46,21 @@ FORBIDDEN_VALIDATOR_FIELD_NAMES = {
     "expected_decision",
     "required_reason_codes",
     "required_output_kind",
+    "required_artifact_kind",
+    "expected_validator_diagnostics",
     "expected_role_output",
     "golden_output",
 }
-VALIDATOR_ONLY_SENTINELS = [
-    f"validator-only-{name.replace('_', '-')}" for name in sorted(FORBIDDEN_VALIDATOR_FIELD_NAMES)
-]
-REQUIRED_ARTIFACT_KIND_SENTINEL = "evidence-boundary-note"
+VALIDATOR_ONLY_SENTINELS = {
+    name: f"validator-only-{name.replace('_', '-')}"
+    for name in sorted(FORBIDDEN_VALIDATOR_FIELD_NAMES)
+}
+REQUIRED_ARTIFACT_KIND_SENTINEL = "validator-only-required-artifact-kind"
+ADAPTER_2_1_GUIDANCE = (
+    "A bounded advisory draft may be prepared before human approval when supplied facts and sources are sufficient.",
+    "Human approval is still required before canonical mutation or lifecycle transition.",
+    "A blocked response contains no completed role artifact and identifies unresolved inputs and required human actions.",
+)
 
 
 def _yaml(path: Path) -> dict:
@@ -1235,6 +1243,20 @@ def test_adapter_2_0_schema_prompt_and_launch_identity_remain_frozen() -> None:
     )
 
 
+def test_adapter_2_1_prompt_clarifies_draft_approval_and_block_boundaries() -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    case = next(item for item in catalog["cases"] if item["id"] == "preflight-validator")
+    pack_2_0, launch_2_0 = case_read_pack(ROOT, PROCESS, case, adapter_version="2.0")
+    pack_2_1, launch_2_1 = case_read_pack(ROOT, PROCESS, case, adapter_version="2.1")
+
+    prompt_2_0 = build_model_prompt(case, launch_2_0, pack_2_0)
+    prompt_2_1 = build_model_prompt(case, launch_2_1, pack_2_1)
+
+    for guidance in ADAPTER_2_1_GUIDANCE:
+        assert guidance not in prompt_2_0
+        assert guidance in prompt_2_1
+
+
 def test_model_prompt_is_non_leading_and_contains_case_specific_source_content() -> None:
     case, pack, launch = _context()
     prompt = build_model_prompt(case, launch, pack)
@@ -1334,9 +1356,10 @@ def _runtime_case_with_sentinels(*, sentinels: bool = True) -> tuple[dict, dict]
     catalog = _yaml(QWEN_MATRIX)
     case = dict(next(item for item in catalog["cases"] if item["id"] == "preflight-validator"))
     if sentinels:
-        for name, sentinel in zip(sorted(FORBIDDEN_VALIDATOR_FIELD_NAMES), VALIDATOR_ONLY_SENTINELS, strict=True):
+        required_artifact_kind = case["required_artifact_kind"]
+        for name, sentinel in VALIDATOR_ONLY_SENTINELS.items():
             case[name] = sentinel
-        case["required_artifact_kind"] = REQUIRED_ARTIFACT_KIND_SENTINEL
+        case["required_artifact_kind"] = required_artifact_kind
     catalog = {
         **catalog,
         "cases": [case],
@@ -1345,10 +1368,12 @@ def _runtime_case_with_sentinels(*, sentinels: bool = True) -> tuple[dict, dict]
     return catalog, case
 
 
-def _role_response(case: dict, *, decision: str = "draft") -> dict:
+def _role_response(
+    case: dict, *, decision: str = "draft", adapter_version: str = "2.0"
+) -> dict:
     payload_key = "requirements_note"
     source_ids = [source["stable_id"] for source in case["sources"]]
-    return {
+    response = {
         "case_id": case["id"],
         "decision": decision,
         "reason_codes": ["bounded-draft"],
@@ -1366,6 +1391,41 @@ def _role_response(case: dict, *, decision: str = "draft") -> dict:
             else None
         ),
     }
+    if adapter_version == "2.1" and isinstance(response[payload_key], dict):
+        response[payload_key]["artifact_kind"] = "requirements-note"
+    return response
+
+
+def _use_adapter_2_1(monkeypatch) -> None:
+    original = actual_certification.load_adapter_profile
+
+    def load_adapter_2_1(process_root: Path, family: str) -> dict:
+        return {**original(process_root, family), "schema_version": "2.1"}
+
+    monkeypatch.setattr(actual_certification, "load_adapter_profile", load_adapter_2_1)
+
+
+def _allow_validator_only_required_kind(monkeypatch) -> None:
+    original = actual_certification.build_role_launch
+
+    def build_launch_with_hidden_kind(*args, **kwargs):
+        contract = dict(kwargs["model_response_contract"])
+        contract["required_artifact_kind"] = "requirements-note"
+        launch = original(
+            *args, **{**kwargs, "model_response_contract": contract}
+        )
+        launch["model_response_contract"]["required_artifact_kind"] = (
+            REQUIRED_ARTIFACT_KIND_SENTINEL
+        )
+        launch["identity"] = model_adapter._digest(
+            model_adapter._without_identity(launch)
+        )
+        return launch
+
+    monkeypatch.setattr(
+        actual_certification, "build_role_launch", build_launch_with_hidden_kind
+    )
+    monkeypatch.setattr(model_adapter, "_schema_errors", lambda *args: [])
 
 
 @pytest.mark.parametrize("first_response", ["", "not-json", "{}"])
@@ -1404,7 +1464,10 @@ def test_execute_model_catalog_retries_only_structural_failures_and_retains_atte
     serialized_retry = json.dumps(requests[1], sort_keys=True)
     for surface in (serialized_schema, requests[0]["prompt"], serialized_initial, requests[1]["prompt"], serialized_retry):
         assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(surface.split('"')))
-        assert all(sentinel not in surface for sentinel in VALIDATOR_ONLY_SENTINELS)
+        assert all(
+            sentinel not in surface
+            for sentinel in VALIDATOR_ONLY_SENTINELS.values()
+        )
         assert REQUIRED_ARTIFACT_KIND_SENTINEL not in surface
     attempts = result["cases"][0]["attempts"]
     assert [item["attempt_ordinal"] for item in attempts] == [1, 2]
@@ -1418,18 +1481,101 @@ def test_execute_model_catalog_retries_only_structural_failures_and_retains_atte
     }
 
 
-@pytest.mark.parametrize("mutation", ["decision", "reason", "source"])
+def test_adapter_2_1_validator_answers_do_not_leak_across_model_facing_bytes(
+    monkeypatch, tmp_path: Path
+) -> None:
+    catalog, case = _runtime_case_with_sentinels()
+    responses = iter(
+        [
+            {"response": "{}", "thinking": "first reasoning"},
+            {
+                "response": json.dumps(
+                    _role_response(case, adapter_version="2.1")
+                ),
+                "thinking": "second reasoning",
+            },
+        ]
+    )
+    requests: list[dict] = []
+
+    def fake_read(url, body, timeout):
+        requests.append(body)
+        return next(responses)
+
+    _use_adapter_2_1(monkeypatch)
+    _allow_validator_only_required_kind(monkeypatch)
+    monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda model: actual_certification.load_runtime_identity(
+            PROCESS, model["family"], model
+        ),
+    )
+    monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
+
+    execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
+
+    initial_prompt = requests[0]["prompt"]
+    retry_prompt = requests[1]["prompt"]
+    surfaces = {
+        "generated schema": json.dumps(
+            requests[0]["format"], sort_keys=True, separators=(",", ":")
+        ),
+        "initial prompt": initial_prompt,
+        "initial full request": json.dumps(
+            requests[0], sort_keys=True, separators=(",", ":")
+        ),
+        "retry prompt": retry_prompt,
+        "retry full request": json.dumps(
+            requests[1], sort_keys=True, separators=(",", ":")
+        ),
+    }
+    assert retry_prompt == initial_prompt + actual_certification.STRUCTURAL_RETRY_SUFFIX
+    assert actual_certification.STRUCTURAL_RETRY_SUFFIX == (
+        "\nReturn only one JSON object matching the unchanged supplied schema."
+    )
+    for surface_name, surface in surfaces.items():
+        serialized_field_names = set(surface.split('"'))
+        assert not (
+            FORBIDDEN_VALIDATOR_FIELD_NAMES & serialized_field_names
+        ), surface_name
+        assert all(
+            sentinel not in surface
+            for sentinel in VALIDATOR_ONLY_SENTINELS.values()
+        ), surface_name
+        assert REQUIRED_ARTIFACT_KIND_SENTINEL not in surface, surface_name
+    for guidance in ADAPTER_2_1_GUIDANCE:
+        assert guidance in surfaces["initial prompt"]
+        assert guidance in surfaces["initial full request"]
+        assert guidance in surfaces["retry prompt"]
+        assert guidance in surfaces["retry full request"]
+    for source in case["sources"]:
+        for surface_name, surface in surfaces.items():
+            assert source["stable_id"] in surface, surface_name
+
+
+@pytest.mark.parametrize(
+    "mutation", ["decision", "kind", "reason", "invented-authority-fact"]
+)
 def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
     monkeypatch, tmp_path: Path, mutation: str
 ) -> None:
     catalog, case = _runtime_case_with_sentinels(sentinels=False)
     calls = 0
-    response = _role_response(case, decision="block" if mutation == "decision" else "draft")
+    response = _role_response(
+        case,
+        decision="block" if mutation == "decision" else "draft",
+        adapter_version="2.1",
+    )
     if mutation == "reason":
         response["reason_codes"] = ["missing-context"]
-    elif mutation == "source":
-        omitted = case["sources"][1]["stable_id"]
-        response["source_ids"].remove(omitted)
+    elif mutation == "kind":
+        response["requirements_note"]["artifact_kind"] = "qa-review-note"
+    elif mutation == "invented-authority-fact":
+        response["requirements_note"]["claims"][0]["summary"] = (
+            "Human approval is recorded and the canonical lifecycle transition completed."
+        )
 
     def fake_read(url, body, timeout):
         nonlocal calls
@@ -1438,6 +1584,7 @@ def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
             pytest.fail("semantic failures must never be retried")
         return {"response": json.dumps(response), "thinking": ""}
 
+    _use_adapter_2_1(monkeypatch)
     monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
     monkeypatch.setattr(
         actual_certification,
@@ -1452,10 +1599,72 @@ def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
     assert result["cases"][0]["deterministic_validation_result"] == "failed"
     expected_code = {
         "decision": "actual-model.unexpected-decision",
+        "kind": "actual-model.role-output-mismatch",
         "reason": "actual-model.reason-mismatch",
-        "source": "actual-model.source-mismatch",
+        "invented-authority-fact": "model-adapter.semantic",
     }[mutation]
     assert expected_code in {item["code"] for item in result["cases"][0]["diagnostics"]}
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "block-with-artifact",
+        "block-without-unresolved-input",
+        "block-without-human-action",
+        "draft-without-artifact",
+        "passed-check",
+    ],
+)
+def test_adapter_2_1_branch_and_schema_failures_receive_at_most_one_retry(
+    monkeypatch, tmp_path: Path, mutation: str
+) -> None:
+    catalog, case = _runtime_case_with_sentinels(sentinels=False)
+    response = _role_response(case, adapter_version="2.1")
+    if mutation.startswith("block-"):
+        response.update(
+            decision="block",
+            reason_codes=["missing-context"],
+            unresolved_inputs=["Missing evidence."],
+            human_decisions_required=["Human owner supplies the evidence."],
+        )
+        if mutation != "block-with-artifact":
+            response["requirements_note"] = None
+        if mutation == "block-without-unresolved-input":
+            response["unresolved_inputs"] = []
+        elif mutation == "block-without-human-action":
+            response["human_decisions_required"] = []
+    elif mutation == "draft-without-artifact":
+        response["requirements_note"] = None
+    else:
+        response["requirements_note"]["checks"][0]["result"] = "passed"
+    calls = 0
+
+    def fake_read(url, body, timeout):
+        nonlocal calls
+        calls += 1
+        if calls > 2:
+            pytest.fail("adapter 2.1 permits at most one structural retry")
+        return {"response": json.dumps(response), "thinking": ""}
+
+    _use_adapter_2_1(monkeypatch)
+    monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda model: actual_certification.load_runtime_identity(
+            PROCESS, model["family"], model
+        ),
+    )
+    monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
+
+    result = execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
+
+    assert calls == 2
+    attempts = result["cases"][0]["attempts"]
+    assert len(attempts) == 2
+    assert attempts[1]["retry_of"] == attempts[0]["raw_logical_artifact_id"]
+    assert result["cases"][0]["deterministic_validation_result"] == "failed"
 
 
 def test_deepseek_runtime_envelope_keeps_thinking_separate_from_final_response() -> None:
