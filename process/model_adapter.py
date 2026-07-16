@@ -230,7 +230,12 @@ def normalize_role_response(
         }
         if not referenced_ids <= set(response["source_ids"]):
             raise ModelAdapterError("model-adapter.semantic")
-    if contains_forbidden_authority_claim(response):
+    authority_surface = {
+        "unresolved_inputs": response["unresolved_inputs"],
+        "human_decisions_required": response["human_decisions_required"],
+        payload_key: payload,
+    }
+    if contains_forbidden_authority_claim(authority_surface):
         raise ModelAdapterError("model-adapter.semantic")
 
     manifest_by_id = {source["stable_id"]: source for source in launch["verified_source_manifest"]}

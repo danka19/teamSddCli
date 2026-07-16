@@ -32,7 +32,7 @@ def main(argv: list[str] | None = None) -> int:
             args.adapter_version,
             args.expected_count,
         )
-    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+    except (OSError, UnicodeError, json.JSONDecodeError, TypeError, AttributeError, KeyError, ValueError) as error:
         print(json.dumps({"status": "blocked", "diagnostics": ["actual-model.gate-malformed"], "detail": str(error)}, sort_keys=True))
         return 3
     if not diagnostics:

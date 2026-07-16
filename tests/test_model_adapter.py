@@ -215,6 +215,23 @@ def test_normalizer_preserves_model_semantics_and_adds_only_launch_invariants(ro
     assert validate_operation_evidence(evidence, launch, pack) == []
 
 
+def test_normalizer_allows_controlled_authority_reason_code_for_a_human_stop() -> None:
+    _, pack, launch = adapter_context(role="tech_lead")
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response.update({
+        "decision": "block",
+        "reason_codes": ["authority-required"],
+        "unresolved_inputs": ["Required evidence remains missing."],
+        "human_decisions_required": ["Human authorization remains required."],
+        payload_key: None,
+    })
+    evidence = normalize_role_response(response, launch, pack)
+    assert evidence["status"] == "blocked"
+    assert evidence["residual_limitations"] == ["model-reason:authority-required"]
+    assert evidence["human_review_status"] == "pending"
+
+
 @pytest.mark.parametrize(
     "mutation",
     ["missing-source", "draft-null", "block-payload", "empty-checks", "empty-claims", "authority-language"],

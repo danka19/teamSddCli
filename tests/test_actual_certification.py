@@ -13,6 +13,7 @@ from scripts import check_actual_certification_gate, normalize_actual_certificat
 from process.actual_certification import (
     ActualCertificationError,
     build_model_prompt,
+    case_read_pack,
     execute_model_catalog,
     expand_compact_output,
     invoke_ollama,
@@ -29,6 +30,7 @@ from process.actual_certification import (
     write_raw_attempt,
 )
 from process.weak_model_kit import build_read_pack, build_role_launch
+from process.model_adapter import build_role_response_schema, normalize_role_response
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -67,6 +69,36 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
     cases = []
     for ordinal in range(count):
         case_id = phase_case_ids[ordinal]
+        catalog_case = next(case for case in catalog["cases"] if case["id"] == case_id)
+        pack, launch = case_read_pack(ROOT, PROCESS, catalog_case, adapter_version="2.0")
+        response_schema = build_role_response_schema(launch)
+        payload_key = launch["model_response_contract"]["role_payload_key"]
+        decision = catalog_case["expected_decision"]
+        source_ids = [*catalog_case["required_source_ids"], "case-facts"]
+        payload = None
+        if decision == "draft":
+            source_id = catalog_case["required_source_ids"][0]
+            payload = {
+                "summary": "Bounded source-linked advisory draft.",
+                "observations": [{"summary": "The source keeps authority human-owned.", "source_id": source_id}],
+                "claims": [{"subject": "boundary", "summary": "Human review remains pending.", "source_id": source_id}],
+                "checks": [{"command": "source-review", "result": "source-reviewed", "evidence": "Supplied source reviewed.", "source_id": source_id}],
+            }
+        response = {
+            "case_id": case_id,
+            "decision": decision,
+            "reason_codes": catalog_case["required_reason_codes"],
+            "source_ids": source_ids,
+            "unresolved_inputs": [] if decision == "draft" else ["Required human-owned evidence remains unresolved."],
+            "human_decisions_required": ["Human review remains required before any next bounded action."],
+            payload_key: payload,
+        }
+        normalized = normalize_role_response(response, launch, pack)
+        diagnostics = validate_model_output(normalized, catalog_case, launch, pack, PROCESS, response)
+        assert diagnostics == []
+        response_schema_sha256 = hashlib.sha256(
+            json.dumps(response_schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
         logical_id = f"{family.removesuffix('-class')}-{case_id}-attempt-1"
         raw = {
             "run_group": phase,
@@ -83,11 +115,21 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             },
             "attempt_ordinal": 1,
             "retry_of": None,
-            "case": {"id": case_id, "phase": phase},
-            "response_schema_sha256": "a" * 64,
+            "case": {key: catalog_case[key] for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")},
+            "read_pack_identity": pack["identity"],
+            "source_manifest": [*launch["verified_source_manifest"], actual_certification._case_facts_source(catalog_case)],
+            "response_schema_sha256": response_schema_sha256,
             "reasoning_present": False,
             "final_response_present": True,
-            "validation": {"result": "passed", "diagnostics": []},
+            "ollama": {
+                "model": model["name"],
+                "response": json.dumps(response),
+                "thinking": "",
+                "request_contract": {"model": model["name"], "think": False, "response_schema_sha256": response_schema_sha256},
+            },
+            "parsed_model_decision": response,
+            "normalized_operation_evidence": normalized,
+            "validation": {"result": "passed", "diagnostics": diagnostics},
         }
         raw_path = raw_group / f"{logical_id}.json"
         raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
@@ -98,7 +140,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "raw_logical_artifact_id": logical_id,
             "raw_filename": raw_path.name,
             "raw_sha256": checksum,
-            "response_schema_sha256": "a" * 64,
+            "response_schema_sha256": response_schema_sha256,
             "thinking_present": False,
             "final_response_present": True,
             "diagnostics": [],
@@ -108,6 +150,8 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
             "phase": phase,
             "execution_identity": raw["execution_identity"],
             "run_group": phase,
+            "read_pack_identity": pack["identity"],
+            "source_manifest": raw["source_manifest"],
             "raw_logical_artifact_id": logical_id,
             "raw_filename": raw_path.name,
             "raw_sha256": checksum,
@@ -129,6 +173,14 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
         "cases": cases,
         "limitations": ["family-level proxy; corporate-runtime equivalence is not established"],
     }, artifact)
+
+
+def _rewrite_raw(artifact: Path, row: dict, raw: object) -> None:
+    path = artifact / row["run_group"] / row["raw_filename"]
+    path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
+    checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    row["raw_sha256"] = checksum
+    row["attempts"][-1]["raw_sha256"] = checksum
 
 
 def test_preflight_gate_requires_exact_five_same_identity_passes(tmp_path: Path) -> None:
@@ -172,16 +224,118 @@ def test_matrix_gate_requires_exact_fifteen_cases(tmp_path: Path) -> None:
     assert "actual-model.gate-case-count" in validate_phase_gate(summary, artifact, "matrix", "qwen-class", "2.0", 15)
 
 
+@pytest.mark.parametrize("tamper", ["missing-ollama", "forged-pass"])
+def test_phase_gate_independently_revalidates_adapter_two_raw_evidence(tmp_path: Path, tamper: str) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    raw_path = artifact / row["run_group"] / row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    if tamper == "missing-ollama":
+        raw.pop("ollama")
+        expected = "actual-model.gate-raw-evidence-missing"
+    else:
+        raw["ollama"]["response"] = "{}"
+        expected = "actual-model.gate-current-validation-mismatch"
+    _rewrite_raw(artifact, row, raw)
+    assert expected in validate_phase_gate(summary, artifact, "preflight", "qwen-class", "2.0", 5)
+
+
+@pytest.mark.parametrize("first_outcome", ["passed", "semantic-failure"])
+def test_phase_gate_allows_retry_only_after_structural_failure(tmp_path: Path, first_outcome: str) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    first_path = artifact / row["run_group"] / row["raw_filename"]
+    passing_raw = json.loads(first_path.read_text(encoding="utf-8"))
+    second_raw = copy.deepcopy(passing_raw)
+    if first_outcome == "semantic-failure":
+        first_raw = copy.deepcopy(passing_raw)
+        response = first_raw["parsed_model_decision"]
+        response["decision"] = "block"
+        response["requirements_note"] = None
+        response["unresolved_inputs"] = ["Required evidence remains unresolved."]
+        first_raw["ollama"]["response"] = json.dumps(response)
+        catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == row["case_id"])
+        _, _, parsed, normalized, first_diagnostics, _ = actual_certification.evaluate_remediation_model_output(
+            ROOT, PROCESS, catalog_case, first_raw
+        )
+        assert first_diagnostics and not all(
+            actual_certification.is_structural_retry(item["code"]) for item in first_diagnostics
+        )
+        first_raw["parsed_model_decision"] = parsed
+        first_raw["normalized_operation_evidence"] = normalized
+        first_raw["validation"] = {"result": "failed", "diagnostics": first_diagnostics}
+        first_path.write_text(json.dumps(first_raw, sort_keys=True), encoding="utf-8")
+        row["attempts"][0]["raw_sha256"] = hashlib.sha256(first_path.read_bytes()).hexdigest()
+        row["attempts"][0]["diagnostics"] = first_diagnostics
+    second_raw["attempt_ordinal"] = 2
+    second_raw["retry_of"] = row["attempts"][0]["raw_logical_artifact_id"]
+    second_id = row["attempts"][0]["raw_logical_artifact_id"].removesuffix("-1") + "-2"
+    second_path = first_path.with_name(second_id + ".json")
+    second_path.write_text(json.dumps(second_raw, sort_keys=True), encoding="utf-8")
+    second_attempt = {
+        **row["attempts"][0],
+        "attempt_ordinal": 2,
+        "retry_of": row["attempts"][0]["raw_logical_artifact_id"],
+        "raw_logical_artifact_id": second_id,
+        "raw_filename": second_path.name,
+        "raw_sha256": hashlib.sha256(second_path.read_bytes()).hexdigest(),
+    }
+    row["attempts"].append(second_attempt)
+    row.update({key: second_attempt[key] for key in ("raw_logical_artifact_id", "raw_filename", "raw_sha256")})
+    assert "actual-model.gate-retry-not-structural" in validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.0", 5
+    )
+
+
+@pytest.mark.parametrize("malformed", [[], "non-dict-attempt"])
+def test_phase_gate_returns_diagnostic_for_valid_json_wrong_shapes(tmp_path: Path, malformed, capsys) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    row = summary["cases"][0]
+    if malformed == "non-dict-attempt":
+        row["attempts"] = ["invalid"]
+    else:
+        _rewrite_raw(artifact, row, malformed)
+    diagnostics = validate_phase_gate(summary, artifact, "preflight", "qwen-class", "2.0", 5)
+    assert "actual-model.gate-raw-malformed" in diagnostics or "actual-model.gate-retry-lineage" in diagnostics
+    result_path = artifact / "malformed-result.json"
+    result_path.write_text(json.dumps(summary), encoding="utf-8")
+    assert check_actual_certification_gate.main([
+        str(result_path), "--artifact-root", str(artifact), "--phase", "preflight",
+        "--model-family", "qwen-class", "--adapter-version", "2.0", "--expected-count", "5",
+    ]) == 3
+    assert json.loads(capsys.readouterr().out)["status"] == "blocked"
+
+
+@pytest.mark.parametrize("field", ["access_token", "private_key"])
+def test_phase_gate_uses_repository_credential_patterns(tmp_path: Path, field: str) -> None:
+    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    summary[field] = "credential-material-must-not-enter-evidence"
+    assert "actual-model.gate-privacy" in validate_phase_gate(
+        summary, artifact, "preflight", "qwen-class", "2.0", 5
+    )
+
+
 def test_matrix_runner_rejects_failed_preflight_before_model_call(monkeypatch, tmp_path: Path, capsys) -> None:
     summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
     failed_row = summary["cases"][0]
-    failed_diagnostics = [{"code": "actual-model.semantic-failure", "detail": "completed deterministic rejection"}]
+    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    response = raw["parsed_model_decision"]
+    response["decision"] = "block"
+    response["requirements_note"] = None
+    response["unresolved_inputs"] = ["The supplied draft is deliberately rejected for this completed test."]
+    raw["ollama"]["response"] = json.dumps(response)
+    catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == failed_row["case_id"])
+    _, _, parsed, normalized, failed_diagnostics, _ = actual_certification.evaluate_remediation_model_output(
+        ROOT, PROCESS, catalog_case, raw
+    )
+    assert failed_diagnostics
+    raw["parsed_model_decision"] = parsed
+    raw["normalized_operation_evidence"] = normalized
+    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
     failed_row["deterministic_validation_result"] = "failed"
     failed_row["diagnostics"] = failed_diagnostics
     failed_row["attempts"][0]["diagnostics"] = failed_diagnostics
-    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
-    raw = json.loads(raw_path.read_text(encoding="utf-8"))
-    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
     raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
     checksum = hashlib.sha256(raw_path.read_bytes()).hexdigest()
     failed_row["raw_sha256"] = checksum
@@ -238,13 +392,24 @@ def test_read_only_gate_cli_has_pass_failed_and_unverifiable_exit_codes(tmp_path
     assert before == {path: path.read_bytes() for path in artifact.rglob("*") if path.is_file()}
 
     failed_row = summary["cases"][0]
-    failed_diagnostics = [{"code": "actual-model.semantic-failure", "detail": "completed deterministic rejection"}]
+    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    response = raw["parsed_model_decision"]
+    response["decision"] = "block"
+    response["requirements_note"] = None
+    response["unresolved_inputs"] = ["The supplied draft is deliberately rejected for this completed test."]
+    raw["ollama"]["response"] = json.dumps(response)
+    catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == failed_row["case_id"])
+    _, _, parsed, normalized, failed_diagnostics, _ = actual_certification.evaluate_remediation_model_output(
+        ROOT, PROCESS, catalog_case, raw
+    )
+    assert failed_diagnostics
+    raw["parsed_model_decision"] = parsed
+    raw["normalized_operation_evidence"] = normalized
+    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
     failed_row["deterministic_validation_result"] = "failed"
     failed_row["diagnostics"] = failed_diagnostics
     failed_row["attempts"][0]["diagnostics"] = failed_diagnostics
-    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
-    raw = json.loads(raw_path.read_text(encoding="utf-8"))
-    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
     raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
     checksum = hashlib.sha256(raw_path.read_bytes()).hexdigest()
     failed_row["raw_sha256"] = checksum
@@ -290,6 +455,32 @@ def test_remediation_normalization_references_immutable_baseline_and_adapter_two
     assert len(normalized["preflight"]["cases"]) == 5
     assert len(normalized["matrix"]["cases"]) == 15
     assert validate_normalized_evidence(normalized, artifact, repository_root=tmp_path) == []
+
+
+def test_remediation_normalizer_rejects_missing_matrix_after_passed_preflight(tmp_path: Path, capsys) -> None:
+    preflight, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }), encoding="utf-8")
+    preflight_path = artifact / "preflight.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    with pytest.raises(ActualCertificationError, match="actual-model.matrix-result-required"):
+        normalize_actual_certification.normalize_remediation_evidence(
+            baseline_path, artifact, preflight_path, None, "qwen-class", repository_root=tmp_path
+        )
+    output = tmp_path / "normalized.yaml"
+    assert normalize_actual_certification.main([
+        "--baseline-evidence", str(baseline_path),
+        "--remediation-artifact-root", str(artifact),
+        "--preflight-result", str(preflight_path),
+        "--output", str(output),
+        "--model-family", "qwen-class",
+    ]) == 3
+    assert json.loads(capsys.readouterr().out)["diagnostic"] == "actual-model.matrix-result-required"
+    assert not output.exists()
 
 
 @pytest.mark.parametrize(

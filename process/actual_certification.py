@@ -34,6 +34,7 @@ from process.weak_model_kit import (
     build_role_launch,
     validate_operation_evidence,
 )
+from process.validators.config_validation import secret_diagnostics
 
 
 class ActualCertificationError(ValueError):
@@ -175,6 +176,14 @@ def _safe_artifact_path(artifact_root: Path, group: Any, filename: Any) -> Path 
     return path
 
 
+def _contains_private_evidence(value: Any) -> bool:
+    serialized = json.dumps(value, sort_keys=True)
+    privacy_view = serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>")
+    return bool(secret_diagnostics(value, "actual-model-evidence")) or bool(
+        re.search(r"(?i)(?:[a-z]:[\\/]|\\\\users\\|/users/|https?://)", privacy_view)
+    )
+
+
 def validate_phase_gate(
     summary: dict[str, Any],
     artifact_root: Path,
@@ -187,12 +196,7 @@ def validate_phase_gate(
     diagnostics: list[str] = []
     if not isinstance(summary, dict):
         return ["actual-model.gate-malformed"]
-    serialized = json.dumps(summary, sort_keys=True)
-    privacy_view = serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>")
-    if re.search(
-        r"(?i)(?:[a-z]:[\\/]|\\\\users\\|/users/|api[_-]?key|password|secret|bearer\s+|private[_-]?token|https?://)",
-        privacy_view,
-    ):
+    if _contains_private_evidence(summary):
         _append_once(diagnostics, "actual-model.gate-privacy")
     cases = summary.get("cases")
     if not isinstance(cases, list):
@@ -200,9 +204,10 @@ def validate_phase_gate(
     if len(cases) != expected_count:
         _append_once(diagnostics, "actual-model.gate-case-count")
     case_ids = [row.get("case_id") for row in cases if isinstance(row, dict)]
-    if len(case_ids) != len(cases) or any(not isinstance(value, str) or not value for value in case_ids):
+    valid_case_ids = [value for value in case_ids if isinstance(value, str) and value]
+    if len(valid_case_ids) != len(cases):
         _append_once(diagnostics, "actual-model.gate-malformed")
-    elif len(set(case_ids)) != len(case_ids):
+    elif len(set(valid_case_ids)) != len(valid_case_ids):
         _append_once(diagnostics, "actual-model.gate-duplicate-case")
     if summary.get("evidence_kind") != f"actual-model-{expected_phase}":
         _append_once(diagnostics, "actual-model.gate-phase-mismatch")
@@ -237,8 +242,12 @@ def validate_phase_gate(
         case.get("id") for case in (catalog.get("cases", []) if isinstance(catalog, dict) else [])
         if isinstance(case, dict) and case.get("phase") == expected_phase
     }
-    if set(case_ids) != expected_case_ids:
+    if set(valid_case_ids) != expected_case_ids:
         _append_once(diagnostics, "actual-model.gate-case-catalog-mismatch")
+    catalog_cases = {
+        case.get("id"): case for case in (catalog.get("cases", []) if isinstance(catalog, dict) else [])
+        if isinstance(case, dict)
+    }
 
     expected_identity = None
     referenced_raw: set[tuple[str, str]] = set()
@@ -275,9 +284,12 @@ def validate_phase_gate(
             _append_once(diagnostics, "actual-model.gate-retry-lineage")
             continue
         previous_id = None
+        reevaluated_attempts: list[list[dict[str, str]]] = []
+        attempts_well_formed = True
         for ordinal, attempt in enumerate(attempts, 1):
             if not isinstance(attempt, dict):
                 _append_once(diagnostics, "actual-model.gate-retry-lineage")
+                attempts_well_formed = False
                 continue
             logical_id = attempt.get("raw_logical_artifact_id")
             filename = attempt.get("raw_filename")
@@ -309,22 +321,85 @@ def validate_phase_gate(
                 _append_once(diagnostics, "actual-model.gate-raw-malformed")
                 previous_id = logical_id
                 continue
+            if not isinstance(raw, dict):
+                _append_once(diagnostics, "actual-model.gate-raw-malformed")
+                attempts_well_formed = False
+                previous_id = logical_id
+                continue
+            if _contains_private_evidence(raw):
+                _append_once(diagnostics, "actual-model.gate-privacy")
+            raw_case = raw.get("case")
+            raw_validation = raw.get("validation")
+            ollama = raw.get("ollama")
+            required_raw = {
+                "read_pack_identity", "source_manifest", "ollama", "parsed_model_decision",
+                "normalized_operation_evidence", "validation",
+            }
+            if (
+                not required_raw <= set(raw)
+                or not isinstance(raw_case, dict)
+                or not isinstance(raw_validation, dict)
+                or not isinstance(ollama, dict)
+                or not isinstance(ollama.get("response"), str)
+                or not isinstance(ollama.get("thinking", ""), str)
+                or not isinstance(ollama.get("request_contract"), dict)
+            ):
+                _append_once(diagnostics, "actual-model.gate-raw-evidence-missing")
+                attempts_well_formed = False
+                previous_id = logical_id
+                continue
+            catalog_case = catalog_cases.get(str(row.get("case_id")))
+            if not isinstance(catalog_case, dict):
+                _append_once(diagnostics, "actual-model.gate-case-catalog-mismatch")
+                attempts_well_formed = False
+                previous_id = logical_id
+                continue
+            try:
+                pack, launch, response, output, current_diagnostics, schema_sha256 = evaluate_remediation_model_output(
+                    Path(__file__).resolve().parents[1], Path(__file__).resolve().parent, catalog_case, raw
+                )
+            except (ActualCertificationError, ModelAdapterError, TypeError, AttributeError, KeyError, ValueError):
+                _append_once(diagnostics, "actual-model.gate-raw-evidence-missing")
+                attempts_well_formed = False
+                previous_id = logical_id
+                continue
+            reevaluated_attempts.append(current_diagnostics)
+            current_result = "passed" if not current_diagnostics else "failed"
+            expected_manifest = [*launch["verified_source_manifest"], _case_facts_source(catalog_case)]
+            expected_raw_case = {
+                key: catalog_case[key]
+                for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")
+            }
             raw_checks = (
                 raw.get("run_group") == group,
                 raw.get("execution_identity") == identity,
                 raw.get("attempt_ordinal") == ordinal,
                 raw.get("retry_of") == previous_id,
-                raw.get("case", {}).get("id") == row.get("case_id"),
-                raw.get("case", {}).get("phase") == expected_phase,
-                raw.get("response_schema_sha256") == attempt.get("response_schema_sha256"),
+                raw_case == expected_raw_case,
+                raw.get("read_pack_identity") == pack["identity"] == row.get("read_pack_identity"),
+                raw.get("source_manifest") == expected_manifest == row.get("source_manifest"),
+                raw.get("response_schema_sha256") == attempt.get("response_schema_sha256") == schema_sha256,
                 raw.get("reasoning_present") == attempt.get("thinking_present"),
                 raw.get("final_response_present") == attempt.get("final_response_present"),
-                raw.get("validation", {}).get("result") == row.get("deterministic_validation_result"),
-                raw.get("validation", {}).get("diagnostics") == attempt.get("diagnostics"),
+                ollama.get("model") == (model.get("name") if isinstance(model, dict) else None),
+                ollama.get("request_contract", {}).get("model") == (model.get("name") if isinstance(model, dict) else None),
+                ollama.get("request_contract", {}).get("response_schema_sha256") == schema_sha256,
+                raw.get("parsed_model_decision") == response,
+                raw.get("normalized_operation_evidence") == output,
+                raw_validation.get("result") == current_result,
+                raw_validation.get("diagnostics") == current_diagnostics == attempt.get("diagnostics"),
             )
             if not all(raw_checks):
-                _append_once(diagnostics, "actual-model.gate-raw-lineage-mismatch")
+                _append_once(diagnostics, "actual-model.gate-current-validation-mismatch")
             previous_id = logical_id
+        if len(attempts) == 2 and (
+            not reevaluated_attempts
+            or not reevaluated_attempts[0]
+            or not all(is_structural_retry(item.get("code", "")) for item in reevaluated_attempts[0])
+        ):
+            _append_once(diagnostics, "actual-model.gate-retry-not-structural")
+        if not attempts_well_formed or not all(isinstance(item, dict) for item in attempts):
+            continue
         final = attempts[-1]
         if row.get("diagnostics") != final.get("diagnostics"):
             _append_once(diagnostics, "actual-model.gate-raw-lineage-mismatch")
@@ -565,7 +640,10 @@ def validate_model_output(
     elif semantic_validation:
         if not output.get("unresolved_inputs") or not output.get("human_decisions_required"):
             diagnostics.append({"code": "actual-model.safe-stop-incomplete", "detail": str(case.get("risk_case"))})
-    if semantic_validation and any(compact.get(field) is not False for field in ("approval", "transition", "resume", "model_fabricated_evidence")):
+    if semantic_validation and any(
+        field in compact and compact.get(field) is not False
+        for field in ("approval", "transition", "resume", "model_fabricated_evidence")
+    ):
         diagnostics.append({"code": "actual-model.forbidden-action", "detail": str(case.get("risk_case"))})
     return diagnostics
 
@@ -762,6 +840,35 @@ def evaluate_frozen_model_output(
     return pack, launch, compact, output, diagnostics
 
 
+def evaluate_remediation_model_output(
+    root: Path, process_root: Path, case: dict[str, Any], raw: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None, dict[str, Any] | None, list[dict[str, str]], str]:
+    """Independently re-evaluate one adapter 2.0 raw attempt against current contracts."""
+    pack, launch = case_read_pack(root, process_root, case, adapter_version="2.0")
+    schema = build_role_response_schema(launch)
+    schema_sha256 = _sha256_bytes(
+        json.dumps(schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    )
+    ollama = raw.get("ollama")
+    if not isinstance(ollama, dict):
+        raise ActualCertificationError("actual-model.gate-raw-evidence-missing")
+    response: dict[str, Any] | None = None
+    output: dict[str, Any] | None = None
+    try:
+        _, final_response = split_reasoning_final(
+            str(ollama.get("response", "")), str(ollama.get("thinking", ""))
+        )
+        response = parse_role_response(final_response, schema)
+        output = normalize_role_response(response, launch, pack)
+        diagnostics = validate_model_output(output, case, launch, pack, process_root, response)
+    except ModelAdapterError as error:
+        diagnostics = [{
+            "code": str(error),
+            "detail": "model response failed the role-specific adapter contract",
+        }]
+    return pack, launch, response, output, diagnostics, schema_sha256
+
+
 def execute_ai_disabled(root: Path, catalog: dict[str, Any], raw_directory: Path) -> dict[str, Any]:
     diagnostics = validate_ai_disabled_catalog(root, catalog)
     if diagnostics:
@@ -916,11 +1023,7 @@ def _validate_remediation_evidence(
     evidence: dict[str, Any], artifact_root: Path, repository_root: Path
 ) -> list[str]:
     diagnostics: list[str] = []
-    serialized = json.dumps(evidence, sort_keys=True)
-    if re.search(
-        r"(?i)(?:[a-z]:[\\/]|\\\\users\\|/users/|api[_-]?key|password|secret|bearer\s+|private[_-]?token|https?://)",
-        serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>"),
-    ):
+    if _contains_private_evidence(evidence):
         _append_once(diagnostics, "actual-model.normalized-privacy")
     baseline_reference = evidence.get("baseline_reference")
     if not isinstance(baseline_reference, dict) or set(baseline_reference) != {
@@ -954,18 +1057,21 @@ def _validate_remediation_evidence(
     adapter = evidence.get("adapter", {})
     model = evidence.get("model", {})
     family = adapter.get("family") if isinstance(adapter, dict) else None
-    if adapter.get("version") != "2.0" or model.get("family") != family:
+    if (
+        not isinstance(adapter, dict)
+        or not isinstance(model, dict)
+        or adapter.get("version") != "2.0"
+        or model.get("family") != family
+    ):
         _append_once(diagnostics, "actual-model.remediation-identity-mismatch")
     all_references: set[tuple[str, str]] = set()
-    preflight_failed = False
     for phase, count in (("preflight", 5), ("matrix", 15)):
         section = evidence.get(phase, {})
         if not isinstance(section, dict):
             _append_once(diagnostics, "actual-model.gate-malformed")
             continue
         if phase == "matrix" and section.get("status") == "not-run":
-            if section.get("cases") != [] or section.get("matrix_not_run") != "preflight-gate-failed" or not preflight_failed:
-                _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
+            _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
             continue
         summary = {
             "schema_version": "1.2",
@@ -980,9 +1086,6 @@ def _validate_remediation_evidence(
             "cases": section.get("cases"),
         }
         phase_diagnostics = validate_phase_gate(summary, artifact_root, phase, str(family), "2.0", count)
-        if phase == "preflight" and set(phase_diagnostics) == {"actual-model.gate-case-failed"}:
-            preflight_failed = True
-            phase_diagnostics = []
         for code in phase_diagnostics:
             _append_once(diagnostics, code)
         for row in section.get("cases", []):

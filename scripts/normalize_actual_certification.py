@@ -128,20 +128,18 @@ def normalize_remediation_evidence(
     preflight_diagnostics = validate_phase_gate(
         preflight, remediation_artifact_root, "preflight", model_family, "2.0", 5
     )
-    if any(code != "actual-model.gate-case-failed" for code in preflight_diagnostics):
+    if preflight_diagnostics:
         raise ActualCertificationError(preflight_diagnostics[0])
-    matrix = None
-    if matrix_result is not None:
-        matrix = json.loads(matrix_result.read_text(encoding="utf-8"))
-        if not isinstance(matrix, dict):
-            raise ActualCertificationError("actual-model.normalization-input-malformed")
-        matrix_diagnostics = validate_phase_gate(
-            matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
-        )
-        if matrix_diagnostics:
-            raise ActualCertificationError(matrix_diagnostics[0])
-        if preflight_diagnostics:
-            raise ActualCertificationError("actual-model.matrix-after-failed-preflight")
+    if matrix_result is None:
+        raise ActualCertificationError("actual-model.matrix-result-required")
+    matrix = json.loads(matrix_result.read_text(encoding="utf-8"))
+    if not isinstance(matrix, dict):
+        raise ActualCertificationError("actual-model.normalization-input-malformed")
+    matrix_diagnostics = validate_phase_gate(
+        matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
+    )
+    if matrix_diagnostics:
+        raise ActualCertificationError(matrix_diagnostics[0])
     document = {
         "schema_version": "1.2",
         "evidence_id": f"phase-2-11-{model_family.removesuffix('-class')}-remediation",
@@ -157,18 +155,14 @@ def normalize_remediation_evidence(
             "adapter_version": "1.0",
         },
         "preflight": {"status": preflight.get("status"), "cases": preflight.get("cases", [])},
-        "matrix": (
-            {"status": matrix.get("status"), "cases": matrix.get("cases", [])}
-            if matrix is not None
-            else {"status": "not-run", "cases": [], "matrix_not_run": "preflight-gate-failed"}
-        ),
-        "status": "passed" if matrix is not None else "failed",
+        "matrix": {"status": matrix.get("status"), "cases": matrix.get("cases", [])},
+        "status": "passed",
         "limitations": preflight.get("limitations", []),
     }
     return document
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--existing", type=Path)
     parser.add_argument("--artifact-root", type=Path)
@@ -180,7 +174,7 @@ def main() -> int:
     parser.add_argument("--matrix-result", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model-family", choices=("qwen-class", "deepseek-class"), default="qwen-class")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     repository_root = Path(__file__).resolve().parents[1]
     if args.baseline_evidence is not None:
         if args.remediation_artifact_root is None or args.preflight_result is None:
@@ -196,7 +190,10 @@ def main() -> int:
             )
             with args.output.open("x", encoding="utf-8", newline="\n") as handle:
                 yaml.safe_dump(document, handle, sort_keys=False, allow_unicode=True)
-        except (OSError, UnicodeError, json.JSONDecodeError, yaml.YAMLError, ActualCertificationError) as error:
+        except (
+            OSError, UnicodeError, json.JSONDecodeError, yaml.YAMLError,
+            ActualCertificationError, TypeError, AttributeError, KeyError,
+        ) as error:
             print(json.dumps({"status": "blocked", "diagnostic": str(error)}, sort_keys=True))
             return 3
         return 0
