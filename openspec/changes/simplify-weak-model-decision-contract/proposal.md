@@ -7,13 +7,16 @@ Adapter `2.1` is needed now because work item 2.11 cannot complete until the mod
 ## What Changes
 
 - Add a decision-discriminated response contract:
-  - `draft` requires exactly one bounded role artifact with evidence-bearing content.
+  - `draft` requires exactly one bounded role artifact with a model-selected kind from one neutral global artifact vocabulary and evidence-bearing content.
   - `block` requires the role artifact to be `null` and requires unresolved inputs plus human actions.
 - Replace prose-dependent interpretation of the decision branch with JSON Schema `oneOf`/`const` constraints selected by the model's own `decision`.
-- Keep reason-code choice model-owned and validate it semantically after parsing; do not expose case-specific expected decisions, expected reason codes, or required artifact kind.
+- Keep reason-code and artifact-kind choice model-owned and validate them semantically after parsing; do not expose case-specific expected decisions, expected reason codes, or required artifact kind.
+- Treat the bounded source pack as launcher-selected required context. The model is checked on faithful attribution to supplied source IDs, not on guessing a hidden required-source subset.
 - Clarify the universal process distinction between preparing a non-canonical advisory draft and approving or advancing work.
 - Retain one retry only for structural contract failures; structurally valid semantic failures remain non-retryable and are retained.
-- Preserve adapter `1.0` and `2.0` evidence as immutable historical inputs while generating new adapter `2.1` append-only evidence.
+- Preserve exact adapter `1.0` and `2.0` schema, prompt, diagnostics, and evidence reconstruction as immutable historical inputs while generating new adapter `2.1` append-only evidence.
+- Remove model-authored `passed`/`failed` check results from adapter `2.1`; only source review or explicit missing/not-run/conflict states can be promoted mechanically.
+- Exclusively create phase directories, retain operational failure summaries, and bind runtime-probe summary checksums into normalized evidence.
 - Re-run exact-identity Qwen and DeepSeek certification in new external artifact roots, gating each fifteen-case matrix behind its own five-of-five preflight.
 
 ## Capabilities

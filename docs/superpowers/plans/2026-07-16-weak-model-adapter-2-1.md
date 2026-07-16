@@ -4,7 +4,7 @@
 
 **Goal:** Replace the ambiguous adapter `2.0` decision/payload contract with a non-leading decision-discriminated adapter `2.1`, then re-run exact-identity Qwen and DeepSeek certification in new append-only artifact roots.
 
-**Architecture:** The deterministic launcher continues to own identity, role, allowed global vocabulary, verified sources, and the internal required artifact kind. The model receives a closed JSON Schema with two mutually exclusive branches selected by its own `decision`: `draft` requires a role payload, while `block` requires `null`. Semantic correctness remains exclusively in the deterministic validator; runtime identity, destination, evidence, and human-authority boundaries remain unchanged.
+**Architecture:** The deterministic launcher continues to own identity, role, complete global vocabularies, launcher-selected required source context, and the internal expected artifact kind. The model receives a version-discriminated closed JSON Schema with two mutually exclusive branches selected by its own `decision`: `draft` requires a role payload and model-owned artifact kind, while `block` requires `null`. Semantic correctness remains exclusively in the deterministic validator; runtime identity, destination, evidence, and human-authority boundaries remain fail-closed.
 
 **Tech Stack:** Python 3, `jsonschema` Draft 2020-12, PyYAML, pytest, Ollama `0.30.11`, OpenSpec `1.4.1`, PowerShell.
 
@@ -12,14 +12,20 @@
 
 - Adapter identity is exactly `2.1` for new Qwen and DeepSeek executions.
 - Both `draft` and `block` branches are present in every model-facing response schema.
-- Case-specific expected decision, expected reason codes, required source IDs, required artifact kind, validator result, and internal sentinel values are absent from schema, prompt, initial request, retry prompt, and retry request.
+- Case-specific expected decision, expected reason codes, required artifact kind, validator result, and internal sentinel values are absent from schema, prompt, initial request, retry prompt, and retry request.
+- Supplied source IDs are intentionally visible launcher-selected required context; the hidden `required_source_ids` field name is absent, and certification checks faithful attribution rather than hidden source discovery.
+- Draft `artifact_kind` is selected by the model from the complete global enum and is compared with the internal expected kind only after parsing; normalization never substitutes the expected kind.
 - `draft` requires a non-null role payload, at least one check, and at least one observation or claim.
 - `block` requires a null role payload, at least one unresolved input, and at least one required human action.
 - Human approval is not required to prepare a bounded non-canonical advisory draft; it remains required for canonical mutation and lifecycle transition.
 - One retry is permitted only for empty final output, invalid JSON, or generated-schema failure. No semantic retry or repair is permitted.
 - Adapter `1.0` and `2.0` raw and normalized evidence remains immutable and read-only compatible.
+- Adapter `2.0` schema bytes, prompt bytes, hashes, and diagnostics are reconstructed through an explicit `2.0` compatibility path.
+- Adapter `2.1` model checks allow only `source-reviewed | not-run | missing | unsupported | conflict`; arbitrary model-authored `passed` or `failed` execution claims are forbidden.
 - Exact observed full model digest and Ollama runtime are checked before execution and immediately before model calls.
 - Raw and result destinations are new, external, non-aliased, non-reparse, non-overlapping, append-only paths outside Git.
+- Phase directories are created exclusively and revalidated immediately before writes; runtime/identity/network/interrupted failures after safe destination setup receive an exclusive non-success operational result.
+- Runtime probes have exclusive result summaries whose checksums are bound into normalized evidence; gates reject unexpected or unreferenced inventory.
 - Matrix execution requires the same family's deterministic five-of-five preflight gate.
 - AI authority, approvals, waivers, merges, releases, resumes, archive decisions, transitions, and canonical writes remain forbidden.
 - Work item 2.11 remains `in_progress` unless both exact model families pass five-of-five plus fifteen-of-fifteen and the human owner later accepts the evidence.
@@ -58,7 +64,19 @@ def test_adapter_2_1_schema_discriminates_draft_and_block(launch):
     assert list(Draft202012Validator(schema).iter_errors({**draft, role_payload_key(launch): None}))
 ```
 
-Also assert `block` rejects empty `unresolved_inputs` or `human_decisions_required`, and `draft` rejects empty checks plus empty observations/claims.
+The draft payload includes:
+
+```python
+{
+    "artifact_kind": "requirements-note",
+    "summary": "...",
+    "observations": [...],
+    "claims": [...],
+    "checks": [...],
+}
+```
+
+Assert `block` rejects empty `unresolved_inputs` or `human_decisions_required`, `draft` rejects empty checks plus empty observations/claims, and `passed`/`failed` check results are invalid under contract `2.1`.
 
 - [ ] **Step 2: Run RED**
 
@@ -119,9 +137,32 @@ return {
 
 Draft payload `checks` has `minItems: 1`; the payload uses `anyOf` requiring non-empty `observations` or non-empty `claims`.
 
+`artifact_kind` uses the complete global enum:
+
+```text
+evidence-boundary-note
+implementation-prep-note
+qa-review-note
+requirements-note
+tech-lead-review-note
+```
+
 - [ ] **Step 4: Preserve semantic normalization**
 
-Keep the explicit defensive decision/payload check in `normalize_role_response()` even though the schema now rejects the contradiction. Do not add inferred fields or response correction. Ensure forbidden authority detection still examines unresolved inputs, human actions, and the selected payload.
+Keep the explicit defensive decision/payload check in `normalize_role_response()` even though the schema now rejects the contradiction. Use `payload["artifact_kind"]` in the scratch path; never use internal `required_artifact_kind` to construct model output. Do not add inferred fields or response correction. Ensure forbidden authority detection still examines unresolved inputs, human actions, and the selected payload.
+
+Add a schema-valid wrong-kind test:
+
+```python
+response = valid_draft_response(artifact_kind="qa-review-note")
+output = normalize_role_response(response, launch, pack)
+assert output["artifacts_drafted"][0]["path"].endswith("/qa-review-note.json")
+assert validate_model_output(output, case, launch, pack, process_root, response) == [
+    {"code": "actual-model.role-output-mismatch", "detail": "qa-review-note"}
+]
+```
+
+The wrong kind is semantic and receives zero retries.
 
 - [ ] **Step 5: Run GREEN and compatibility**
 
@@ -166,7 +207,7 @@ Construct unique sentinels in:
 
 - expected decision;
 - required reason codes;
-- required source IDs;
+- the validator-only required-source field name;
 - required artifact kind;
 - expected validator diagnostics.
 
@@ -244,7 +285,10 @@ git commit -m "feat: clarify advisory draft boundary"
 - Modify: `process/adapters/qwen-class.yaml`
 - Modify: `process/adapters/deepseek-class.yaml`
 - Modify: `process/actual_certification.py`
+- Modify: `process/weak_model_kit.py`
+- Modify: `process/schemas/task-launch.schema.json`
 - Modify: `scripts/normalize_actual_certification.py`
+- Modify: `scripts/run_actual_certification.py`
 - Modify: `process/schemas/process-package.schema.json`
 - Modify: `process/package.yaml` only if package inventory changes
 - Modify: `tests/test_actual_certification.py`
@@ -264,6 +308,8 @@ assert load_adapter_profile(process_root, "deepseek-class")["schema_version"] ==
 ```
 
 Synthetic `2.1` summaries must validate; changing summary/raw/request adapter identity to `2.0` must fail. Existing committed adapter `2.0` normalized evidence must still validate through the historical read path.
+
+Freeze real committed adapter `2.0` schema hash, prompt hash, and diagnostic expectations. Rebuilding those artifacts after `2.1` implementation must produce the same bytes and values.
 
 - [ ] **Step 2: Run RED**
 
@@ -289,7 +335,7 @@ num_predict: 2400  # DeepSeek
 technical_retries: 1
 ```
 
-Update `load_adapter_profile()` to accept exactly `2.1` for current execution. Historical evidence validators branch on recorded evidence version; they do not load `2.0` as the current runtime profile.
+Add identity-bound `contract_version` and complete `allowed_artifact_kinds` to the launch contract. Update `load_adapter_profile()` to accept exactly `2.1` for current execution. Historical evidence validators branch on recorded evidence version and use exact `2.0` builders; they do not load `2.0` as the current runtime profile.
 
 - [ ] **Step 4: Bind `2.1` through execution and normalization**
 
@@ -304,7 +350,34 @@ Retain:
 - external destination validation;
 - privacy and baseline-family binding.
 
-- [ ] **Step 5: Run focused and full deterministic verification**
+Update matrix runner code from a hard-coded adapter version to:
+
+```python
+adapter_version = load_adapter_profile(root / "process", args.model_family)["schema_version"]
+```
+
+The preflight gate receives that version. Add an end-to-end synthetic test proving a `2.1` preflight permits matrix execution while any summary/raw/request downgrade to `2.0` blocks before model calls.
+
+- [ ] **Step 5: Exclusively create phases and retain operational failures**
+
+Add shared interfaces:
+
+```python
+create_actual_certification_directory(repository_root, raw_output) -> Path
+write_operational_result_exclusive(result_output, phase, family, diagnostic, observed_identity=None) -> dict[str, Any]
+```
+
+Requirements:
+
+- create the full new phase directory without `exist_ok=True`;
+- repeat containment/reparse checks after creation and immediately before every write;
+- write runtime-probe result through required `--result-output`;
+- after safe destination establishment, record runtime/identity/network/interrupted-call failures as non-success results;
+- never create an operational result when destination validation itself fails;
+- require exact referenced inventory and reject extra/unreferenced raw/result files;
+- normalized `2.1` evidence includes runtime-probe result path and SHA-256.
+
+- [ ] **Step 6: Run focused and full deterministic verification**
 
 ```powershell
 python -m pytest tests/test_model_adapter.py tests/test_actual_certification.py tests/test_weak_model_kit.py tests/test_process_package.py -q
@@ -315,7 +388,7 @@ node "$env:USERPROFILE\.codex\skills\roadmap-openspec-validator\scripts\validate
 git diff --check
 ```
 
-- [ ] **Step 6: Complete implementation reviews**
+- [ ] **Step 7: Complete implementation reviews**
 
 Run:
 
@@ -324,7 +397,7 @@ Run:
 
 Fix and re-review all Critical or Important findings before any model execution.
 
-- [ ] **Step 7: Mark OpenSpec implementation tasks 1.1-3.3 complete and commit**
+- [ ] **Step 8: Mark OpenSpec implementation tasks 1.1-3.3 complete and commit**
 
 ```powershell
 git add process scripts tests openspec/changes/simplify-weak-model-decision-contract/tasks.md
@@ -371,7 +444,7 @@ Any mismatch or existing destination is a hard stop.
 For each family:
 
 ```powershell
-python scripts/run_actual_certification.py --raw-output <root>\runtime-probe --phase runtime-probe --model-family <family>
+python scripts/run_actual_certification.py --raw-output <root>\runtime-probe --phase runtime-probe --model-family <family> --result-output <root>\<family>-runtime-result.json
 python scripts/run_actual_certification.py --raw-output <root>\preflight --phase preflight --model-family <family> --result-output <root>\<family>-preflight-result.json
 python scripts/check_actual_certification_gate.py <root>\<family>-preflight-result.json --artifact-root <root> --phase preflight --model-family <family> --adapter-version 2.1 --expected-count 5
 ```
@@ -386,7 +459,7 @@ Never run a family matrix after preflight exit 1 or 3.
 
 - [ ] **Step 4: Normalize actual outcome**
 
-Passing path uses preflight plus matrix. Honest failure path omits matrix and records:
+Passing path uses runtime result, preflight, and matrix. Honest failure path uses runtime result plus preflight, omits matrix, and records:
 
 ```yaml
 status: failed

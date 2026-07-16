@@ -6,10 +6,11 @@ The human owner accepted option 1 on 2026-07-16 and explicitly authorized design
 
 Adapter `2.1` uses a decision-dependent response schema:
 
-- `draft` requires one bounded non-canonical role artifact;
+- `draft` requires one bounded non-canonical role artifact whose kind is selected by the model from one neutral global vocabulary;
 - `block` requires the role artifact to be `null` and requires unresolved inputs plus human actions;
 - both branches remain visible to the model, so the schema does not reveal the correct answer;
-- case-specific expected decisions, reason codes, sources, artifact kind, and validator outcomes remain outside all model-facing surfaces.
+- case-specific expected decisions, reason codes, artifact kind, and validator outcomes remain outside all model-facing surfaces;
+- source IDs are intentionally supplied as launcher-selected required context; the model is checked on attribution, not hidden source discovery.
 
 The normative behavior and architecture are owned by:
 
@@ -33,7 +34,9 @@ The ten retained Qwen/DeepSeek preflight responses were structurally valid but s
 
 Adapter `2.1` does not select the answer, repair semantics, inspect or publish hidden reasoning, approve work, transition lifecycle state, mutate canonical files, or weaken any deterministic gate. One retry remains available only when the response is empty, invalid JSON, or violates the generated schema.
 
-Runtime certification retains exact observed full digest/runtime binding, immediate pre-call identity checks, external non-aliased append-only destinations, prompt/schema/request hashes, failed-run retention, and AI-disabled fallback.
+Model-authored checks cannot claim arbitrary `passed` or `failed` execution. Adapter `2.1` allows only source-reviewed, not-run, missing, unsupported, or conflict; independently passed commands require launcher-bound evidence outside the model response.
+
+Runtime certification retains exact observed full digest/runtime binding, immediate pre-call identity checks, external non-aliased append-only destinations, prompt/schema/request hashes, failed-run retention, and AI-disabled fallback. Runtime probes receive exclusive result summaries; safe operational failures are retained, while unsafe destinations fail before any write.
 
 ## Certification Acceptance
 

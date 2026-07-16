@@ -1,12 +1,12 @@
 ## 1. Contract And Compatibility
 
-- [ ] 1.1 Add TDD coverage for decision-discriminated `draft` and `block` schemas, universal draft-vs-approval guidance, and validator-answer leakage across schema, prompt, initial request, and retry request.
-- [ ] 1.2 Implement adapter `2.1` schema generation and mechanical normalization while preserving authority checks and read-only adapter `1.0`/`2.0` compatibility.
+- [ ] 1.1 Add TDD coverage for version-discriminated `2.0`/`2.1` schemas, decision-discriminated `draft`/`block`, model-owned global artifact kind, restricted check results, universal draft-vs-approval guidance, and validator-answer leakage across schema, prompt, initial request, and retry request.
+- [ ] 1.2 Implement adapter `2.1` schema generation and mechanical normalization without substituting expected artifact kind, while preserving authority checks and exact read-only adapter `1.0`/`2.0` schema/prompt/hash/diagnostic compatibility.
 
 ## 2. Runtime And Evidence
 
-- [ ] 2.1 Version Qwen and DeepSeek profiles to `2.1`, bind launch/request/raw/summary/normalization identity, and retain one structural-only retry for branch/schema failures.
-- [ ] 2.2 Extend deterministic gate, failed-run retention, package schema, and evidence validation for adapter `2.1` without weakening observed runtime identity, external destination, privacy, checksum, or lineage controls.
+- [ ] 2.1 Version Qwen and DeepSeek profiles to `2.1`, bind contract/launch/request/raw/summary/normalization identity, load the matrix gate version from the closed profile, and retain one structural-only retry for branch/schema failures.
+- [ ] 2.2 Extend deterministic gate, failed-run retention, package schema, and evidence validation for adapter `2.1`, including exclusive phase creation, runtime-probe result checksum binding, operational failure summaries, and exact inventory rejection without weakening observed runtime identity, external destination, privacy, checksum, or lineage controls.
 
 ## 3. Deterministic Verification
 
