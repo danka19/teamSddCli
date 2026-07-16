@@ -7,10 +7,14 @@ from pathlib import Path
 import pytest
 import yaml
 
+from process import actual_certification
 from process.actual_certification import (
     ActualCertificationError,
     build_model_prompt,
+    execute_model_catalog,
     expand_compact_output,
+    invoke_ollama,
+    load_adapter_profile,
     parse_compact_output,
     parse_model_output,
     select_model_profile,
@@ -28,6 +32,20 @@ ROOT = Path(__file__).resolve().parents[1]
 PROCESS = ROOT / "process"
 AI_DISABLED = PROCESS / "certification/ai-disabled-walkthroughs.yaml"
 QWEN_MATRIX = PROCESS / "certification/qwen-matrix.yaml"
+FORBIDDEN_VALIDATOR_FIELD_NAMES = {
+    "contract",
+    "risk_case",
+    "required_source_ids",
+    "expected_decision",
+    "required_reason_codes",
+    "required_output_kind",
+    "expected_role_output",
+    "golden_output",
+}
+VALIDATOR_ONLY_SENTINELS = [
+    f"validator-only-{name.replace('_', '-')}" for name in sorted(FORBIDDEN_VALIDATOR_FIELD_NAMES)
+]
+REQUIRED_ARTIFACT_KIND_SENTINEL = "evidence-boundary-note"
 
 
 def _yaml(path: Path) -> dict:
@@ -247,6 +265,177 @@ def test_raw_attempt_writer_is_append_only_and_hash_bound(tmp_path: Path) -> Non
     assert reference["stored_in_git"] is False
     with pytest.raises(ActualCertificationError, match="actual-model.raw-output-exists"):
         write_raw_attempt(tmp_path, "qwen-preflight-001", raw)
+
+
+def test_runtime_adapter_profiles_are_versioned_and_fail_closed(tmp_path: Path) -> None:
+    qwen = load_adapter_profile(PROCESS, "qwen-class")
+    deepseek = load_adapter_profile(PROCESS, "deepseek-class")
+    assert qwen["schema_version"] == deepseek["schema_version"] == "2.0"
+    assert qwen["generation"] == {
+        "format": "json-schema",
+        "think": False,
+        "num_predict": 1200,
+        "technical_retries": 1,
+    }
+    assert deepseek["generation"]["num_predict"] == 2400
+    with pytest.raises(ActualCertificationError, match="actual-model.invalid-adapter-profile"):
+        load_adapter_profile(PROCESS, "unknown-family")
+
+    adapter_dir = tmp_path / "adapters"
+    adapter_dir.mkdir()
+    base = dict(qwen)
+    invalid_profiles = [
+        {**base, "unknown": True},
+        {**base, "adapter_family": "deepseek-class"},
+        {**base, "authority": "approve"},
+        {**base, "canonical_write": True},
+        {**base, "generation": {**base["generation"], "technical_retries": 2}},
+        {**base, "generation": {**base["generation"], "format": "json"}},
+        {**base, "generation": {**base["generation"], "policy": "expanded"}},
+    ]
+    for profile in invalid_profiles:
+        (adapter_dir / "qwen-class.yaml").write_text(yaml.safe_dump(profile), encoding="utf-8")
+        with pytest.raises(ActualCertificationError, match="actual-model.invalid-adapter-profile"):
+            load_adapter_profile(tmp_path, "qwen-class")
+
+
+def test_ollama_request_uses_generated_schema_and_runtime_only_profile(monkeypatch) -> None:
+    captured: dict = {}
+    monkeypatch.setattr(
+        actual_certification,
+        "_read_json_url",
+        lambda url, body, timeout: captured.update(url=url, body=body, timeout=timeout)
+        or {"response": "{}", "done": True},
+    )
+    schema = {"type": "object", "additionalProperties": False}
+    response = invoke_ollama(
+        "http://127.0.0.1:11434",
+        "qwen3.5:9b",
+        "{}",
+        response_schema=schema,
+        think=False,
+        num_predict=1200,
+    )
+    assert captured["body"]["format"] == schema
+    assert captured["body"]["stream"] is False
+    assert captured["body"]["options"] == {"temperature": 0, "num_predict": 1200}
+    assert response["request_contract"]["response_schema_sha256"] == hashlib.sha256(
+        json.dumps(schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def _runtime_case_with_sentinels(*, sentinels: bool = True) -> tuple[dict, dict]:
+    catalog = _yaml(QWEN_MATRIX)
+    case = dict(next(item for item in catalog["cases"] if item["id"] == "preflight-validator"))
+    if sentinels:
+        for name, sentinel in zip(sorted(FORBIDDEN_VALIDATOR_FIELD_NAMES), VALIDATOR_ONLY_SENTINELS, strict=True):
+            case[name] = sentinel
+        case["required_artifact_kind"] = REQUIRED_ARTIFACT_KIND_SENTINEL
+    catalog = {
+        **catalog,
+        "cases": [case],
+        "fallback_routes": {case["id"]: catalog["fallback_routes"][case["id"]]},
+    }
+    return catalog, case
+
+
+def _role_response(case: dict, *, decision: str = "draft") -> dict:
+    payload_key = "requirements_note"
+    source_ids = [source["stable_id"] for source in case["sources"]]
+    return {
+        "case_id": case["id"],
+        "decision": decision,
+        "reason_codes": ["bounded-draft"],
+        "source_ids": [*source_ids, "case-facts"],
+        "unresolved_inputs": [] if decision == "draft" else ["Semantic mismatch is deliberate."],
+        "human_decisions_required": ["Human analyst reviews the advisory result."],
+        payload_key: (
+            {
+                "summary": "Bounded source-linked analysis.",
+                "observations": [{"summary": "The source preserves human authority.", "source_id": source_ids[0]}],
+                "claims": [{"subject": "boundary", "summary": "Human review remains pending.", "source_id": source_ids[0]}],
+                "checks": [{"command": "source-review", "result": "source-reviewed", "evidence": "Supplied source reviewed.", "source_id": source_ids[0]}],
+            }
+            if decision == "draft"
+            else None
+        ),
+    }
+
+
+@pytest.mark.parametrize("first_response", ["", "not-json", "{}"])
+def test_execute_model_catalog_retries_only_structural_failures_and_retains_attempts(
+    monkeypatch, tmp_path: Path, first_response: str
+) -> None:
+    catalog, case = _runtime_case_with_sentinels()
+    responses = iter(
+        [
+            {"response": first_response, "thinking": "first reasoning"},
+            {"response": json.dumps(_role_response(case)), "thinking": "second reasoning"},
+        ]
+    )
+    requests: list[dict] = []
+
+    def fake_read(url, body, timeout):
+        requests.append(body)
+        return next(responses)
+
+    monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
+    result = execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
+
+    assert len(requests) == 2
+    retry_suffix = "\nReturn only one JSON object matching the unchanged supplied schema."
+    assert requests[1]["prompt"] == requests[0]["prompt"] + retry_suffix
+    serialized_schema = json.dumps(requests[0]["format"], sort_keys=True)
+    serialized_initial = json.dumps(requests[0], sort_keys=True)
+    serialized_retry = json.dumps(requests[1], sort_keys=True)
+    for surface in (serialized_schema, requests[0]["prompt"], serialized_initial, requests[1]["prompt"], serialized_retry):
+        assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(surface.split('"')))
+        assert all(sentinel not in surface for sentinel in VALIDATOR_ONLY_SENTINELS)
+        assert REQUIRED_ARTIFACT_KIND_SENTINEL not in surface
+    attempts = result["cases"][0]["attempts"]
+    assert [item["attempt_ordinal"] for item in attempts] == [1, 2]
+    assert attempts[0]["retry_of"] is None
+    assert attempts[1]["retry_of"] == attempts[0]["raw_logical_artifact_id"]
+    assert attempts[0]["raw_logical_artifact_id"] != attempts[1]["raw_logical_artifact_id"]
+    assert attempts[0]["raw_sha256"] != attempts[1]["raw_sha256"]
+    assert {path.name for path in tmp_path.iterdir()} == {
+        "qwen-preflight-validator-attempt-1.json",
+        "qwen-preflight-validator-attempt-2.json",
+    }
+
+
+@pytest.mark.parametrize("mutation", ["decision", "reason", "source"])
+def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
+    monkeypatch, tmp_path: Path, mutation: str
+) -> None:
+    catalog, case = _runtime_case_with_sentinels(sentinels=False)
+    calls = 0
+    response = _role_response(case, decision="block" if mutation == "decision" else "draft")
+    if mutation == "reason":
+        response["reason_codes"] = ["missing-context"]
+    elif mutation == "source":
+        omitted = case["sources"][1]["stable_id"]
+        response["source_ids"].remove(omitted)
+
+    def fake_read(url, body, timeout):
+        nonlocal calls
+        calls += 1
+        if calls > 1:
+            pytest.fail("semantic failures must never be retried")
+        return {"response": json.dumps(response), "thinking": ""}
+
+    monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
+    result = execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
+    assert calls == 1
+    assert result["cases"][0]["deterministic_validation_result"] == "failed"
+    expected_code = {
+        "decision": "actual-model.unexpected-decision",
+        "reason": "actual-model.reason-mismatch",
+        "source": "actual-model.source-mismatch",
+    }[mutation]
+    assert expected_code in {item["code"] for item in result["cases"][0]["diagnostics"]}
 
 
 def test_deepseek_runtime_envelope_keeps_thinking_separate_from_final_response() -> None:

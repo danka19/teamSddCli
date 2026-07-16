@@ -36,6 +36,7 @@ FORBIDDEN_VALIDATOR_FIELD_NAMES = {
     "expected_decision",
     "required_reason_codes",
     "required_output_kind",
+    "required_artifact_kind",
     "expected_role_output",
     "golden_output",
 }

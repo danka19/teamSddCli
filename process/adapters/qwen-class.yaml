@@ -1,8 +1,12 @@
-schema_version: "1.0"
+schema_version: "2.0"
 adapter_family: qwen-class
 inputs: [instruction_path, read_pack_path]
 output: scratch_operation_evidence
 authority: none
 canonical_write: false
 failure_behavior: preserve-canonical-and-report-scratch
-
+generation:
+  format: json-schema
+  think: false
+  num_predict: 1200
+  technical_retries: 1
