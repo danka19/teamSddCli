@@ -96,7 +96,17 @@ The launcher remains the owner of workflow selection, role, stage, available sou
 
 ### Deterministic contract builder
 
-The builder receives the selected case, role launch, and read pack. It creates a JSON Schema that contains:
+The certification orchestrator may retain the selected validator case for downstream semantic validation, but it must first ask the deterministic launcher to bind an optional closed `model_response_contract` into the task launch. That launcher-owned projection contains exactly:
+
+- `case_id`;
+- `operation`;
+- `role_payload_key`;
+- `required_artifact_kind`;
+- the global allowed reason-code vocabulary.
+
+The task-launch identity covers the projection. Verified source IDs are not copied from the validator case into the projection; the builder derives them only from the launch's verified source manifest. Existing non-certification launches remain valid without the optional projection.
+
+The builder receives only the verified launch. It creates a JSON Schema that contains:
 
 - the shared bounded-decision fields;
 - only the selected role payload;
@@ -104,7 +114,7 @@ The builder receives the selected case, role launch, and read pack. It creates a
 - the globally allowed reason-code vocabulary;
 - closed objects with no additional properties.
 
-The schema must not contain the expected decision, required case-specific reason codes, expected role output, or any other validator-only answer.
+The projection is not serialized wholesale into the model prompt, generated schema, or runtime request. The builder may expose only its safe model-facing fields: `case_id`, `operation`, `role_payload_key`, and the global reason-code vocabulary. `required_artifact_kind` remains internal launcher metadata used only by mechanical normalization and downstream semantic validation. The schema and prompts must not contain the expected decision, required case-specific reason codes, required source subset, risk/contract classification, expected role output, or any other validator-only answer.
 
 ### Model-family adapters
 
@@ -124,7 +134,7 @@ The parser accepts exactly one schema-conforming JSON object. It rejects Markdow
 
 ### Mechanical normalizer
 
-The normalizer maps only explicit model fields into the existing operation-evidence contract. It may add deterministic launch metadata and contract-owned invariant fields, but it must not:
+The normalizer receives the parsed response, verified launch, and read pack, never the full validator case. It maps only explicit model fields into the existing operation-evidence contract. It may add deterministic launch metadata and contract-owned invariant fields, including the internal `required_artifact_kind`, but it must not:
 
 - change `draft` to `block` or `block` to `draft`;
 - add or remove reason codes or sources;
@@ -163,14 +173,14 @@ Approval, transition, resume, human-stop, review-pending, canonical-write, and s
 
 ## Data Flow
 
-1. The deterministic launcher selects the case, role, sources, reason-code vocabulary, and stage boundary.
-2. The contract builder generates the role-specific closed JSON Schema without validator-only expected answers.
+1. The certification orchestrator retains the full case for downstream semantic validation and asks the deterministic launcher to bind the closed `model_response_contract`; the launch identity covers it.
+2. The contract builder consumes only that verified launch, derives source IDs from its verified manifest, and generates the role-specific closed JSON Schema without validator-only expected answers.
 3. The family adapter adds only the pinned runtime options for Qwen or DeepSeek.
 4. The runtime returns raw reasoning and raw final-response bytes.
 5. The separator preserves both channels and passes only final-response bytes to the parser.
 6. The parser validates exact structure and permitted identifiers.
-7. The normalizer expands the explicit response into the existing operation-evidence shape.
-8. The unchanged deterministic validator evaluates semantics, evidence, authority, and stop rules.
+7. The normalizer consumes only the response, verified launch, and read pack and expands the explicit response into the existing operation-evidence shape.
+8. The unchanged deterministic validator receives the retained full case and evaluates expected decisions, case-specific reason codes, artifact-kind semantics, evidence, authority, and stop rules.
 9. The runner records the attempt, raw checksum, diagnostics, intervention, and fallback without overwriting earlier attempts.
 
 ## Retry And Failure Handling
@@ -201,7 +211,7 @@ There is no automatic retry for a syntactically valid but semantically incorrect
 Implementation follows scenario-first TDD. Focused tests must cover:
 
 1. role-specific closed-schema generation;
-2. absence of validator-only expected answers from prompts and schemas;
+2. absence of every validator-only field name and unique sentinel value from generated schemas, initial prompts/requests, and structural-retry prompts/requests, while the internal artifact-kind sentinel is available only to normalization;
 3. Qwen and DeepSeek request formation;
 4. reasoning/final separation, including empty final output;
 5. successful mechanical normalization for each role;

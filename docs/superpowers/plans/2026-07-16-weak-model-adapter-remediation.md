@@ -14,7 +14,7 @@
 - Keep `qwen3.5:9b` and `deepseek-r1:8b` as the exact frozen local proxy model IDs; do not download or substitute another model.
 - The local proxy runs do not establish equivalence with any corporate Qwen or DeepSeek runtime.
 - AI remains advisory-only and cannot approve, waive, merge, release, resume, archive, transition lifecycle state, write canonical data, or turn its own output into accepted evidence.
-- The generated schema may enumerate globally allowed reason codes and supplied source IDs, but must not expose `expected_decision`, case-specific `required_reason_codes`, `required_output_kind`, golden output, or any validator-only expected answer.
+- The generated schema may enumerate globally allowed reason codes and verified launch-manifest source IDs, but must not expose `expected_decision`, case-specific `required_reason_codes`, `required_source_ids`, `required_artifact_kind`, risk/contract classifications, golden output, or any validator-only expected answer. The internal artifact kind is launcher-owned and may be consumed only by normalization and downstream validation.
 - The normalizer may add only deterministic launch metadata and launch-owned invariant authority fields; it cannot change decisions, sources, reason codes, facts, observations, claims, checks, unresolved inputs, or required human decisions.
 - Preserve the existing `validate_operation_evidence()` and case-semantic checks as the mandatory fail-closed control plane; do not delete or relax a diagnostic to obtain a pass.
 - Permit at most one technical retry, and only for an empty final response, invalid JSON, or JSON-Schema failure. Do not retry a structurally valid semantic failure.
@@ -34,6 +34,8 @@
 - Create `tests/test_model_adapter.py`: focused TDD for all adapter invariants and four role contracts.
 - Create `scripts/check_actual_certification_gate.py`: deterministic preflight/matrix summary gate with no model invocation and no writes.
 - Modify `process/actual_certification.py`: use the adapter boundary, send Ollama the generated schema, preserve attempt-level raw evidence, expose a phase summary, and retain existing semantic validation.
+- Modify `process/schemas/task-launch.schema.json`: add the optional closed identity-bound `model_response_contract` projection while keeping launches that omit it compatible.
+- Modify `process/weak_model_kit.py`: let the deterministic launcher validate and bind the optional projection before calculating launch identity.
 - Modify `scripts/run_actual_certification.py`: write an append-only phase summary and require a passing preflight summary for matrix execution.
 - Modify `scripts/normalize_actual_certification.py`: normalize remediation artifacts without rewriting 2026-07-15 evidence and retain retry lineage.
 - Modify `process/adapters/qwen-class.yaml` and `process/adapters/deepseek-class.yaml`: declare adapter contract `2.0` and bounded runtime-only settings.
@@ -160,18 +162,46 @@ Do not force-add `.superpowers/sdd/progress.md` if Git ignores it.
 ### Task 2: Build The Closed Role-Specific Adapter Core With TDD
 
 **Files:**
+- Modify: `process/schemas/task-launch.schema.json`
+- Modify: `process/weak_model_kit.py`
 - Create: `process/model_adapter.py`
 - Create: `tests/test_model_adapter.py`
 - Modify: `process/package.yaml`
 - Modify: `tests/test_weak_model_kit.py`
 
 **Interfaces:**
-- Consumes: a certification `case`, verified `launch`, and bounded `read_pack` dictionaries.
-- Produces: `build_role_response_schema(case, launch) -> dict[str, Any]`, `split_reasoning_final(response, thinking) -> tuple[str, str]`, `parse_role_response(text, schema) -> dict[str, Any]`, `normalize_role_response(response, case, launch, read_pack) -> dict[str, Any]`, and `is_structural_retry(code) -> bool`.
+- Consumes: a verified `launch` containing the optional certification projection and a bounded `read_pack`; the adapter never receives the full validator case.
+- Produces: `build_role_response_schema(launch) -> dict[str, Any]`, `split_reasoning_final(response, thinking) -> tuple[str, str]`, `parse_role_response(text, schema) -> dict[str, Any]`, `normalize_role_response(response, launch, read_pack) -> dict[str, Any]`, and `is_structural_retry(code) -> bool`.
 
-- [ ] **Step 1: Write failing closed-schema tests for all four roles**
+- [ ] **Step 1: Write failing launcher-projection contract tests before adapter production code**
 
-Add parametrized tests with these assertions:
+Extend `tests/test_weak_model_kit.py` first. Require `process/schemas/task-launch.schema.json` to accept an optional closed `model_response_contract` containing exactly `case_id`, `operation`, `role_payload_key`, `required_artifact_kind`, and `allowed_reason_codes`. Add tests proving:
+
+- `build_role_launch(..., model_response_contract=projection)` returns a schema-valid launch and its `identity` covers the projection;
+- changing any projection value without recomputing identity yields `evidence.invalid-launch`;
+- unknown/missing projection fields, a role/payload mismatch, or a non-global reason-code vocabulary fail closed;
+- verified source IDs remain derived from `verified_source_manifest` and are not accepted in the projection;
+- the existing call with no projection produces the same compatible non-certification launch shape.
+
+Run:
+
+```powershell
+python -m pytest tests/test_weak_model_kit.py -q
+```
+
+Expected: the new projection tests fail because the launch schema and builder do not support the projection yet.
+
+- [ ] **Step 2: Implement the optional identity-bound launcher projection**
+
+Update `process/schemas/task-launch.schema.json` before creating `process/model_adapter.py`. Add optional `model_response_contract` with `additionalProperties: false`, the five required fields above, closed role payload-key and artifact-kind strings, and the exact global reason-code vocabulary. Keep `schema_version: "1.0"` and do not add the projection to the launch's top-level `required` list, preserving existing launches.
+
+Update `process/weak_model_kit.py` in the same step: define the single `GLOBAL_ALLOWED_REASON_CODES` vocabulary and role-to-payload-key mapping at the launcher boundary; add an optional `model_response_contract` argument to `build_role_launch()`; validate its role binding and exact global vocabulary; insert a defensive copy before `launch["identity"] = _digest(launch)`; and keep omission byte-for-byte compatible. The adapter must consume the bound vocabulary rather than define a competing copy. Run the Step 1 tests and expect PASS.
+
+- [ ] **Step 3: Write failing closed-schema and non-leading boundary tests for all four roles**
+
+Create `tests/test_model_adapter.py`. Build test launches through the launcher projection, and place distinct unmistakable sentinel values in every validator-only case field: `contract`, `risk_case`, `required_source_ids`, `expected_decision`, `required_reason_codes`, `required_output_kind`, and any golden/expected-role-output field supported by the catalog. Use a separate internal `required_artifact_kind` sentinel in the launcher projection. Assert both forbidden field names and all validator-only sentinel values are absent from the generated schema. The artifact-kind sentinel must also be absent even though normalization later consumes it.
+
+Add parametrized tests with these core assertions:
 
 ```python
 @pytest.mark.parametrize(
@@ -185,11 +215,13 @@ Add parametrized tests with these assertions:
 )
 def test_role_schema_is_closed_non_leading_and_role_specific(role, payload_key):
     case, pack, launch = adapter_context(role=role)
-    schema = build_role_response_schema(case, launch)
+    schema = build_role_response_schema(launch)
     serialized = json.dumps(schema, sort_keys=True)
     assert schema["additionalProperties"] is False
     assert payload_key in schema["properties"]
-    assert not ({"expected_decision", "required_reason_codes", "required_output_kind"} & set(serialized.split('"')))
+    assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(serialized.split('"')))
+    assert all(sentinel not in serialized for sentinel in VALIDATOR_ONLY_SENTINELS)
+    assert REQUIRED_ARTIFACT_KIND_SENTINEL not in serialized
     assert set(schema["properties"]["source_ids"]["items"]["enum"]) == {
         *(source["stable_id"] for source in launch["verified_source_manifest"]),
         "case-facts",
@@ -204,40 +236,27 @@ python -m pytest tests/test_model_adapter.py::test_role_schema_is_closed_non_lea
 
 Expected: collection fails because `process.model_adapter` does not exist.
 
-- [ ] **Step 2: Implement the schema builder minimally**
+- [ ] **Step 4: Implement the schema builder minimally**
 
-Create these stable constants and signature:
+Create the adapter signature below. Import no validator case data and define no competing reason-code vocabulary in this module; the vocabulary and selected payload key come from the identity-verified launch projection:
 
 ```python
-ROLE_PAYLOAD_KEYS = {
-    "analyst": "requirements_note",
-    "developer": "implementation_prep_note",
-    "qa": "qa_review_note",
-    "tech_lead": "advisory_review_note",
-}
-ALLOWED_REASON_CODES = (
-    "bounded-draft", "missing-context", "authority-required", "unsupported-evidence",
-    "unsafe-resume", "failed-run-missing", "qa-evidence-insufficient",
-    "reconciliation-missing", "conflicting-context", "human-stop-required",
-    "lifecycle-authority-required",
-)
-
-def build_role_response_schema(case: dict[str, Any], launch: dict[str, Any]) -> dict[str, Any]:
+def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
     """Return one closed, non-leading Draft 2020-12 response schema."""
 ```
 
-The top-level required keys are exactly `case_id`, `decision`, `reason_codes`, `source_ids`, `unresolved_inputs`, `human_decisions_required`, and the selected role payload key. The selected payload is `oneOf` null or a closed object requiring `summary`, `observations`, `claims`, and `checks`. Every observation/claim/check carries a `source_id` enum drawn only from the verified launch manifest plus `case-facts`. The case-specific `required_output_kind` remains launcher/validator-only data: it is not exposed in the model schema, but the normalizer uses it as deterministic artifact-contract metadata and the existing semantic validator confirms that the normalized artifact path/kind matches it.
+The function validates the launch identity and requires its `model_response_contract`. The top-level required keys are exactly `case_id`, `decision`, `reason_codes`, `source_ids`, `unresolved_inputs`, `human_decisions_required`, and the projection's selected `role_payload_key`. The selected payload is `oneOf` null or a closed object requiring `summary`, `observations`, `claims`, and `checks`. Every observation/claim/check carries a `source_id` enum derived only from the verified launch manifest plus `case-facts`. The schema uses the projection's safe case ID, payload key, and global allowed vocabulary, but never serializes the projection object or its internal `required_artifact_kind`.
 
 Run the focused test and expect PASS.
 
-- [ ] **Step 3: Write failing parser and reasoning-boundary tests**
+- [ ] **Step 5: Write failing parser and reasoning-boundary tests**
 
 Cover exact JSON acceptance, Markdown/prose rejection, wrong-role payload rejection, unknown source rejection, invalid reason rejection, existing `thinking` field separation, embedded `<think>...</think>` separation, and an unclosed reasoning envelope producing an empty final response.
 
 ```python
 def test_parser_rejects_wrapper_unknown_source_and_wrong_role_payload():
     case, pack, launch = adapter_context(role="qa")
-    schema = build_role_response_schema(case, launch)
+    schema = build_role_response_schema(launch)
     valid = valid_role_response(case, launch, payload_key="qa_review_note")
     assert parse_role_response(json.dumps(valid), schema) == valid
     for invalid_text in (
@@ -251,7 +270,7 @@ def test_parser_rejects_wrapper_unknown_source_and_wrong_role_payload():
 
 Run the named tests and expect failures for missing functions.
 
-- [ ] **Step 4: Implement strict parsing and envelope separation**
+- [ ] **Step 6: Implement strict parsing and envelope separation**
 
 Use `json.loads` followed by `Draft202012Validator(schema).iter_errors(value)`. Return stable codes:
 
@@ -268,7 +287,7 @@ STRUCTURAL_RETRY_CODES = {
 
 `split_reasoning_final()` must never return reasoning as final output. `parse_role_response()` must reject leading/trailing prose and fenced JSON even if an inner object is valid.
 
-- [ ] **Step 5: Write failing mechanical-normalization tests**
+- [ ] **Step 7: Write failing mechanical-normalization tests**
 
 Test all four roles plus these invariants:
 
@@ -276,7 +295,7 @@ Test all four roles plus these invariants:
 def test_normalizer_preserves_model_semantics_and_adds_only_launch_invariants():
     case, pack, launch = adapter_context(role="analyst")
     response = valid_role_response(case, launch, payload_key="requirements_note")
-    evidence = normalize_role_response(response, case, launch, pack)
+    evidence = normalize_role_response(response, launch, pack)
     assert evidence["status"] == ("draft-complete" if response["decision"] == "draft" else "blocked")
     assert evidence["approval_claimed"] is False
     assert evidence["lifecycle_transition_requested"] is False
@@ -286,28 +305,29 @@ def test_normalizer_preserves_model_semantics_and_adds_only_launch_invariants():
     assert response["reason_codes"] == [value.removeprefix("model-reason:") for value in evidence["residual_limitations"]]
 ```
 
-Also assert that missing source coverage, a draft with null role payload, a block with non-null payload, empty checks/claims for a draft, and forbidden authority language remain failures rather than repaired output.
+Also assert that missing source coverage, a draft with null role payload, a block with non-null payload, empty checks/claims for a draft, and forbidden authority language remain failures rather than repaired output. Prove the internal `required_artifact_kind` sentinel is used to form deterministic artifact metadata without appearing in any model-facing byte sequence.
 
-- [ ] **Step 6: Implement minimal mechanical normalization**
+- [ ] **Step 8: Implement minimal mechanical normalization**
 
 Map response fields without interpretation:
 
 ```python
-def normalize_role_response(response, case, launch, read_pack):
-    payload_key = ROLE_PAYLOAD_KEYS[case["role"]]
+def normalize_role_response(response, launch, read_pack):
+    contract = launch["model_response_contract"]
+    payload_key = contract["role_payload_key"]
     payload = response[payload_key]
     # Validate case ID, decision/payload relationship, source membership, and non-empty draft evidence.
     # Copy observations and claims into source-bound fact claims without rewriting their text.
     # Copy checks into operation checks without promoting not-run/missing/unsupported to passed.
-    # Add only launch-owned task/role/stage/read-pack, required_output_kind artifact metadata,
+    # Add only launch-owned task/role/stage/read-pack, required_artifact_kind metadata,
     # and fixed advisory authority fields.
 ```
 
 Do not import expected case outcomes into this module. Semantic expectation checking stays in `process.actual_certification.validate_model_output()`.
 
-The only case field the normalizer may consume beyond identity is `required_output_kind`, because deterministic launch already owns the required artifact contract. It must not consume `expected_decision` or `required_reason_codes`. Update `validate_model_output()` during Task 3 so adapter `2.0` validates the selected role payload plus the normalized artifact kind, while the adapter `1.0` compatibility path continues validating its original `role_output.kind` field.
+The normalizer must not receive or import any case field. It consumes `required_artifact_kind` only from the identity-verified launcher projection. `expected_decision` and case-specific `required_reason_codes` stay solely in `process.actual_certification.validate_model_output()`. Update that validator during Task 3 so adapter `2.0` validates the selected role payload plus normalized artifact kind against the retained full case, while the adapter `1.0` compatibility path continues validating its original `role_output.kind` field.
 
-- [ ] **Step 7: Register the module and verify package thinness**
+- [ ] **Step 9: Register the module and verify package thinness**
 
 Add `model_adapter.py` to `process/package.yaml` distribution files. Extend adapter-template tests to require `authority: none`, `canonical_write: false`, no policy paths, and no expected-answer keys.
 
@@ -320,10 +340,10 @@ python -m compileall -q process/model_adapter.py
 
 Expected: all focused tests pass; compile command exits 0.
 
-- [ ] **Step 8: Commit the adapter core**
+- [ ] **Step 10: Commit the launcher contract and adapter core**
 
 ```powershell
-git add process/model_adapter.py process/package.yaml tests/test_model_adapter.py tests/test_weak_model_kit.py
+git add process/schemas/task-launch.schema.json process/weak_model_kit.py process/model_adapter.py process/package.yaml tests/test_model_adapter.py tests/test_weak_model_kit.py
 git commit -m "feat: add role-specific model adapter core"
 ```
 
@@ -340,12 +360,12 @@ git commit -m "feat: add role-specific model adapter core"
 - Modify: `tests/test_model_adapter.py`
 
 **Interfaces:**
-- Consumes: the Task 2 adapter functions and the existing frozen case catalog.
+- Consumes: the Task 2 adapter functions, identity-verified launcher projection, and the existing frozen case catalog retained only by the certification orchestrator for prompt-safe input selection and downstream semantic validation.
 - Produces: `load_adapter_profile(process_root, family) -> dict[str, Any]`, `invoke_ollama(..., response_schema: dict[str, Any], ...) -> dict[str, Any]`, and attempt-aware `execute_model_catalog(...)` results whose raw records never overwrite one another.
 
 - [ ] **Step 1: Write failing request-contract tests**
 
-Monkeypatch `_read_json_url` and assert the exact request boundary:
+Monkeypatch `_read_json_url` and assert the exact request boundary. Construct a case with unique sentinels in every validator-only field listed in Task 2. Build the initial prompt only from an explicit allowlist of model-facing inputs (`instruction`, `facts`, and safe launch projection fields), never by serializing the case. Assert forbidden field names and every validator-only sentinel are absent from the generated schema, initial prompt, and complete initial request body; assert the internal `required_artifact_kind` sentinel is absent from all three as well:
 
 ```python
 def test_ollama_request_uses_generated_schema_and_runtime_only_profile(monkeypatch):
@@ -355,7 +375,10 @@ def test_ollama_request_uses_generated_schema_and_runtime_only_profile(monkeypat
     assert captured["body"]["format"] == {"type": "object"}
     assert captured["body"]["stream"] is False
     assert captured["body"]["options"]["temperature"] == 0
-    assert "expected_decision" not in json.dumps(captured["body"])
+    model_facing = json.dumps(captured["body"], sort_keys=True)
+    assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(model_facing.split('"')))
+    assert all(sentinel not in model_facing for sentinel in VALIDATOR_ONLY_SENTINELS)
+    assert REQUIRED_ARTIFACT_KIND_SENTINEL not in model_facing
 ```
 
 Expected: FAIL because `invoke_ollama` has no `response_schema` parameter.
@@ -408,6 +431,7 @@ Inject two responses and assert:
 - structurally valid wrong decision/reason/source semantics -> zero retries;
 - first and second attempts have distinct logical IDs and checksums;
 - a third invocation never occurs.
+- the structural retry prompt is formed by appending only the fixed structural instruction to the already-verified initial prompt; forbidden validator field names, all unique validator-only sentinel values, and the internal artifact-kind sentinel are absent from the retry prompt and complete retry request body.
 
 Use filenames `<family>-<case-id>-attempt-1.json` and `<family>-<case-id>-attempt-2.json`.
 
@@ -421,7 +445,7 @@ for attempt_ordinal in (1, 2):
     reasoning, final = split_reasoning_final(raw_response.get("response", ""), raw_response.get("thinking", ""))
     try:
         response = parse_role_response(final, response_schema)
-        output = normalize_role_response(response, case, launch, pack)
+        output = normalize_role_response(response, launch, pack)
         diagnostics = validate_model_output(output, case, launch, pack, process_root, response)
     except ModelAdapterError as error:
         diagnostics = [{"code": str(error), "detail": "model response failed the role-specific adapter contract"}]
@@ -430,7 +454,9 @@ for attempt_ordinal in (1, 2):
         break
 ```
 
-Only the structural error set may trigger attempt 2. The prompt for attempt 2 may add `Return only one JSON object matching the unchanged supplied schema.` It must keep the same facts, sources, schema, role, and case and must not expose expected semantics.
+Before this loop, the orchestrator creates the closed projection from the case's identity/operation/role payload/artifact-kind fields plus the global vocabulary and passes it to `build_role_launch()`. It then calls `build_role_response_schema(launch)`. The full case remains in the orchestrator only for the explicit prompt-safe allowlist and `validate_model_output()`; it is never passed to adapter schema construction or normalization.
+
+Only the structural error set may trigger attempt 2. The prompt for attempt 2 may add `Return only one JSON object matching the unchanged supplied schema.` It must keep the same facts, sources, schema, role, and case and must not expose expected semantics. The sentinel assertions must inspect serialized bytes for all four surfaces independently: generated schema, initial prompt/request, and retry prompt/request; checking only literal key names is insufficient.
 
 - [ ] **Step 6: Preserve old frozen-output evaluation**
 
