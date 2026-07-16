@@ -403,6 +403,31 @@ def test_normalizer_preserves_check_result_semantics_and_source_provenance(
         assert evidence["checks"][0]["result"] != "passed"
 
 
+def test_adapter_2_1_source_review_cannot_become_passed_execution_evidence() -> None:
+    _, pack, launch = adapter_context(contract_version="2.1")
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response[payload_key]["checks"][0].update(
+        command="pytest tests --all",
+        result="source-reviewed",
+        evidence="All tests passed successfully",
+    )
+
+    evidence = normalize_role_response(response, launch, pack)
+
+    assert evidence["checks"] == [
+        {
+            "command": "pytest tests --all",
+            "result": "not-run",
+            "evidence": (
+                'model-check:{"evidence":"All tests passed successfully",'
+                '"result":"source-reviewed","source_id":"weak-model-guardrails"}'
+            ),
+        }
+    ]
+    assert validate_operation_evidence(evidence, launch, pack) == []
+
+
 def test_authority_classifier_allows_required_human_decision_and_negated_claim() -> None:
     _, pack, launch = adapter_context()
     response = valid_role_response(launch)

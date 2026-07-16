@@ -398,7 +398,14 @@ def normalize_role_response(
         checks.extend(
             {
                 "command": item["command"],
-                "result": CHECK_RESULT_MAP[item["result"]],
+                "result": (
+                    "not-run"
+                    if (
+                        contract.get("contract_version") == "2.1"
+                        and item["result"] == "source-reviewed"
+                    )
+                    else CHECK_RESULT_MAP[item["result"]]
+                ),
                 "evidence": "model-check:"
                 + json.dumps(
                     {
