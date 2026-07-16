@@ -13,7 +13,13 @@ import yaml
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from process.actual_certification import evaluate_frozen_model_output, select_model_profile, split_reasoning_envelope
+from process.actual_certification import (
+    ActualCertificationError,
+    evaluate_frozen_model_output,
+    select_model_profile,
+    split_reasoning_envelope,
+    validate_phase_gate,
+)
 
 
 def _sha(path: Path) -> str:
@@ -97,16 +103,105 @@ def _default_reason(group: str) -> str:
     return "superseded-model-or-runtime-attempt"
 
 
+def normalize_remediation_evidence(
+    baseline_evidence: Path,
+    remediation_artifact_root: Path,
+    preflight_result: Path,
+    matrix_result: Path | None,
+    model_family: str,
+    *,
+    repository_root: Path | None = None,
+) -> dict:
+    """Link immutable adapter 1.0 evidence to new adapter 2.0 phase summaries."""
+    repository_root = (repository_root or Path(__file__).resolve().parents[1]).resolve()
+    baseline_path = baseline_evidence.resolve()
+    try:
+        baseline_relative = baseline_path.relative_to(repository_root).as_posix()
+    except ValueError as error:
+        raise ActualCertificationError("actual-model.baseline-path-outside-repository") from error
+    baseline = yaml.safe_load(baseline_path.read_text(encoding="utf-8"))
+    preflight = json.loads(preflight_result.read_text(encoding="utf-8"))
+    if not isinstance(baseline, dict) or not isinstance(preflight, dict):
+        raise ActualCertificationError("actual-model.normalization-input-malformed")
+    if baseline.get("adapter", {}).get("version") != "1.0" or baseline.get("adapter", {}).get("family") != model_family:
+        raise ActualCertificationError("actual-model.baseline-adapter-mismatch")
+    preflight_diagnostics = validate_phase_gate(
+        preflight, remediation_artifact_root, "preflight", model_family, "2.0", 5
+    )
+    if any(code != "actual-model.gate-case-failed" for code in preflight_diagnostics):
+        raise ActualCertificationError(preflight_diagnostics[0])
+    matrix = None
+    if matrix_result is not None:
+        matrix = json.loads(matrix_result.read_text(encoding="utf-8"))
+        if not isinstance(matrix, dict):
+            raise ActualCertificationError("actual-model.normalization-input-malformed")
+        matrix_diagnostics = validate_phase_gate(
+            matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
+        )
+        if matrix_diagnostics:
+            raise ActualCertificationError(matrix_diagnostics[0])
+        if preflight_diagnostics:
+            raise ActualCertificationError("actual-model.matrix-after-failed-preflight")
+    document = {
+        "schema_version": "1.2",
+        "evidence_id": f"phase-2-11-{model_family.removesuffix('-class')}-remediation",
+        "process_package_version": preflight.get("process_package_version"),
+        "adapter": {"family": model_family, "version": "2.0", "authority": "advisory-only"},
+        "model": preflight.get("model"),
+        "source_catalog": preflight.get("source_catalog"),
+        "raw_artifact": {"logical_id": remediation_artifact_root.name, "stored_in_git": False},
+        "baseline_reference": {
+            "path": baseline_relative,
+            "sha256": _sha(baseline_path),
+            "raw_logical_artifact_id": baseline.get("raw_artifact", {}).get("logical_id"),
+            "adapter_version": "1.0",
+        },
+        "preflight": {"status": preflight.get("status"), "cases": preflight.get("cases", [])},
+        "matrix": (
+            {"status": matrix.get("status"), "cases": matrix.get("cases", [])}
+            if matrix is not None
+            else {"status": "not-run", "cases": [], "matrix_not_run": "preflight-gate-failed"}
+        ),
+        "status": "passed" if matrix is not None else "failed",
+        "limitations": preflight.get("limitations", []),
+    }
+    return document
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--existing", type=Path, required=True)
-    parser.add_argument("--artifact-root", type=Path, required=True)
-    parser.add_argument("--preflight-group", required=True)
-    parser.add_argument("--matrix-group", required=True)
+    parser.add_argument("--existing", type=Path)
+    parser.add_argument("--artifact-root", type=Path)
+    parser.add_argument("--preflight-group")
+    parser.add_argument("--matrix-group")
+    parser.add_argument("--baseline-evidence", type=Path)
+    parser.add_argument("--remediation-artifact-root", type=Path)
+    parser.add_argument("--preflight-result", type=Path)
+    parser.add_argument("--matrix-result", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model-family", choices=("qwen-class", "deepseek-class"), default="qwen-class")
     args = parser.parse_args()
     repository_root = Path(__file__).resolve().parents[1]
+    if args.baseline_evidence is not None:
+        if args.remediation_artifact_root is None or args.preflight_result is None:
+            parser.error("--remediation-artifact-root and --preflight-result are required with --baseline-evidence")
+        try:
+            document = normalize_remediation_evidence(
+                args.baseline_evidence,
+                args.remediation_artifact_root,
+                args.preflight_result,
+                args.matrix_result,
+                args.model_family,
+                repository_root=repository_root,
+            )
+            with args.output.open("x", encoding="utf-8", newline="\n") as handle:
+                yaml.safe_dump(document, handle, sort_keys=False, allow_unicode=True)
+        except (OSError, UnicodeError, json.JSONDecodeError, yaml.YAMLError, ActualCertificationError) as error:
+            print(json.dumps({"status": "blocked", "diagnostic": str(error)}, sort_keys=True))
+            return 3
+        return 0
+    if any(value is None for value in (args.existing, args.artifact_root, args.preflight_group, args.matrix_group)):
+        parser.error("legacy mode requires --existing, --artifact-root, --preflight-group, and --matrix-group")
     old = yaml.safe_load(args.existing.read_text(encoding="utf-8"))
     catalog = yaml.safe_load((repository_root / "process/certification/qwen-matrix.yaml").read_text(encoding="utf-8"))
     cases = {case["id"]: case for case in catalog["cases"]}

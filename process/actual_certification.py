@@ -155,6 +155,196 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _append_once(diagnostics: list[str], code: str) -> None:
+    if code not in diagnostics:
+        diagnostics.append(code)
+
+
+def _safe_artifact_path(artifact_root: Path, group: Any, filename: Any) -> Path | None:
+    if not all(isinstance(value, str) and value for value in (group, filename)):
+        return None
+    relative = Path(filename) if group == "root" else Path(group) / filename
+    if relative.is_absolute() or ".." in relative.parts or "\\" in str(group) or "\\" in str(filename):
+        return None
+    root = artifact_root.resolve()
+    path = (root / relative).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return None
+    return path
+
+
+def validate_phase_gate(
+    summary: dict[str, Any],
+    artifact_root: Path,
+    expected_phase: str,
+    model_family: str,
+    adapter_version: str,
+    expected_count: int,
+) -> list[str]:
+    """Validate one immutable actual-model phase summary and every raw attempt."""
+    diagnostics: list[str] = []
+    if not isinstance(summary, dict):
+        return ["actual-model.gate-malformed"]
+    serialized = json.dumps(summary, sort_keys=True)
+    privacy_view = serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>")
+    if re.search(
+        r"(?i)(?:[a-z]:[\\/]|\\\\users\\|/users/|api[_-]?key|password|secret|bearer\s+|private[_-]?token|https?://)",
+        privacy_view,
+    ):
+        _append_once(diagnostics, "actual-model.gate-privacy")
+    cases = summary.get("cases")
+    if not isinstance(cases, list):
+        return [*diagnostics, "actual-model.gate-malformed"]
+    if len(cases) != expected_count:
+        _append_once(diagnostics, "actual-model.gate-case-count")
+    case_ids = [row.get("case_id") for row in cases if isinstance(row, dict)]
+    if len(case_ids) != len(cases) or any(not isinstance(value, str) or not value for value in case_ids):
+        _append_once(diagnostics, "actual-model.gate-malformed")
+    elif len(set(case_ids)) != len(case_ids):
+        _append_once(diagnostics, "actual-model.gate-duplicate-case")
+    if summary.get("evidence_kind") != f"actual-model-{expected_phase}":
+        _append_once(diagnostics, "actual-model.gate-phase-mismatch")
+    adapter = summary.get("adapter")
+    if not isinstance(adapter, dict) or adapter.get("family") != model_family or adapter.get("version") != adapter_version:
+        _append_once(diagnostics, "actual-model.gate-adapter-mismatch")
+    model = summary.get("model")
+    catalog_path = Path(__file__).resolve().parent / "certification/qwen-matrix.yaml"
+    try:
+        catalog_bytes = catalog_path.read_bytes()
+        catalog = yaml.safe_load(catalog_bytes)
+        expected_model = select_model_profile(catalog, model_family)
+    except (OSError, UnicodeError, yaml.YAMLError, ActualCertificationError):
+        expected_model = None
+        _append_once(diagnostics, "actual-model.gate-catalog-mismatch")
+    if not isinstance(model, dict) or model.get("family") != model_family:
+        _append_once(diagnostics, "actual-model.gate-family-mismatch")
+    elif expected_model is None or any(model.get(key) != expected_model.get(key) for key in ("name", "digest", "runtime", "runtime_version")):
+        _append_once(diagnostics, "actual-model.gate-model-mismatch")
+    source_catalog = summary.get("source_catalog")
+    if (
+        not isinstance(source_catalog, dict)
+        or source_catalog.get("path") != "process/certification/qwen-matrix.yaml"
+        or source_catalog.get("sha256") != _sha256_bytes(catalog_bytes if "catalog_bytes" in locals() else b"")
+    ):
+        _append_once(diagnostics, "actual-model.gate-catalog-mismatch")
+    if summary.get("status") != "passed" or summary.get("actual_model_run") is not True:
+        _append_once(diagnostics, "actual-model.gate-case-failed")
+    if summary.get("raw_artifact") != {"logical_id": artifact_root.name, "stored_in_git": False}:
+        _append_once(diagnostics, "actual-model.gate-artifact-mismatch")
+    expected_case_ids = {
+        case.get("id") for case in (catalog.get("cases", []) if isinstance(catalog, dict) else [])
+        if isinstance(case, dict) and case.get("phase") == expected_phase
+    }
+    if set(case_ids) != expected_case_ids:
+        _append_once(diagnostics, "actual-model.gate-case-catalog-mismatch")
+
+    expected_identity = None
+    referenced_raw: set[tuple[str, str]] = set()
+    for row in cases:
+        if not isinstance(row, dict):
+            _append_once(diagnostics, "actual-model.gate-malformed")
+            continue
+        if row.get("phase") != expected_phase:
+            _append_once(diagnostics, "actual-model.gate-phase-mismatch")
+        if row.get("deterministic_validation_result") != "passed" or row.get("diagnostics") != []:
+            _append_once(diagnostics, "actual-model.gate-case-failed")
+        identity = row.get("execution_identity")
+        if not isinstance(identity, dict):
+            _append_once(diagnostics, "actual-model.gate-identity-mismatch")
+        else:
+            expected_identity = expected_identity or identity
+            identity_matches = (
+                identity == expected_identity
+                and identity.get("model_family") == model_family
+                and isinstance(model, dict)
+                and identity.get("model_tag") == model.get("name")
+                and identity.get("model_digest") == model.get("digest")
+                and identity.get("runtime") == model.get("runtime")
+                and identity.get("runtime_version") == model.get("runtime_version")
+                and identity.get("adapter_family") == model_family
+                and identity.get("adapter_version") == adapter_version
+                and identity.get("process_package_version") == summary.get("process_package_version")
+            )
+            if not identity_matches:
+                _append_once(diagnostics, "actual-model.gate-identity-mismatch")
+        group = row.get("run_group")
+        attempts = row.get("attempts")
+        if not isinstance(attempts, list) or not attempts or len(attempts) > 2:
+            _append_once(diagnostics, "actual-model.gate-retry-lineage")
+            continue
+        previous_id = None
+        for ordinal, attempt in enumerate(attempts, 1):
+            if not isinstance(attempt, dict):
+                _append_once(diagnostics, "actual-model.gate-retry-lineage")
+                continue
+            logical_id = attempt.get("raw_logical_artifact_id")
+            filename = attempt.get("raw_filename")
+            key = (str(group), str(filename))
+            if key in referenced_raw:
+                _append_once(diagnostics, "actual-model.gate-duplicate-raw-reference")
+            referenced_raw.add(key)
+            if attempt.get("attempt_ordinal") != ordinal or attempt.get("retry_of") != previous_id:
+                _append_once(diagnostics, "actual-model.gate-retry-lineage")
+            if (
+                not isinstance(logical_id, str)
+                or not isinstance(filename, str)
+                or Path(filename).stem != logical_id
+                or not re.fullmatch(r"[0-9a-f]{64}", str(attempt.get("raw_sha256", "")))
+                or not re.fullmatch(r"[0-9a-f]{64}", str(attempt.get("response_schema_sha256", "")))
+            ):
+                _append_once(diagnostics, "actual-model.gate-raw-malformed")
+            path = _safe_artifact_path(artifact_root, group, filename)
+            if path is None or not path.is_file():
+                _append_once(diagnostics, "actual-model.gate-raw-missing")
+                previous_id = logical_id
+                continue
+            data = path.read_bytes()
+            if attempt.get("raw_sha256") != _sha256_bytes(data):
+                _append_once(diagnostics, "actual-model.gate-raw-checksum")
+            try:
+                raw = json.loads(data)
+            except (UnicodeError, json.JSONDecodeError):
+                _append_once(diagnostics, "actual-model.gate-raw-malformed")
+                previous_id = logical_id
+                continue
+            raw_checks = (
+                raw.get("run_group") == group,
+                raw.get("execution_identity") == identity,
+                raw.get("attempt_ordinal") == ordinal,
+                raw.get("retry_of") == previous_id,
+                raw.get("case", {}).get("id") == row.get("case_id"),
+                raw.get("case", {}).get("phase") == expected_phase,
+                raw.get("response_schema_sha256") == attempt.get("response_schema_sha256"),
+                raw.get("reasoning_present") == attempt.get("thinking_present"),
+                raw.get("final_response_present") == attempt.get("final_response_present"),
+                raw.get("validation", {}).get("result") == row.get("deterministic_validation_result"),
+                raw.get("validation", {}).get("diagnostics") == attempt.get("diagnostics"),
+            )
+            if not all(raw_checks):
+                _append_once(diagnostics, "actual-model.gate-raw-lineage-mismatch")
+            previous_id = logical_id
+        final = attempts[-1]
+        if row.get("diagnostics") != final.get("diagnostics"):
+            _append_once(diagnostics, "actual-model.gate-raw-lineage-mismatch")
+        final_path = _safe_artifact_path(artifact_root, group, row.get("raw_filename"))
+        if final_path is not None and final_path.is_file() and row.get("raw_sha256") != _sha256_bytes(final_path.read_bytes()):
+            _append_once(diagnostics, "actual-model.gate-raw-checksum")
+        if any(row.get(key) != final.get(key) for key in ("raw_logical_artifact_id", "raw_filename", "raw_sha256")):
+            _append_once(diagnostics, "actual-model.gate-retry-lineage")
+    prefix = model_family.removesuffix("-class")
+    groups = {str(row.get("run_group")) for row in cases if isinstance(row, dict)}
+    eligible = {
+        (group, path.name)
+        for group in groups
+        for path in ((_safe_artifact_path(artifact_root, group, ".") or artifact_root).glob(f"{prefix}-*-attempt-*.json"))
+    }
+    if referenced_raw != eligible:
+        _append_once(diagnostics, "actual-model.gate-raw-inventory")
+    return diagnostics
+
+
 def validate_ai_disabled_catalog(root: Path, catalog: dict[str, Any]) -> list[str]:
     diagnostics: list[str] = []
     cases = catalog.get("cases")
@@ -682,7 +872,7 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
                     "raw_filename": reference["filename"],
                     "raw_sha256": reference["sha256"],
                     "response_schema_sha256": response_schema_sha256,
-                    "reasoning_present": bool(reasoning),
+                    "thinking_present": bool(reasoning),
                     "final_response_present": bool(final_response),
                     "diagnostics": diagnostics_out,
                 }
@@ -710,16 +900,115 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
             "duration_ms": raw_response.get("client_duration_ms"), "prompt_tokens": raw_response.get("prompt_eval_count"),
             "output_tokens": raw_response.get("eval_count"), "done_reason": raw_response.get("done_reason"),
         })
+    catalog_path = process_root / "certification/qwen-matrix.yaml"
     return {
-        "schema_version": "1.1", "evidence_kind": f"actual-model-{phase}", "actual_model_run": True,
+        "schema_version": "1.2", "evidence_kind": f"actual-model-{phase}", "actual_model_run": True,
         "process_package_version": package_version, "model": model, "adapter": {"family": model_family, "version": adapter["schema_version"]},
+        "source_catalog": {"path": "process/certification/qwen-matrix.yaml", "sha256": _sha256_bytes(catalog_path.read_bytes())},
+        "raw_artifact": {"logical_id": raw_directory.parent.name, "stored_in_git": False},
         "status": "passed" if all(row["deterministic_validation_result"] == "passed" for row in results) else "partial",
         "cases": results,
         "limitations": [model.get("limitation", "family-level proxy; corporate-runtime equivalence is not established")],
     }
 
 
-def validate_normalized_evidence(evidence: dict[str, Any], artifact_root: Path) -> list[str]:
+def _validate_remediation_evidence(
+    evidence: dict[str, Any], artifact_root: Path, repository_root: Path
+) -> list[str]:
+    diagnostics: list[str] = []
+    serialized = json.dumps(evidence, sort_keys=True)
+    if re.search(
+        r"(?i)(?:[a-z]:[\\/]|\\\\users\\|/users/|api[_-]?key|password|secret|bearer\s+|private[_-]?token|https?://)",
+        serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>"),
+    ):
+        _append_once(diagnostics, "actual-model.normalized-privacy")
+    baseline_reference = evidence.get("baseline_reference")
+    if not isinstance(baseline_reference, dict) or set(baseline_reference) != {
+        "path", "sha256", "raw_logical_artifact_id", "adapter_version"
+    }:
+        _append_once(diagnostics, "actual-model.baseline-reference-invalid")
+    else:
+        relative = Path(str(baseline_reference.get("path", "")))
+        baseline_path = (repository_root.resolve() / relative).resolve()
+        try:
+            baseline_path.relative_to(repository_root.resolve())
+        except ValueError:
+            _append_once(diagnostics, "actual-model.baseline-reference-invalid")
+            baseline_path = Path("__invalid_baseline__")
+        if not baseline_path.is_file():
+            _append_once(diagnostics, "actual-model.baseline-reference-invalid")
+        else:
+            if _sha256_bytes(baseline_path.read_bytes()) != baseline_reference.get("sha256"):
+                _append_once(diagnostics, "actual-model.baseline-hash-mismatch")
+            try:
+                baseline = yaml.safe_load(baseline_path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, yaml.YAMLError):
+                baseline = None
+            if (
+                not isinstance(baseline, dict)
+                or baseline.get("adapter", {}).get("version") != "1.0"
+                or baseline_reference.get("adapter_version") != "1.0"
+                or baseline.get("raw_artifact", {}).get("logical_id") != baseline_reference.get("raw_logical_artifact_id")
+            ):
+                _append_once(diagnostics, "actual-model.baseline-reference-invalid")
+    adapter = evidence.get("adapter", {})
+    model = evidence.get("model", {})
+    family = adapter.get("family") if isinstance(adapter, dict) else None
+    if adapter.get("version") != "2.0" or model.get("family") != family:
+        _append_once(diagnostics, "actual-model.remediation-identity-mismatch")
+    all_references: set[tuple[str, str]] = set()
+    preflight_failed = False
+    for phase, count in (("preflight", 5), ("matrix", 15)):
+        section = evidence.get(phase, {})
+        if not isinstance(section, dict):
+            _append_once(diagnostics, "actual-model.gate-malformed")
+            continue
+        if phase == "matrix" and section.get("status") == "not-run":
+            if section.get("cases") != [] or section.get("matrix_not_run") != "preflight-gate-failed" or not preflight_failed:
+                _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
+            continue
+        summary = {
+            "schema_version": "1.2",
+            "evidence_kind": f"actual-model-{phase}",
+            "actual_model_run": True,
+            "process_package_version": evidence.get("process_package_version"),
+            "model": model,
+            "adapter": {"family": family, "version": adapter.get("version")},
+            "source_catalog": evidence.get("source_catalog"),
+            "raw_artifact": evidence.get("raw_artifact"),
+            "status": section.get("status"),
+            "cases": section.get("cases"),
+        }
+        phase_diagnostics = validate_phase_gate(summary, artifact_root, phase, str(family), "2.0", count)
+        if phase == "preflight" and set(phase_diagnostics) == {"actual-model.gate-case-failed"}:
+            preflight_failed = True
+            phase_diagnostics = []
+        for code in phase_diagnostics:
+            _append_once(diagnostics, code)
+        for row in section.get("cases", []):
+            if not isinstance(row, dict):
+                continue
+            for attempt in row.get("attempts", []):
+                if not isinstance(attempt, dict):
+                    continue
+                key = (str(row.get("run_group")), str(attempt.get("raw_filename")))
+                if key in all_references:
+                    _append_once(diagnostics, "actual-model.gate-duplicate-raw-reference")
+                all_references.add(key)
+    if evidence.get("raw_artifact", {}).get("logical_id") != artifact_root.name:
+        _append_once(diagnostics, "actual-model.remediation-artifact-mismatch")
+    return diagnostics
+
+
+def validate_normalized_evidence(
+    evidence: dict[str, Any], artifact_root: Path, *, repository_root: Path | None = None
+) -> list[str]:
+    if isinstance(evidence, dict) and "baseline_reference" in evidence:
+        return _validate_remediation_evidence(
+            evidence,
+            artifact_root,
+            (repository_root or Path(__file__).resolve().parents[1]),
+        )
     diagnostics: list[str] = []
     serialized = json.dumps(evidence, sort_keys=True)
     privacy_view = serialized.replace(OLLAMA_ENDPOINT, "<local-ollama-endpoint>")
