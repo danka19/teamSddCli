@@ -1323,6 +1323,17 @@ def test_normalized_deepseek_evidence_covers_every_raw_attempt_and_reasoning_bou
     assert "actual-model.generic-fallback-route" in validate_normalized_evidence(broken, artifact)
 
 
+def _require_remediation_artifact(artifact: Path) -> None:
+    if not artifact.is_dir():
+        pytest.skip(f"external remediation artifact is required: {artifact.name}")
+
+
+def test_absent_remediation_artifact_is_an_explicit_portability_skip(tmp_path: Path) -> None:
+    missing = tmp_path / "absent-remediation-artifact"
+    with pytest.raises(pytest.skip.Exception, match="external remediation artifact is required"):
+        _require_remediation_artifact(missing)
+
+
 @pytest.mark.parametrize(
     ("family", "evidence_name", "artifact_name"),
     [
@@ -1344,7 +1355,7 @@ def test_remediation_evidence_binds_failed_preflight_and_immutable_baseline(
     evidence = _yaml(PROCESS / "certification/evidence" / evidence_name)
     artifact = ROOT.parent / "teamSsdCli-release-artifacts" / artifact_name
 
-    assert artifact.is_dir(), f"external remediation artifact is required: {artifact_name}"
+    _require_remediation_artifact(artifact)
     assert validate_normalized_evidence(evidence, artifact) == []
     assert evidence["adapter"] == {
         "family": family,
