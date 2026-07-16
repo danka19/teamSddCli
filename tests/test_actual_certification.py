@@ -602,6 +602,117 @@ def test_remediation_normalizer_rejects_missing_matrix_after_passed_preflight(tm
     assert not output.exists()
 
 
+def test_remediation_normalizes_and_validates_honest_failed_preflight_without_matrix(
+    tmp_path: Path, capsys
+) -> None:
+    preflight, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    failed_row = preflight["cases"][0]
+    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    response = raw["parsed_model_decision"]
+    response["decision"] = "block"
+    response["requirements_note"] = None
+    response["unresolved_inputs"] = ["The completed preflight case cannot be accepted."]
+    raw["ollama"]["response"] = json.dumps(response)
+    catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == failed_row["case_id"])
+    _, _, parsed, normalized, failed_diagnostics, _ = actual_certification.evaluate_remediation_model_output(
+        ROOT, PROCESS, catalog_case, raw
+    )
+    assert failed_diagnostics
+    raw["parsed_model_decision"] = parsed
+    raw["normalized_operation_evidence"] = normalized
+    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
+    failed_row["deterministic_validation_result"] = "failed"
+    failed_row["diagnostics"] = failed_diagnostics
+    failed_row["attempts"][0]["diagnostics"] = failed_diagnostics
+    raw_path.write_text(json.dumps(raw, sort_keys=True), encoding="utf-8")
+    checksum = hashlib.sha256(raw_path.read_bytes()).hexdigest()
+    failed_row["raw_sha256"] = checksum
+    failed_row["attempts"][0]["raw_sha256"] = checksum
+    preflight["status"] = "partial"
+    preflight_path = artifact / "preflight.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }), encoding="utf-8")
+
+    document = normalize_actual_certification.normalize_remediation_evidence(
+        baseline_path, artifact, preflight_path, None, "qwen-class", repository_root=tmp_path
+    )
+
+    assert document["status"] == "failed"
+    assert document["matrix_not_run"] == "preflight-gate-failed"
+    assert document["matrix"] == {"status": "not-run", "cases": []}
+    assert document["preflight"]["cases"][0]["diagnostics"] == failed_diagnostics
+    assert validate_normalized_evidence(document, artifact, repository_root=tmp_path) == []
+    output = tmp_path / "normalized.yaml"
+    argv = [
+        "--baseline-evidence", str(baseline_path),
+        "--remediation-artifact-root", str(artifact),
+        "--preflight-result", str(preflight_path),
+        "--output", str(output),
+        "--model-family", "qwen-class",
+    ]
+    assert normalize_actual_certification.main(argv) == 0
+    first_output = output.read_bytes()
+    assert normalize_actual_certification.main(argv) == 3
+    assert json.loads(capsys.readouterr().out)["status"] == "blocked"
+    assert output.read_bytes() == first_output
+
+
+def test_remediation_normalizer_rejects_forged_failed_preflight(tmp_path: Path) -> None:
+    preflight, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    preflight["status"] = "partial"
+    preflight["cases"][0]["deterministic_validation_result"] = "failed"
+    preflight["cases"][0]["diagnostics"] = [{"code": "forged", "detail": "not in raw evidence"}]
+    preflight["cases"][0]["attempts"][0]["diagnostics"] = preflight["cases"][0]["diagnostics"]
+    preflight_path = artifact / "preflight.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }), encoding="utf-8")
+
+    with pytest.raises(ActualCertificationError, match="actual-model.gate-current-validation-mismatch"):
+        normalize_actual_certification.normalize_remediation_evidence(
+            baseline_path, artifact, preflight_path, None, "qwen-class", repository_root=tmp_path
+        )
+
+
+def test_remediation_normalizer_writes_no_output_for_malformed_preflight(tmp_path: Path, capsys) -> None:
+    artifact = tmp_path / "remediation-artifact"
+    artifact.mkdir()
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }), encoding="utf-8")
+    preflight_path = artifact / "preflight.json"
+    preflight_path.write_text("{malformed", encoding="utf-8")
+    output = tmp_path / "normalized.yaml"
+    baseline_before = baseline_path.read_bytes()
+    preflight_before = preflight_path.read_bytes()
+
+    assert normalize_actual_certification.main([
+        "--baseline-evidence", str(baseline_path),
+        "--remediation-artifact-root", str(artifact),
+        "--preflight-result", str(preflight_path),
+        "--output", str(output),
+        "--model-family", "qwen-class",
+    ]) == 3
+
+    assert json.loads(capsys.readouterr().out)["status"] == "blocked"
+    assert not output.exists()
+    assert baseline_path.read_bytes() == baseline_before
+    assert preflight_path.read_bytes() == preflight_before
+
+
 @pytest.mark.parametrize(
     ("mutation", "code"),
     [

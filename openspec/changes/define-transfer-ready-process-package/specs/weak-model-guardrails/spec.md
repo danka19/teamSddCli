@@ -93,6 +93,11 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 - **WHEN** actual weak-model remediation certification is executed
 - **THEN** each family must pass all five frozen preflight cases with the same adapter version before its fifteen-case matrix may start
 
+#### Scenario: Failed preflight evidence is retained without a matrix
+- **WHEN** all five preflight cases completed and deterministic revalidation proves an honest semantic failure
+- **THEN** normalization retains the exact append-only attempts, diagnostics, and immutable adapter 1.0 baseline reference, records `matrix_not_run: preflight-gate-failed`, and does not require or accept matrix evidence
+- **AND** a passed preflight still requires a complete passing fifteen-case matrix, while malformed, mismatched, private, forged, or otherwise unverifiable preflight evidence fails normalization
+
 #### Scenario: Certification covers first pilot roles
 - **WHEN** release-candidate weak-model certification is complete
 - **THEN** it includes analyst, developer, QA, and Tech Lead class-aware walkthroughs plus negative cases for missing context, conflicting sources, under-classification, pseudo-hotfix, fabricated evidence, forbidden approval, unsafe resume, unresolved reconciliation, skipped stop point, and invalid lifecycle transition

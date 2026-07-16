@@ -128,18 +128,27 @@ def normalize_remediation_evidence(
     preflight_diagnostics = validate_phase_gate(
         preflight, remediation_artifact_root, "preflight", model_family, "2.0", 5
     )
-    if preflight_diagnostics:
-        raise ActualCertificationError(preflight_diagnostics[0])
-    if matrix_result is None:
-        raise ActualCertificationError("actual-model.matrix-result-required")
-    matrix = json.loads(matrix_result.read_text(encoding="utf-8"))
-    if not isinstance(matrix, dict):
-        raise ActualCertificationError("actual-model.normalization-input-malformed")
-    matrix_diagnostics = validate_phase_gate(
-        matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
-    )
-    if matrix_diagnostics:
-        raise ActualCertificationError(matrix_diagnostics[0])
+    integrity_diagnostics = [
+        code for code in preflight_diagnostics if code != "actual-model.gate-case-failed"
+    ]
+    if integrity_diagnostics:
+        raise ActualCertificationError(integrity_diagnostics[0])
+    preflight_failed = preflight_diagnostics == ["actual-model.gate-case-failed"]
+    if preflight_failed:
+        if matrix_result is not None:
+            raise ActualCertificationError("actual-model.matrix-result-forbidden")
+        matrix = None
+    else:
+        if matrix_result is None:
+            raise ActualCertificationError("actual-model.matrix-result-required")
+        matrix = json.loads(matrix_result.read_text(encoding="utf-8"))
+        if not isinstance(matrix, dict):
+            raise ActualCertificationError("actual-model.normalization-input-malformed")
+        matrix_diagnostics = validate_phase_gate(
+            matrix, remediation_artifact_root, "matrix", model_family, "2.0", 15
+        )
+        if matrix_diagnostics:
+            raise ActualCertificationError(matrix_diagnostics[0])
     document = {
         "schema_version": "1.2",
         "evidence_id": f"phase-2-11-{model_family.removesuffix('-class')}-remediation",
@@ -155,10 +164,16 @@ def normalize_remediation_evidence(
             "adapter_version": "1.0",
         },
         "preflight": {"status": preflight.get("status"), "cases": preflight.get("cases", [])},
-        "matrix": {"status": matrix.get("status"), "cases": matrix.get("cases", [])},
-        "status": "passed",
+        "matrix": (
+            {"status": "not-run", "cases": []}
+            if matrix is None
+            else {"status": matrix.get("status"), "cases": matrix.get("cases", [])}
+        ),
+        "status": "failed" if preflight_failed else "passed",
         "limitations": preflight.get("limitations", []),
     }
+    if preflight_failed:
+        document["matrix_not_run"] = "preflight-gate-failed"
     return document
 
 
