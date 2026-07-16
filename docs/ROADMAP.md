@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work item 2.11 remains `in_progress` after adapter `2.1` passed Qwen 2/5 and DeepSeek 0/5 preflight cases with zero retries and no matrices; work item 2.12 remains planned and blocked by 2.11.
+- Current roadmap focus: work item 2.11 remains `in_progress` after adapter `2.1` passed Qwen 2/5 and DeepSeek 0/5 preflight cases with zero retries and no matrices. The 2026-07-17 operational-ambiguity audit routes the next bounded remediation through planned change `determinize-weak-model-operational-decisions`; work item 2.12 remains planned and blocked by 2.11.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -21,6 +21,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decision `D-017` on 2026-07-14 accepts the corrected `2.1-2.14` Phase 2 plan and opens work item 2.1 as the sequential implementation start.
 - Human decision on 2026-07-16 rejects fallback-only acceptance of the first Qwen/DeepSeek certification baseline and adopts bounded role-specific schema generation, reasoning/final separation, mechanical normalization, one append-only structural retry, and a 5/5 preflight gate before each 15/15 matrix. Work item 2.11 returns from `pending_acceptance` to `in_progress`; 2.12 remains blocked and Phase 3 does not start.
 - The follow-up adapter `2.1` execution retained the same authority and safety gates while making decision branches structurally exclusive. Frozen Qwen passed 2/5 preflight cases and DeepSeek passed 0/5; all ten responses were structurally valid on attempt 1, so there were zero retries, both family gates failed, and neither matrix ran. Transfer progress remains 22/36, task 4.9 remains open, 2.11 remains `in_progress`, and 2.12 remains blocked.
+- The 2026-07-17 ambiguity audit found that the observed failures are a mixed system/model result: the validator expects hidden exact reason codes, full source repetition, and artifact routing, while a field-blind authority regex can reject safe descriptions of required human decisions. The planned remediation keeps adapter `2.1` immutable, moves operation action and policy metadata into the deterministic launcher, narrows the model to source-grounded content, and rejects semantic retry/self-critique complexity.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -73,7 +74,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. The adapter `1.0` and `2.0` evidence remains immutable historical baseline evidence, the fresh AI-disabled regression passes 11/11, and 2.12 remains planned and blocked by 2.11.
+Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. The adapter `1.0`, `2.0`, and `2.1` evidence remains immutable historical baseline evidence. Planned change `determinize-weak-model-operational-decisions` owns the next bounded remediation, the fresh AI-disabled regression passes 11/11, and 2.12 remains planned and blocked by 2.11.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -178,6 +179,7 @@ Likely scope:
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
 | `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
+| `determinize-weak-model-operational-decisions` | P2 | P3 | planned |
 | `define-transfer-ready-process-package` | P2 | P3 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P3 | blocked |
 

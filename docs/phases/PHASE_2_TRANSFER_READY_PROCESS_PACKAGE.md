@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. Work item 2.12 remains planned and blocked by 2.11.
+Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. The 2026-07-17 ambiguity audit routes the next bounded remediation through planned change `determinize-weak-model-operational-decisions`. Work item 2.12 remains planned and blocked by 2.11.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,8 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for the approved bounded adapter remediation, and 2.12 is blocked by 2.11.
+- Planned change `determinize-weak-model-operational-decisions` owns the post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for bounded weak-model remediation, and 2.12 is blocked by 2.11.
 
 ## Planning Acceptance Gate
 
@@ -492,6 +493,69 @@ Data contract impact: Replace the model-facing all-role compact envelope with a 
 Verification impact: Require adapter-focused TDD, negative authority/evidence/source tests, append-only retry evidence, 5/5 preflight for each model family before its matrix, and 15/15 matrix completion for both families.
 Status: adopted; adapter `2.0` and `2.1` implementations were reviewed before execution. Task 4.9 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices, and work item 2.11 remains `in_progress`.
 ```
+
+#### Phase Change Intake: Deterministic Operational Decision Plan
+
+```text
+Idea: Reduce Phase 2.11 operational error by moving deterministic policy and routing metadata out of weak-model generation.
+Source: Human request on 2026-07-17 and docs/audits/PHASE_2_WORK_ITEM_2_11_OPERATIONAL_AMBIGUITY_AUDIT_2026-07-17.md.
+Type: architecture_change, data_contract_change, verification_change, documentation_change
+Decision: create_openspec_change
+Reason: Adapter 2.1 made the JSON shape unambiguous, but the current gate still contains hidden exact policy labels, source-manifest repetition, ambiguous draft sufficiency, and a field-blind authority heuristic. Another prompt-only revision would not isolate or minimize operational error.
+Affected specs: New weak-model-operational-decision-plan capability; existing transfer-readiness weak-model objectives remain active.
+Affected architecture: Add an identity-bound deterministic operation plan before the model call; model produces only source-grounded draft content or a planned block explanation.
+Data contract impact: Launcher owns action, artifact kind, reason codes, required source inventory, and human action codes; model content uses a smaller branch-specific schema.
+Verification impact: Add ambiguity regression fixtures, deterministic policy-projection evidence, field-scoped authority tests, actual Qwen/DeepSeek 5/5 then 15/15 gates, and AI-disabled 11/11.
+Status: planned in openspec/changes/determinize-weak-model-operational-decisions/.
+```
+
+#### Planned Work Item 2.11 Remediation Slice
+
+OpenSpec source:
+
+- `openspec/changes/determinize-weak-model-operational-decisions/`
+
+Objective:
+
+- make the supported weak-model operation deterministic before generation;
+- remove model ownership of machine reason codes, full source inventory,
+  artifact routing, and human action codes;
+- preserve claim-level source grounding and all authority/evidence safety gates;
+- rerun the same frozen Qwen and DeepSeek proxies without increasing the model.
+
+Implementation order:
+
+1. Reproduce the ambiguity findings with focused RED tests.
+2. Add the smallest operation-plan schema and predicates for the frozen
+   supported catalog; unknown cases fail to the named human.
+3. Replace policy-selection output with `draft_content` or `blocked_summary`.
+4. Scope authority validation to structured action fields and model-authored
+   claims; attach launcher provenance mechanically.
+5. Run deterministic verification, then append-only 5/5 preflight and gated
+   15/15 matrices, followed by AI-disabled 11/11.
+6. Reconcile work item 2.11 from actual evidence.
+
+Explicitly rejected as disproportionate:
+
+- semantic retries or self-critique loops;
+- another classifier agent;
+- fuzzy or embedding-based semantic acceptance;
+- expanding the reason-code taxonomy;
+- a new maintained role/process documentation hierarchy;
+- a general-purpose policy rules engine.
+
+Exit criteria:
+
+- identical verified inputs produce byte-stable operation policy metadata;
+- every model-owned acceptance obligation is visible and locally diagnosed;
+- zero accepted unsafe continuation, fabricated evidence, model-owned authority,
+  canonical mutation, or operation-plan override;
+- safe descriptions of pending human approval/resume/release/archive decisions
+  do not trigger false authority failures;
+- each family passes 5/5 preflight before 15/15 matrix, and AI-disabled remains
+  11/11;
+- otherwise work item 2.11 remains `in_progress` with exact residual
+  incompatibility and fallback evidence.
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
 

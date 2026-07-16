@@ -2,7 +2,14 @@
 
 Status: in_progress.
 
-Last status reconciliation: 2026-07-16.
+Last status reconciliation: 2026-07-17.
+
+## Phase And OpenSpec Status Reconciliation (2026-07-17)
+
+- Phase 2 remains `in_progress`; work items 2.1-2.10 remain `closed`, work item 2.11 remains `in_progress`, and sequential work item 2.12 remains `planned` and blocked.
+- The dated Phase 2.11 ambiguity audit confirms that adapter `2.1` is structurally clear for the observed ten preflight responses but operationally ambiguous: exact reason codes, required source repetition, artifact kind, and some decision semantics are hidden validator expectations, while the field-blind authority regex can reject safe descriptions of required human decisions.
+- New OpenSpec change `determinize-weak-model-operational-decisions` is `planned` under P2/P3. It owns the bounded next remediation: deterministic operation planning, smaller model content contracts, launcher-bound provenance, field-scoped authority checks, local diagnostics, frozen-model recertification, and AI-disabled regression.
+- The blocked `simplify-weak-model-decision-contract` change and all adapter `1.0`/`2.0`/`2.1` evidence remain immutable history. No implementation, model rerun, certification pass, transfer-progress increase, or release acceptance is claimed by this planning session.
 
 ## Phase And OpenSpec Status Reconciliation (2026-07-16)
 
@@ -21,7 +28,7 @@ Last status reconciliation: 2026-07-16.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 20/33 tasks complete and 13 remaining; `adopt-nis-corporate-process-governance` has 38/43 tasks complete and 5 remaining. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are execution-complete. Task 7.5 and NIS task 8.8 remain Phase 3 work. Both changes remain `in_progress`.
 - At the 2026-07-15 snapshot, sequential work item 2.12 was blocked on a human fallback-disposition decision. That fallback-only acceptance path was later rejected and is superseded; the current blocker is the failed adapter `2.1` certification gate for in-progress work item 2.11.
 
-Last updated: 2026-07-16.
+Last updated: 2026-07-17.
 
 ## Repository Baseline
 
@@ -102,6 +109,7 @@ Last updated: 2026-07-16.
 | AUDIT-020 | Transfer readiness is explicitly defined. Work items 2.1-2.10 are closed; work item 2.11 remains `in_progress`. The preserved 2026-07-15 adapter `1.0` baseline passed Qwen 0/5 preflight and 1/15 matrix cases and DeepSeek 0/5 and 0/15. Adapter `2.0` remained 0/5 for both families. The append-only adapter `2.1` run produced Qwen 2/5 and DeepSeek 0/5, one structurally valid attempt per case, zero retries, and no matrices; task 4.9 remains open. The fresh AI-disabled run passed 11/11. Cross-platform rehearsal, update/rollback, release evidence, transfer acceptance, corporate adaptation, and pilot materials remain open. | Phase 2/3 | open |
 | AUDIT-021 | Actual-certification execution now binds a fresh full model digest and Ollama runtime version from an immutable runtime-identity catalog into preflight evidence and re-probes immediately before every matrix model call. All phase raw/result destinations fail closed before side effects unless they are new, external, non-aliased, non-reparse, non-overlapping paths under one artifact root. Historical raw and normalized evidence remains unchanged and validation-compatible. Ollama tag invocation is not digest-addressed, so a residual observation-to-call race remains documented. | Phase 2.11 | mitigated |
 | AUDIT-024 | Adapter `2.0` remediation produced ten schema-valid but semantically invalid preflight responses. Adapter `2.1` removed the dominant contradictory decision/payload state structurally while preserving semantic validation and human authority. Its exact run passed Qwen 2/5 and DeepSeek 0/5, used zero retries, and ran no matrices. The bounded change `simplify-weak-model-decision-contract` is blocked with 15/15 technical tasks complete after final spec/status, architecture, and raw-evidence reviews; the residual model incompatibility requires a new human disposition, so task completion is not certification acceptance or accepted-spec promotion. | Phase 2.11 | in_progress |
+| AUDIT-025 | The 2026-07-17 operational-ambiguity audit verifies that the remaining adapter `2.1` gate is a mixed system/model result. Hidden exact policy labels, full source-manifest repetition, ambiguous draft sufficiency, a field-blind authority regex, and aggregate semantic diagnostics prevent clean attribution and can reject safe output. Planned change `determinize-weak-model-operational-decisions` moves deterministic routing metadata into the launcher, narrows the model to source-grounded content, preserves structural-only retry, and explicitly rejects prompt chaining, self-critique, classifier agents, and a new documentation hierarchy. | Phase 2.11 | planned |
 | AUDIT-021 | `D-013` accepts the NIS-aligned target process. Closed work item 2.7 adds check-only flow enforcement, QA authority, scoped exceptions, release handoff, role/WIP/pilot-safety checks, and append-only failed-run retention without replacing human decisions or mutating lifecycle/external state. Packaged workflow mutation and broader traceability remain 2.8. Tasks 4.1-4.6, 5.1-5.7, and 6.1-6.2 are complete after the required review gates. | Phase 2/3 | open |
 | AUDIT-022 | `D-014` makes AI-disabled deterministic operation the first required delivery state and permanent fallback, not the final AI-minimal product direction. Later accepted changes are expected to progressively automate bounded orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation while deterministic checks remain the control plane and accountable human authority remains explicit. Presentation-facing and project-direction documentation now carry this two-horizon message; implementation of the later horizon remains future scope. | Phase 2/4 | open |
 | AUDIT-023 | `D-016` makes broader risk-oriented positive/negative testing and end-to-end requirement/scenario evidence traceability explicit reliability mechanisms, and safe parallel AI execution an explicit throughput mechanism. The transfer change now requires independent ownership/write scopes, separate evidence, serialization of conflicts, and a deterministic combined integration gate. This is not the excluded process-effectiveness measurement program. | Phase 2/4 | open |
