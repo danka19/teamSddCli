@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is pending acceptance after the AI-disabled, Qwen-family, and DeepSeek-family execution slices completed with explicit fallback dispositions.
+Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after the human rejected fallback-only acceptance and approved bounded weak-model adapter remediation. Work item 2.12 remains planned and blocked by 2.11.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -33,7 +33,7 @@ Status: accepted.
 - The external release-candidate boundary, NIS target behavior, two-horizon AI direction, evidence-storage policy, human acceptance owner, certification matrix, and Windows/Linux/macOS host matrix are accepted in `D-012` through `D-016`.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is pending acceptance after complete execution and awaits human fallback disposition.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for the approved bounded adapter remediation, and 2.12 is blocked by 2.11.
 
 ## Planning Acceptance Gate
 
@@ -42,11 +42,13 @@ Status: accepted. Human acceptance is recorded in `D-017` on 2026-07-14.
 Acceptance confirms:
 
 - clean sequential work-item numbering `2.1-2.14`;
-- exact one-owner mapping for all 33 transfer-package tasks and all 43 NIS-governance tasks;
+- exact one-owner mapping for the then-current 33 transfer-package tasks and all 43 NIS-governance tasks;
 - no circular Phase 2 dependencies;
 - `define-transfer-ready-process-package` task 7.5 and `adopt-nis-corporate-process-governance` task 8.8 remain Phase 3 work;
 - safe parallelism is limited to independent subtasks inside an active work item unless a later plan explicitly marks cross-item work `parallel-independent`;
 - Phase 2 implementation starts with work item 2.1 after this accepted gate.
+
+The adopted 2026-07-16 change intake adds transfer tasks 4.7-4.9 under work item 2.11. The current exact one-owner mapping therefore covers 36 transfer-package tasks and all 43 NIS-governance tasks without altering the historical planning-acceptance evidence.
 
 ## Inputs To Read
 
@@ -444,31 +446,46 @@ Exit criteria: certification is repeatable, source-linked, privacy-safe, and exp
 
 ### 2.11 AI-Disabled And Weak-Model Certification
 
-Status: pending_acceptance.
+Status: in_progress.
 
 Dependency status: sequential after 2.10.
 
-Objective: execute all AI-disabled walkthroughs and the accepted risk-oriented Qwen/DeepSeek certification matrix.
+Objective: preserve the completed AI-disabled and first weak-model baseline, implement the approved bounded Qwen/DeepSeek adapter remediation, and execute new gated certification without weakening deterministic validation.
 
-OpenSpec source: transfer-package tasks 4.4-4.5; NIS tasks 8.2-8.3.
+OpenSpec source: transfer-package tasks 4.4-4.5 and 4.7-4.9; NIS tasks 8.2-8.3.
 
 Expected files: normalized results, manifests/hashes, raw versioned release artifacts, limitation/fallback records, and phase evidence index entries.
 
-Verification: every gate works AI-disabled; each model family performs all four roles once; each class runs on both families; critical authority, fabricated-evidence, unsafe-resume, failed-run, QA-review, and hotfix-reconciliation negatives run on both.
+Verification: every gate works AI-disabled; role-specific schemas expose only supplied source IDs and global reason codes; reasoning and final output remain separate; normalization cannot repair semantics; at most one structural retry is retained append-only; each family must pass the same-adapter 5/5 preflight before its 15/15 matrix may start; all existing authority, evidence, source, stop, and lifecycle checks remain unchanged.
 
 Parallelization: independent model/role/class runs may execute concurrently when isolated workspaces and evidence paths are declared; shared fixture mutation and final result disposition are serialized.
 
 Documentation: exact model/runtime/adapter versions, interventions, limitations, and fallbacks.
 
-Exit criteria: mandatory operations pass or have an explicit deterministic/mandatory-human fallback accepted for release.
+Exit criteria: Qwen and DeepSeek each pass 5/5 preflight and 15/15 matrix with the approved adapter boundary, or the exact residual incompatibility is recorded and returned for a new human disposition; fallback-only acceptance is not the current approved route.
 
-Execution evidence on 2026-07-15: all 11 AI-disabled walkthrough records passed. Frozen non-leading Qwen-family bytes passed 0/5 preflight and 1/15 matrix cases; frozen DeepSeek-family bytes passed 0/5 preflight and 0/15 matrix cases. Every DeepSeek failure retains deterministic validation plus a catalog-owned case-specific human owner and concrete disposition action. Transfer task 4.5 and NIS task 8.3 are execution-complete. Work item 2.11 remains at `pending_acceptance` until the human owner accepts or rejects both family fallback dispositions; 2.12 remains blocked.
+Historical baseline evidence on 2026-07-15: all 11 AI-disabled walkthrough records passed. Frozen non-leading Qwen-family bytes passed 0/5 preflight and 1/15 matrix cases; frozen DeepSeek-family bytes passed 0/5 preflight and 0/15 matrix cases. Every failure retains deterministic validation plus a catalog-owned case-specific human owner and concrete disposition action. Transfer task 4.5 and NIS task 8.3 remain checked as execution-complete historical baseline work and are not reopened or rewritten.
+
+#### Phase Change Intake: Weak-Model Adapter Remediation
+
+```text
+Idea: Remediate the weak-model adapter so Qwen- and DeepSeek-family assistants can reliably produce bounded role output without weakening deterministic authority or safety checks.
+Source: Human rejection of fallback-only acceptance after Phase 2 work item 2.11 certification results, confirmed on 2026-07-16.
+Type: scope_refinement, architecture_change, data_contract_change, verification_change, documentation_change
+Decision: adopt_now
+Reason: Accepting the current fallback dispositions would leave the internal AI layer ineffective and would make the intended work item 2.11 outcome incorrect for the human's stated product goal.
+Affected specs: Existing define-transfer-ready-process-package weak-model-guardrails delta and its certification tasks; no independent capability is introduced.
+Affected architecture: Add a thin model-family generation adapter, role-specific constrained response contracts, reasoning/final separation, and mechanical normalization ahead of the unchanged deterministic validator.
+Data contract impact: Replace the model-facing all-role compact envelope with a generated common decision envelope plus one role-specific payload; preserve the existing normalized operation-evidence contract downstream.
+Verification impact: Require adapter-focused TDD, negative authority/evidence/source tests, append-only retry evidence, 5/5 preflight for each model family before its matrix, and 15/15 matrix completion for both families.
+Status: adopted; architecture preflight approved at commit 8077847; OpenSpec tasks 4.7-4.9 are apply-ready under in-progress work item 2.11.
+```
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
 
 Status: planned.
 
-Dependency status: sequential after 2.11 and requires 2.2 and 2.8.
+Dependency status: blocked by in-progress work item 2.11; sequential after 2.11 and requires 2.2 and 2.8.
 
 Objective: generate/validate the release manifest, automate acceptance checks, rehearse migration/update/rollback, and prove equivalent Windows/Linux/macOS behavior.
 
@@ -538,7 +555,7 @@ Exit criteria: the human owner accepts or rejects the exact external candidate u
 | 2.8 | 2.1-2.5 | 7.1-7.4 |
 | 2.9 | 3.1-3.6 | - |
 | 2.10 | 4.1-4.3, 4.6 | 8.1 |
-| 2.11 | 4.4-4.5 | 8.2-8.3 |
+| 2.11 | 4.4-4.5, 4.7-4.9 | 8.2-8.3 |
 | 2.12 | 5.1-5.4 | 8.4 |
 | 2.13 | 6.1-6.4 | - |
 | 2.14 | 7.1-7.4 | 8.5-8.7 |
@@ -546,7 +563,7 @@ Exit criteria: the human owner accepts or rejects the exact external candidate u
 
 Coverage check:
 
-- Transfer-package tasks: 33 total; 32 map exactly once to Phase 2 and task 7.5 maps exactly once to Phase 3.
+- Transfer-package tasks: 36 total; 35 map exactly once to Phase 2 and task 7.5 maps exactly once to Phase 3.
 - NIS-governance tasks: 43 total; 42 map exactly once to Phase 2 and task 8.8 maps exactly once to Phase 3.
 - No task group is owned by more than one Phase 2 work item.
 - No Phase 2 work item depends on Phase 3 evidence for closure.
@@ -593,11 +610,11 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution evidence for work item 2.11 is complete. The remaining mandatory gate is explicit human acceptance or rejection of the recorded Qwen and DeepSeek fallback dispositions; until then 2.11 remains `pending_acceptance` and 2.12 remains blocked.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. The human rejected fallback-only acceptance on 2026-07-16 and approved bounded adapter remediation, so 2.11 is `in_progress`; 2.12 remains planned and blocked until the remediation is accepted or receives a new explicit human disposition.
 
 Mandatory later evidence, not design decisions:
 
-- Human disposition of the exact recorded Qwen-class and DeepSeek-class fallback routes.
+- New append-only Qwen-class and DeepSeek-class remediation evidence: 5/5 frozen preflight before each 15/15 matrix, or an exact residual incompatibility for human disposition.
 - Exact supported Windows, Linux, and macOS versions/architectures and dependency versions used for certification.
 - Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

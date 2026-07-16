@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is `pending_acceptance` after complete AI-disabled, Qwen-family, and DeepSeek-family execution with explicit fallbacks.
+Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for approved bounded adapter remediation after the human rejected fallback-only acceptance. Work item 2.12 remains planned and blocked by 2.11.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -529,7 +529,7 @@ Status: closed after implementation, independent architecture/review hardening, 
 
 ## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `pending_acceptance`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are complete; human acceptance or rejection of the explicit Qwen/DeepSeek fallback dispositions remains mandatory before 2.12.
+Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 remain complete; transfer tasks 4.7-4.9 now own bounded adapter remediation and append-only recertification. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
 
 ### Evidence And Scope
 
@@ -552,4 +552,6 @@ Status: `pending_acceptance`. The AI-disabled baseline and both frozen non-leadi
 
 ### Limitation And Next Gate
 
-`qwen3.5:9b` and `deepseek-r1:8b` are local family-level proxies, not corporate-runtime equivalence proof. DeepSeek passed 0/5 preflight and 0/15 matrix cases; Qwen passed 0/5 and 1/15. Normalized DeepSeek evidence is `process/certification/evidence/phase-2-11-deepseek-2026-07-15.yaml`; the dated audit is `docs/audits/PHASE_2_WORK_ITEM_2_11_DEEPSEEK_CERTIFICATION_AUDIT_2026-07-15.md`. Work item 2.11 is not closed, both active changes remain open, 2.12-2.14 are untouched, and no release acceptance, archive, PR, or pilot is claimed.
+`qwen3.5:9b` and `deepseek-r1:8b` are local family-level proxies, not corporate-runtime equivalence proof. As the immutable 2026-07-15 baseline, DeepSeek passed 0/5 preflight and 0/15 matrix cases while Qwen passed 0/5 and 1/15. Normalized DeepSeek evidence is `process/certification/evidence/phase-2-11-deepseek-2026-07-15.yaml`; the dated audit is `docs/audits/PHASE_2_WORK_ITEM_2_11_DEEPSEEK_CERTIFICATION_AUDIT_2026-07-15.md`. Both dated 2026-07-15 audits remain historical evidence and are not rewritten.
+
+The next gate is new append-only remediation certification under transfer tasks 4.7-4.9: each family must pass all five frozen preflight cases with one adapter version before its fifteen-case matrix may start. If either family fails preflight after the permitted technical retry, its matrix is not run and the exact residual incompatibility returns for human disposition. Work item 2.11 remains open, both active changes remain open, 2.12 is planned and blocked, and no release acceptance, archive, PR, or pilot is claimed.

@@ -29,6 +29,9 @@
 - [x] 4.4 Execute and record AI-disabled certification for every gated minor/major/hotfix operation, including Tech Lead, stop/resume, and hotfix reconciliation cases.
 - [x] 4.5 Execute and record the accepted risk-oriented pairwise Qwen/DeepSeek-class matrix: each model family performs analyst, developer, QA, and Tech Lead work once, minor/major/hotfix are each exercised by both families, and critical authority, fabricated-evidence, unsafe-resume, and hotfix-reconciliation negative cases run on both; route unreliable operations to deterministic or mandatory-human fallbacks.
 - [x] 4.6 Generate a requirement/scenario-to-test/evidence coverage report, add focused positive and negative tests for uncovered deterministic behavior, and keep permitted residual gaps source-linked with owner, risk, compensating evidence, and follow-up.
+- [ ] 4.7 Define and verify the schema-constrained role-specific model adapter contract, reasoning/final boundary, mechanical normalization boundary, and one-retry append-only evidence rule without weakening deterministic validation.
+- [ ] 4.8 Implement and test Qwen/DeepSeek adapter remediation plus the deterministic 5/5 preflight gate that blocks matrix execution for an unqualified family or adapter version.
+- [ ] 4.9 Execute and record new append-only Qwen and DeepSeek remediation certification: require 5/5 preflight before each 15/15 matrix, preserve the original baseline evidence, and record exact residual incompatibility if either family fails.
 
 ## 5. Release Candidate And Transfer Runbook
 

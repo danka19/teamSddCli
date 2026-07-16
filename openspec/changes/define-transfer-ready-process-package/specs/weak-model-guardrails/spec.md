@@ -77,6 +77,22 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 - **WHEN** a weak-model certification run is executed
 - **THEN** evidence records the model and runtime identifier, adapter version, process-package version, read-pack identity, operation, input fixture, output artifact, deterministic validation result, human intervention, and known limitations
 
+#### Scenario: Model-facing contract is role specific and schema constrained
+- **WHEN** the deterministic launcher prepares a Qwen-class or DeepSeek-class role operation
+- **THEN** it supplies a closed role-specific JSON Schema containing only supplied source IDs and the global reason-code vocabulary, without exposing validator-only expected answers
+
+#### Scenario: Normalization cannot repair model semantics
+- **WHEN** the adapter parses a structurally valid model response
+- **THEN** normalization may add launch-owned identity and invariant authority fields but does not change the model decision, reasons, sources, evidence observations, unresolved inputs, or required human decisions
+
+#### Scenario: Technical retry is bounded and retained
+- **WHEN** final model output is empty, invalid JSON, or fails the generated response schema
+- **THEN** the runner may make one structurally prompted retry with identical facts and sources, retaining both attempts separately, and does not retry a structurally valid semantic failure
+
+#### Scenario: Preflight gates matrix execution
+- **WHEN** actual weak-model remediation certification is executed
+- **THEN** each family must pass all five frozen preflight cases with the same adapter version before its fifteen-case matrix may start
+
 #### Scenario: Certification covers first pilot roles
 - **WHEN** release-candidate weak-model certification is complete
 - **THEN** it includes analyst, developer, QA, and Tech Lead class-aware walkthroughs plus negative cases for missing context, conflicting sources, under-classification, pseudo-hotfix, fabricated evidence, forbidden approval, unsafe resume, unresolved reconciliation, skipped stop point, and invalid lifecycle transition

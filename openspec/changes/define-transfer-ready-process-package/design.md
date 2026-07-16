@@ -88,6 +88,23 @@ The package uses shared schemas, policy, workflow, and evidence contracts with t
 
 Treating one workstation or one container as proof of portability was rejected because the human owner requires equivalent full desktop-host behavior across all three operating-system families.
 
+### 9. Remediate weak-model generation through a bounded family adapter
+
+The approved remediation flow is:
+
+```text
+deterministic launcher
+  -> model-family adapter with a generated role-specific schema
+  -> separate reasoning and final-response channels
+  -> strict role-response parser
+  -> mechanical normalizer
+  -> existing deterministic operation-evidence validator
+```
+
+The launcher owns the selected workflow, role, verified sources, authority boundary, and response-contract projection. The Qwen or DeepSeek family adapter owns only runtime request formation and response-envelope handling. Only the final-response channel enters the parser; reasoning remains separate append-only evidence. The normalizer may add launch-owned identity and invariant authority fields, but it cannot change or invent model semantics. The existing validator remains unchanged as the fail-closed control plane.
+
+Task 4.5 records the completed 2026-07-15 baseline execution. It is not reopened, unchecked, or rewritten; remediation and recertification are new tasks 4.7-4.9, and all new attempts remain append-only alongside that historical evidence.
+
 ## Risks / Trade-offs
 
 - [Corporate runtime differs from the external certification environment] -> Keep adapters thin, publish compatibility assumptions, and require an internal environment inventory before pilot entry.

@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work item 2.11 is pending acceptance after complete AI-disabled, Qwen-family, and DeepSeek-family execution; 2.12 remains blocked pending human fallback disposition.
+- Current roadmap focus: work item 2.11 is `in_progress` for bounded weak-model adapter remediation after the human rejected fallback-only acceptance; work item 2.12 remains planned and blocked by 2.11.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -19,6 +19,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decision `D-013` on 2026-07-13 supersedes `thin/full` as the target process classification with the flat NIS model `minor|major|hotfix`, adopts corporate DoR/DoD, Tech Lead governance, regression/scope/stop/release controls, pilot safety, and failed-run retention, and records the migration and safety corrections in active change `adopt-nis-corporate-process-governance`. Process-effectiveness measurement is excluded. Earlier Phase 1 thin/full records remain historical accepted evidence until the new change is implemented and promoted.
 - Human decisions `D-014`, `D-015`, and `D-016` on 2026-07-14 establish the two-horizon automation strategy, Phase 2 remediation gate, and reliability/throughput direction: deterministic/AI-disabled operation is the foundation and fallback; the release package must cover Windows, Linux, and macOS; reliability grows through risk-oriented tests and traceability; speed grows through safe parallel AI work on independent tasks. `D-015` required explicit plan acceptance before implementation; `D-017` now closes that gate.
 - Human decision `D-017` on 2026-07-14 accepts the corrected `2.1-2.14` Phase 2 plan and opens work item 2.1 as the sequential implementation start.
+- Human decision on 2026-07-16 rejects fallback-only acceptance of the first Qwen/DeepSeek certification baseline and adopts bounded role-specific schema generation, reasoning/final separation, mechanical normalization, one append-only structural retry, and a 5/5 preflight gate before each 15/15 matrix. Work item 2.11 returns from `pending_acceptance` to `in_progress`; 2.12 remains blocked and Phase 3 does not start.
 - Roadmap execution is gate-based. Delivery dates and calendar deadlines are intentionally managed outside this repository and are not recorded in roadmap, phase, or OpenSpec planning artifacts.
 - Update this file when phase status, gates, or scope changes.
 
@@ -71,7 +72,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed; work item 2.11 is pending acceptance after complete certification execution with explicit deterministic or mandatory-human fallbacks.
+Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for the approved bounded adapter remediation. The completed 2026-07-15 certification remains historical baseline evidence, and 2.12 remains planned and blocked by 2.11.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
