@@ -12,7 +12,7 @@
 
 - [x] 3.1 Run focused adapter, certification, compatibility, package, authority, leakage, retry, and runtime-boundary tests with zero failures.
 - [x] 3.2 Run the complete test suite, compilation, OpenSpec strict validation, roadmap validation, privacy scans, and diff checks with only documented environment-dependent skips.
-- [ ] 3.3 Complete task/spec and architecture reviews; fix and re-review every Critical or Important finding before model execution.
+- [x] 3.3 Complete task/spec and architecture reviews; fix and re-review every Critical or Important finding before model execution.
 
 ## 4. Adapter 2.1 Certification
 
