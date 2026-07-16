@@ -302,6 +302,45 @@ def test_authority_classifier_allows_required_human_decision_and_negated_claim()
 
 
 @pytest.mark.parametrize(
+    "wording",
+    [
+        "Model approval is required",
+        "AI authorization remains pending",
+        "Assistant approval is absent",
+        "Model authorization is missing",
+        "AI approval remains required",
+    ],
+)
+def test_authority_classifier_rejects_assistant_owned_required_or_pending_authority(
+    wording: str,
+) -> None:
+    _, pack, launch = adapter_context()
+    response = valid_role_response(launch)
+    response["human_decisions_required"] = [wording]
+    with pytest.raises(ModelAdapterError, match="model-adapter.semantic"):
+        normalize_role_response(response, launch, pack)
+
+
+@pytest.mark.parametrize(
+    "wording",
+    [
+        "Human approval is required",
+        "Tech Lead approval is required",
+        "QA owner authorization remains pending",
+        "Configured decision owner approval is absent",
+        "Configured approver authorization is missing",
+    ],
+)
+def test_authority_classifier_allows_explicit_human_or_accountable_owner(wording: str) -> None:
+    _, pack, launch = adapter_context()
+    response = valid_role_response(launch)
+    response["human_decisions_required"] = [wording]
+    evidence = normalize_role_response(response, launch, pack)
+    assert evidence["human_decisions_required"] == [wording]
+    assert validate_operation_evidence(evidence, launch, pack) == []
+
+
+@pytest.mark.parametrize(
     "claim",
     [
         "The model approved release.",

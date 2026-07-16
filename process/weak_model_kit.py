@@ -57,7 +57,9 @@ _LEGACY_AUTHORITY_TERMS = re.compile(
 )
 _SAFE_AUTHORITY_CONTEXTS = (
     re.compile(
-        r"\b(?:approval|authorization|decision)\s+(?:is|are|remains?)\s+"
+        r"\b(?:human(?:\s+(?:owner|approver))?|tech\s+lead|qa\s+owner|"
+        r"configured\s+(?:decision\s+)?(?:owner|approver)|decision\s+owner|accountable\s+owner)\s+"
+        r"(?:approval|authorization|decision)\s+(?:is|are|remains?)\s+"
         r"(?:required|pending|absent|missing)\b",
         re.IGNORECASE,
     ),
