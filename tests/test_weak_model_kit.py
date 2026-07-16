@@ -329,6 +329,19 @@ def test_claims_use_closed_safe_kinds_and_reject_decision_semantics_in_values() 
     assert {item["code"] for item in validate_operation_evidence(evidence, launch, pack)} == {"evidence.schema"}
 
 
+def test_legacy_launch_preserves_conservative_authority_diagnostics() -> None:
+    evidence, launch, pack = evidence_context()
+    assert "model_response_contract" not in launch
+    evidence["claims"][0] = {
+        "kind": "fact",
+        "value": {"subject": "boundary", "summary": "release is not approved"},
+        "evidence": "source:weak-model-guardrails",
+    }
+    assert "evidence.forbidden-authority" in {
+        item["code"] for item in validate_operation_evidence(evidence, launch, pack)
+    }
+
+
 def test_evidence_rejects_unverified_source_reference_even_when_id_matches() -> None:
     evidence, launch, pack = evidence_context()
     evidence["sources_read"][0]["sha256"] = "0" * 64

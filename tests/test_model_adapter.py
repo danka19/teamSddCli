@@ -255,3 +255,78 @@ def test_normalizer_block_is_mechanical_and_has_no_artifact() -> None:
     assert evidence["artifacts_drafted"] == []
     assert evidence["claims"] == []
     assert evidence["checks"] == []
+
+
+@pytest.mark.parametrize(
+    ("model_result", "evidence_result"),
+    [
+        ("missing", "failed"),
+        ("unsupported", "failed"),
+        ("conflict", "failed"),
+        ("not-run", "not-run"),
+        ("source-reviewed", "passed"),
+    ],
+)
+def test_normalizer_preserves_check_result_semantics_and_source_provenance(
+    model_result: str, evidence_result: str
+) -> None:
+    _, pack, launch = adapter_context()
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    check = response[payload_key]["checks"][0]
+    check.update(result=model_result, evidence="original model evidence")
+    evidence = normalize_role_response(response, launch, pack)
+    assert evidence["checks"] == [
+        {
+            "command": "deterministic-check",
+            "result": evidence_result,
+            "evidence": (
+                'model-check:{"evidence":"original model evidence","result":"'
+                + model_result
+                + '","source_id":"weak-model-guardrails"}'
+            ),
+        }
+    ]
+    if model_result in {"missing", "unsupported", "conflict"}:
+        assert evidence["checks"][0]["result"] != "passed"
+
+
+def test_authority_classifier_allows_required_human_decision_and_negated_claim() -> None:
+    _, pack, launch = adapter_context()
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response["human_decisions_required"] = ["Tech Lead approval is required"]
+    response[payload_key]["claims"][0]["summary"] = "release is not approved"
+    evidence = normalize_role_response(response, launch, pack)
+    assert validate_operation_evidence(evidence, launch, pack) == []
+
+
+@pytest.mark.parametrize(
+    "claim",
+    [
+        "The model approved release.",
+        "I authorize resume.",
+        "I transition the change.",
+        "I release the artifact.",
+        "I archive the change.",
+        "I merge the change.",
+    ],
+)
+def test_authority_classifier_rejects_positive_model_authority_claims(claim: str) -> None:
+    _, pack, launch = adapter_context()
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response[payload_key]["claims"][0]["summary"] = claim
+    with pytest.raises(ModelAdapterError, match="model-adapter.semantic"):
+        normalize_role_response(response, launch, pack)
+
+
+def test_evidence_validator_allows_negated_authority_claim_but_not_positive_claim() -> None:
+    _, pack, launch = adapter_context()
+    evidence = normalize_role_response(valid_role_response(launch), launch, pack)
+    evidence["claims"][0]["value"]["summary"] = "release is not approved"
+    assert validate_operation_evidence(evidence, launch, pack) == []
+    evidence["claims"][0]["value"]["summary"] = "The model approved release"
+    assert "evidence.forbidden-authority" in {
+        item["code"] for item in validate_operation_evidence(evidence, launch, pack)
+    }

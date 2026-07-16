@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import re
 from typing import Any
 
 from jsonschema import Draft202012Validator
 
-from process.weak_model_kit import _digest, _schema_errors, _without_identity
+from process.weak_model_kit import (
+    _digest,
+    _schema_errors,
+    _without_identity,
+    contains_forbidden_authority_claim,
+)
 
 
 class ModelAdapterError(ValueError):
@@ -83,7 +87,17 @@ def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
                             "required": ["command", "result", "evidence", "source_id"],
                             "properties": {
                                 "command": nonempty_string,
-                                "result": {"enum": ["passed", "failed", "not-run", "missing", "unsupported"]},
+                                "result": {
+                                    "enum": [
+                                        "passed",
+                                        "failed",
+                                        "not-run",
+                                        "missing",
+                                        "unsupported",
+                                        "conflict",
+                                        "source-reviewed",
+                                    ]
+                                },
                                 "evidence": nonempty_string,
                                 "source_id": source_id,
                             },
@@ -166,10 +180,15 @@ def is_structural_retry(code: str) -> bool:
     return code in STRUCTURAL_RETRY_CODES
 
 
-FORBIDDEN_AUTHORITY_LANGUAGE = re.compile(
-    r"(?i)\b(?:approv(?:e|ed|es|al)|authoriz(?:e|ed|es|ation)|transition(?:ed|s)?|"
-    r"merg(?:e|ed|es)|releas(?:e|ed|es)|archiv(?:e|ed|es)|waiver|resum(?:e|ed|es)|gate[- ]green)\b"
-)
+CHECK_RESULT_MAP = {
+    "passed": "passed",
+    "failed": "failed",
+    "missing": "failed",
+    "unsupported": "failed",
+    "conflict": "failed",
+    "not-run": "not-run",
+    "source-reviewed": "passed",
+}
 
 
 def normalize_role_response(
@@ -211,7 +230,7 @@ def normalize_role_response(
         }
         if not referenced_ids <= set(response["source_ids"]):
             raise ModelAdapterError("model-adapter.semantic")
-    if FORBIDDEN_AUTHORITY_LANGUAGE.search(json.dumps(response, ensure_ascii=False)):
+    if contains_forbidden_authority_claim(response):
         raise ModelAdapterError("model-adapter.semantic")
 
     manifest_by_id = {source["stable_id"]: source for source in launch["verified_source_manifest"]}
@@ -243,8 +262,18 @@ def normalize_role_response(
         checks.extend(
             {
                 "command": item["command"],
-                "result": item["result"] if item["result"] in {"passed", "failed", "not-run"} else "not-run",
-                "evidence": item["evidence"],
+                "result": CHECK_RESULT_MAP[item["result"]],
+                "evidence": "model-check:"
+                + json.dumps(
+                    {
+                        "result": item["result"],
+                        "source_id": item["source_id"],
+                        "evidence": item["evidence"],
+                    },
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=False,
+                ),
             }
             for item in payload["checks"]
         )

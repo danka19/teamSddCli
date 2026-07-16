@@ -44,9 +44,58 @@ MAX_SOURCES = 16
 MAX_SOURCE_BYTES = 65_536
 MAX_PACK_BYTES = 262_144
 
+_AUTHORITY_LANGUAGE = re.compile(
+    r"\b(?:decision|approv(?:e|ed|es|al)|authoriz(?:e|ed|es|ation)|waiv(?:e|ed|er)|"
+    r"transition(?:ed|s)?|merg(?:e|ed|es)|releas(?:e|ed|es)|archiv(?:e|ed|es)|"
+    r"resum(?:e|ed|es)|gate[- ]?green)\b",
+    re.IGNORECASE,
+)
+_LEGACY_AUTHORITY_TERMS = re.compile(
+    r"\b(decision|approv(?:e|ed|al)|authoriz(?:e|ed|ation)|waiv(?:e|ed|er)|"
+    r"transition|merge|release|archive|resume|gate[- ]?green)\b",
+    re.IGNORECASE,
+)
+_SAFE_AUTHORITY_CONTEXTS = (
+    re.compile(
+        r"\b(?:approval|authorization|decision)\s+(?:is|are|remains?)\s+"
+        r"(?:required|pending|absent|missing)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:decision|approval|authorization|transition|release|archive|merge|resume)\s+"
+        r"(?:is|are|was|were|remains?)\s+not\s+"
+        r"(?:approved|authorized|requested|performed|completed?)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:is|are|was|were|do|does|did|can|could|may|must|should|will|would|has|have|had)\s+"
+        r"not\s+(?:approv\w*|authoriz\w*|transition\w*|merg\w*|releas\w*|archiv\w*|resum\w*)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:no|without)\s+(?:\w+\s+){0,2}"
+        r"(?:decision|approval|authorization|transition|merge|release|archive|resume)\b",
+        re.IGNORECASE,
+    ),
+)
+
 
 class ContractError(ValueError):
     pass
+
+
+def contains_forbidden_authority_claim(value: Any) -> bool:
+    """Detect positive authority semantics while preserving explicit stops and negation."""
+    if isinstance(value, dict):
+        return any(contains_forbidden_authority_claim(item) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(contains_forbidden_authority_claim(item) for item in value)
+    if not isinstance(value, str):
+        return False
+    candidate = value
+    for safe_context in _SAFE_AUTHORITY_CONTEXTS:
+        candidate = safe_context.sub(" ", candidate)
+    return _AUTHORITY_LANGUAGE.search(candidate) is not None
 
 
 def _digest(value: Any) -> str:
@@ -343,8 +392,17 @@ def validate_operation_evidence(
         diagnostics.append({"code": "evidence.prohibited-action", "detail": "a prohibited action was attempted"})
     if evidence.get("human_stop_reached") is not True or evidence.get("human_review_status") != "pending":
         diagnostics.append({"code": "evidence.human-stop-missing", "detail": "human stop must remain pending"})
-    authority_terms = re.compile(r"\b(decision|approv(?:e|ed|al)|authoriz(?:e|ed|ation)|waiv(?:e|ed|er)|transition|merge|release|archive|resume|gate[- ]?green)\b", re.IGNORECASE)
-    if any(authority_terms.search(json.dumps(claim.get("value", {}), sort_keys=True)) for claim in evidence.get("claims", [])):
+    if launch.get("model_response_contract") is not None:
+        forbidden_authority = any(
+            contains_forbidden_authority_claim(claim.get("value", {}))
+            for claim in evidence.get("claims", [])
+        )
+    else:
+        forbidden_authority = any(
+            _LEGACY_AUTHORITY_TERMS.search(json.dumps(claim.get("value", {}), sort_keys=True))
+            for claim in evidence.get("claims", [])
+        )
+    if forbidden_authority:
         diagnostics.append({"code": "evidence.forbidden-authority", "detail": "claim value contains human-authority semantics"})
 
     verified_sources = {
