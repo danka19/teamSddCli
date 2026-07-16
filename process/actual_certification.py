@@ -30,6 +30,7 @@ from process.model_adapter import (
     split_reasoning_final,
 )
 from process.weak_model_kit import (
+    GLOBAL_ALLOWED_ARTIFACT_KINDS,
     GLOBAL_ALLOWED_REASON_CODES,
     build_read_pack,
     build_role_launch,
@@ -881,6 +882,13 @@ def validate_model_output(
     if semantic_validation and case.get("expected_decision") == "draft":
         role_output = compact.get("role_output")
         required_kind = case.get("required_artifact_kind", case.get("required_output_kind"))
+        payload_key = launch.get("model_response_contract", {}).get("role_payload_key")
+        role_payload = compact.get(payload_key) if isinstance(payload_key, str) else None
+        selected_kind = (
+            role_payload.get("artifact_kind")
+            if isinstance(role_payload, dict)
+            else None
+        )
         wrong_kind = (
             isinstance(role_output, dict) and role_output.get("kind") != required_kind
         ) or (
@@ -890,7 +898,11 @@ def validate_model_output(
         if wrong_kind or not output.get("artifacts_drafted") or not output.get("checks") or not output.get("claims"):
             diagnostics.append({
                 "code": "actual-model.role-output-mismatch",
-                "detail": str(role_output.get("kind") if isinstance(role_output, dict) else required_kind),
+                "detail": str(
+                    role_output.get("kind")
+                    if isinstance(role_output, dict)
+                    else selected_kind or required_kind
+                ),
             })
     elif semantic_validation:
         if not output.get("unresolved_inputs") or not output.get("human_decisions_required"):
@@ -1055,7 +1067,7 @@ def case_read_pack(
     }
     pack = build_read_pack(root, process_root, request)
     model_response_contract = None
-    if adapter_version == "2.0":
+    if adapter_version in {"2.0", "2.1"}:
         model_response_contract = {
             "case_id": case["id"],
             "operation": case["operation"],
@@ -1066,6 +1078,11 @@ def case_read_pack(
             ),
             "allowed_reason_codes": list(GLOBAL_ALLOWED_REASON_CODES),
         }
+        if adapter_version == "2.1":
+            model_response_contract.update(
+                contract_version="2.1",
+                allowed_artifact_kinds=list(GLOBAL_ALLOWED_ARTIFACT_KINDS),
+            )
     elif adapter_version != FROZEN_ADAPTER_VERSION:
         raise ActualCertificationError("actual-model.unsupported-adapter-version")
     launch = build_role_launch(

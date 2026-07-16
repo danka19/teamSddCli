@@ -40,9 +40,9 @@ def _verified_contract(launch: dict[str, Any]) -> dict[str, Any]:
     return contract
 
 
-def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
-    """Return one closed, non-leading Draft 2020-12 response schema."""
-    contract = _verified_contract(launch)
+def _build_role_response_schema_2_0(
+    launch: dict[str, Any], contract: dict[str, Any]
+) -> dict[str, Any]:
     payload_key = contract["role_payload_key"]
     source_ids = [source["stable_id"] for source in launch["verified_source_manifest"]]
     source_ids.append("case-facts")
@@ -141,6 +141,137 @@ def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
             payload_key: payload,
         },
     }
+
+
+def _build_role_response_schema_2_1(
+    launch: dict[str, Any], contract: dict[str, Any]
+) -> dict[str, Any]:
+    payload_key = contract["role_payload_key"]
+    source_ids = [source["stable_id"] for source in launch["verified_source_manifest"]]
+    source_ids.append("case-facts")
+    source_id = {"type": "string", "enum": source_ids}
+    nonempty_string = {"type": "string", "minLength": 1}
+    string_array = {"type": "array", "items": nonempty_string}
+    observations = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["summary", "source_id"],
+            "properties": {"summary": nonempty_string, "source_id": source_id},
+        },
+    }
+    claims = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["subject", "summary", "source_id"],
+            "properties": {
+                "subject": nonempty_string,
+                "summary": nonempty_string,
+                "source_id": source_id,
+            },
+        },
+    }
+    draft_payload_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["artifact_kind", "summary", "observations", "claims", "checks"],
+        "properties": {
+            "artifact_kind": {"enum": contract["allowed_artifact_kinds"]},
+            "summary": nonempty_string,
+            "observations": observations,
+            "claims": claims,
+            "checks": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["command", "result", "evidence", "source_id"],
+                    "properties": {
+                        "command": nonempty_string,
+                        "result": {
+                            "enum": [
+                                "source-reviewed",
+                                "not-run",
+                                "missing",
+                                "unsupported",
+                                "conflict",
+                            ]
+                        },
+                        "evidence": nonempty_string,
+                        "source_id": source_id,
+                    },
+                },
+            },
+        },
+        "anyOf": [
+            {"properties": {"observations": {"minItems": 1}}},
+            {"properties": {"claims": {"minItems": 1}}},
+        ],
+    }
+    common_required = [
+        "case_id",
+        "decision",
+        "reason_codes",
+        "source_ids",
+        "unresolved_inputs",
+        "human_decisions_required",
+        payload_key,
+    ]
+    common_properties = {
+        "case_id": {"const": contract["case_id"]},
+        "reason_codes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": True,
+            "items": {"enum": contract["allowed_reason_codes"]},
+        },
+        "source_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": True,
+            "items": source_id,
+        },
+    }
+    draft_branch = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": common_required,
+        "properties": {
+            **common_properties,
+            "decision": {"const": "draft"},
+            "unresolved_inputs": string_array,
+            "human_decisions_required": string_array,
+            payload_key: draft_payload_schema,
+        },
+    }
+    block_branch = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": common_required,
+        "properties": {
+            **common_properties,
+            "decision": {"const": "block"},
+            "unresolved_inputs": {**string_array, "minItems": 1},
+            "human_decisions_required": {**string_array, "minItems": 1},
+            payload_key: {"type": "null"},
+        },
+    }
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "oneOf": [draft_branch, block_branch],
+    }
+
+
+def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
+    """Return one closed, non-leading Draft 2020-12 response schema."""
+    contract = _verified_contract(launch)
+    if contract.get("contract_version") == "2.1":
+        return _build_role_response_schema_2_1(launch, contract)
+    return _build_role_response_schema_2_0(launch, contract)
 
 
 def split_reasoning_final(response: str, thinking: str) -> tuple[str, str]:
@@ -289,7 +420,10 @@ def normalize_role_response(
         ]
         artifacts.append(
             {
-                "path": f"scratch/model-adapter/{contract['case_id']}/{contract['required_artifact_kind']}.json",
+                "path": (
+                    f"scratch/model-adapter/{contract['case_id']}/"
+                    f"{payload['artifact_kind'] if contract.get('contract_version') == '2.1' else contract['required_artifact_kind']}.json"
+                ),
                 "canonical": False,
                 "canonical_references": canonical_references,
             }

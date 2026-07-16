@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from process.model_adapter import (
     ModelAdapterError,
@@ -42,9 +43,16 @@ FORBIDDEN_VALIDATOR_FIELD_NAMES = {
 }
 VALIDATOR_ONLY_SENTINELS = [f"validator-only-{name.replace('_', '-')}" for name in FORBIDDEN_VALIDATOR_FIELD_NAMES]
 REQUIRED_ARTIFACT_KIND_SENTINEL = "evidence-boundary-note"
+GLOBAL_ALLOWED_ARTIFACT_KINDS = (
+    "evidence-boundary-note",
+    "implementation-prep-note",
+    "qa-review-note",
+    "requirements-note",
+    "tech-lead-review-note",
+)
 
 
-def adapter_context(role: str = "analyst") -> tuple[dict, dict, dict]:
+def adapter_context(role: str = "analyst", contract_version: str = "2.0") -> tuple[dict, dict, dict]:
     payload_key = ROLE_PAYLOAD_KEYS[role]
     case = {
         "id": f"{role.replace('_', '-')}-case",
@@ -75,19 +83,25 @@ def adapter_context(role: str = "analyst") -> tuple[dict, dict, dict]:
         "unresolved_inputs": [],
     }
     pack = build_read_pack(ROOT, PROCESS, request)
+    model_response_contract = {
+        "case_id": case["id"],
+        "operation": case["operation"],
+        "role_payload_key": payload_key,
+        "required_artifact_kind": REQUIRED_ARTIFACT_KIND_SENTINEL,
+        "allowed_reason_codes": list(GLOBAL_ALLOWED_REASON_CODES),
+    }
+    if contract_version == "2.1":
+        model_response_contract.update(
+            contract_version="2.1",
+            allowed_artifact_kinds=list(GLOBAL_ALLOWED_ARTIFACT_KINDS),
+        )
     launch = build_role_launch(
         ROOT,
         PROCESS,
         pack,
         "scratch/read-pack.json",
         "evidence/model-adapter.yaml",
-        model_response_contract={
-            "case_id": case["id"],
-            "operation": case["operation"],
-            "role_payload_key": payload_key,
-            "required_artifact_kind": REQUIRED_ARTIFACT_KIND_SENTINEL,
-            "allowed_reason_codes": list(GLOBAL_ALLOWED_REASON_CODES),
-        },
+        model_response_contract=model_response_contract,
     )
     return case, pack, launch
 
@@ -136,7 +150,7 @@ def valid_role_response(launch: dict, payload_key: str | None = None) -> dict:
     payload_key = payload_key or launch["model_response_contract"]["role_payload_key"]
     source_ids = [source["stable_id"] for source in launch["verified_source_manifest"]]
     source_id = source_ids[0]
-    return {
+    response = {
         "case_id": launch["model_response_contract"]["case_id"],
         "decision": "draft",
         "reason_codes": ["bounded-draft"],
@@ -150,6 +164,86 @@ def valid_role_response(launch: dict, payload_key: str | None = None) -> dict:
             "checks": [{"command": "deterministic-check", "result": "not-run", "evidence": "not-run:adapter", "source_id": source_id}],
         },
     }
+    if launch["model_response_contract"].get("contract_version") == "2.1":
+        response[payload_key]["artifact_kind"] = "requirements-note"
+    return response
+
+
+def test_adapter_2_1_schema_discriminates_draft_and_block() -> None:
+    _, _, launch = adapter_context(contract_version="2.1")
+    schema = build_role_response_schema(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    draft = valid_role_response(launch)
+    blocked = {
+        **draft,
+        "decision": "block",
+        "reason_codes": ["missing-context"],
+        "unresolved_inputs": ["environment_evidence"],
+        "human_decisions_required": ["provide-and-review-evidence"],
+        payload_key: None,
+    }
+
+    assert list(Draft202012Validator(schema).iter_errors(draft)) == []
+    assert list(Draft202012Validator(schema).iter_errors(blocked)) == []
+    assert list(
+        Draft202012Validator(schema).iter_errors(
+            {**blocked, payload_key: draft[payload_key]}
+        )
+    )
+    assert list(
+        Draft202012Validator(schema).iter_errors({**draft, payload_key: None})
+    )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "block-empty-unresolved",
+        "block-empty-actions",
+        "draft-empty-checks",
+        "draft-empty-evidence",
+        "draft-passed-check",
+        "draft-failed-check",
+    ],
+)
+def test_adapter_2_1_schema_enforces_branch_obligations(mutation: str) -> None:
+    _, _, launch = adapter_context(contract_version="2.1")
+    schema = build_role_response_schema(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response = valid_role_response(launch)
+    if mutation.startswith("block-"):
+        response.update(
+            decision="block",
+            reason_codes=["missing-context"],
+            unresolved_inputs=["environment_evidence"],
+            human_decisions_required=["provide-and-review-evidence"],
+        )
+        response[payload_key] = None
+    if mutation == "block-empty-unresolved":
+        response["unresolved_inputs"] = []
+    elif mutation == "block-empty-actions":
+        response["human_decisions_required"] = []
+    elif mutation == "draft-empty-checks":
+        response[payload_key]["checks"] = []
+    elif mutation == "draft-empty-evidence":
+        response[payload_key]["observations"] = []
+        response[payload_key]["claims"] = []
+    elif mutation == "draft-passed-check":
+        response[payload_key]["checks"][0]["result"] = "passed"
+    elif mutation == "draft-failed-check":
+        response[payload_key]["checks"][0]["result"] = "failed"
+
+    assert list(Draft202012Validator(schema).iter_errors(response))
+
+
+def test_adapter_2_0_schema_preserves_historical_check_vocabulary() -> None:
+    _, _, launch = adapter_context(contract_version="2.0")
+    schema = build_role_response_schema(launch)
+    response = valid_role_response(launch)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    for result in ("passed", "failed"):
+        response[payload_key]["checks"][0]["result"] = result
+        assert list(Draft202012Validator(schema).iter_errors(response)) == []
 
 
 def test_parser_rejects_wrapper_unknown_source_and_wrong_role_payload() -> None:

@@ -1203,6 +1203,38 @@ def test_case_semantics_reject_missing_required_source_reason_and_output_kind() 
     assert "actual-model.role-output-mismatch" in kind_codes
 
 
+def test_adapter_2_1_wrong_globally_valid_artifact_kind_is_semantic_without_repair() -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    case = next(item for item in catalog["cases"] if item["id"] == "preflight-validator")
+    pack, launch = case_read_pack(ROOT, PROCESS, case, adapter_version="2.1")
+    response = _role_response(case)
+    payload_key = launch["model_response_contract"]["role_payload_key"]
+    response[payload_key]["artifact_kind"] = "qa-review-note"
+
+    output = normalize_role_response(response, launch, pack)
+
+    assert output["artifacts_drafted"][0]["path"].endswith("/qa-review-note.json")
+    assert validate_model_output(output, case, launch, pack, PROCESS, response) == [
+        {"code": "actual-model.role-output-mismatch", "detail": "qa-review-note"}
+    ]
+
+
+def test_adapter_2_0_schema_prompt_and_launch_identity_remain_frozen() -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    case = next(item for item in catalog["cases"] if item["id"] == "preflight-validator")
+    pack, launch = case_read_pack(ROOT, PROCESS, case, adapter_version="2.0")
+    schema = build_role_response_schema(launch)
+    prompt = build_model_prompt(case, launch, pack)
+
+    assert launch["identity"] == "sha256:32e2539261980639d51dfd54917e95f118dc2ce5cbd3ef3ae4e8a1270d369a30"
+    assert hashlib.sha256(
+        json.dumps(schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest() == "3ce1d345fc8633c10a99c12cb25768803911427c35aac2ca6db5b11951adc3e2"
+    assert hashlib.sha256(prompt.encode("utf-8")).hexdigest() == (
+        "74d2c5579ed584ef9300276eb9b669b7aecee85f5bf72f3e8a5d2db89c1ae652"
+    )
+
+
 def test_model_prompt_is_non_leading_and_contains_case_specific_source_content() -> None:
     case, pack, launch = _context()
     prompt = build_model_prompt(case, launch, pack)

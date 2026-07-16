@@ -32,6 +32,13 @@ GLOBAL_ALLOWED_REASON_CODES = (
     "unsafe-resume",
     "unsupported-evidence",
 )
+GLOBAL_ALLOWED_ARTIFACT_KINDS = (
+    "evidence-boundary-note",
+    "implementation-prep-note",
+    "qa-review-note",
+    "requirements-note",
+    "tech-lead-review-note",
+)
 CLASSES = {"minor", "major", "hotfix"}
 ROLE_FILES = {
     "analyst": "roles/analyst.md",
@@ -337,18 +344,33 @@ def build_role_launch(
         "next_action": "run deterministic checks and obtain the named human review",
     }
     if model_response_contract is not None:
-        if set(model_response_contract) != {
+        legacy_fields = {
             "case_id",
             "operation",
             "role_payload_key",
             "required_artifact_kind",
             "allowed_reason_codes",
-        }:
+        }
+        adapter_2_1_fields = {
+            *legacy_fields,
+            "contract_version",
+            "allowed_artifact_kinds",
+        }
+        contract_fields = frozenset(model_response_contract)
+        if contract_fields not in {frozenset(legacy_fields), frozenset(adapter_2_1_fields)}:
             raise ContractError("model response contract fields are invalid")
+        if contract_fields == adapter_2_1_fields and model_response_contract.get("contract_version") != "2.1":
+            raise ContractError("model response contract version is invalid")
         if model_response_contract.get("role_payload_key") != ROLE_PAYLOAD_KEYS.get(role):
             raise ContractError("model response contract does not match launch role")
         if model_response_contract.get("allowed_reason_codes") != list(GLOBAL_ALLOWED_REASON_CODES):
             raise ContractError("model response contract reason-code vocabulary is invalid")
+        if (
+            contract_fields == adapter_2_1_fields
+            and model_response_contract.get("allowed_artifact_kinds")
+            != list(GLOBAL_ALLOWED_ARTIFACT_KINDS)
+        ):
+            raise ContractError("model response contract artifact-kind vocabulary is invalid")
         launch["model_response_contract"] = copy.deepcopy(model_response_contract)
     launch["identity"] = _digest(launch)
     if _schema_errors(process_root, "task-launch.schema.json", launch):

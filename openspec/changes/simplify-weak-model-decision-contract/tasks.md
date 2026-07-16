@@ -1,7 +1,7 @@
 ## 1. Contract And Compatibility
 
-- [ ] 1.1 Add TDD coverage for version-discriminated `2.0`/`2.1` schemas, decision-discriminated `draft`/`block`, model-owned global artifact kind, restricted check results, universal draft-vs-approval guidance, and validator-answer leakage across schema, prompt, initial request, and retry request.
-- [ ] 1.2 Implement adapter `2.1` schema generation and mechanical normalization without substituting expected artifact kind, while preserving authority checks and exact read-only adapter `1.0`/`2.0` schema/prompt/hash/diagnostic compatibility.
+- [x] 1.1 Add TDD coverage for version-discriminated `2.0`/`2.1` schemas, decision-discriminated `draft`/`block`, model-owned global artifact kind, restricted check results, universal draft-vs-approval guidance, and validator-answer leakage across schema, prompt, initial request, and retry request.
+- [x] 1.2 Implement adapter `2.1` schema generation and mechanical normalization without substituting expected artifact kind, while preserving authority checks and exact read-only adapter `1.0`/`2.0` schema/prompt/hash/diagnostic compatibility.
 
 ## 2. Runtime And Evidence
 
