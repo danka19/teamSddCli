@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.10 are closed. Work item 2.11 is pending acceptance after complete AI-disabled, Qwen-family, and DeepSeek-family execution with explicit fallbacks.
+Status: work items 2.1-2.10 are closed. Fallback-only acceptance was superseded; work item 2.11 remains `in_progress` after adapter `2.0` remediation produced Qwen 0/5 and DeepSeek 0/5 semantic preflight failures with no matrices. Work item 2.12 remains blocked by 2.11.
 
 ## Contract Sources
 
