@@ -625,7 +625,10 @@ Status: `in_progress`. The AI-disabled baseline and both frozen non-leading mode
   `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
 
 Transfer progress is 22/36. Task 4.9 remains unchecked, work item 2.11 remains
-open, all active changes remain open, 2.12 is planned and blocked, and no model
-certification, release acceptance, archive, PR, or pilot is claimed. The
-adapter `2.1` change has final ordered reviews still open; after those reviews,
-the residual incompatibility requires a new human disposition.
+open, the bounded adapter `2.1` remediation change is blocked pending a new
+human disposition and has no accepted-spec promotion, 2.12 is planned and
+blocked, and no model
+certification, release acceptance, archive, PR, or pilot is claimed. Final
+spec/status, architecture, and raw-evidence reviews approved the accuracy and
+safety of the recorded failure path. The residual incompatibility requires a
+new human disposition.

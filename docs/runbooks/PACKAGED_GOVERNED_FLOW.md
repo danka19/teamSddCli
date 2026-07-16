@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work items 2.8-2.10 are closed after review and TDD hardening. Fallback-only acceptance was superseded; work item 2.11 remains `in_progress` after adapter `2.0` remediation produced Qwen 0/5 and DeepSeek 0/5 semantic preflight failures with no matrices. Work item 2.12 remains blocked by 2.11.
+Status: work items 2.8-2.10 are closed after review and TDD hardening. Fallback-only acceptance was superseded; work item 2.11 remains `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. The fresh AI-disabled walkthrough passed 11/11. Work item 2.12 remains blocked by 2.11.
 
 ## Boundary
 

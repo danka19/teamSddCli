@@ -182,13 +182,14 @@ runtime is equivalent.
 - Transfer progress remains 22/36.
 - Work item 2.11 remains `in_progress`.
 - Work item 2.12 remains `planned` and blocked by 2.11.
-- The adapter `2.1` OpenSpec change remains `in_progress`; documentation and
-  outcome reconciliation tasks are complete, while final ordered reviews remain
-  open.
+- The bounded adapter `2.1` OpenSpec change is `blocked`; all 15 remediation,
+  execution, reconciliation, and final-review tasks are complete, but the
+  unsuccessful certification gate requires a new human disposition and prevents
+  acceptance, accepted-spec promotion, or archive.
 - No model certification, release-candidate acceptance, OpenSpec archive, PR,
   cross-platform claim, corporate adaptation, or pilot is claimed.
 
-The next gate is the final spec/status, architecture/safety, and
-verification/raw-evidence review. After that review, the residual model
-incompatibility still requires a new human disposition before further adapter,
-model, or runtime remediation.
+Final spec/status, architecture/safety, and verification/raw-evidence reviews
+approved the accuracy, safety boundaries, and reproducibility of this failure
+record. The residual model incompatibility now requires a new human disposition
+before further adapter, model, or runtime remediation.

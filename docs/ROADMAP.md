@@ -179,7 +179,7 @@ Likely scope:
 |---|---|---|---|
 | `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
 | `define-transfer-ready-process-package` | P2 | P3 | in_progress |
-| `simplify-weak-model-decision-contract` | P2 | P3 | in_progress |
+| `simplify-weak-model-decision-contract` | P2 | P3 | blocked |
 
 ## Phase Planning Rule
 

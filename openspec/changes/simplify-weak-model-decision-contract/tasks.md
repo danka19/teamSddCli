@@ -25,5 +25,5 @@
 
 - [x] 5.1 Create a dated adapter `2.1` outcome audit with the ten-error baseline classification, exact new results, retries, diagnostics, identities, checksums, limitations, and comparison without process-effectiveness claims.
 - [x] 5.2 Update Phase 2, roadmap, current audit, evidence index, file structure, and operator runbooks to the actual success or failure path.
-- [ ] 5.3 Complete final spec/status, architecture, and verification reviews with fresh raw/normalized cross-checks.
+- [x] 5.3 Complete final spec/status, architecture, and verification reviews with fresh raw/normalized cross-checks.
 - [x] 5.4 Mark transfer task 4.9 complete and move work item 2.11 to `pending_acceptance` only if both families pass five-of-five and fifteen-of-fifteen; otherwise keep 4.9 open, 2.11 `in_progress`, and 2.12 blocked.
