@@ -95,8 +95,10 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 
 #### Scenario: Failed preflight evidence is retained without a matrix
 - **WHEN** all five preflight cases completed and deterministic revalidation proves an honest semantic failure
-- **THEN** normalization retains the exact append-only attempts, diagnostics, and immutable adapter 1.0 baseline reference, records `matrix_not_run: preflight-gate-failed`, and does not require or accept matrix evidence
-- **AND** a passed preflight still requires a complete passing fifteen-case matrix, while malformed, mismatched, private, forged, or otherwise unverifiable preflight evidence fails normalization
+- **THEN** normalization exclusively creates a new document with top-level `status: failed`, retains the exact append-only attempts, diagnostics, and same-family immutable adapter 1.0 baseline reference, records `matrix_not_run: preflight-gate-failed`, and does not require or accept matrix evidence
+- **AND** a passed preflight still requires a complete passing fifteen-case matrix
+- **AND** malformed, mismatched, private, forged, cross-family, or otherwise unverifiable preflight or baseline evidence exits 3 without creating output or modifying baseline or raw evidence
+- **AND** an existing output is never overwritten
 
 #### Scenario: Certification covers first pilot roles
 - **WHEN** release-candidate weak-model certification is complete

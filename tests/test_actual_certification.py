@@ -191,6 +191,32 @@ def _rewrite_raw(artifact: Path, row: dict, raw: object) -> None:
     row["attempts"][-1]["raw_sha256"] = checksum
 
 
+def _semantic_failed_preflight(tmp_path: Path) -> tuple[dict, Path]:
+    preflight, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    failed_row = preflight["cases"][0]
+    raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+    response = raw["parsed_model_decision"]
+    response["decision"] = "block"
+    response["requirements_note"] = None
+    response["unresolved_inputs"] = ["The completed preflight case cannot be accepted."]
+    raw["ollama"]["response"] = json.dumps(response)
+    catalog_case = next(case for case in _yaml(QWEN_MATRIX)["cases"] if case["id"] == failed_row["case_id"])
+    _, _, parsed, normalized, failed_diagnostics, _ = actual_certification.evaluate_remediation_model_output(
+        ROOT, PROCESS, catalog_case, raw
+    )
+    assert failed_diagnostics
+    raw["parsed_model_decision"] = parsed
+    raw["normalized_operation_evidence"] = normalized
+    raw["validation"] = {"result": "failed", "diagnostics": failed_diagnostics}
+    failed_row["deterministic_validation_result"] = "failed"
+    failed_row["diagnostics"] = failed_diagnostics
+    failed_row["attempts"][0]["diagnostics"] = failed_diagnostics
+    _rewrite_raw(artifact, failed_row, raw)
+    preflight["status"] = "partial"
+    return preflight, artifact
+
+
 def test_preflight_gate_requires_exact_five_same_identity_passes(tmp_path: Path) -> None:
     summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
     assert validate_phase_gate(summary, artifact, "preflight", "qwen-class", "2.0", 5) == []
@@ -684,6 +710,53 @@ def test_remediation_normalizer_rejects_forged_failed_preflight(tmp_path: Path) 
         )
 
 
+@pytest.mark.parametrize(
+    ("preflight_factory", "mutation", "diagnostic"),
+    [
+        (
+            lambda path: _phase_summary(path, phase="preflight", count=5),
+            lambda value: value.update(status="partial"),
+            "actual-model.failed-preflight-no-failed-case",
+        ),
+        (
+            _semantic_failed_preflight,
+            lambda value: value.update(status="passed"),
+            "actual-model.failed-preflight-status-mismatch",
+        ),
+        (
+            _semantic_failed_preflight,
+            lambda value: value["cases"].pop(),
+            "actual-model.gate-case-count",
+        ),
+    ],
+)
+def test_remediation_normalizer_rejects_ambiguous_or_incomplete_failed_preflight_without_output(
+    tmp_path: Path, capsys, preflight_factory, mutation, diagnostic: str
+) -> None:
+    preflight, artifact = preflight_factory(tmp_path)
+    mutation(preflight)
+    preflight_path = artifact / "preflight-result.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline_path.write_text(yaml.safe_dump({
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }), encoding="utf-8")
+    output = tmp_path / "normalized.yaml"
+
+    assert normalize_actual_certification.main([
+        "--baseline-evidence", str(baseline_path),
+        "--remediation-artifact-root", str(artifact),
+        "--preflight-result", str(preflight_path),
+        "--output", str(output),
+        "--model-family", "qwen-class",
+    ]) == 3
+
+    assert json.loads(capsys.readouterr().out)["diagnostic"] == diagnostic
+    assert not output.exists()
+
+
 def test_remediation_normalizer_writes_no_output_for_malformed_preflight(tmp_path: Path, capsys) -> None:
     artifact = tmp_path / "remediation-artifact"
     artifact.mkdir()
@@ -740,6 +813,35 @@ def test_remediation_validation_rejects_baseline_or_lineage_tampering(tmp_path: 
     )
     mutation(normalized)
     assert code in validate_normalized_evidence(normalized, artifact, repository_root=tmp_path)
+
+
+@pytest.mark.parametrize("section", ["adapter", "model"])
+def test_remediation_validation_rejects_cross_family_baseline_substitution(
+    tmp_path: Path, section: str
+) -> None:
+    preflight, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    matrix, _ = _phase_summary(tmp_path, phase="matrix", count=15)
+    baseline_path = tmp_path / "baseline.yaml"
+    baseline = {
+        "adapter": {"family": "qwen-class", "version": "1.0"},
+        "model": {"family": "qwen-class"},
+        "raw_artifact": {"logical_id": "raw-baseline", "stored_in_git": False},
+    }
+    baseline_path.write_text(yaml.safe_dump(baseline), encoding="utf-8")
+    preflight_path = artifact / "preflight.json"
+    matrix_path = artifact / "matrix.json"
+    preflight_path.write_text(json.dumps(preflight), encoding="utf-8")
+    matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+    normalized = normalize_actual_certification.normalize_remediation_evidence(
+        baseline_path, artifact, preflight_path, matrix_path, "qwen-class", repository_root=tmp_path
+    )
+    baseline[section]["family"] = "deepseek-class"
+    baseline_path.write_text(yaml.safe_dump(baseline), encoding="utf-8")
+    normalized["baseline_reference"]["sha256"] = hashlib.sha256(baseline_path.read_bytes()).hexdigest()
+
+    assert "actual-model.baseline-family-mismatch" in validate_normalized_evidence(
+        normalized, artifact, repository_root=tmp_path
+    )
 
 
 def test_ai_disabled_catalog_covers_every_required_walkthrough_with_exact_nodes() -> None:

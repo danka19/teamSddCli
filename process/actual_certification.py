@@ -455,6 +455,52 @@ def validate_phase_gate(
     return diagnostics
 
 
+def classify_preflight_gate(
+    summary: dict[str, Any], artifact_root: Path, model_family: str, adapter_version: str
+) -> tuple[str | None, list[str]]:
+    """Classify a complete preflight as passed, honestly failed, or unverifiable."""
+    gate_diagnostics = validate_phase_gate(
+        summary, artifact_root, "preflight", model_family, adapter_version, 5
+    )
+    if not gate_diagnostics:
+        return "passed", []
+    diagnostics = [
+        code for code in gate_diagnostics if code != "actual-model.gate-case-failed"
+    ]
+    if summary.get("status") != "partial":
+        _append_once(diagnostics, "actual-model.failed-preflight-status-mismatch")
+    cases = summary.get("cases")
+    failed_rows = []
+    if isinstance(cases, list):
+        for row in cases:
+            if not isinstance(row, dict):
+                continue
+            result = row.get("deterministic_validation_result")
+            row_diagnostics = row.get("diagnostics")
+            attempts = row.get("attempts")
+            final_diagnostics = (
+                attempts[-1].get("diagnostics")
+                if isinstance(attempts, list) and attempts and isinstance(attempts[-1], dict)
+                else None
+            )
+            if result == "failed":
+                failed_rows.append(row)
+                if not isinstance(row_diagnostics, list) or not row_diagnostics:
+                    _append_once(diagnostics, "actual-model.failed-preflight-row-mismatch")
+            elif result == "passed":
+                if row_diagnostics != []:
+                    _append_once(diagnostics, "actual-model.failed-preflight-row-mismatch")
+            else:
+                _append_once(diagnostics, "actual-model.failed-preflight-row-mismatch")
+            if row_diagnostics != final_diagnostics:
+                _append_once(diagnostics, "actual-model.failed-preflight-row-mismatch")
+    if not failed_rows:
+        _append_once(diagnostics, "actual-model.failed-preflight-no-failed-case")
+    if diagnostics:
+        return None, diagnostics
+    return "failed", []
+
+
 def validate_ai_disabled_catalog(root: Path, catalog: dict[str, Any]) -> list[str]:
     diagnostics: list[str] = []
     cases = catalog.get("cases")
@@ -1059,6 +1105,8 @@ def _validate_remediation_evidence(
     evidence: dict[str, Any], artifact_root: Path, repository_root: Path
 ) -> list[str]:
     diagnostics: list[str] = []
+    remediation_adapter = evidence.get("adapter", {})
+    remediation_family = remediation_adapter.get("family") if isinstance(remediation_adapter, dict) else None
     if _contains_private_evidence(evidence):
         _append_once(diagnostics, "actual-model.normalized-privacy")
     baseline_reference = evidence.get("baseline_reference")
@@ -1090,6 +1138,14 @@ def _validate_remediation_evidence(
                 or baseline.get("raw_artifact", {}).get("logical_id") != baseline_reference.get("raw_logical_artifact_id")
             ):
                 _append_once(diagnostics, "actual-model.baseline-reference-invalid")
+            if (
+                isinstance(baseline, dict)
+                and (
+                    baseline.get("adapter", {}).get("family") != remediation_family
+                    or baseline.get("model", {}).get("family") != remediation_family
+                )
+            ):
+                _append_once(diagnostics, "actual-model.baseline-family-mismatch")
     adapter = evidence.get("adapter", {})
     model = evidence.get("model", {})
     family = adapter.get("family") if isinstance(adapter, dict) else None
@@ -1101,7 +1157,6 @@ def _validate_remediation_evidence(
     ):
         _append_once(diagnostics, "actual-model.remediation-identity-mismatch")
     matrix_not_run = evidence.get("matrix_not_run")
-    preflight_section = evidence.get("preflight", {})
     failed_preflight = (
         matrix_not_run == "preflight-gate-failed"
         and evidence.get("status") == "failed"
@@ -1131,11 +1186,14 @@ def _validate_remediation_evidence(
             "status": section.get("status"),
             "cases": section.get("cases"),
         }
-        phase_diagnostics = validate_phase_gate(summary, artifact_root, phase, str(family), "2.0", count)
         if phase == "preflight" and failed_preflight:
-            phase_diagnostics = [
-                code for code in phase_diagnostics if code != "actual-model.gate-case-failed"
-            ]
+            classification, phase_diagnostics = classify_preflight_gate(
+                summary, artifact_root, str(family), "2.0"
+            )
+            if classification != "failed":
+                _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
+        else:
+            phase_diagnostics = validate_phase_gate(summary, artifact_root, phase, str(family), "2.0", count)
         for code in phase_diagnostics:
             _append_once(diagnostics, code)
         for row in section.get("cases", []):
@@ -1148,23 +1206,6 @@ def _validate_remediation_evidence(
                 if key in all_references:
                     _append_once(diagnostics, "actual-model.gate-duplicate-raw-reference")
                 all_references.add(key)
-    if failed_preflight:
-        preflight_summary = {
-            "schema_version": "1.2",
-            "evidence_kind": "actual-model-preflight",
-            "actual_model_run": True,
-            "process_package_version": evidence.get("process_package_version"),
-            "model": model,
-            "adapter": {"family": family, "version": adapter.get("version")},
-            "source_catalog": evidence.get("source_catalog"),
-            "raw_artifact": evidence.get("raw_artifact"),
-            "status": preflight_section.get("status") if isinstance(preflight_section, dict) else None,
-            "cases": preflight_section.get("cases") if isinstance(preflight_section, dict) else None,
-        }
-        if validate_phase_gate(preflight_summary, artifact_root, "preflight", str(family), "2.0", 5) != [
-            "actual-model.gate-case-failed"
-        ]:
-            _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
     if evidence.get("raw_artifact", {}).get("logical_id") != artifact_root.name:
         _append_once(diagnostics, "actual-model.remediation-artifact-mismatch")
     return diagnostics

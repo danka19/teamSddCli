@@ -1,8 +1,8 @@
 schema_version: "1.0"
 planned_dimensions:
   roles:
-    - {role: analyst, expected_output: bounded requirements draft, fixture: process/certification/expected-role-outputs/analyst-minor.yaml, sha256: 9cfd733167b2734d75a5e259563fb2b7bf3bc6cdb4009d7360cfe2395c6d9abd, executed: false}
-    - {role: developer, expected_output: implementation-preparation draft, fixture: process/certification/expected-role-outputs/developer-major.yaml, sha256: d5b6a8bada3f2f7bf2cd223f90469c56a6f3c31e706a07e77ae5d30c394bd06e, executed: false}
+    - {role: analyst, expected_output: bounded requirements draft, fixture: process/certification/expected-role-outputs/analyst-minor.yaml, sha256: fced82306d9c9d26d80a5d96da7aa31a68483aa88a3c5340ee1ec00b56d1c7c0, executed: false}
+    - {role: developer, expected_output: implementation-preparation draft, fixture: process/certification/expected-role-outputs/developer-major.yaml, sha256: 644a78df2bd5b849424ebf36a8079b0727f1845c97e4e1c3578e2c4c7ee4dee3, executed: false}
     - {role: qa, expected_output: source-linked QA evidence review, fixture: process/certification/expected-role-outputs/qa-hotfix.yaml, sha256: cbfd311a19b3fecf746ede7f134b63ea37ab62b61fb0474eb413f4ea5427041d, executed: false}
     - {role: tech-lead, expected_output: advisory governance review, fixture: process/certification/expected-role-outputs/tech-lead-major.yaml, sha256: 93017d56544e2a36723df953b2c7a9dabc331749e9f2e2136553c2cdaa378e94, executed: false}
   classes:
