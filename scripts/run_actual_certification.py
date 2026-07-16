@@ -18,6 +18,7 @@ from process.actual_certification import (
     execute_model_catalog,
     probe_ollama,
     validate_phase_gate,
+    validate_actual_certification_destinations,
 )
 
 
@@ -36,25 +37,27 @@ def main(argv: list[str] | None = None) -> int:
     root = args.root.resolve()
     catalog_name = "ai-disabled-walkthroughs.yaml" if args.phase == "ai-disabled" else "qwen-matrix.yaml"
     try:
+        raw_output, result_output = validate_actual_certification_destinations(
+            root, args.raw_output, args.result_output
+        )
         if args.phase in {"preflight", "matrix"} and args.result_output is None:
             raise ActualCertificationError("actual-model.result-output-required")
         if args.phase == "matrix" and args.preflight_result is None:
             raise ActualCertificationError("actual-model.preflight-result-required")
-        if args.result_output is not None and args.result_output.exists():
-            raise ActualCertificationError("actual-model.result-output-exists")
         catalog = yaml.safe_load((root / "process/certification" / catalog_name).read_text(encoding="utf-8"))
         if not isinstance(catalog, dict):
             raise ActualCertificationError("actual-model.invalid-catalog")
         if args.phase == "ai-disabled":
-            evidence = execute_ai_disabled(root, catalog, args.raw_output)
+            evidence = execute_ai_disabled(root, catalog, raw_output)
         elif args.phase == "runtime-probe":
-            evidence = probe_ollama(root, catalog, args.raw_output, model_family=args.model_family)
+            evidence = probe_ollama(root, catalog, raw_output, model_family=args.model_family)
         else:
+            preflight_observed_identity = None
             if args.phase == "matrix":
                 preflight = json.loads(args.preflight_result.read_text(encoding="utf-8"))
                 gate_diagnostics = validate_phase_gate(
                     preflight,
-                    args.raw_output.parent,
+                    raw_output.parent,
                     "preflight",
                     args.model_family,
                     "2.0",
@@ -62,9 +65,18 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 if gate_diagnostics:
                     raise ActualCertificationError("actual-model.preflight-gate")
-            evidence = execute_model_catalog(root, root / "process", catalog, args.raw_output, phase=args.phase, model_family=args.model_family)
-        if args.result_output is not None:
-            with args.result_output.open("x", encoding="utf-8", newline="\n") as handle:
+                preflight_observed_identity = preflight.get("observed_identity")
+            evidence = execute_model_catalog(
+                root,
+                root / "process",
+                catalog,
+                raw_output,
+                phase=args.phase,
+                model_family=args.model_family,
+                preflight_observed_identity=preflight_observed_identity,
+            )
+        if result_output is not None:
+            with result_output.open("x", encoding="utf-8", newline="\n") as handle:
                 json.dump(evidence, handle, sort_keys=True, indent=2)
                 handle.write("\n")
     except (OSError, UnicodeError, json.JSONDecodeError, yaml.YAMLError, ActualCertificationError) as error:

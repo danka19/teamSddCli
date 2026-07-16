@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -71,6 +72,136 @@ ROLE_ARTIFACT_KINDS = {
 }
 STRUCTURAL_RETRY_SUFFIX = "\nReturn only one JSON object matching the unchanged supplied schema."
 GENERIC_FALLBACK_VALUES = {"human", "human owner", "named human", "named human decision", "mandatory human", "manual decision"}
+FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+
+
+def _is_relative_to(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+    except ValueError:
+        return False
+    return True
+
+
+def _has_reparse_component(path: Path) -> bool:
+    current = path
+    while True:
+        if current.exists() or current.is_symlink():
+            try:
+                stat_result = os.lstat(current)
+            except OSError as error:
+                raise ActualCertificationError("actual-model.destination-unverifiable") from error
+            if current.is_symlink() or (
+                getattr(stat_result, "st_file_attributes", 0)
+                & FILE_ATTRIBUTE_REPARSE_POINT
+            ):
+                return True
+        if current.parent == current:
+            return False
+        current = current.parent
+
+
+def validate_actual_certification_destinations(
+    repository_root: Path,
+    raw_output: Path,
+    result_output: Path | None,
+) -> tuple[Path, Path | None]:
+    """Resolve and validate fail-closed external certification destinations."""
+    root = repository_root.resolve(strict=True)
+    candidates = [raw_output, *([result_output] if result_output is not None else [])]
+    resolved: list[Path] = []
+    for candidate in candidates:
+        absolute = candidate if candidate.is_absolute() else root / candidate
+        if absolute.exists() or absolute.is_symlink():
+            raise ActualCertificationError("actual-model.destination-exists")
+        if _has_reparse_component(absolute):
+            raise ActualCertificationError("actual-model.destination-reparse")
+        value = absolute.resolve(strict=False)
+        if _is_relative_to(value, root):
+            raise ActualCertificationError("actual-model.destination-inside-repository")
+        resolved.append(value)
+    raw = resolved[0]
+    result = resolved[1] if len(resolved) == 2 else None
+    if result is not None:
+        if _is_relative_to(raw, result) or _is_relative_to(result, raw):
+            raise ActualCertificationError("actual-model.destination-overlap")
+        artifact_root = raw.parent
+        if not _is_relative_to(result, artifact_root):
+            raise ActualCertificationError("actual-model.result-outside-artifact-root")
+    return raw, result
+
+
+def load_runtime_identity(
+    process_root: Path, family: str, model: dict[str, Any]
+) -> dict[str, Any]:
+    """Combine the semantic model catalog with its exact immutable full digest."""
+    try:
+        value = yaml.safe_load(
+            (process_root / "certification/runtime-identities.yaml").read_text(encoding="utf-8")
+        )
+    except (OSError, yaml.YAMLError) as error:
+        raise ActualCertificationError("actual-model.runtime-identity-catalog") from error
+    digests = value.get("digests") if isinstance(value, dict) else None
+    digest = digests.get(family) if isinstance(digests, dict) else None
+    if (
+        not isinstance(value, dict)
+        or set(value) != {"schema_version", "digests"}
+        or value.get("schema_version") != "1.0"
+        or set(digests or {}) != {"qwen-class", "deepseek-class"}
+        or not re.fullmatch(r"[0-9a-f]{64}", str(digest or ""))
+        or model.get("family") != family
+    ):
+        raise ActualCertificationError("actual-model.runtime-identity-catalog")
+    return {
+        "model_family": family,
+        "model_tag": model.get("name"),
+        "model_digest": digest,
+        "runtime": model.get("runtime"),
+        "runtime_version": model.get("runtime_version"),
+        "endpoint": NORMALIZED_ENDPOINT,
+    }
+
+
+def observe_ollama_identity(model: dict[str, Any]) -> dict[str, Any]:
+    """Read the current tag digest and runtime version without writing evidence."""
+    endpoint = str(model.get("endpoint", OLLAMA_ENDPOINT)).rstrip("/")
+    try:
+        version = _read_json_url(endpoint + "/api/version")
+        tags = _read_json_url(endpoint + "/api/tags")
+    except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
+        raise ActualCertificationError("actual-model.runtime-probe-failure") from error
+    match = next(
+        (
+            item
+            for item in tags.get("models", [])
+            if isinstance(item, dict) and item.get("name") == model.get("name")
+        ),
+        None,
+    )
+    identity = {
+        "model_family": model.get("family"),
+        "model_tag": model.get("name"),
+        "model_digest": match.get("digest") if isinstance(match, dict) else None,
+        "runtime": model.get("runtime"),
+        "runtime_version": version.get("version"),
+        "endpoint": NORMALIZED_ENDPOINT,
+    }
+    if (
+        not isinstance(identity["model_tag"], str)
+        or not re.fullmatch(r"[0-9a-f]{64}", str(identity["model_digest"] or ""))
+        or not isinstance(identity["runtime_version"], str)
+    ):
+        raise ActualCertificationError("actual-model.runtime-identity-malformed")
+    return identity
+
+
+def require_observed_identity(
+    observed: dict[str, Any],
+    frozen: dict[str, Any],
+    *additional: dict[str, Any] | None,
+) -> None:
+    if observed != frozen or any(expected is not None and observed != expected for expected in additional):
+        raise ActualCertificationError("actual-model.runtime-identity-mismatch")
 
 
 def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
@@ -191,6 +322,8 @@ def validate_phase_gate(
     model_family: str,
     adapter_version: str,
     expected_count: int,
+    *,
+    allow_legacy_observed_identity: bool = False,
 ) -> list[str]:
     """Validate one immutable actual-model phase summary and every raw attempt."""
     diagnostics: list[str] = []
@@ -221,14 +354,24 @@ def validate_phase_gate(
         catalog = yaml.safe_load(catalog_bytes)
         expected_model = select_model_profile(catalog, model_family)
         adapter_profile = load_adapter_profile(Path(__file__).resolve().parent, model_family)
+        frozen_identity = load_runtime_identity(
+            Path(__file__).resolve().parent, model_family, expected_model
+        )
     except (OSError, UnicodeError, yaml.YAMLError, ActualCertificationError):
         expected_model = None
         adapter_profile = None
+        frozen_identity = None
         _append_once(diagnostics, "actual-model.gate-catalog-mismatch")
     if not isinstance(model, dict) or model.get("family") != model_family:
         _append_once(diagnostics, "actual-model.gate-family-mismatch")
     elif expected_model is None or any(model.get(key) != expected_model.get(key) for key in ("name", "digest", "runtime", "runtime_version")):
         _append_once(diagnostics, "actual-model.gate-model-mismatch")
+    observed_identity = summary.get("observed_identity")
+    legacy_identity = allow_legacy_observed_identity and not isinstance(observed_identity, dict)
+    if not legacy_identity and (
+        not isinstance(observed_identity, dict) or observed_identity != frozen_identity
+    ):
+        _append_once(diagnostics, "actual-model.gate-observed-identity-mismatch")
     source_catalog = summary.get("source_catalog")
     if (
         not isinstance(source_catalog, dict)
@@ -271,9 +414,24 @@ def validate_phase_gate(
                 and identity.get("model_family") == model_family
                 and isinstance(model, dict)
                 and identity.get("model_tag") == model.get("name")
-                and identity.get("model_digest") == model.get("digest")
-                and identity.get("runtime") == model.get("runtime")
-                and identity.get("runtime_version") == model.get("runtime_version")
+                and (
+                    (
+                        legacy_identity
+                        and identity.get("model_digest") == model.get("digest")
+                        and identity.get("runtime") == model.get("runtime")
+                        and identity.get("runtime_version") == model.get("runtime_version")
+                    )
+                    or (
+                        isinstance(observed_identity, dict)
+                        and all(
+                            identity.get(key) == observed_identity.get(key)
+                            for key in (
+                                "model_family", "model_tag", "model_digest", "runtime",
+                                "runtime_version", "endpoint",
+                            )
+                        )
+                    )
+                )
                 and identity.get("adapter_family") == model_family
                 and identity.get("adapter_version") == adapter_version
                 and identity.get("process_package_version") == summary.get("process_package_version")
@@ -401,6 +559,11 @@ def validate_phase_gate(
             raw_checks = (
                 raw.get("run_group") == group,
                 raw.get("execution_identity") == identity,
+                (
+                    raw.get("runtime_observation") == observed_identity
+                    if not legacy_identity
+                    else "runtime_observation" not in raw
+                ),
                 raw.get("attempt_ordinal") == ordinal,
                 raw.get("retry_of") == previous_id,
                 raw_case == expected_raw_case,
@@ -456,11 +619,22 @@ def validate_phase_gate(
 
 
 def classify_preflight_gate(
-    summary: dict[str, Any], artifact_root: Path, model_family: str, adapter_version: str
+    summary: dict[str, Any],
+    artifact_root: Path,
+    model_family: str,
+    adapter_version: str,
+    *,
+    allow_legacy_observed_identity: bool = False,
 ) -> tuple[str | None, list[str]]:
     """Classify a complete preflight as passed, honestly failed, or unverifiable."""
     gate_diagnostics = validate_phase_gate(
-        summary, artifact_root, "preflight", model_family, adapter_version, 5
+        summary,
+        artifact_root,
+        "preflight",
+        model_family,
+        adapter_version,
+        5,
+        allow_legacy_observed_identity=allow_legacy_observed_identity,
     )
     if not gate_diagnostics:
         return "passed", []
@@ -799,28 +973,29 @@ def probe_ollama(root: Path, catalog: dict[str, Any], raw_directory: Path, *, mo
     model = select_model_profile(catalog, model_family)
     adapter = load_adapter_profile(root / "process", model_family)
     endpoint = str(model.get("endpoint", OLLAMA_ENDPOINT)).rstrip("/")
+    frozen_identity = load_runtime_identity(root / "process", model_family, model)
     try:
-        version = _read_json_url(endpoint + "/api/version")
-        tags = _read_json_url(endpoint + "/api/tags")
+        observed_identity = observe_ollama_identity(model)
         running = _read_json_url(endpoint + "/api/ps")
     except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
         raise ActualCertificationError("actual-model.runtime-probe-failure") from error
-    match = next((item for item in tags.get("models", []) if isinstance(item, dict) and item.get("name") == model["name"]), None)
     package_version = (root / "process/VERSION").read_text(encoding="utf-8").strip()
     probe = {
-        "probe_kind": "ollama-execution-identity", "endpoint": endpoint, "runtime_version": version.get("version"),
-        "model_tag": model["name"], "model_digest": match.get("digest") if match else None,
-        "model_details": match.get("details") if match else None, "running_models": running.get("models"),
+        "probe_kind": "ollama-execution-identity", "endpoint": endpoint,
+        "runtime_version": observed_identity["runtime_version"],
+        "model_tag": observed_identity["model_tag"],
+        "model_digest": observed_identity["model_digest"],
+        "running_models": running.get("models"),
         "adapter_family": model["family"],
         "adapter_version": adapter["schema_version"], "process_package_version": package_version,
     }
     reference = write_raw_attempt(raw_directory, f"{model['family'].removesuffix('-class')}-runtime-probe", probe)
-    expected_digest = str(model["digest"])
-    passed = version.get("version") == model["runtime_version"] and isinstance(probe["model_digest"], str) and probe["model_digest"].startswith(expected_digest)
+    passed = observed_identity == frozen_identity
     return {
         "result": "passed" if passed else "failed", "raw_logical_artifact_id": reference["logical_artifact_id"],
         "raw_filename": reference["filename"], "raw_sha256": reference["sha256"],
-        "runtime_version": version.get("version"), "model_tag": model["name"], "model_digest": probe["model_digest"],
+        "runtime_version": observed_identity["runtime_version"], "model_tag": observed_identity["model_tag"],
+        "model_digest": observed_identity["model_digest"], "observed_identity": observed_identity,
         "endpoint": NORMALIZED_ENDPOINT, "adapter_version": adapter["schema_version"], "process_package_version": package_version,
     }
 
@@ -970,20 +1145,37 @@ def execute_ai_disabled(root: Path, catalog: dict[str, Any], raw_directory: Path
     return {"schema_version": "1.0", "evidence_kind": "ai-disabled-walkthrough", "actual_model_run": False, "process_package_version": (root / "process/VERSION").read_text().strip(), "status": "passed" if all(row["result"] == "passed" for row in results) else "failed", "cases": results, "limitations": ["Windows-host deterministic walkthrough; cross-platform certification remains work item 2.12"]}
 
 
-def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any], raw_directory: Path, *, phase: str, model_family: str = "qwen-class") -> dict[str, Any]:
+def execute_model_catalog(
+    root: Path,
+    process_root: Path,
+    catalog: dict[str, Any],
+    raw_directory: Path,
+    *,
+    phase: str,
+    model_family: str = "qwen-class",
+    preflight_observed_identity: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     diagnostics = validate_model_catalog(root, catalog)
     if diagnostics:
         raise ActualCertificationError(diagnostics[0])
     selected = [case for case in catalog["cases"] if case["phase"] == phase]
     results: list[dict[str, Any]] = []
     model = select_model_profile(catalog, model_family)
+    frozen_identity = load_runtime_identity(process_root, model_family, model)
+    observed_identity = observe_ollama_identity(model)
+    require_observed_identity(
+        observed_identity,
+        frozen_identity,
+        preflight_observed_identity if phase == "matrix" else None,
+    )
+    if phase == "matrix" and preflight_observed_identity is None:
+        raise ActualCertificationError("actual-model.preflight-identity-required")
     adapter = load_adapter_profile(process_root, model_family)
     generation = adapter["generation"]
     prefix = model_family.removesuffix("-class")
     package_version = (root / "process/VERSION").read_text(encoding="utf-8").strip()
     identity = {
-        "model_family": model["family"], "model_tag": model["name"], "model_digest": model["digest"],
-        "runtime": model["runtime"], "runtime_version": model["runtime_version"], "endpoint": NORMALIZED_ENDPOINT,
+        **observed_identity,
         "adapter_family": model_family, "adapter_version": adapter["schema_version"], "process_package_version": package_version,
     }
     run_group = raw_directory.name
@@ -1004,6 +1196,13 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
         raw_response: dict[str, Any] = {}
         for attempt_ordinal in (1, 2):
             attempt_prompt = prompt if attempt_ordinal == 1 else prompt + STRUCTURAL_RETRY_SUFFIX
+            current_identity = observe_ollama_identity(model)
+            require_observed_identity(
+                current_identity,
+                frozen_identity,
+                observed_identity,
+                preflight_observed_identity if phase == "matrix" else None,
+            )
             raw_response = invoke_ollama(
                 str(model.get("endpoint", OLLAMA_ENDPOINT)),
                 model["name"],
@@ -1035,6 +1234,7 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
             raw = {
                 "run_group": run_group,
                 "execution_identity": identity,
+                "runtime_observation": current_identity,
                 "attempt_ordinal": attempt_ordinal,
                 "retry_of": retry_of,
                 "case": {
@@ -1093,6 +1293,7 @@ def execute_model_catalog(root: Path, process_root: Path, catalog: dict[str, Any
     return {
         "schema_version": "1.2", "evidence_kind": f"actual-model-{phase}", "actual_model_run": True,
         "process_package_version": package_version, "model": model, "adapter": {"family": model_family, "version": adapter["schema_version"]},
+        "observed_identity": observed_identity,
         "source_catalog": {"path": "process/certification/qwen-matrix.yaml", "sha256": _sha256_bytes(catalog_path.read_bytes())},
         "raw_artifact": {"logical_id": raw_directory.parent.name, "stored_in_git": False},
         "status": "passed" if all(row["deterministic_validation_result"] == "passed" for row in results) else "partial",
@@ -1181,6 +1382,11 @@ def _validate_remediation_evidence(
             "process_package_version": evidence.get("process_package_version"),
             "model": model,
             "adapter": {"family": family, "version": adapter.get("version")},
+            **(
+                {"observed_identity": evidence.get("observed_identity")}
+                if "observed_identity" in evidence
+                else {}
+            ),
             "source_catalog": evidence.get("source_catalog"),
             "raw_artifact": evidence.get("raw_artifact"),
             "status": section.get("status"),
@@ -1188,12 +1394,24 @@ def _validate_remediation_evidence(
         }
         if phase == "preflight" and failed_preflight:
             classification, phase_diagnostics = classify_preflight_gate(
-                summary, artifact_root, str(family), "2.0"
+                summary,
+                artifact_root,
+                str(family),
+                "2.0",
+                allow_legacy_observed_identity="observed_identity" not in evidence,
             )
             if classification != "failed":
                 _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
         else:
-            phase_diagnostics = validate_phase_gate(summary, artifact_root, phase, str(family), "2.0", count)
+            phase_diagnostics = validate_phase_gate(
+                summary,
+                artifact_root,
+                phase,
+                str(family),
+                "2.0",
+                count,
+                allow_legacy_observed_identity="observed_identity" not in evidence,
+            )
         for code in phase_diagnostics:
             _append_once(diagnostics, code)
         for row in section.get("cases", []):

@@ -103,12 +103,13 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
 | `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml` | Normalized Qwen adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml` | Normalized DeepSeek adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
+| `process/certification/runtime-identities.yaml` | Immutable full-digest extension to the semantic matrix catalog, used by fresh preflight and per-matrix-call runtime probes without duplicating tag/runtime ownership or rewriting historical evidence |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
 | `tests/test_*.py` `SCENARIO_COVERAGE` markers | Test-source-owned exact selector-to-pytest-node bindings used to reject duplicate, unknown, unused, or unrelated evidence substitution |
 | `tests/test_feedback_policy.py` | Eight exact deterministic scenarios for the modified NIS feedback/publication-boundary requirement |
 | `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
 | `scripts/certify_process_release.py` | Thin CWD-independent fixture-certification and coverage entry point; actual model/cross-platform execution remains later work |
-| `scripts/check_actual_certification_gate.py` | Read-only identity/hash/count/status gate that blocks a model-family matrix until its same-adapter 5/5 preflight passes |
+| `scripts/check_actual_certification_gate.py` | Read-only observed-identity/hash/count/status gate that blocks a model-family matrix until its same-adapter 5/5 preflight passes |
 | `tests/test_weak_model_kit.py` | Scenario-first launch, missing context, authority, derived-output, adapter, role, and parallel-safety evidence |
 | `docs/runbooks/WEAK_MODEL_OPERATING_KIT.md` | Operator launch, evidence, adapter-failure, AI-disabled, and safe-parallel procedure |
 | `docs/runbooks/CERTIFICATION_EVIDENCE.md` | Fixture certification, raw/normalized storage boundary, privacy controls, coverage gaps, and future-work disclosure |

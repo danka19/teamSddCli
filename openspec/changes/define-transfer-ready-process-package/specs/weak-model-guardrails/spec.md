@@ -75,7 +75,17 @@ The release candidate SHALL be evaluated with actual Qwen/DeepSeek-class assista
 
 #### Scenario: Certification records the evaluated runtime
 - **WHEN** a weak-model certification run is executed
-- **THEN** evidence records the model and runtime identifier, adapter version, process-package version, read-pack identity, operation, input fixture, output artifact, deterministic validation result, human intervention, and known limitations
+- **THEN** a fresh runtime probe records the exact observed model tag and full digest plus Ollama runtime version, and evidence binds that observed identity with the adapter version, process-package version, read-pack identity, operation, input fixture, output artifact, deterministic validation result, human intervention, and known limitations
+
+#### Scenario: Matrix execution rejects runtime identity drift
+- **WHEN** a family passed preflight and the matrix runner is about to invoke any model case
+- **THEN** it freshly observes the current tag digest and runtime version and requires exact equality to the immutable runtime-identity catalog and the preflight observed identity
+- **AND** an unavailable, malformed, repointed, or changed identity exits 3 before the model call and before creating matrix raw or result output
+
+#### Scenario: Actual certification destinations are external and non-aliased
+- **WHEN** any AI-disabled, runtime-probe, preflight, or matrix phase is requested
+- **THEN** raw and result destinations are resolved before directory creation or model execution, are new paths outside the repository and canonical process sources, contain no symlink, junction, or reparse component, do not overlap, and keep result output inside the selected external artifact root
+- **AND** an unsafe or unverifiable destination exits 3 without model calls or output creation
 
 #### Scenario: Model-facing contract is role specific and schema constrained
 - **WHEN** the deterministic launcher prepares a Qwen-class or DeepSeek-class role operation

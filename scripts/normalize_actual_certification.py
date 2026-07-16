@@ -158,6 +158,7 @@ def normalize_remediation_evidence(
         "process_package_version": preflight.get("process_package_version"),
         "adapter": {"family": model_family, "version": "2.0", "authority": "advisory-only"},
         "model": preflight.get("model"),
+        "observed_identity": preflight.get("observed_identity"),
         "source_catalog": preflight.get("source_catalog"),
         "raw_artifact": {"logical_id": remediation_artifact_root.name, "stored_in_git": False},
         "baseline_reference": {

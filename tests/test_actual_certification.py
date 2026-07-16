@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,7 @@ from process.actual_certification import (
     load_adapter_profile,
     parse_compact_output,
     parse_model_output,
+    validate_actual_certification_destinations,
     select_model_profile,
     split_reasoning_envelope,
     validate_ai_disabled_catalog,
@@ -65,6 +67,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
     raw_group.mkdir(parents=True)
     catalog = _yaml(QWEN_MATRIX)
     model = select_model_profile(catalog, family)
+    observed_identity = actual_certification.load_runtime_identity(PROCESS, family, model)
     phase_case_ids = [case["id"] for case in catalog["cases"] if case["phase"] == phase]
     cases = []
     for ordinal in range(count):
@@ -105,18 +108,14 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
         raw = {
             "run_group": phase,
             "execution_identity": {
-                "model_family": family,
-                "model_tag": model["name"],
-                "model_digest": model["digest"],
-                "runtime": model["runtime"],
-                "runtime_version": model["runtime_version"],
-                "endpoint": "local-ollama-loopback",
+                **observed_identity,
                 "adapter_family": family,
                 "adapter_version": "2.0",
                 "process_package_version": "0.2.0",
             },
             "attempt_ordinal": 1,
             "retry_of": None,
+            "runtime_observation": observed_identity,
             "case": {key: catalog_case[key] for key in ("id", "phase", "role", "change_class", "operation", "risk_case", "instruction", "facts")},
             "read_pack_identity": pack["identity"],
             "source_manifest": [*launch["verified_source_manifest"], actual_certification._case_facts_source(catalog_case)],
@@ -174,6 +173,7 @@ def _phase_summary(tmp_path: Path, *, phase: str, count: int, family: str = "qwe
         "actual_model_run": True,
         "process_package_version": "0.2.0",
         "model": model,
+        "observed_identity": observed_identity,
         "adapter": {"family": family, "version": "2.0"},
         "source_catalog": {"path": "process/certification/qwen-matrix.yaml", "sha256": catalog_sha},
         "raw_artifact": {"logical_id": artifact.name, "stored_in_git": False},
@@ -240,6 +240,7 @@ def test_preflight_gate_requires_exact_five_same_identity_passes(tmp_path: Path)
         (lambda value, root: value.update(evidence_kind="actual-model-matrix"), "actual-model.gate-phase-mismatch"),
         (lambda value, root: value["model"].update(family="deepseek-class"), "actual-model.gate-family-mismatch"),
         (lambda value, root: value["model"].update(digest="forged"), "actual-model.gate-model-mismatch"),
+        (lambda value, root: value["observed_identity"].update(model_digest="f" * 64), "actual-model.gate-observed-identity-mismatch"),
         (lambda value, root: value.update(operator_path="C:\\Users\\private\\result.json"), "actual-model.gate-privacy"),
         (lambda value, root: value["source_catalog"].update(sha256="0" * 64), "actual-model.gate-catalog-mismatch"),
         (lambda value, root: value["cases"][0].update(case_id="forged-case"), "actual-model.gate-case-catalog-mismatch"),
@@ -461,7 +462,8 @@ def test_phase_gate_uses_repository_credential_patterns(tmp_path: Path, field: s
 
 
 def test_matrix_runner_rejects_failed_preflight_before_model_call(monkeypatch, tmp_path: Path, capsys) -> None:
-    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    external_tmp = Path(tempfile.mkdtemp())
+    summary, artifact = _phase_summary(external_tmp, phase="preflight", count=5)
     failed_row = summary["cases"][0]
     raw_path = artifact / failed_row["run_group"] / failed_row["raw_filename"]
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
@@ -508,12 +510,14 @@ def test_matrix_runner_rejects_failed_preflight_before_model_call(monkeypatch, t
 
 
 def test_preflight_runner_writes_summary_exclusively(monkeypatch, tmp_path: Path) -> None:
-    summary, artifact = _phase_summary(tmp_path, phase="preflight", count=5)
+    external_tmp = Path(tempfile.mkdtemp())
+    summary, artifact = _phase_summary(external_tmp, phase="preflight", count=5)
     result_output = artifact / "qwen-preflight-result.json"
     monkeypatch.setattr(run_actual_certification, "execute_model_catalog", lambda *args, **kwargs: summary)
+    raw_output = artifact / "fresh-preflight"
     argv = [
         "--root", str(ROOT),
-        "--raw-output", str(artifact / "preflight"),
+        "--raw-output", str(raw_output),
         "--phase", "preflight",
         "--model-family", "qwen-class",
         "--result-output", str(result_output),
@@ -521,6 +525,186 @@ def test_preflight_runner_writes_summary_exclusively(monkeypatch, tmp_path: Path
     assert run_actual_certification.main(argv) == 0
     assert json.loads(result_output.read_text(encoding="utf-8")) == summary
     assert run_actual_certification.main(argv) == 3
+
+
+def test_matrix_reprobes_runtime_identity_before_each_model_call_and_blocks_tag_repoint(
+    monkeypatch, tmp_path: Path
+) -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    case = next(item for item in catalog["cases"] if item["phase"] == "matrix")
+    frozen = {
+        "model_family": "qwen-class",
+        "model_tag": "qwen3.5:9b",
+        "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+        "runtime": "Ollama",
+        "runtime_version": "0.30.11",
+        "endpoint": "local-ollama-loopback",
+    }
+    observations = iter(
+        [
+            frozen,
+            {**frozen, "model_digest": "f" * 64},
+        ]
+    )
+    model_calls: list[str] = []
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda *args, **kwargs: next(observations),
+    )
+    monkeypatch.setattr(
+        actual_certification,
+        "invoke_ollama",
+        lambda *args, **kwargs: model_calls.append(case["id"]) or pytest.fail(
+            "identity drift must block before a model call"
+        ),
+    )
+    with pytest.raises(ActualCertificationError, match="actual-model.runtime-identity-mismatch"):
+        execute_model_catalog(
+            ROOT,
+            PROCESS,
+            catalog,
+            tmp_path / "matrix",
+            phase="matrix",
+            preflight_observed_identity=frozen,
+        )
+    assert model_calls == []
+    assert not (tmp_path / "matrix").exists()
+
+
+def test_matrix_reprobes_runtime_version_and_blocks_change_before_model_call(
+    monkeypatch, tmp_path: Path
+) -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    frozen = {
+        "model_family": "qwen-class",
+        "model_tag": "qwen3.5:9b",
+        "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+        "runtime": "Ollama",
+        "runtime_version": "0.30.11",
+        "endpoint": "local-ollama-loopback",
+    }
+    observations = iter([frozen, {**frozen, "runtime_version": "0.30.12"}])
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda *args, **kwargs: next(observations),
+    )
+    monkeypatch.setattr(
+        actual_certification,
+        "invoke_ollama",
+        lambda *args, **kwargs: pytest.fail("runtime drift must block before a model call"),
+    )
+    with pytest.raises(ActualCertificationError, match="actual-model.runtime-identity-mismatch"):
+        execute_model_catalog(
+            ROOT,
+            PROCESS,
+            catalog,
+            tmp_path / "matrix",
+            phase="matrix",
+            preflight_observed_identity=frozen,
+        )
+    assert not (tmp_path / "matrix").exists()
+
+
+def test_actual_certification_destinations_reject_repository_existing_and_overlap(
+    tmp_path: Path,
+) -> None:
+    inside_repo = ROOT / "scratch-certification-output"
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-inside-repository"):
+        validate_actual_certification_destinations(ROOT, inside_repo, None)
+
+    existing = tmp_path / "existing"
+    existing.mkdir()
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-exists"):
+        validate_actual_certification_destinations(ROOT, existing, None)
+
+    raw = ROOT.parent / "teamSsdCli-release-artifacts" / "overlap-test" / "preflight"
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-overlap"):
+        validate_actual_certification_destinations(ROOT, raw, raw / "result.json")
+
+    with pytest.raises(ActualCertificationError, match="actual-model.result-outside-artifact-root"):
+        validate_actual_certification_destinations(
+            ROOT,
+            ROOT.parent / "teamSsdCli-release-artifacts" / "bounded-root" / "preflight",
+            ROOT.parent / "different-artifact-root" / "result.json",
+        )
+
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-inside-repository"):
+        validate_actual_certification_destinations(
+            ROOT, Path("process") / ".." / "unsafe-relative-output", None
+        )
+
+
+def test_actual_certification_destinations_reject_symlink_component(tmp_path: Path) -> None:
+    target = tmp_path / "target"
+    target.mkdir()
+    link = tmp_path / "linked-artifact"
+    try:
+        link.symlink_to(target, target_is_directory=True)
+    except OSError:
+        pytest.skip("directory symlinks are not available")
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-reparse"):
+        validate_actual_certification_destinations(ROOT, link / "preflight", None)
+
+
+def test_actual_certification_destinations_reject_mocked_windows_reparse(
+    monkeypatch, tmp_path: Path
+) -> None:
+    artifact = tmp_path / "artifact"
+    artifact.mkdir()
+    original_lstat = actual_certification.os.lstat
+
+    def fake_lstat(path):
+        value = original_lstat(path)
+        if Path(path) == artifact:
+            class ReparseStat:
+                st_file_attributes = 0x400
+            return ReparseStat()
+        return value
+
+    monkeypatch.setattr(actual_certification.os, "lstat", fake_lstat)
+    with pytest.raises(ActualCertificationError, match="actual-model.destination-reparse"):
+        validate_actual_certification_destinations(ROOT, artifact / "preflight", None)
+
+
+def test_actual_certification_destinations_accept_external_sibling_root() -> None:
+    artifact = ROOT.parent / "teamSsdCli-release-artifacts" / "future-boundary-test"
+    raw = artifact / "preflight"
+    result = artifact / "qwen-preflight-result.json"
+    validated_raw, validated_result = validate_actual_certification_destinations(
+        ROOT, raw, result
+    )
+    assert validated_raw == raw.resolve()
+    assert validated_result == result.resolve()
+
+
+def test_runner_rejects_unsafe_destination_before_model_call_or_write(
+    monkeypatch, capsys
+) -> None:
+    model_calls: list[str] = []
+    monkeypatch.setattr(
+        run_actual_certification,
+        "execute_model_catalog",
+        lambda *args, **kwargs: model_calls.append("called"),
+    )
+    raw = ROOT / "unsafe-raw"
+    result = ROOT / "unsafe-result.json"
+    assert run_actual_certification.main(
+        [
+            "--root", str(ROOT),
+            "--raw-output", str(raw),
+            "--phase", "preflight",
+            "--model-family", "qwen-class",
+            "--result-output", str(result),
+        ]
+    ) == 3
+    assert json.loads(capsys.readouterr().out)["diagnostic"] == (
+        "actual-model.destination-inside-repository"
+    )
+    assert model_calls == []
+    assert not raw.exists()
+    assert not result.exists()
 
 
 def test_read_only_gate_cli_has_pass_failed_and_unverifiable_exit_codes(tmp_path: Path, capsys) -> None:
@@ -1170,6 +1354,13 @@ def test_execute_model_catalog_retries_only_structural_failures_and_retains_atte
         return next(responses)
 
     monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda model: actual_certification.load_runtime_identity(
+            PROCESS, model["family"], model
+        ),
+    )
     monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
     result = execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
 
@@ -1216,6 +1407,13 @@ def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
         return {"response": json.dumps(response), "thinking": ""}
 
     monkeypatch.setattr(actual_certification, "validate_model_catalog", lambda root, value: [])
+    monkeypatch.setattr(
+        actual_certification,
+        "observe_ollama_identity",
+        lambda model: actual_certification.load_runtime_identity(
+            PROCESS, model["family"], model
+        ),
+    )
     monkeypatch.setattr(actual_certification, "_read_json_url", fake_read)
     result = execute_model_catalog(ROOT, PROCESS, catalog, tmp_path, phase="preflight")
     assert calls == 1
@@ -1248,6 +1446,7 @@ def test_package_registers_actual_certification_module_and_catalogs() -> None:
     assert "actual_certification.py" in package["distribution"]["files"]
     assert package["certification"]["ai_disabled_catalog"] == "certification/ai-disabled-walkthroughs.yaml"
     assert package["certification"]["qwen_matrix"] == "certification/qwen-matrix.yaml"
+    assert package["certification"]["runtime_identities"] == "certification/runtime-identities.yaml"
 
 
 def test_normalized_qwen_evidence_is_complete_private_path_free_and_raw_hash_bound() -> None:

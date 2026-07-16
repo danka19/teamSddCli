@@ -110,12 +110,13 @@
     "certification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["case_catalog", "coverage_inventory", "ai_disabled_catalog", "qwen_matrix"],
+      "required": ["case_catalog", "coverage_inventory", "ai_disabled_catalog", "qwen_matrix", "runtime_identities"],
       "properties": {
         "case_catalog": {"const": "certification/cases.yaml"},
         "coverage_inventory": {"const": "certification/coverage.yaml"},
         "ai_disabled_catalog": {"const": "certification/ai-disabled-walkthroughs.yaml"},
-        "qwen_matrix": {"const": "certification/qwen-matrix.yaml"}
+        "qwen_matrix": {"const": "certification/qwen-matrix.yaml"},
+        "runtime_identities": {"const": "certification/runtime-identities.yaml"}
       }
     },
     "distribution": {

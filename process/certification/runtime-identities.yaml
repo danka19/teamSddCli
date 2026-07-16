@@ -1,0 +1,4 @@
+schema_version: "1.0"
+digests:
+  qwen-class: 6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7
+  deepseek-class: 6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763

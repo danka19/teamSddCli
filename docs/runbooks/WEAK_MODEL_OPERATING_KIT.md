@@ -30,6 +30,19 @@ same-family, same-adapter preflight gate exits `0`. Gate exit `1` blocks the
 matrix; exit `3` means evidence is unverifiable. Do not infer a pass from fluent
 output or from the runner having completed all cases.
 
+Use only a new external artifact root such as
+`../teamSsdCli-release-artifacts/<new-versioned-artifact>/`. The runner rejects
+repository-contained paths, existing destinations, traversal/alias paths,
+symlink/junction/reparse components, raw/result overlap, and result output
+outside the selected artifact root before any model call or directory creation.
+
+The runner binds preflight to a fresh full-digest/runtime observation from
+`process/certification/runtime-identities.yaml`. Immediately before every matrix
+model call it probes the current tag again and requires exact equality to both
+that immutable allowlist and the preflight observation. Ollama tag invocation is
+not immutable-digest addressed here, so a small observation-to-call race remains;
+the safe response to any detected change is exit `3` with no matrix model call.
+
 Canonical sources must be listed by the package and present under the repository root. Supporting, evidence, and generated/advisory sources remain explicitly labelled. Read packs contain stable paths and hashes, not private exports or an unbounded repository dump. Missing canonical context stays in `missing_or_invalid_context`; unresolved inputs block launch instead of being invented.
 
 Derived artifacts cite the stable canonical IDs they summarize. Model drafts remain non-canonical scratch output until deterministic checks, human review, and the normal Git/OpenSpec process accept them. If an adapter is unavailable, exceeds context, or fails, use the same instruction, read-pack manifest, templates, deterministic commands, and human-authored evidence without weakening a gate.

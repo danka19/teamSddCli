@@ -59,6 +59,7 @@ certification:
   coverage_inventory: certification/coverage.yaml
   ai_disabled_catalog: certification/ai-disabled-walkthroughs.yaml
   qwen_matrix: certification/qwen-matrix.yaml
+  runtime_identities: certification/runtime-identities.yaml
 distribution:
   files:
     - VERSION

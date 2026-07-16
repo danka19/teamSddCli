@@ -9,5 +9,5 @@ output:
   summary: Major implementation preparation with dependencies and checks.
   required_fields: [sources_read, write_scope, focused_checks, human_stop]
 canonical_sources:
-  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: d7d9a0bcc7391bfda57a0cd37aa4a886c63cdd244a8b46cdf6984dd0424491ee}
+  - {stable_id: synthetic-source, path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md, sha256: d43977abd9f770498416df5b852ce3e2721e4571dcc02d8aacad1593edb47022}
 validation: {expected_result: passed, expected_codes: []}
