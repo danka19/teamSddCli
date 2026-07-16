@@ -130,7 +130,8 @@ def test_role_schema_is_closed_non_leading_and_role_specific(role: str, payload_
         payload_key,
     }
     assert payload_key in schema["properties"]
-    assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(serialized.split('"')))
+    for field_name in FORBIDDEN_VALIDATOR_FIELD_NAMES:
+        assert field_name.encode("utf-8") not in serialized.encode("utf-8")
     assert all(sentinel not in serialized for sentinel in VALIDATOR_ONLY_SENTINELS)
     assert REQUIRED_ARTIFACT_KIND_SENTINEL not in serialized
     assert set(schema["properties"]["source_ids"]["items"]["enum"]) == {

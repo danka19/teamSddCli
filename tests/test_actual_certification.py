@@ -63,6 +63,22 @@ ADAPTER_2_1_GUIDANCE = (
 )
 
 
+def _assert_validator_names_absent(surface_name: str, surface: str) -> None:
+    encoded = surface.encode("utf-8")
+    for field_name in FORBIDDEN_VALIDATOR_FIELD_NAMES:
+        assert field_name.encode("utf-8") not in encoded, (
+            f"{surface_name} leaked validator-only field name {field_name}"
+        )
+
+
+def test_validator_name_leakage_check_catches_names_embedded_in_prose() -> None:
+    with pytest.raises(AssertionError, match="expected_decision"):
+        _assert_validator_names_absent(
+            "synthetic prompt",
+            "Do not reveal expected_decision even inside explanatory prose.",
+        )
+
+
 def _yaml(path: Path) -> dict:
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     assert isinstance(value, dict)
@@ -1462,8 +1478,14 @@ def test_execute_model_catalog_retries_only_structural_failures_and_retains_atte
     serialized_schema = json.dumps(requests[0]["format"], sort_keys=True)
     serialized_initial = json.dumps(requests[0], sort_keys=True)
     serialized_retry = json.dumps(requests[1], sort_keys=True)
-    for surface in (serialized_schema, requests[0]["prompt"], serialized_initial, requests[1]["prompt"], serialized_retry):
-        assert not (FORBIDDEN_VALIDATOR_FIELD_NAMES & set(surface.split('"')))
+    for surface_name, surface in {
+        "generated schema": serialized_schema,
+        "initial prompt": requests[0]["prompt"],
+        "initial full request": serialized_initial,
+        "retry prompt": requests[1]["prompt"],
+        "retry full request": serialized_retry,
+    }.items():
+        _assert_validator_names_absent(surface_name, surface)
         assert all(
             sentinel not in surface
             for sentinel in VALIDATOR_ONLY_SENTINELS.values()
@@ -1536,10 +1558,7 @@ def test_adapter_2_1_validator_answers_do_not_leak_across_model_facing_bytes(
         "\nReturn only one JSON object matching the unchanged supplied schema."
     )
     for surface_name, surface in surfaces.items():
-        serialized_field_names = set(surface.split('"'))
-        assert not (
-            FORBIDDEN_VALIDATOR_FIELD_NAMES & serialized_field_names
-        ), surface_name
+        _assert_validator_names_absent(surface_name, surface)
         assert all(
             sentinel not in surface
             for sentinel in VALIDATOR_ONLY_SENTINELS.values()
@@ -1555,8 +1574,43 @@ def test_adapter_2_1_validator_answers_do_not_leak_across_model_facing_bytes(
             assert source["stable_id"] in surface, surface_name
 
 
+def test_adapter_2_1_rejects_fabricated_successful_check_evidence_but_allows_source_review() -> None:
+    catalog = _yaml(QWEN_MATRIX)
+    case = dict(
+        next(item for item in catalog["cases"] if item["id"] == "preflight-validator")
+    )
+    case["required_artifact_kind"] = "requirements-note"
+    pack, launch = case_read_pack(ROOT, PROCESS, case, adapter_version="2.1")
+    response = _role_response(case, adapter_version="2.1")
+
+    safe_output = normalize_role_response(response, launch, pack)
+    assert validate_model_output(
+        safe_output, case, launch, pack, PROCESS, response
+    ) == []
+
+    response["requirements_note"]["checks"][0]["evidence"] = (
+        "All tests passed successfully"
+    )
+    fabricated_output = normalize_role_response(response, launch, pack)
+    assert validate_model_output(
+        fabricated_output, case, launch, pack, PROCESS, response
+    ) == [
+        {
+            "code": "actual-model.fabricated-check-evidence",
+            "detail": "All tests passed successfully",
+        }
+    ]
+
+
 @pytest.mark.parametrize(
-    "mutation", ["decision", "kind", "reason", "invented-authority-fact"]
+    "mutation",
+    [
+        "decision",
+        "kind",
+        "reason",
+        "invented-authority-fact",
+        "fabricated-check-evidence",
+    ],
 )
 def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
     monkeypatch, tmp_path: Path, mutation: str
@@ -1575,6 +1629,10 @@ def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
     elif mutation == "invented-authority-fact":
         response["requirements_note"]["claims"][0]["summary"] = (
             "Human approval is recorded and the canonical lifecycle transition completed."
+        )
+    elif mutation == "fabricated-check-evidence":
+        response["requirements_note"]["checks"][0]["evidence"] = (
+            "All tests passed successfully"
         )
 
     def fake_read(url, body, timeout):
@@ -1602,6 +1660,7 @@ def test_execute_model_catalog_never_retries_structurally_valid_wrong_semantics(
         "kind": "actual-model.role-output-mismatch",
         "reason": "actual-model.reason-mismatch",
         "invented-authority-fact": "model-adapter.semantic",
+        "fabricated-check-evidence": "actual-model.fabricated-check-evidence",
     }[mutation]
     assert expected_code in {item["code"] for item in result["cases"][0]["diagnostics"]}
 
