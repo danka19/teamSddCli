@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after reviewed adapter `2.0` remediation left both frozen proxies at 0/5 preflight with no retries or matrices. Work item 2.12 remains planned and blocked by 2.11.
+Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. Work item 2.12 remains planned and blocked by 2.11.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -466,16 +466,17 @@ Exit criteria: Qwen and DeepSeek each pass 5/5 preflight and 15/15 matrix with t
 
 Historical baseline evidence on 2026-07-15: all 11 AI-disabled walkthrough records passed. Frozen non-leading Qwen-family bytes passed 0/5 preflight and 1/15 matrix cases; frozen DeepSeek-family bytes passed 0/5 preflight and 0/15 matrix cases. Every failure retains deterministic validation plus a catalog-owned case-specific human owner and concrete disposition action. Transfer task 4.5 and NIS task 8.3 remain checked as execution-complete historical baseline work and are not reopened or rewritten.
 
-Remediation outcome on 2026-07-16: OpenSpec tasks 4.7-4.8 are complete after
-reviewed adapter-contract, retry, normalization, and deterministic gate
-implementation. With adapter `2.0` and Ollama `0.30.11`, frozen
-`qwen3.5:9b` and `deepseek-r1:8b` each failed 0/5 preflight cases with
-`model-adapter.semantic`. Every case had one structurally valid attempt, so no
-retry was allowed; both gates exited `1`, and neither matrix ran. The fresh
-AI-disabled regression passed 11/11. Transfer progress is 22/36; task 4.9
-remains open, fallback-only acceptance remains superseded, and the exact
-residual incompatibility is recorded in
-`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md`.
+Adapter `2.1` outcome on 2026-07-16: decision-dependent `draft` and `block`
+branches, restricted model check results, version-bound runtime evidence,
+exclusive result creation, and immutable adapter `1.0`/`2.0` compatibility were
+implemented and reviewed before execution. With Ollama `0.30.11`, frozen
+`qwen3.5:9b` passed 2/5 preflight cases and frozen `deepseek-r1:8b` passed 0/5.
+All ten responses were structurally valid on attempt 1, so no retry was allowed;
+both gates failed and neither matrix ran. The fresh AI-disabled regression
+passed 11/11. Transfer progress remains 22/36; task 4.9 remains open,
+fallback-only acceptance remains superseded, and the exact outcome is recorded
+in
+`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
 
 #### Phase Change Intake: Weak-Model Adapter Remediation
 
@@ -489,7 +490,7 @@ Affected specs: Existing define-transfer-ready-process-package weak-model-guardr
 Affected architecture: Add a thin model-family generation adapter, role-specific constrained response contracts, reasoning/final separation, and mechanical normalization ahead of the unchanged deterministic validator.
 Data contract impact: Replace the model-facing all-role compact envelope with a generated common decision envelope plus one role-specific payload; preserve the existing normalized operation-evidence contract downstream.
 Verification impact: Require adapter-focused TDD, negative authority/evidence/source tests, append-only retry evidence, 5/5 preflight for each model family before its matrix, and 15/15 matrix completion for both families.
-Status: adopted; architecture preflight approved at commit 8077847; OpenSpec tasks 4.7-4.8 are complete, task 4.9 remains open after both failed remediation preflights, and work item 2.11 remains `in_progress`.
+Status: adopted; adapter `2.0` and `2.1` implementations were reviewed before execution. Task 4.9 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices, and work item 2.11 remains `in_progress`.
 ```
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
@@ -621,11 +622,11 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. The human rejected fallback-only acceptance on 2026-07-16; the approved bounded adapter remediation then failed both 5-case preflight gates honestly, so 2.11 remains `in_progress` and 2.12 remains planned and blocked until a new explicit human disposition.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. The adapter `2.0` remediation and adapter `2.1` follow-up are also append-only evidence. Adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with zero retries and no matrices, so 2.11 remains `in_progress` and 2.12 remains planned and blocked.
 
 Mandatory later evidence, not design decisions:
 
-- New append-only Qwen-class and DeepSeek-class remediation evidence: 5/5 frozen preflight before each 15/15 matrix, or an exact residual incompatibility for human disposition.
+- Any later append-only Qwen-class and DeepSeek-class remediation evidence: 5/5 frozen preflight before each 15/15 matrix, with a new human-approved remediation scope required before another run.
 - Exact supported Windows, Linux, and macOS versions/architectures and dependency versions used for certification.
 - Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

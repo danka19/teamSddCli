@@ -65,15 +65,15 @@ Concrete analyst/minor, developer/major, QA/hotfix, and Tech Lead/major expected
 
 The non-leading prompt supplies bounded role/class/operation identity, exact case facts, universal authority rules, an output schema, and minimal authority-labelled canonical/supporting source excerpts. It never includes expected decisions, claims, source selection, or verdicts. The model returns the role output, checks, claims, unresolved inputs, human decisions, and selected source IDs. Trusted code normalizes that envelope without supplying semantic content, binds selected IDs to exact hashes, and rejects forbidden authority, fabricated evidence, missing required sources, or a skipped human stop.
 
-`--phase runtime-probe` records the exact observed Ollama version, model tag/full digest, loopback endpoint, adapter version, and package version. `process/certification/runtime-identities.yaml` is the immutable full-digest extension to the existing semantic matrix catalog; it does not duplicate tag or runtime ownership because the historical matrix catalog already owns those fields and intentionally retains the shorter Qwen compatibility identifier used by immutable evidence. Preflight summaries bind the combined fresh observed identity. Before every matrix model call, the runner re-observes the current tag digest and runtime version and requires exact equality to both catalogs and the preflight identity. Ollama does not provide immutable-digest invocation through this runner, so an immediate observation-to-call race remains and is recorded as a residual limitation.
+`--phase runtime-probe` records the exact observed Ollama version, model tag/full digest, loopback endpoint, adapter version, and package version in both raw and exclusive result files. Adapter `2.1` normalized evidence binds both runtime-probe checksums. `process/certification/runtime-identities.yaml` is the immutable full-digest extension to the existing semantic matrix catalog; it does not duplicate tag or runtime ownership because the historical matrix catalog already owns those fields and intentionally retains the shorter Qwen compatibility identifier used by immutable evidence. Preflight summaries bind the combined fresh observed identity. Before every matrix model call, the runner re-observes the current tag digest and runtime version and requires exact equality to both catalogs and the preflight identity. Ollama does not provide immutable-digest invocation through this runner, so an immediate observation-to-call race remains and is recorded as a residual limitation.
 
-All actual-certification raw and result destinations are validated before directory creation, subprocess/model calls, or output writes. They must be new external paths, outside the repository and canonical sources, with no symlink, junction, or Windows reparse component in the path, no raw/result overlap, and result output under the same external artifact root. The supported sibling root `../teamSsdCli-release-artifacts/` remains valid.
+All actual-certification raw and result destinations are validated before directory creation, subprocess/model calls, or output writes. They must be new external paths, outside the repository and canonical sources, with no symlink, junction, or Windows reparse component in the path, no raw/result overlap, and result output under the same external artifact root. Phase directories and result files are created exclusively and revalidated before writes. Runtime, identity, network, or interrupted-call failures after safe destination establishment retain a schema-valid non-success operational result; unsafe destination failures make no write. Exact inventory validation rejects extra, missing, duplicate, or unreferenced files. The supported sibling root `../teamSsdCli-release-artifacts/` remains valid.
 
 `scripts/normalize_actual_certification.py` cross-links each model row to its append-only raw artifact. Normalized validation then cross-checks operation, case, role, class, group identity, observed model/runtime identity, source hashes, token/duration metrics, and deterministic result against raw bytes. Failed and superseded attempts remain immutable. Historical remediation evidence remains validation-compatible without being rewritten; only new phase summaries require the observed-identity fields.
 
 The 2026-07-15 Qwen evidence uses Ollama `0.30.11`, `qwen3.5:9b` digest `6488c96fa5fa`, and adapter `1.0`; it passed 0/5 preflight and 1/15 matrix cases. The DeepSeek evidence uses the same frozen semantics with `deepseek-r1:8b`, full digest `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`, architecture `qwen3`, 8.2B profile, `Q4_K_M`, context `131072`, Ollama `0.30.11`, and adapter `1.0`; it passed 0/5 and 0/15. These files remain immutable baseline evidence.
 
-Adapter `2.0` adds generated closed role schemas, reasoning/final separation,
+Adapter `2.0` added generated closed role schemas, reasoning/final separation,
 mechanical normalization, append-only attempt lineage, and one structural retry
 only for empty/invalid/schema-invalid final output. `run_actual_certification.py`
 writes phase summaries; `check_actual_certification_gate.py` independently
@@ -82,7 +82,7 @@ case passing. A preflight gate must exit `0` before a matrix command is permitte
 Failed preflight normalization omits `--matrix-result` and records
 `matrix_not_run: preflight-gate-failed`.
 
-The 2026-07-16 remediation evidence is stored separately at
+The adapter `2.0` remediation evidence is stored separately at
 `phase-2-11-qwen-remediation-2026-07-16.yaml` and
 `phase-2-11-deepseek-remediation-2026-07-16.yaml`. Each family completed five
 structurally valid attempts, failed 0/5 with `model-adapter.semantic`, used no
@@ -90,10 +90,28 @@ retry, and had gate exit `1`; neither matrix ran. Both normalized documents bind
 their adapter `1.0` baseline by SHA-256 and validate one-to-one against their
 external raw roots. The fresh AI-disabled remediation artifact passed 11/11.
 
+Adapter `2.1` adds mutually exclusive `draft` and `block` schema branches,
+model-owned global artifact kind, restricted model check results, universal
+advisory-draft versus approval guidance, version-bound current profiles, runtime
+result checksum binding, operational failure summaries, and exact inventory
+validation. It retains at most one retry only for structural response failure;
+semantic failures are never repaired or retried. Historical adapter `1.0` and
+`2.0` schema, prompt, diagnostic, and evidence reconstruction remains exact.
+
+The adapter `2.1` normalized evidence is stored at
+`phase-2-11-qwen-adapter-2-1-2026-07-16.yaml` and
+`phase-2-11-deepseek-adapter-2-1-2026-07-16.yaml`. Qwen passed 2/5 preflight
+cases; DeepSeek passed 0/5. All ten responses were structurally valid on attempt
+1, so there were zero retries. Both gates failed and neither matrix ran. The new
+AI-disabled artifact
+`raw-artifact-v0.2.1-ai-disabled-remediation-2026-07-16` passed 11/11 with
+exact catalog command vectors and inventory.
+
 DeepSeek reasoning is retained separately from the final-response boundary and
 never becomes authority or a pass. Every failed operation routes to deterministic
 validation plus the case-specific catalog-owned human role and concrete
 disposition action; generic owner/decision text fails normalized validation. Both
 models are local family proxies, not corporate-runtime equivalence proof. Work
-item 2.11 remains `in_progress`, task 4.9 remains open, and 2.12 remains blocked
-pending a new human disposition.
+item 2.11 remains `in_progress`, task 4.9 remains open, and 2.12 remains blocked.
+The exact adapter `2.1` result is recorded in
+`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.

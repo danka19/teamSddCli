@@ -1,12 +1,12 @@
 # Weak-Model Operating Kit And Safe Parallel Work
 
-Status: work items 2.9-2.10 are closed after review and TDD hardening. Work item 2.11 is `in_progress`: adapter `2.0` is implemented, but both frozen proxy families failed 0/5 semantic preflight and neither matrix ran.
+Status: work items 2.9-2.10 are closed after review and TDD hardening. Work item 2.11 is `in_progress`: adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries, and neither matrix ran.
 
 ## Boundary
 
 The deterministic process, not the model, selects the role, class, one-stage boundary, instruction, read pack, evidence contract, stop point, and allowed write scope. Analyst, developer, QA, and Tech Lead assistants are advisory. They cannot approve, waive, merge, release, archive, resume, set a gate green, mutate lifecycle state, or turn their own draft into canonical evidence.
 
-The three family templates contain no process policy or transition rules, have no authority, cannot write canonical data, and preserve existing canonical files if a runtime fails. For Qwen/DeepSeek certification, adapter `2.0` uses `process/model_adapter.py` to generate a closed role-specific response schema from the verified launch manifest, keep reasoning separate from final output, parse the exact final JSON object, and mechanically expand it into the existing operation-evidence contract. Schema generation may expose supplied source IDs and global reason codes, but never validator-only expected decisions, required answers, or internal classifications.
+The three family templates contain no process policy or transition rules, have no authority, cannot write canonical data, and preserve existing canonical files if a runtime fails. For current Qwen/DeepSeek certification, adapter `2.1` uses `process/model_adapter.py` to generate mutually exclusive closed `draft` and `block` role-response branches from the verified launch manifest, keep reasoning separate from final output, parse the exact final JSON object, and mechanically expand it into the existing operation-evidence contract. The model owns the decision, reason codes, source selection from the supplied pack, and draft artifact kind. Schema generation may expose supplied source IDs and complete global vocabularies, but never validator-only expected decisions, required answers, expected artifact kind, or internal classifications. Adapter `1.0` and `2.0` builders remain read-only compatibility paths for historical evidence.
 
 ## Deterministic launch
 
@@ -21,8 +21,9 @@ For actual-model certification, run a new append-only phase destination and then
 gate its summary:
 
 ```powershell
+python scripts/run_actual_certification.py --raw-output <new-root>\runtime-probe --phase runtime-probe --model-family qwen-class --result-output <new-root>\qwen-class-runtime-result.json
 python scripts/run_actual_certification.py --raw-output <new-root>\preflight --phase preflight --model-family qwen-class --result-output <new-root>\qwen-preflight-result.json
-python scripts/check_actual_certification_gate.py <new-root>\qwen-preflight-result.json --artifact-root <new-root> --phase preflight --model-family qwen-class --adapter-version 2.0 --expected-count 5
+python scripts/check_actual_certification_gate.py <new-root>\qwen-preflight-result.json --artifact-root <new-root> --phase preflight --model-family qwen-class --adapter-version 2.1 --expected-count 5
 ```
 
 Repeat with `deepseek-class`. A family matrix may start only after its same-root,
@@ -35,6 +36,11 @@ Use only a new external artifact root such as
 repository-contained paths, existing destinations, traversal/alias paths,
 symlink/junction/reparse components, raw/result overlap, and result output
 outside the selected artifact root before any model call or directory creation.
+Runtime, preflight, and matrix phase directories and result files are created
+exclusively and rechecked before writes. After safe destination establishment,
+runtime, identity, network, or interrupted-call failures retain a closed
+non-success operational result; destination-validation failures remain
+side-effect free.
 
 The runner binds preflight to a fresh full-digest/runtime observation from
 `process/certification/runtime-identities.yaml`. Immediately before every matrix
@@ -66,18 +72,27 @@ Operation evidence separates sources read, artifacts drafted, actual checks, cla
 
 All committed examples and tests are synthetic. They prove deterministic contracts and the AI-disabled path, not model quality, corporate compatibility, real integration availability, or transfer readiness.
 
-Adapter `2.0` may make one retry only when the final response is empty, invalid
+Adapter `2.1` may make one retry only when the final response is empty, invalid
 JSON, or fails its generated schema. The retry keeps identical facts, sources,
 role, case, and schema and adds only the fixed structural instruction. A
 structurally valid semantic failure is never retried. Every attempt is written to
 a separate immutable raw file with its own checksum and lineage.
 
 Normalization is mechanical: it may add launch-owned identity and invariant
-authority fields, but it cannot repair a model decision, reason, source,
-observation, claim, check, unresolved input, or required human decision. The
-2026-07-15 adapter `1.0` evidence remains the immutable baseline; adapter `2.0`
-remediation evidence lives in separate raw roots and normalized documents with a
-hashed `baseline_reference`.
+authority fields, but it cannot repair a model decision, artifact kind, reason,
+source, observation, claim, check, unresolved input, or required human decision.
+Adapter `2.1` model-authored checks cannot claim independently passed commands
+or tests; only source-review and explicit not-run/missing/unsupported/conflict
+states are accepted. The 2026-07-15 adapter `1.0` evidence and adapter `2.0`
+remediation evidence remain immutable; adapter `2.1` lives in separate raw roots
+and normalized documents with a hashed adapter `2.0` `baseline_reference`.
+Normalized `2.1` evidence also binds runtime-probe result and raw checksums.
+
+The 2026-07-16 adapter `2.1` execution produced Qwen 2/5 and DeepSeek 0/5.
+All ten responses were structurally valid on attempt 1, so zero retries were
+allowed. Both gates failed and neither matrix ran. The exact evidence and
+diagnostics are recorded in
+`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
 
 Recovery procedure:
 

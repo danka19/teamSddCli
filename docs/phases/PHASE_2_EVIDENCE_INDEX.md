@@ -529,7 +529,7 @@ Status: closed after implementation, independent architecture/review hardening, 
 
 ## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5, 4.7-4.8 and NIS tasks 8.2-8.3 are complete; transfer task 4.9 remains open after both adapter `2.0` preflight gates failed. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
+Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5, 4.7-4.8 and NIS tasks 8.2-8.3 are complete; transfer task 4.9 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
 
 ### Evidence And Scope
 
@@ -583,7 +583,49 @@ Status: `in_progress`. The AI-disabled baseline and both frozen non-leading mode
 - Durable result:
   `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md`.
 
+### Adapter 2.1 Outcome
+
+- Contract boundary: adapter `2.1` makes `draft` and `block` mutually exclusive,
+  keeps artifact kind and semantic choices model-owned, restricts model check
+  results so they cannot self-certify execution, and keeps case expectations
+  outside every model-facing surface.
+- Runtime/evidence boundary: the current profiles, launch, request, raw attempts,
+  phase summaries, gate, and normalized evidence bind adapter `2.1`. Runtime
+  probes have exclusive result summaries and normalized SHA-256 binding;
+  operational failures after safe destination establishment are retained; exact
+  inventory rejects extra or unreferenced files. Historical adapter `1.0` and
+  `2.0` schema, prompt, diagnostics, hashes, and evidence remain readable and
+  immutable.
+- Retry boundary: all ten adapter `2.1` responses were structurally valid on
+  attempt 1. There were zero retries; semantic and downstream evidence failures
+  were retained without repair.
+- Qwen: `qwen3.5:9b`, full digest
+  `6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7`,
+  Ollama `0.30.11`, adapter `2.1`; 2/5 preflight. The missing-context and
+  source-evidence cases passed. Exact-output, authority, and validator cases
+  failed with `model-adapter.semantic`. The gate failed and the matrix did not
+  run.
+- DeepSeek: `deepseek-r1:8b`, full digest
+  `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`,
+  Ollama `0.30.11`, adapter `2.1`; 0/5 preflight. Diagnostics include wrong
+  decision, reason, source, role-output kind, downstream source schema, and
+  aggregate semantic failures. The gate failed and the matrix did not run.
+- Normalized evidence:
+  `process/certification/evidence/phase-2-11-qwen-adapter-2-1-2026-07-16.yaml`
+  and
+  `process/certification/evidence/phase-2-11-deepseek-adapter-2-1-2026-07-16.yaml`.
+  Both have `status: failed`, `matrix.status: not-run`,
+  `matrix_not_run: preflight-gate-failed`, exact runtime/preflight/attempt
+  checksum binding, and immutable adapter `2.0` baseline references.
+- AI-disabled regression:
+  `raw-artifact-v0.2.1-ai-disabled-remediation-2026-07-16` outside Git passed
+  11/11 with exact catalog command vectors, no canonical mutation, and no extra
+  inventory.
+- Durable audit:
+  `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
+
 Transfer progress is 22/36. Task 4.9 remains unchecked, work item 2.11 remains
-open, both active changes remain open, 2.12 is planned and blocked, and no model
-certification, release acceptance, archive, PR, or pilot is claimed. The next
-gate is a new human disposition for the exact residual semantic incompatibility.
+open, all active changes remain open, 2.12 is planned and blocked, and no model
+certification, release acceptance, archive, PR, or pilot is claimed. The
+adapter `2.1` change has final ordered reviews still open; after those reviews,
+the residual incompatibility requires a new human disposition.

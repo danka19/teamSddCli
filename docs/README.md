@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.10 closed the versioned foundation; work item 2.11 remains in progress after adapter `2.0` remediation produced honest Qwen 0/5 and DeepSeek 0/5 semantic preflight failures, no retries, and no matrices. The AI-disabled regression still passes 11/11. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.10 closed the versioned foundation; work item 2.11 remains in progress after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results, zero retries, and no matrices. The AI-disabled regression still passes 11/11. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates.
 
 ## Scope
 

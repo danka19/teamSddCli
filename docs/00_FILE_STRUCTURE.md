@@ -51,6 +51,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_PLAN_COMPLETENESS_AUDIT_2026-07-13.md` | Evidence-backed audit of Phase 2 scope coverage, statuses, task ownership, dependency cycles, OpenSpec mapping, verification specificity, and planning drift |
 | `docs/audits/PHASE_2_EXECUTION_PREFLIGHT_AUDIT_2026-07-14.md` | Reproducible Phase 2 execution-entry audit covering statuses, dependency gates, OpenSpec readiness, baseline tests, branch safety, and later certification limitations |
 | `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md` | Dated adapter `2.0` remediation outcome, exact Qwen/DeepSeek failure evidence, AI-disabled regression, raw checksums, and residual human decision |
+| `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md` | Dated adapter `2.1` outcome with the adapter `2.0` ten-response classification, Qwen 2/5 and DeepSeek 0/5 evidence, zero retries, runtime/result checksums, AI-disabled 11/11, and residual limitations |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
@@ -74,6 +75,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
 | `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 36 implementation tasks; 22/36 are complete at the current work item 2.11 residual-failure checkpoint |
 | `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot safety, failed-run retention, and affected accepted-capability deltas |
+| `openspec/changes/simplify-weak-model-decision-contract/` | Active adapter `2.1` change for decision-discriminated role responses, non-leading guidance, structural-only retry, compatibility, runtime/evidence hardening, and append-only recertification; 14/15 tasks are complete and final ordered reviews remain open |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts
@@ -103,6 +105,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
 | `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml` | Normalized Qwen adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml` | Normalized DeepSeek adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
+| `process/certification/evidence/phase-2-11-qwen-adapter-2-1-2026-07-16.yaml` | Normalized Qwen adapter `2.1` failed-preflight evidence: 2/5, zero retries, matrix not run, runtime/preflight/attempt checksums, and immutable adapter `2.0` baseline reference |
+| `process/certification/evidence/phase-2-11-deepseek-adapter-2-1-2026-07-16.yaml` | Normalized DeepSeek adapter `2.1` failed-preflight evidence: 0/5, zero retries, matrix not run, runtime/preflight/attempt checksums, and immutable adapter `2.0` baseline reference |
 | `process/certification/runtime-identities.yaml` | Immutable full-digest extension to the semantic matrix catalog, used by fresh preflight and per-matrix-call runtime probes without duplicating tag/runtime ownership or rewriting historical evidence |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
 | `tests/test_*.py` `SCENARIO_COVERAGE` markers | Test-source-owned exact selector-to-pytest-node bindings used to reject duplicate, unknown, unused, or unrelated evidence substitution |
@@ -141,7 +145,7 @@ The base `process/`, central-topology templates, schemas, and fixtures now exist
 
 | Path | Purpose |
 |---|---|
-| External `../teamSsdCli-release-artifacts/raw-artifact-v0.2.0-*-2026-07-*` roots | Immutable AI-disabled and actual Qwen/DeepSeek raw evidence outside Git; normalized evidence and checksums are committed, and work item 2.11 remains open after failed adapter `2.0` preflights |
+| External `../teamSsdCli-release-artifacts/raw-artifact-v0.2.*-*-2026-07-*` roots | Immutable AI-disabled and actual Qwen/DeepSeek raw evidence outside Git for adapter `1.0`, `2.0`, and `2.1`; normalized evidence and checksums are committed, and work item 2.11 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 |
 | Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
 | `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 
