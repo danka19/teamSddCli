@@ -18,6 +18,8 @@
 - Focused tests run while stabilizing; the complete suite runs exactly once after implementation and rehearsals stabilize.
 - Do not rerun Qwen/DeepSeek certification; consume existing committed normalized evidence and external raw-artifact checksums.
 - Do not touch user-owned untracked `.claude/` or `.vite/`.
+- Delivery mode after Task 1 uses the minimum sufficient SDD risk route per task. Architecture review is required only for a public contract, data schema, auth/security boundary, concurrency, irreversible external effect, or module-boundary change; non-Critical hardening ideas that are outside the accepted task contract are recorded as follow-ups rather than expanding the blocking scope.
+- Do not run the complete suite, Windows rehearsal, or WSL smoke before the immutable candidate is stable. Each implementation step uses targeted checks only; one complete suite and one final branch review run after candidate stabilization.
 
 ---
 
