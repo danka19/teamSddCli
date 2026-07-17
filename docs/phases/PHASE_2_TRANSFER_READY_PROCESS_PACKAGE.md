@@ -2,13 +2,13 @@
 
 Status: in_progress.
 
-Work items 2.1-2.11 are closed after implementation, actual-model certification, and deterministic verification. Adapter `2.2` produced Qwen and DeepSeek 5/5 preflight followed by 15/15 matrices, while AI-disabled remained 11/11. Work item 2.12 is planned and is now the next sequential item.
+Work items 2.1-2.11 are closed after implementation, actual-model certification, and deterministic verification. Adapter `2.2` produced Qwen and DeepSeek 5/5 preflight followed by 15/15 matrices, while AI-disabled remained 11/11. Work item 2.12 is in progress under the two-host verification scope accepted in `D-018`.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
 ## Goal
 
-Build and externally certify a reusable release candidate for the deterministic NIS-aligned `minor | major | hotfix` SDD process. The package must provide equivalent governed behavior on Windows, Linux, and macOS with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies.
+Build and externally certify a reusable release candidate for the deterministic NIS-aligned `minor | major | hotfix` SDD process. The package must pass one full clean Windows rehearsal and a shorter equivalent Linux portability smoke on WSL2 with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies; macOS is not certified.
 
 Reliability increases through broader risk-oriented positive and negative test coverage plus end-to-end traceability from requirements and scenarios to tasks, executions, decisions, failures, and verification evidence. Delivery speed increases through AI-assisted decomposition and safe parallel execution of explicitly independent tasks. AI-disabled execution remains the required foundation and fallback; AI never gains approval or accountable human authority by implication.
 
@@ -20,7 +20,7 @@ Phase 2 produces the accepted external release candidate and the adaptation/pilo
 - External development owns reusable schemas, deterministic checks, workflow entry points, package/bootstrap/update/rollback behavior, role instructions, read packs, safe-parallel contracts, certification fixtures, cross-platform evidence, release evidence, and runbooks.
 - Corporate adaptation owns real non-secret configuration, approved secret references, environment-specific standard-tool wiring, thin AI adapters, and monitored pilot evidence.
 - Reusable gaps found during corporate adaptation return to the external OpenSpec workflow; long-lived internal behavior forks are rejected.
-- Windows, Linux, and macOS are supported full desktop hosts. Provisioned prerequisites do not replace clean-bootstrap and equivalence evidence on each host.
+- Windows is the full clean-rehearsal host and Linux on WSL2 is the bounded portability-smoke host. Provisioned prerequisites do not replace the required evidence; macOS is explicitly outside certification under `D-018`.
 - Normalized synthetic evidence, manifests, and hashes are stored in Git. Raw certification outputs are stored in a versioned release artifact and referenced by manifest and checksum.
 - Both active OpenSpec changes remain open through the Phase 3 pilot. Phase 2 stops at external release-candidate acceptance.
 - Jira task automation, Confluence publication, QA/AT proposal generation, role inboxes, deploy, Zephyr integration, graph databases, and broad project-memory automation remain outside Phase 2.
@@ -83,7 +83,7 @@ Active proposed behavior:
 
 Phase acceptance evidence must prove:
 
-- deterministic bootstrap, validation, update, rollback, and class-aware governed flow on Windows, Linux, and macOS;
+- deterministic bootstrap, validation, update, rollback, and class-aware governed flow through a full Windows rehearsal and bounded Linux/WSL2 portability smoke;
 - `thin -> minor`, `full -> major`, no inferred hotfix, no archive rewrite, and safe rollback;
 - DoR, implementation-complete, DoD, release readiness, archive readiness, archived, and external Done remain distinct;
 - broader positive and negative verification coverage with requirement/scenario-to-evidence mapping and visible residual gaps;
@@ -568,23 +568,23 @@ Exit criteria:
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
 
-Status: planned.
+Status: in_progress.
 
 Dependency status: prerequisite 2.11 is closed; sequential after 2.11 and requires closed work items 2.2 and 2.8.
 
-Objective: generate/validate the release manifest, automate acceptance checks, rehearse migration/update/rollback, and prove equivalent Windows/Linux/macOS behavior.
+Objective: generate/validate the release manifest, automate acceptance checks, rehearse migration/update/rollback, and prove full Windows plus bounded equivalent Linux/WSL2 behavior.
 
 OpenSpec source: transfer-package tasks 5.1-5.4; NIS task 8.4.
 
 Expected files: release-manifest generator/validator, platform launch adapters, setup/update/rollback runbooks, platform evidence, checksums, and release artifact.
 
-Verification: clean bootstrap, deterministic flow, MCP connectivity, OpenSpec/Git/Python/Node dependencies, migration, idempotency, update, rollback/hold, no archive rewrite, evidence equivalence, and missing/stale/failed/private/AI-only evidence rejection on all three hosts.
+Verification: focused bootstrap/integration tests; one full clean Windows rehearsal; one shorter Linux/WSL2 portability smoke with equivalent negative acceptance cases; migration, idempotency, update, rollback/hold, no archive rewrite, and missing/stale/failed/private/AI-only evidence rejection; then one complete suite after stabilization. macOS is not certified.
 
-Parallelization: Windows, Linux, and macOS rehearsals may run concurrently from the same immutable candidate; candidate construction and final manifest acceptance remain single-owner.
+Parallelization: Windows and Linux rehearsals may run concurrently from the same immutable candidate; candidate construction and final manifest acceptance remain single-owner.
 
 Documentation: installation, platform inventory, compatibility, update, rollback, secrets, adapters, and no-fork feedback.
 
-Exit criteria: one immutable candidate produces equivalent governed results on all supported hosts and can be rolled back safely.
+Exit criteria: one immutable candidate passes the full Windows rehearsal and bounded equivalent Linux/WSL2 smoke, rejects the required negative cases, records macOS as not certified, and can be rolled back safely.
 
 ### 2.13 Corporate Adaptation And Pilot Package
 
@@ -618,7 +618,7 @@ OpenSpec source: transfer-package tasks 7.1-7.4; NIS tasks 8.5-8.7.
 
 Expected files: current docs/audit/roadmap, phase evidence index, manifest, runbooks, review records, coverage/traceability report, limitations, and acceptance packet.
 
-Verification: focused/full tests; package/config/template validation; coverage/traceability; Windows/Linux/macOS evidence; AI-disabled and weak-model certification; privacy/secret scan; documentation-sync audit; `openspec list`; `openspec list --specs`; `openspec validate --all --strict`; `git diff --check`; worker/reviewer/architecture/verification gates.
+Verification: focused tests during implementation and one full suite after stabilization; package/config/template validation; Windows full-rehearsal and Linux/WSL2 smoke evidence; AI-disabled and weak-model certification; privacy/secret scan; documentation-sync audit; `openspec list`; `openspec list --specs`; `openspec validate --all --strict`; `git diff --check`; worker/reviewer/architecture/verification gates.
 
 Parallelization: documentation review, architecture review, and verification evidence audit may run concurrently against the frozen candidate; fixes serialize through one integration owner and require re-verification.
 
@@ -673,7 +673,7 @@ Phase 2 can move to `pending_acceptance` only when:
 
 - work items 2.1-2.13 are `closed` and 2.14 verification is complete;
 - the exact immutable release candidate, manifest, raw artifact, hashes, and rollback reference are reproducible;
-- Windows, Linux, and macOS clean-host evidence proves equivalent governed behavior;
+- Windows full-rehearsal and Linux/WSL2 portability evidence prove the accepted proportionate governed behavior, while macOS remains explicitly not certified;
 - all deterministic gates pass with AI disabled;
 - risk-oriented Qwen/DeepSeek certification and negative authority/safety cases are complete;
 - broader positive/negative coverage is linked to requirements/scenarios and residual gaps are explicit;
@@ -700,6 +700,6 @@ The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix executio
 Mandatory later evidence, not design decisions:
 
 - Any later append-only Qwen-class and DeepSeek-class remediation evidence: 5/5 frozen preflight before each 15/15 matrix, with a new human-approved remediation scope required before another run.
-- Exact supported Windows, Linux, and macOS versions/architectures and dependency versions used for certification.
+- Exact Windows and Linux/WSL2 versions/architectures and dependency versions used for certification, plus the explicit macOS not-certified limitation.
 - Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
 - Human acceptance of the external release candidate before Phase 3.

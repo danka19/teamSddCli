@@ -26,9 +26,10 @@ The SDD process SHALL provide deterministic bootstrap, compatibility validation,
 - **WHEN** a package or configuration upgrade fails its verification gate
 - **THEN** the runbook restores the previously pinned package and configuration version without rewriting canonical change or living-spec history
 
-#### Scenario: Supported desktop hosts produce equivalent governed behavior
-- **WHEN** the release candidate is bootstrapped on clean supported Windows, Linux, and macOS hosts with the documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned
-- **THEN** the same canonical fixtures, deterministic gates, evidence contracts, update path, and rollback behavior pass without platform-specific weakening or manual source edits
+#### Scenario: Supported hosts produce proportionate governed evidence
+- **WHEN** the same immutable release candidate is rehearsed with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned
+- **THEN** Windows passes one full clean rehearsal and Linux on WSL2 passes a shorter equivalent portability smoke plus negative acceptance cases without platform-specific weakening or manual source edits
+- **AND** macOS is recorded as not certified rather than inferred from Windows or Linux evidence
 
 ### Requirement: External release acceptance gate
 The SDD process SHALL require reproducible external evidence before a release candidate is accepted for corporate transfer.
