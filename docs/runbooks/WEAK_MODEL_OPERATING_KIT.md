@@ -1,12 +1,12 @@
 # Weak-Model Operating Kit And Safe Parallel Work
 
-Status: work items 2.9-2.10 are closed after review and TDD hardening. Work item 2.11 is `in_progress`: adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries, and neither matrix ran.
+Status: work items 2.9-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates; AI-disabled passed 11/11.
 
 ## Boundary
 
 The deterministic process, not the model, selects the role, class, one-stage boundary, instruction, read pack, evidence contract, stop point, and allowed write scope. Analyst, developer, QA, and Tech Lead assistants are advisory. They cannot approve, waive, merge, release, archive, resume, set a gate green, mutate lifecycle state, or turn their own draft into canonical evidence.
 
-The three family templates contain no process policy or transition rules, have no authority, cannot write canonical data, and preserve existing canonical files if a runtime fails. For current Qwen/DeepSeek certification, adapter `2.1` uses `process/model_adapter.py` to generate mutually exclusive closed `draft` and `block` role-response branches from the verified launch manifest, keep reasoning separate from final output, parse the exact final JSON object, and mechanically expand it into the existing operation-evidence contract. The model owns the decision, reason codes, source selection from the supplied pack, and draft artifact kind. Schema generation may expose supplied source IDs and complete global vocabularies, but never validator-only expected decisions, required answers, expected artifact kind, or internal classifications. Adapter `1.0` and `2.0` builders remain read-only compatibility paths for historical evidence.
+The three family templates contain no process policy or transition rules, have no authority, cannot write canonical data, and preserve existing canonical files if a runtime fails. Adapter `2.2` uses `process/operation_plan.py` before generation to select one deterministic `draft-content` or `blocked-summary` branch and bind artifact kind, reason codes, verified source inventory, unresolved inputs, and accountable human route. The model returns only source-linked observations or a concise blocked summary with one allowed source ID. `process/model_adapter.py` validates that content and mechanically expands it into the existing operation-evidence contract. The model never selects the process decision, artifact route, reason code, human action, or lifecycle result. Adapter `1.0`, `2.0`, and `2.1` builders remain read-only compatibility paths for historical evidence.
 
 ## Deterministic launch
 
@@ -23,13 +23,22 @@ gate its summary:
 ```powershell
 python scripts/run_actual_certification.py --raw-output <new-root>\runtime-probe --phase runtime-probe --model-family qwen-class --result-output <new-root>\qwen-class-runtime-result.json
 python scripts/run_actual_certification.py --raw-output <new-root>\preflight --phase preflight --model-family qwen-class --result-output <new-root>\qwen-preflight-result.json
-python scripts/check_actual_certification_gate.py <new-root>\qwen-preflight-result.json --artifact-root <new-root> --phase preflight --model-family qwen-class --adapter-version 2.1 --expected-count 5
+python scripts/check_actual_certification_gate.py <new-root>\qwen-preflight-result.json --artifact-root <new-root> --phase preflight --model-family qwen-class --adapter-version 2.2 --expected-count 5
 ```
 
 Repeat with `deepseek-class`. A family matrix may start only after its same-root,
 same-family, same-adapter preflight gate exits `0`. Gate exit `1` blocks the
 matrix; exit `3` means evidence is unverifiable. Do not infer a pass from fluent
 output or from the runner having completed all cases.
+
+Run local model families sequentially. Unload Qwen before DeepSeek, do not run
+pytest or another model beside the DeepSeek slice, and leave a short pause
+between preflight and matrix. DeepSeek can materially load the workstation;
+the current adapter therefore requests `num_ctx=8192` rather than the model's
+advertised 131072-token maximum. Do not raise this operational bound for the
+certification catalog without new resource and contract evidence. A
+runtime failure receives a new append-only root after the local service is
+healthy, never a reused destination.
 
 Use only a new external artifact root such as
 `../teamSsdCli-release-artifacts/<new-versioned-artifact>/`. The runner rejects
@@ -72,27 +81,30 @@ Operation evidence separates sources read, artifacts drafted, actual checks, cla
 
 All committed examples and tests are synthetic. They prove deterministic contracts and the AI-disabled path, not model quality, corporate compatibility, real integration availability, or transfer readiness.
 
-Adapter `2.1` may make one retry only when the final response is empty, invalid
+Adapter `2.2` may make one retry only when the final response is empty, invalid
 JSON, or fails its generated schema. The retry keeps identical facts, sources,
 role, case, and schema and adds only the fixed structural instruction. A
 structurally valid semantic failure is never retried. Every attempt is written to
 a separate immutable raw file with its own checksum and lineage.
 
-Normalization is mechanical: it may add launch-owned identity and invariant
-authority fields, but it cannot repair a model decision, artifact kind, reason,
-source, observation, claim, check, unresolved input, or required human decision.
-Adapter `2.1` model-authored checks cannot claim independently passed commands
-or tests; only source-review and explicit not-run/missing/unsupported/conflict
-states are accepted. The 2026-07-15 adapter `1.0` evidence and adapter `2.0`
-remediation evidence remain immutable; adapter `2.1` lives in separate raw roots
-and normalized documents with a hashed adapter `2.0` `baseline_reference`.
-Normalized `2.1` evidence also binds runtime-probe result and raw checksums.
+Normalization is mechanical: it may add operation-plan identity, verified source
+inventory, policy metadata, and invariant authority fields, but it cannot repair
+model-authored observations or a blocked summary. Model checks are recorded as
+not run unless independently supplied by deterministic evidence. Historical
+adapter `1.0`, `2.0`, and `2.1` evidence remains immutable; adapter `2.2` lives
+in separate raw roots and normalized documents with hashed adapter `2.1`
+baseline references and runtime-probe checksums.
 
 The 2026-07-16 adapter `2.1` execution produced Qwen 2/5 and DeepSeek 0/5.
 All ten responses were structurally valid on attempt 1, so zero retries were
 allowed. Both gates failed and neither matrix ran. The exact evidence and
 diagnostics are recorded in
 `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
+
+The 2026-07-17 adapter `2.2` execution produced Qwen 5/5 then 15/15 and
+DeepSeek 5/5 then 15/15. Every accepted response used attempt 1. AI-disabled
+passed 11/11. See
+`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_2_AUDIT_2026-07-17.md`.
 
 Recovery procedure:
 

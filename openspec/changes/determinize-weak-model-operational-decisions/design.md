@@ -54,12 +54,12 @@ correct owner for decisions that can be derived before generation.
 The launcher creates an identity-bound plan containing:
 
 ```text
-action: draft-artifact | explain-block
+action: draft-content | blocked-summary
 artifact_kind: <configured kind> | null
 reason_codes: <deterministically derived codes>
-required_source_ids: <launcher-bound inventory>
-human_action_codes: <configured accountable handoff>
-content_requirements: <small branch-specific checklist>
+source_inventory: <verified launcher and case-fact records>
+human_action_codes: <configured accountable case handoff>
+unresolved_inputs: <planned missing inputs for blocked cases>
 ```
 
 If policy inputs are missing or contradictory and the deterministic evaluator
@@ -72,20 +72,15 @@ not JSON syntax, now dominate failures.
 
 ### 2. Let the model generate content, not policy metadata
 
-For `draft-artifact`, the model supplies only bounded summary, observations,
-claims, and check notes. For `explain-block`, it supplies only a concise
-source-grounded explanation of the missing or forbidden condition. Artifact
+For `draft-content`, the model supplies only source-linked observations. For
+`blocked-summary`, it supplies only a concise summary and one allowed source ID
+for the missing or forbidden condition. Artifact
 kind, reason codes, source inventory, and human action codes are copied from the
 verified operation plan into normalized evidence.
 
-Model-authored claims still cite allowed source IDs. The model is not asked to
+Model-authored observations cite allowed source IDs. The model is not asked to
 echo every source merely to prove that it read the pack; source inventory is
 launcher evidence, while citations are claim evidence.
-
-If the model notices an additional possible gap that is not represented by the
-verified operation plan, it may report an advisory finding. That finding cannot
-change the planned action or policy metadata; deterministic validation or the
-named human owner must disposition it.
 
 Alternative rejected: keep exact reason and artifact selection model-owned as a
 proxy for process understanding. That measures taxonomy recall and creates

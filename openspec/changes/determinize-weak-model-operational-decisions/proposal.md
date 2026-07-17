@@ -57,4 +57,4 @@ broader weak-model and certification objective.
 
 - Execution phase: P2
 - Related phases: P3
-- Lifecycle status: planned
+- Lifecycle status: in_progress

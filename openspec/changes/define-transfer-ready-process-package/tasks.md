@@ -31,7 +31,7 @@
 - [x] 4.6 Generate a requirement/scenario-to-test/evidence coverage report, add focused positive and negative tests for uncovered deterministic behavior, and keep permitted residual gaps source-linked with owner, risk, compensating evidence, and follow-up.
 - [x] 4.7 Define and verify the schema-constrained role-specific model adapter contract, reasoning/final boundary, mechanical normalization boundary, and one-retry append-only evidence rule without weakening deterministic validation.
 - [x] 4.8 Implement and test Qwen/DeepSeek adapter remediation plus the deterministic 5/5 preflight gate that blocks matrix execution for an unqualified family or adapter version.
-- [ ] 4.9 Execute and record new append-only Qwen and DeepSeek remediation certification: require 5/5 preflight before each 15/15 matrix, preserve the original baseline evidence, and record exact residual incompatibility if either family fails.
+- [x] 4.9 Execute and record new append-only Qwen and DeepSeek remediation certification: require 5/5 preflight before each 15/15 matrix, preserve the original baseline evidence, and record exact residual incompatibility if either family fails.
 
 ## 5. Release Candidate And Transfer Runbook
 

@@ -13,6 +13,7 @@ from process.weak_model_kit import (
     _schema_errors,
     _without_identity,
     contains_forbidden_authority_claim,
+    contains_model_owned_authority_claim,
 )
 
 
@@ -266,9 +267,94 @@ def _build_role_response_schema_2_1(
     }
 
 
+def _build_role_response_schema_2_2(
+    launch: dict[str, Any], contract: dict[str, Any]
+) -> dict[str, Any]:
+    plan = contract["operation_plan"]
+    canonical_source_ids = [
+        source["stable_id"]
+        for source in launch["verified_source_manifest"]
+        if source["authority"] == "canonical"
+    ]
+    source_id = {"type": "string", "enum": plan["source_inventory"]}
+    nonempty_string = {"type": "string", "minLength": 1}
+    observation = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["summary", "source_id"],
+        "properties": {"summary": nonempty_string, "source_id": source_id},
+    }
+    properties: dict[str, Any] = {"case_id": {"const": contract["case_id"]}}
+    if plan["action"] == "draft-content":
+        claim = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["subject", "summary", "source_id"],
+            "properties": {
+                "subject": nonempty_string,
+                "summary": nonempty_string,
+                "source_id": source_id,
+            },
+        }
+        check = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["command", "result", "evidence", "source_id"],
+            "properties": {
+                "command": nonempty_string,
+                "result": {
+                    "enum": ["source-reviewed", "not-run", "missing", "unsupported", "conflict"]
+                },
+                "evidence": nonempty_string,
+                "source_id": source_id,
+            },
+        }
+        required = ["case_id", "draft_content"]
+        properties["draft_content"] = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["observations"],
+            "properties": {
+                "summary": nonempty_string,
+                "observations": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": observation,
+                    "contains": {
+                        "type": "object",
+                        "required": ["source_id"],
+                        "properties": {
+                            "source_id": {"enum": canonical_source_ids}
+                        },
+                    },
+                    "minContains": 1,
+                },
+                "claims": {"type": "array", "items": claim},
+                "checks": {"type": "array", "items": check},
+            },
+        }
+    else:
+        required = ["case_id", "blocked_summary"]
+        properties["blocked_summary"] = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["summary", "source_id"],
+            "properties": {"summary": nonempty_string, "source_id": source_id},
+        }
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": False,
+        "required": required,
+        "properties": properties,
+    }
+
+
 def build_role_response_schema(launch: dict[str, Any]) -> dict[str, Any]:
     """Return one closed, non-leading Draft 2020-12 response schema."""
     contract = _verified_contract(launch)
+    if contract.get("contract_version") == "2.2":
+        return _build_role_response_schema_2_2(launch, contract)
     if contract.get("contract_version") == "2.1":
         return _build_role_response_schema_2_1(launch, contract)
     return _build_role_response_schema_2_0(launch, contract)
@@ -322,6 +408,103 @@ CHECK_RESULT_MAP = {
 }
 
 
+def _normalize_role_response_2_2(
+    response: dict[str, Any], launch: dict[str, Any], contract: dict[str, Any]
+) -> dict[str, Any]:
+    plan = contract["operation_plan"]
+    is_draft = plan["action"] == "draft-content"
+    content = response["draft_content" if is_draft else "blocked_summary"]
+    if contains_model_owned_authority_claim(content):
+        raise ModelAdapterError("model-adapter.authority-claim")
+    manifest_by_id = {
+        source["stable_id"]: source for source in launch["verified_source_manifest"]
+    }
+    manifest_by_id["case-facts"] = {
+        "authority": "evidence",
+        "stable_id": "case-facts",
+        "path": f"certification-case:{contract['case_id']}",
+        "sha256": plan["case_facts_sha256"],
+    }
+    cited_source_ids = {
+        item.get("source_id")
+        for key in ("observations", "claims", "checks")
+        for item in content.get(key, [])
+        if isinstance(item, dict)
+    }
+    if not is_draft:
+        cited_source_ids.add(content["source_id"])
+    sources_read = [
+        dict(source)
+        for source_id, source in manifest_by_id.items()
+        if source_id in cited_source_ids
+    ]
+    claims: list[dict[str, Any]] = []
+    checks: list[dict[str, Any]] = []
+    artifacts: list[dict[str, Any]] = []
+    if is_draft:
+        claims.extend(
+            {
+                "kind": "fact",
+                "value": {"subject": "observation", "summary": item["summary"]},
+                "evidence": f"source:{item['source_id']}",
+            }
+            for item in content["observations"]
+        )
+        claims.extend(
+            {
+                "kind": "fact",
+                "value": {"subject": item["subject"], "summary": item["summary"]},
+                "evidence": f"source:{item['source_id']}",
+            }
+            for item in content.get("claims", [])
+        )
+        checks.extend(
+            {
+                "command": item["command"],
+                "result": "not-run" if item["result"] == "source-reviewed" else CHECK_RESULT_MAP[item["result"]],
+                "evidence": "model-check:"
+                + json.dumps(item, sort_keys=True, separators=(",", ":"), ensure_ascii=False),
+            }
+            for item in content.get("checks", [])
+        )
+        canonical_references = [
+            {key: source[key] for key in ("stable_id", "sha256")}
+            for source in sources_read
+            if source["authority"] == "canonical"
+        ]
+        artifacts.append({
+            "path": f"scratch/model-adapter/{contract['case_id']}/{plan['artifact_kind']}.json",
+            "canonical": False,
+            "canonical_references": canonical_references,
+        })
+    else:
+        claims.append({
+            "kind": "fact",
+            "value": {"subject": "blocker", "summary": content["summary"]},
+            "evidence": f"source:{content['source_id']}",
+        })
+    return {
+        "schema_version": "1.0",
+        "task_id": launch["task_id"],
+        "role": launch["role"],
+        "stage": launch["stage_boundary"],
+        "status": "draft-complete" if is_draft else "blocked",
+        "read_pack_identity": launch["read_pack_identity"],
+        "sources_read": sources_read,
+        "artifacts_drafted": artifacts,
+        "checks": checks,
+        "claims": claims,
+        "human_decisions_required": list(plan["human_action_codes"]),
+        "unresolved_inputs": list(plan["unresolved_input_codes"]),
+        "residual_limitations": [f"plan-reason:{code}" for code in plan["reason_codes"]],
+        "prohibited_actions_attempted": [],
+        "human_stop_reached": True,
+        "human_review_status": "pending",
+        "lifecycle_transition_requested": False,
+        "approval_claimed": False,
+    }
+
+
 def normalize_role_response(
     response: dict[str, Any], launch: dict[str, Any], read_pack: dict[str, Any]
 ) -> dict[str, Any]:
@@ -343,6 +526,9 @@ def normalize_role_response(
     schema = build_role_response_schema(launch)
     if list(Draft202012Validator(schema).iter_errors(response)):
         raise ModelAdapterError("model-adapter.semantic")
+
+    if contract.get("contract_version") == "2.2":
+        return _normalize_role_response_2_2(response, launch, contract)
 
     payload_key = contract["role_payload_key"]
     payload = response[payload_key]

@@ -1582,13 +1582,15 @@ def test_raw_attempt_writer_is_append_only_and_hash_bound(tmp_path: Path) -> Non
 def test_runtime_adapter_profiles_are_versioned_and_fail_closed(tmp_path: Path) -> None:
     qwen = load_adapter_profile(PROCESS, "qwen-class")
     deepseek = load_adapter_profile(PROCESS, "deepseek-class")
-    assert qwen["schema_version"] == deepseek["schema_version"] == "2.1"
+    assert qwen["schema_version"] == deepseek["schema_version"] == "2.2"
     assert qwen["generation"] == {
         "format": "json-schema",
         "think": False,
+        "num_ctx": 131072,
         "num_predict": 1200,
         "technical_retries": 1,
     }
+    assert deepseek["generation"]["num_ctx"] == 8192
     assert deepseek["generation"]["num_predict"] == 2400
     with pytest.raises(ActualCertificationError, match="actual-model.invalid-adapter-profile"):
         load_adapter_profile(PROCESS, "unknown-family")
@@ -1705,7 +1707,7 @@ def test_phase_directory_and_operational_result_are_exclusive_and_external(
         "actual-model.runtime-failure",
     )
     assert payload["status"] == "blocked"
-    assert payload["adapter"] == {"family": "qwen-class", "version": "2.1"}
+    assert payload["adapter"] == {"family": "qwen-class", "version": "2.2"}
     assert json.loads(result.read_text(encoding="utf-8")) == payload
     with pytest.raises(
         ActualCertificationError, match="actual-model.result-output-exists"
@@ -1933,6 +1935,23 @@ def _role_response(
 ) -> dict:
     payload_key = "requirements_note"
     source_ids = [source["stable_id"] for source in case["sources"]]
+    if adapter_version == "2.2":
+        return {
+            "case_id": case["id"],
+            "draft_content": {
+                "summary": "Bounded source-linked analysis.",
+                "observations": [{
+                    "summary": "The source preserves human authority.",
+                    "source_id": source_ids[0],
+                }],
+                "claims": [{
+                    "subject": "boundary",
+                    "summary": "Human review remains pending.",
+                    "source_id": source_ids[0],
+                }],
+                "checks": [],
+            },
+        }
     response = {
         "case_id": case["id"],
         "decision": decision,
@@ -1992,11 +2011,11 @@ def _allow_validator_only_required_kind(monkeypatch) -> None:
 def test_execute_model_catalog_retries_only_structural_failures_and_retains_attempts(
     monkeypatch, tmp_path: Path, first_response: str
 ) -> None:
-    catalog, case = _runtime_case_with_sentinels()
+    catalog, case = _runtime_case_with_sentinels(sentinels=False)
     responses = iter(
         [
             {"response": first_response, "thinking": "first reasoning"},
-            {"response": json.dumps(_role_response(case)), "thinking": "second reasoning"},
+            {"response": json.dumps(_role_response(case, adapter_version="2.2")), "thinking": "second reasoning"},
         ]
     )
     requests: list[dict] = []

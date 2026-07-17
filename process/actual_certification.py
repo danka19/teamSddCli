@@ -30,6 +30,7 @@ from process.model_adapter import (
     parse_role_response,
     split_reasoning_final,
 )
+from process.operation_plan import OperationPlanError, build_operation_plan
 from process.weak_model_kit import (
     GLOBAL_ALLOWED_ARTIFACT_KINDS,
     GLOBAL_ALLOWED_REASON_CODES,
@@ -89,6 +90,7 @@ FROZEN_ADAPTER_2_0_GENERATION = {
         "technical_retries": 1,
     },
 }
+FROZEN_ADAPTER_2_1_GENERATION = FROZEN_ADAPTER_2_0_GENERATION
 
 
 def _is_relative_to(path: Path, parent: Path) -> bool:
@@ -203,7 +205,7 @@ def write_operational_result_exclusive(
             if re.fullmatch(r"actual-model\.[a-z0-9-]+", diagnostic)
             else "actual-model.operational-failure"
         ),
-        "adapter": {"family": family, "version": "2.1"},
+        "adapter": {"family": family, "version": "2.2"},
     }
     if observed_identity is not None:
         payload["observed_identity"] = observed_identity
@@ -327,7 +329,7 @@ def preflight_model_execution_identity(
 
 
 def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
-    """Load one exact current runtime-only adapter 2.1 profile."""
+    """Load one exact current runtime-only adapter 2.2 profile."""
     path = process_root / "adapters" / f"{family}.yaml"
     try:
         value = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -343,12 +345,15 @@ def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
         "failure_behavior",
         "generation",
     }
-    generation_required = {"format", "think", "num_predict", "technical_retries"}
+    generation_required = {
+        "format", "think", "num_ctx", "num_predict", "technical_retries"
+    }
     expected_budget = {"qwen-class": 1200, "deepseek-class": 2400}.get(family)
+    expected_context = {"qwen-class": 131072, "deepseek-class": 8192}.get(family)
     valid = (
         isinstance(value, dict)
         and set(value) == required
-        and value.get("schema_version") == "2.1"
+        and value.get("schema_version") == "2.2"
         and value.get("adapter_family") == family
         and value.get("inputs") == ["instruction_path", "read_pack_path"]
         and value.get("output") == "scratch_operation_evidence"
@@ -359,6 +364,7 @@ def load_adapter_profile(process_root: Path, family: str) -> dict[str, Any]:
         and set(value["generation"]) == generation_required
         and value["generation"].get("format") == "json-schema"
         and value["generation"].get("think") is False
+        and value["generation"].get("num_ctx") == expected_context
         and value["generation"].get("num_predict") == expected_budget
         and value["generation"].get("technical_retries") == 1
     )
@@ -376,6 +382,11 @@ def adapter_generation_contract(
             raise ActualCertificationError("actual-model.invalid-adapter-profile")
         return dict(generation)
     if adapter_version == "2.1":
+        generation = FROZEN_ADAPTER_2_1_GENERATION.get(family)
+        if generation is None:
+            raise ActualCertificationError("actual-model.invalid-adapter-profile")
+        return dict(generation)
+    if adapter_version == "2.2":
         return dict(load_adapter_profile(process_root, family)["generation"])
     raise ActualCertificationError("actual-model.unsupported-adapter-version")
 
@@ -691,14 +702,19 @@ def validate_phase_gate(
                 "num_predict": generation.get("num_predict"),
                 "response_schema_sha256": schema_sha256,
                 **(
-                    {"num_ctx": model["context_length"]}
-                    if isinstance(model, dict) and model.get("context_length") is not None
+                    {
+                        "num_ctx": generation.get(
+                            "num_ctx", model["context_length"]
+                        )
+                    }
+                    if isinstance(model, dict)
+                    and model.get("context_length") is not None
                     else {}
                 ),
             }
-            if adapter_version == "2.1":
+            if adapter_version in {"2.1", "2.2"}:
                 expected_request_contract.update(
-                    contract_version="2.1",
+                    contract_version=adapter_version,
                     launch_identity=launch["identity"],
                 )
             if (
@@ -722,9 +738,22 @@ def validate_phase_gate(
                     raw.get("launch_identity")
                     == launch["identity"]
                     == row.get("launch_identity")
-                    if adapter_version == "2.1"
+                    if adapter_version in {"2.1", "2.2"}
                     else "launch_identity" not in raw
                     and "launch_identity" not in row
+                ),
+                (
+                    raw.get("operation_plan")
+                    == launch["model_response_contract"].get("operation_plan")
+                    and row.get("operation_plan_identity")
+                    == _sha256_bytes(json.dumps(
+                        launch["model_response_contract"].get("operation_plan"),
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    ).encode("utf-8"))
+                    if adapter_version == "2.2"
+                    else "operation_plan" not in raw
+                    and "operation_plan_identity" not in row
                 ),
                 raw.get("source_manifest") == expected_manifest == row.get("source_manifest"),
                 raw.get("response_schema_sha256") == attempt.get("response_schema_sha256") == schema_sha256,
@@ -1098,10 +1127,13 @@ def _fabricated_check_evidence(
     response: dict[str, Any], launch: dict[str, Any]
 ) -> str | None:
     contract = launch.get("model_response_contract", {})
-    if contract.get("contract_version") != "2.1":
+    if contract.get("contract_version") not in {"2.1", "2.2"}:
         return None
-    payload_key = contract.get("role_payload_key")
-    payload = response.get(payload_key) if isinstance(payload_key, str) else None
+    if contract.get("contract_version") == "2.2":
+        payload = response.get("draft_content")
+    else:
+        payload_key = contract.get("role_payload_key")
+        payload = response.get(payload_key) if isinstance(payload_key, str) else None
     if not isinstance(payload, dict):
         return None
     for check in payload.get("checks", []):
@@ -1121,6 +1153,39 @@ def validate_model_output(
         diagnostics.append({"code": "evidence.forbidden-authority", "detail": "AI approval is forbidden"})
     if (output.get("human_stop_reached") is not True or output.get("human_review_status") != "pending") and "evidence.human-stop-missing" not in codes:
         diagnostics.append({"code": "evidence.human-stop-missing", "detail": "human stop must remain pending"})
+    contract = launch.get("model_response_contract", {})
+    if contract.get("contract_version") == "2.2":
+        plan = contract["operation_plan"]
+        expected_status = (
+            "draft-complete" if plan["action"] == "draft-content" else "blocked"
+        )
+        if output.get("status") != expected_status:
+            diagnostics.append({
+                "code": "actual-model.operation-plan-override",
+                "detail": str(output.get("status")),
+            })
+        fabricated = _fabricated_check_evidence(compact or {}, launch)
+        if fabricated is not None:
+            diagnostics.append({
+                "code": "actual-model.fabricated-check-evidence",
+                "detail": fabricated,
+            })
+        if plan["action"] == "draft-content" and (
+            not output.get("artifacts_drafted") or not output.get("claims")
+        ):
+            diagnostics.append({
+                "code": "actual-model.role-output-mismatch",
+                "detail": str(plan["artifact_kind"]),
+            })
+        if plan["action"] == "blocked-summary" and (
+            not output.get("unresolved_inputs")
+            or not output.get("human_decisions_required")
+        ):
+            diagnostics.append({
+                "code": "actual-model.safe-stop-incomplete",
+                "detail": str(case.get("risk_case")),
+            })
+        return diagnostics
     semantic_validation = compact is not None
     compact = compact or {}
     expected_status = "draft-complete" if case.get("expected_decision") == "draft" else "blocked"
@@ -1201,6 +1266,49 @@ def build_model_prompt(case: dict[str, Any], launch: dict[str, Any], read_pack: 
         "sources": sources,
         "response_rule": "Return exactly one JSON object matching the separately supplied schema; no markdown or explanation.",
     }
+    if contract.get("contract_version") == "2.2":
+        plan = contract["operation_plan"]
+        context["operation_plan"] = {
+            "action": plan["action"],
+            "artifact_kind": plan["artifact_kind"],
+            "reason_codes": plan["reason_codes"],
+            "source_inventory": plan["source_inventory"],
+            "human_action_codes": plan["human_action_codes"],
+            "unresolved_input_codes": plan["unresolved_input_codes"],
+        }
+        context["authority"]["rules"] = [
+            "The launcher already selected the only permitted action. Author only the supplied content branch.",
+            "Use only supplied facts and source excerpts. Cite every observation, claim, or blocked summary with one supplied source ID.",
+            "Never invent test, integration, file-state, approval, or lifecycle evidence.",
+            "Do not approve, resume held work, request a lifecycle transition, or claim human authority.",
+        ]
+        if plan["action"] == "draft-content":
+            canonical_source_ids = [
+                source["stable_id"]
+                for source in launch["verified_source_manifest"]
+                if source["authority"] == "canonical"
+            ]
+            context["authority"]["rules"].append(
+                "At least one draft observation must cite a canonical source ID: "
+                + ", ".join(canonical_source_ids)
+                + "."
+            )
+            context["response_shape"] = {
+                "case_id": contract["case_id"],
+                "draft_content": {
+                    "observations": [
+                        {"summary": "<source-grounded observation>", "source_id": "<one canonical source ID>"}
+                    ]
+                },
+            }
+        else:
+            context["response_shape"] = {
+                "case_id": contract["case_id"],
+                "blocked_summary": {
+                    "summary": "<source-grounded blocker explanation>",
+                    "source_id": "<one source_inventory ID>",
+                },
+            }
     if contract.get("contract_version") == "2.1":
         context["decision_guidance"] = {
             "draft": (
@@ -1386,6 +1494,20 @@ def case_read_pack(
                 contract_version="2.1",
                 allowed_artifact_kinds=list(GLOBAL_ALLOWED_ARTIFACT_KINDS),
             )
+    elif adapter_version == "2.2":
+        try:
+            operation_plan = build_operation_plan(
+                case, [source["stable_id"] for source in pack["sources"]]
+            )
+        except OperationPlanError as error:
+            raise ActualCertificationError(str(error)) from error
+        model_response_contract = {
+            "case_id": case["id"],
+            "operation": case["operation"],
+            "role_payload_key": ROLE_PAYLOAD_KEYS[case["role"]],
+            "contract_version": "2.2",
+            "operation_plan": operation_plan,
+        }
     elif adapter_version != FROZEN_ADAPTER_VERSION:
         raise ActualCertificationError("actual-model.unsupported-adapter-version")
     launch = build_role_launch(
@@ -1433,7 +1555,7 @@ def evaluate_remediation_model_output(
         else None
     )
     version = adapter_version or recorded_version
-    if version not in {"2.0", "2.1"}:
+    if version not in {"2.0", "2.1", "2.2"}:
         raise ActualCertificationError("actual-model.unsupported-adapter-version")
     pack, launch = case_read_pack(
         root, process_root, case, adapter_version=version
@@ -1543,6 +1665,14 @@ def execute_model_catalog(
         response_schema_sha256 = _sha256_bytes(
             json.dumps(response_schema, sort_keys=True, separators=(",", ":")).encode("utf-8")
         )
+        operation_plan = launch["model_response_contract"].get("operation_plan")
+        operation_plan_identity = (
+            _sha256_bytes(json.dumps(
+                operation_plan, sort_keys=True, separators=(",", ":")
+            ).encode("utf-8"))
+            if operation_plan is not None
+            else None
+        )
         response: dict[str, Any] | None = None
         output: dict[str, Any] | None = None
         diagnostics_out: list[dict[str, str]] = []
@@ -1575,7 +1705,7 @@ def execute_model_catalog(
                 response_schema=response_schema,
                 think=generation["think"],
                 num_predict=generation["num_predict"],
-                num_ctx=model.get("context_length"),
+                num_ctx=generation.get("num_ctx", model.get("context_length")),
                 contract_version=adapter["schema_version"],
                 launch_identity=launch["identity"],
             )
@@ -1612,6 +1742,7 @@ def execute_model_catalog(
                 },
                 "read_pack_identity": pack["identity"],
                 "launch_identity": launch["identity"],
+                **({"operation_plan": operation_plan} if operation_plan is not None else {}),
                 "source_manifest": [*launch["verified_source_manifest"], _case_facts_source(case)],
                 "prompt_sha256": _sha256_bytes(attempt_prompt.encode("utf-8")),
                 "response_schema_sha256": response_schema_sha256,
@@ -1655,6 +1786,11 @@ def execute_model_catalog(
             "execution_identity": identity, "run_group": run_group,
             "read_pack_identity": pack["identity"],
             "launch_identity": launch["identity"],
+            **(
+                {"operation_plan_identity": operation_plan_identity}
+                if operation_plan_identity is not None
+                else {}
+            ),
             "source_manifest": [*launch["verified_source_manifest"], _case_facts_source(case)], "source_hashes": {source["stable_id"]: source["sha256"] for source in [*launch["verified_source_manifest"], _case_facts_source(case)]},
             "raw_logical_artifact_id": reference["raw_logical_artifact_id"], "raw_filename": reference["raw_filename"], "raw_sha256": reference["raw_sha256"],
             "attempts": attempt_rows,
@@ -1775,9 +1911,15 @@ def _validate_remediation_evidence(
                 if isinstance(baseline, dict)
                 else None
             )
+            remediation_version = remediation_adapter.get("version")
+            allowed_baselines = {
+                "2.0": {"1.0"},
+                "2.1": {"1.0", "2.0"},
+                "2.2": {"1.0", "2.0", "2.1"},
+            }.get(remediation_version, set())
             if (
                 not isinstance(baseline, dict)
-                or baseline_version not in {"1.0", "2.0"}
+                or baseline_version not in allowed_baselines
                 or baseline_reference.get("adapter_version") != baseline_version
                 or baseline.get("raw_artifact", {}).get("logical_id") != baseline_reference.get("raw_logical_artifact_id")
             ):
@@ -1796,7 +1938,7 @@ def _validate_remediation_evidence(
     if (
         not isinstance(adapter, dict)
         or not isinstance(model, dict)
-        or adapter.get("version") not in {"2.0", "2.1"}
+        or adapter.get("version") not in {"2.0", "2.1", "2.2"}
         or model.get("family") != family
     ):
         _append_once(diagnostics, "actual-model.remediation-identity-mismatch")
@@ -1868,7 +2010,7 @@ def _validate_remediation_evidence(
                 if key in all_references:
                     _append_once(diagnostics, "actual-model.gate-duplicate-raw-reference")
                 all_references.add(key)
-    if adapter_version == "2.1":
+    if adapter_version in {"2.1", "2.2"}:
         result_references: set[str] = set()
         runtime_reference = evidence.get("runtime_probe_result")
         if (
@@ -1920,7 +2062,7 @@ def _validate_remediation_evidence(
         observed = evidence.get("observed_identity")
         expected_runtime_raw = {
             "adapter_family": family,
-            "adapter_version": "2.1",
+            "adapter_version": adapter_version,
             "process_package_version": evidence.get("process_package_version"),
             "runtime_version": observed.get("runtime_version")
             if isinstance(observed, dict)
@@ -1939,7 +2081,7 @@ def _validate_remediation_evidence(
             runtime_result.get("result") == "passed"
             if isinstance(runtime_result, dict)
             else False,
-            runtime_result.get("adapter_version") == "2.1"
+            runtime_result.get("adapter_version") == adapter_version
             if isinstance(runtime_result, dict)
             else False,
             runtime_result.get("process_package_version")

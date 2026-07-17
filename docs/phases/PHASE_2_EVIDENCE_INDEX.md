@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for approved bounded adapter remediation after the human rejected fallback-only acceptance. Work item 2.12 remains planned and blocked by 2.11.
+Status: in_progress. Work items 2.1-2.11 are closed; adapter `2.2` passed both frozen model-family gates and AI-disabled regression. Work item 2.12 is the next planned sequential item.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -529,7 +529,7 @@ Status: closed after implementation, independent architecture/review hardening, 
 
 ## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `in_progress`. The AI-disabled baseline and both frozen non-leading model-family slices executed completely. Transfer tasks 4.4-4.5, 4.7-4.8 and NIS tasks 8.2-8.3 are complete; transfer task 4.9 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices. The human rejected fallback-only acceptance, and 2.12 remains blocked by 2.11.
+Status: `closed`. Transfer tasks 4.4-4.5 and 4.7-4.9 plus NIS tasks 8.2-8.3 are complete. Historical adapter `1.0`/`2.0`/`2.1` evidence remains immutable; adapter `2.2` passed both frozen model families and AI-disabled 11/11. Work item 2.12 is the next planned sequential item.
 
 ### Evidence And Scope
 
@@ -624,11 +624,41 @@ Status: `in_progress`. The AI-disabled baseline and both frozen non-leading mode
 - Durable audit:
   `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
 
-Transfer progress is 22/36. Task 4.9 remains unchecked, work item 2.11 remains
-open, the bounded adapter `2.1` remediation change is blocked pending a new
-human disposition and has no accepted-spec promotion, 2.12 is planned and
-blocked, and no model
-certification, release acceptance, archive, PR, or pilot is claimed. Final
-spec/status, architecture, and raw-evidence reviews approved the accuracy and
-safety of the recorded failure path. The residual incompatibility requires a
-new human disposition.
+### Adapter 2.2 Certified Outcome
+
+- Boundary: `process/operation_plan.py` computes the identity-bound action,
+  artifact kind, reason codes, source inventory, unresolved inputs, and human
+  route before generation. Unknown or contradictory inputs fail closed.
+- Model contract: one branch is exposed. Drafts require only source-linked
+  observations; blocks require a concise summary and one allowed source ID.
+  Trusted normalization attaches plan metadata without semantic repair.
+- Qwen: frozen `qwen3.5:9b`, full digest
+  `6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7`,
+  Ollama `0.30.11`, adapter `2.2`; 5/5 preflight and 15/15 matrix.
+- DeepSeek: frozen `deepseek-r1:8b`, full digest
+  `6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763`,
+  Ollama `0.30.11`, adapter `2.2`; 5/5 preflight and 15/15 matrix.
+- Every accepted model case used attempt 1. There was no semantic retry,
+  model-owned authority, fabricated verification, unsafe continuation,
+  canonical mutation, or operation-plan override.
+- AI-disabled logical root `raw-artifact-v0.2.2-ai-disabled-2026-07-17`
+  passed 11/11.
+- Normalized evidence:
+  `process/certification/evidence/phase-2-11-qwen-adapter-2-2-2026-07-17.yaml`
+  and
+  `process/certification/evidence/phase-2-11-deepseek-adapter-2-2-2026-07-17.yaml`.
+  External raw logical roots are
+  `raw-artifact-v0.2.2-qwen-2026-07-17-certified-policy-v3` and
+  `raw-artifact-v0.2.2-deepseek-2026-07-17-certified-policy-v9`.
+- The DeepSeek request context is bounded to `num_ctx=8192` even though the
+  frozen model profile advertises 131072. This removes the observed excessive
+  workstation allocation while retaining enough room for the bounded prompt
+  and `num_predict=2400` output budget.
+- Durable audit:
+  `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_2_AUDIT_2026-07-17.md`.
+- Final project regression: `610 passed, 3 skipped`.
+
+Transfer progress is 23/36. Task 4.9 is checked and work item 2.11 is closed.
+This is actual local proxy certification, but not corporate-runtime equivalence,
+cross-platform release acceptance, accepted-spec promotion/archive, Phase 3
+adaptation, or pilot acceptance. Work item 2.12 owns the next gate.

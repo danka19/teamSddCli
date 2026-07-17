@@ -14,6 +14,7 @@ from process.model_adapter import (
     parse_role_response,
     split_reasoning_final,
 )
+from process.operation_plan import OperationPlanError, build_operation_plan
 from process.weak_model_kit import (
     GLOBAL_ALLOWED_REASON_CODES,
     build_read_pack,
@@ -95,6 +96,21 @@ def adapter_context(role: str = "analyst", contract_version: str = "2.0") -> tup
             contract_version="2.1",
             allowed_artifact_kinds=list(GLOBAL_ALLOWED_ARTIFACT_KINDS),
         )
+    elif contract_version == "2.2":
+        model_response_contract = {
+            "case_id": case["id"],
+            "operation": case["operation"],
+            "role_payload_key": payload_key,
+            "contract_version": "2.2",
+            "operation_plan": build_operation_plan(
+                {
+                    **case,
+                    "facts": {"review_state": "pending human review"},
+                    "role": role,
+                },
+                [source["stable_id"] for source in pack["sources"]],
+            ),
+        }
     launch = build_role_launch(
         ROOT,
         PROCESS,
@@ -104,6 +120,157 @@ def adapter_context(role: str = "analyst", contract_version: str = "2.0") -> tup
         model_response_contract=model_response_contract,
     )
     return case, pack, launch
+
+
+def valid_content_response(launch: dict) -> dict:
+    source_id = launch["verified_source_manifest"][0]["stable_id"]
+    return {
+        "case_id": launch["model_response_contract"]["case_id"],
+        "draft_content": {
+            "summary": "Bounded source-grounded advisory draft.",
+            "observations": [
+                {"summary": "Human review remains pending.", "source_id": source_id}
+            ],
+            "claims": [],
+            "checks": [],
+        },
+    }
+
+
+def test_operation_plan_is_byte_stable_and_fails_closed_on_contradiction() -> None:
+    case = {
+        "id": "stable-plan",
+        "operation": "design-context-review",
+        "role": "analyst",
+        "facts": {"system_map": "absent", "accepted_design": "absent", "supplied_context": "absent"},
+    }
+    first = build_operation_plan(case, ["canonical-a", "supporting-b"])
+    second = build_operation_plan(case, ["canonical-a", "supporting-b"])
+    assert json.dumps(first, sort_keys=True, separators=(",", ":")) == json.dumps(
+        second, sort_keys=True, separators=(",", ":")
+    )
+    assert first == {
+        "action": "blocked-summary",
+        "artifact_kind": None,
+        "reason_codes": ["missing-context"],
+        "source_inventory": ["canonical-a", "supporting-b", "case-facts"],
+        "case_facts_sha256": "54e3f78808bd91b49370c1261893a8e6955b916f18ab5c078cada481a1227997",
+        "human_action_codes": ["owner-analyst-or-change-owner", "resolve-missing-context"],
+        "unresolved_input_codes": ["system-map", "accepted-design", "supplied-context"],
+    }
+    with pytest.raises(OperationPlanError, match="operation-plan.contradictory-input"):
+        build_operation_plan(
+            {**case, "facts": {**case["facts"], "system_map": "present"}},
+            ["canonical-a"],
+        )
+
+    # Certification expectations are validator-only and cannot change policy.
+    tampered = build_operation_plan(
+        {**case, "expected_decision": "draft", "required_reason_codes": ["bounded-draft"]},
+        ["canonical-a", "supporting-b"],
+    )
+    assert tampered == first
+
+
+def test_draft_plan_keeps_future_human_decision_out_of_unresolved_inputs() -> None:
+    plan = build_operation_plan(
+        {
+            "id": "qa-draft",
+            "operation": "qa-review-draft",
+            "role": "qa",
+            "facts": {"qa_decision": "absent"},
+        },
+        ["qa-role"],
+    )
+    assert plan["unresolved_input_codes"] == []
+    assert plan["human_action_codes"] == ["owner-qa-or-test-owner", "review-bounded-draft"]
+
+
+def test_adapter_2_2_exposes_only_launcher_selected_content_branch() -> None:
+    _, _, launch = adapter_context(contract_version="2.2")
+    schema = build_role_response_schema(launch)
+    serialized = json.dumps(schema, sort_keys=True)
+    assert schema["required"] == ["case_id", "draft_content"]
+    assert "blocked_summary" not in serialized
+    for launcher_owned in (
+        "decision",
+        "reason_codes",
+        "source_ids",
+        "artifact_kind",
+        "human_decisions_required",
+        "unresolved_inputs",
+    ):
+        assert f'"{launcher_owned}"' not in serialized
+    assert list(Draft202012Validator(schema).iter_errors(valid_content_response(launch))) == []
+    minimal = {
+        "case_id": launch["model_response_contract"]["case_id"],
+        "draft_content": {"observations": valid_content_response(launch)["draft_content"]["observations"]},
+    }
+    assert list(Draft202012Validator(schema).iter_errors(minimal)) == []
+    case_facts_only = {
+        "case_id": launch["model_response_contract"]["case_id"],
+        "draft_content": {
+            "observations": [
+                {"summary": "The supplied case facts were reviewed.", "source_id": "case-facts"}
+            ]
+        },
+    }
+    assert list(Draft202012Validator(schema).iter_errors(case_facts_only))
+
+
+@pytest.mark.parametrize(
+    "wording",
+    [
+        "Human owner must record approval before any canonical mutation.",
+        "Release readiness approval remains a decision for the authorized human owner.",
+        "Document source ownership requires human approval.",
+        "Canonical mutation remains pending human review.",
+        "The human release decision is absent.",
+        "Model outputs cannot claim approval or lifecycle transitions without corresponding evidence and human review.",
+        "The output is advisory without ownership of approvals or lifecycle state transitions.",
+        "The model output claims to approve a waiver or authorize a merge, which is prohibited and non-authoritative.",
+        "The request to mark the QA gate approved is blocked; AI assistants shall not claim approval authority.",
+        "No manual or approved evidence exists for the claimed regression result.",
+        "The approved scope is to add validation at the existing configuration boundary.",
+    ],
+)
+def test_adapter_2_2_does_not_false_block_human_authority_boundaries(wording: str) -> None:
+    _, pack, launch = adapter_context(contract_version="2.2")
+    response = valid_content_response(launch)
+    response["draft_content"]["observations"][0]["summary"] = wording
+    evidence = normalize_role_response(response, launch, pack)
+    assert evidence["status"] == "draft-complete"
+    assert [item["stable_id"] for item in evidence["sources_read"]] == [
+        launch["verified_source_manifest"][0]["stable_id"]
+    ]
+    assert evidence["residual_limitations"] == ["plan-reason:bounded-draft"]
+
+
+@pytest.mark.parametrize(
+    "claim",
+    [
+        "I approve release and authorize resume.",
+        "The release is approved.",
+        "No issue was found; the release is approved.",
+        "Human review is required, but the release is approved.",
+        "AI cannot approve; the release is approved.",
+        "Human review is required and the release is approved.",
+        "AI cannot approve, and the release is approved.",
+        "The approved release can proceed.",
+        "Approval has been granted.",
+        "Approve the release.",
+    ],
+)
+def test_adapter_2_2_rejects_positive_model_authority_claim_in_authored_claim(claim: str) -> None:
+    _, pack, launch = adapter_context(contract_version="2.2")
+    response = valid_content_response(launch)
+    response["draft_content"]["claims"] = [{
+        "subject": "authority",
+        "summary": claim,
+        "source_id": launch["verified_source_manifest"][0]["stable_id"],
+    }]
+    with pytest.raises(ModelAdapterError, match="model-adapter.authority-claim"):
+        normalize_role_response(response, launch, pack)
 
 
 @pytest.mark.parametrize(

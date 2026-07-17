@@ -87,6 +87,39 @@ _SAFE_AUTHORITY_CONTEXTS = (
         re.IGNORECASE,
     ),
 )
+_MODEL_AUTHORITY_ACTOR = re.compile(
+    r"\b(?:i|we|model|ai|assistant)\s+(?:have\s+)?(?:approv\w*|authoriz\w*|"
+    r"transition\w*|merg\w*|releas\w*|archiv\w*|resum\w*)\b",
+    re.IGNORECASE,
+)
+_HUMAN_BOUNDARY = re.compile(
+    r"\b(?:human|tech\s+lead|qa\s+owner|authorized\s+human|human\s+review)\b.*"
+    r"\b(?:required|pending|absent|missing|must|before|decision)\b|"
+    r"\b(?:required|requires|pending|absent|missing|before|decision)\b.*\bhuman\b",
+    re.IGNORECASE,
+)
+_POSITIVE_AUTHORITY_STATE = re.compile(
+    r"\b(?:(?:release|change|gate|work|hold)\s+(?:is\s+|was\s+|has\s+been\s+)?"
+    r"(?:approved|authorized|transitioned|merged|released|archived|resumed)|"
+    r"approved\s+(?:release|change|gate|work|hold)|"
+    r"(?:approval|authorization|waiver)\s+(?:is\s+|was\s+|has\s+been\s+)?"
+    r"(?:granted|approved|authorized))\b",
+    re.IGNORECASE,
+)
+_DIRECT_AUTHORITY_ACTION = re.compile(
+    r"^\s*(?:please\s+)?(?:approve|authorize|transition|merge|release|archive|resume|waive)\b",
+    re.IGNORECASE,
+)
+_AUTHORITY_CLAUSE_BREAK = re.compile(
+    r"[.,;]|\b(?:and|but|however)\b", re.IGNORECASE
+)
+_NEGATED_AUTHORITY_CONTEXT = re.compile(
+    r"\b(?:cannot|can't|must\s+not|does\s+not|do\s+not|shall\s+not|without|rather\s+than|"
+    r"only\s+after|before|blocked|prohibited|non-authoritative)\b|"
+    r"\bno\s+(?:\w+\s+){0,3}(?:approv\w*|authoriz\w*)\s+"
+    r"(?:evidence|decision|record)\b",
+    re.IGNORECASE,
+)
 
 
 class ContractError(ValueError):
@@ -105,6 +138,28 @@ def contains_forbidden_authority_claim(value: Any) -> bool:
     for safe_context in _SAFE_AUTHORITY_CONTEXTS:
         candidate = safe_context.sub(" ", candidate)
     return _AUTHORITY_LANGUAGE.search(candidate) is not None
+
+
+def contains_model_owned_authority_claim(value: Any) -> bool:
+    """Check model-authored content without scanning launcher-owned human handoff."""
+    if isinstance(value, dict):
+        return any(contains_model_owned_authority_claim(item) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(contains_model_owned_authority_claim(item) for item in value)
+    if not isinstance(value, str):
+        return False
+    clauses = [item.strip() for item in _AUTHORITY_CLAUSE_BREAK.split(value) if item.strip()]
+    if len(clauses) > 1:
+        return any(contains_model_owned_authority_claim(item) for item in clauses)
+    if _MODEL_AUTHORITY_ACTOR.search(value):
+        return True
+    if _HUMAN_BOUNDARY.search(value):
+        return False
+    if _NEGATED_AUTHORITY_CONTEXT.search(value):
+        return False
+    if _POSITIVE_AUTHORITY_STATE.search(value):
+        return True
+    return _DIRECT_AUTHORITY_ACTION.search(value) is not None
 
 
 def _digest(value: Any) -> str:
@@ -356,14 +411,29 @@ def build_role_launch(
             "contract_version",
             "allowed_artifact_kinds",
         }
+        adapter_2_2_fields = {
+            "case_id",
+            "operation",
+            "role_payload_key",
+            "contract_version",
+            "operation_plan",
+        }
         contract_fields = frozenset(model_response_contract)
-        if contract_fields not in {frozenset(legacy_fields), frozenset(adapter_2_1_fields)}:
+        if contract_fields not in {
+            frozenset(legacy_fields),
+            frozenset(adapter_2_1_fields),
+            frozenset(adapter_2_2_fields),
+        }:
             raise ContractError("model response contract fields are invalid")
         if contract_fields == adapter_2_1_fields and model_response_contract.get("contract_version") != "2.1":
             raise ContractError("model response contract version is invalid")
         if model_response_contract.get("role_payload_key") != ROLE_PAYLOAD_KEYS.get(role):
             raise ContractError("model response contract does not match launch role")
-        if model_response_contract.get("allowed_reason_codes") != list(GLOBAL_ALLOWED_REASON_CODES):
+        if (
+            contract_fields != adapter_2_2_fields
+            and model_response_contract.get("allowed_reason_codes")
+            != list(GLOBAL_ALLOWED_REASON_CODES)
+        ):
             raise ContractError("model response contract reason-code vocabulary is invalid")
         if (
             contract_fields == adapter_2_1_fields
@@ -371,6 +441,21 @@ def build_role_launch(
             != list(GLOBAL_ALLOWED_ARTIFACT_KINDS)
         ):
             raise ContractError("model response contract artifact-kind vocabulary is invalid")
+        if contract_fields == adapter_2_2_fields:
+            if model_response_contract.get("contract_version") != "2.2":
+                raise ContractError("model response contract version is invalid")
+            plan = model_response_contract.get("operation_plan")
+            if not isinstance(plan, dict):
+                raise ContractError("operation plan is missing")
+            if _schema_errors(process_root, "weak-model-operation-plan.schema.json", plan):
+                raise ContractError("operation plan schema is invalid")
+            expected_source_ids = [source["stable_id"] for source in manifest] + ["case-facts"]
+            if plan.get("source_inventory") != expected_source_ids:
+                raise ContractError("operation plan source inventory is invalid")
+            action = plan.get("action")
+            artifact_kind = plan.get("artifact_kind")
+            if (action == "draft-content") != (artifact_kind in GLOBAL_ALLOWED_ARTIFACT_KINDS):
+                raise ContractError("operation plan action is contradictory")
         launch["model_response_contract"] = copy.deepcopy(model_response_contract)
     launch["identity"] = _digest(launch)
     if _schema_errors(process_root, "task-launch.schema.json", launch):
@@ -416,7 +501,13 @@ def validate_operation_evidence(
         diagnostics.append({"code": "evidence.prohibited-action", "detail": "a prohibited action was attempted"})
     if evidence.get("human_stop_reached") is not True or evidence.get("human_review_status") != "pending":
         diagnostics.append({"code": "evidence.human-stop-missing", "detail": "human stop must remain pending"})
-    if launch.get("model_response_contract") is not None:
+    contract_version = launch.get("model_response_contract", {}).get("contract_version")
+    if contract_version == "2.2":
+        forbidden_authority = any(
+            contains_model_owned_authority_claim(claim.get("value", {}))
+            for claim in evidence.get("claims", [])
+        )
+    elif launch.get("model_response_contract") is not None:
         forbidden_authority = any(
             contains_forbidden_authority_claim(claim.get("value", {}))
             for claim in evidence.get("claims", [])
@@ -433,6 +524,14 @@ def validate_operation_evidence(
         (source["stable_id"], source["path"], source["sha256"], source["authority"])
         for source in read_pack.get("sources", [])
     }
+    if contract_version == "2.2":
+        plan = launch["model_response_contract"]["operation_plan"]
+        verified_sources.add((
+            "case-facts",
+            f"certification-case:{launch['model_response_contract']['case_id']}",
+            plan["case_facts_sha256"],
+            "evidence",
+        ))
     for source in evidence.get("sources_read", []):
         key = tuple(source.get(name) for name in ("stable_id", "path", "sha256", "authority"))
         if key not in verified_sources:

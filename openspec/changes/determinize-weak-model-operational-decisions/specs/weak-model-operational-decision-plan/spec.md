@@ -8,12 +8,12 @@ codes.
 
 #### Scenario: Supported draft operation has one planned action
 - **WHEN** verified facts and policy predicates permit a bounded non-canonical draft
-- **THEN** the operation plan selects `draft-artifact` and the configured artifact kind
+- **THEN** the operation plan selects `draft-content` and the configured artifact kind
 - **AND** the model is not asked to choose the action, artifact kind, or policy reason codes
 
 #### Scenario: Supported blocked operation has one planned action
 - **WHEN** verified facts show a missing prerequisite, forbidden requested action, active hold, source conflict, or unsupported evidence condition
-- **THEN** the operation plan selects `explain-block` with deterministic reason and human action codes
+- **THEN** the operation plan selects `blocked-summary` with deterministic reason and human action codes
 - **AND** the model is not asked to decide whether work may proceed
 
 #### Scenario: Unknown policy state fails before generation
@@ -27,24 +27,19 @@ draft content, while normalization SHALL bind launcher-owned policy metadata
 without semantic inference or repair.
 
 #### Scenario: Draft content remains source grounded
-- **WHEN** the operation plan selects `draft-artifact`
-- **THEN** the model supplies bounded summary, observations, claims, and check notes using only allowed facts and sources
-- **AND** every model-authored claim cites an allowed source ID
+- **WHEN** the operation plan selects `draft-content`
+- **THEN** the model supplies bounded observations using only allowed facts and sources
+- **AND** every model-authored observation cites an allowed source ID
 
 #### Scenario: Block explanation preserves deterministic disposition
-- **WHEN** the operation plan selects `explain-block`
-- **THEN** the model supplies a concise explanation of the planned blocking condition
-- **AND** normalization preserves the plan's reason codes, required sources, and human action codes exactly
+- **WHEN** the operation plan selects `blocked-summary`
+- **THEN** the model supplies a concise summary and one allowed source ID for the planned blocking condition
+- **AND** normalization preserves the plan's reason codes, source inventory, artifact kind, and human action codes exactly
 
 #### Scenario: Model cannot override the operation plan
 - **WHEN** model content requests or implies a different action, artifact kind, authority result, or lifecycle disposition
 - **THEN** deterministic validation rejects the output
 - **AND** no semantic retry or automatic repair occurs
-
-#### Scenario: Additional model concern remains advisory
-- **WHEN** model content identifies a possible missing fact or conflict not represented by the verified operation plan
-- **THEN** the concern is recorded as an advisory finding for deterministic or human disposition
-- **AND** it does not change the planned action or launcher-owned policy metadata
 
 ### Requirement: Source provenance distinguishes launcher inventory from model citations
 The system SHALL distinguish sources supplied and verified by the launcher from
@@ -52,7 +47,7 @@ sources cited by model-authored claims.
 
 #### Scenario: Required source inventory is bound mechanically
 - **WHEN** an operation plan is created
-- **THEN** its required source IDs and hashes are copied from the verified read pack
+- **THEN** its source inventory IDs are copied from the verified read pack, case facts receive an independent hash, and the launch retains the verified read-pack hashes
 - **AND** the model is not required to echo every supplied source as proof of reading
 
 #### Scenario: Claim citation is validated locally

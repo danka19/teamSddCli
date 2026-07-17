@@ -138,10 +138,14 @@ def normalize_remediation_evidence(
     if not isinstance(baseline, dict) or not isinstance(preflight, dict):
         raise ActualCertificationError("actual-model.normalization-input-malformed")
     adapter_version = preflight.get("adapter", {}).get("version")
-    if adapter_version not in {"2.0", "2.1"}:
+    if adapter_version not in {"2.0", "2.1", "2.2"}:
         raise ActualCertificationError("actual-model.remediation-identity-mismatch")
     baseline_version = baseline.get("adapter", {}).get("version")
-    allowed_baselines = {"1.0"} if adapter_version == "2.0" else {"1.0", "2.0"}
+    allowed_baselines = {
+        "2.0": {"1.0"},
+        "2.1": {"1.0", "2.0"},
+        "2.2": {"1.0", "2.0", "2.1"},
+    }[adapter_version]
     if baseline_version not in allowed_baselines:
         raise ActualCertificationError("actual-model.baseline-adapter-mismatch")
     if (
@@ -208,14 +212,14 @@ def normalize_remediation_evidence(
     }
     if preflight_failed:
         document["matrix_not_run"] = "preflight-gate-failed"
-    if adapter_version == "2.1":
+    if adapter_version in {"2.1", "2.2"}:
         if runtime_result is None:
             raise ActualCertificationError("actual-model.runtime-result-required")
         runtime = json.loads(runtime_result.read_text(encoding="utf-8"))
         if (
             not isinstance(runtime, dict)
             or runtime.get("result") != "passed"
-            or runtime.get("adapter_version") != "2.1"
+            or runtime.get("adapter_version") != adapter_version
             or runtime.get("observed_identity") != preflight.get("observed_identity")
         ):
             raise ActualCertificationError("actual-model.runtime-result-mismatch")
@@ -240,7 +244,7 @@ def normalize_remediation_evidence(
                 runtime_raw.get(key) != value
                 for key, value in {
                     "adapter_family": model_family,
-                    "adapter_version": "2.1",
+                    "adapter_version": adapter_version,
                     "process_package_version": preflight.get(
                         "process_package_version"
                     ),

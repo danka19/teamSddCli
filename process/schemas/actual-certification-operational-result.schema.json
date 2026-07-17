@@ -28,7 +28,7 @@
       "required": ["family", "version"],
       "properties": {
         "family": {"enum": ["qwen-class", "deepseek-class"]},
-        "version": {"const": "2.1"}
+        "version": {"enum": ["2.1", "2.2"]}
       }
     },
     "observed_identity": {

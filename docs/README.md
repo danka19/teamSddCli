@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.10 closed the versioned foundation; work item 2.11 remains in progress after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results, zero retries, and no matrices. The 2026-07-17 ambiguity audit found that the remaining gate mixes model weakness with hidden exact policy labels, source-manifest repetition, and field-blind authority checks; planned change `determinize-weak-model-operational-decisions` moves those decisions into the deterministic launcher without increasing the model. The AI-disabled regression still passes 11/11. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.11 are closed. Adapter `2.2` moves deterministic routing and policy metadata into an identity-bound launcher plan; unchanged frozen Qwen and DeepSeek proxies each passed 5/5 preflight and 15/15 matrix gates, while AI-disabled passed 11/11. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. Cross-platform release, transfer acceptance, corporate adaptation, and pilot work remain later gates; work item 2.12 is next.
 
 ## Scope
 

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "weak-model-operation-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action", "artifact_kind", "reason_codes", "source_inventory", "case_facts_sha256", "human_action_codes", "unresolved_input_codes"],
+  "properties": {
+    "action": {"enum": ["draft-content", "blocked-summary"]},
+    "artifact_kind": {"type": ["string", "null"], "enum": [null, "evidence-boundary-note", "implementation-prep-note", "qa-review-note", "requirements-note", "tech-lead-review-note"]},
+    "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["authority-required", "bounded-draft", "conflicting-context", "failed-run-missing", "human-stop-required", "lifecycle-authority-required", "missing-context", "qa-evidence-insufficient", "reconciliation-missing", "unsafe-resume", "unsupported-evidence"]}},
+    "source_inventory": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "case_facts_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "human_action_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"}},
+    "unresolved_input_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"}}
+  },
+  "allOf": [
+    {"if": {"properties": {"action": {"const": "draft-content"}}}, "then": {"properties": {"artifact_kind": {"type": "string"}, "unresolved_input_codes": {"maxItems": 0}}}},
+    {"if": {"properties": {"action": {"const": "blocked-summary"}}}, "then": {"properties": {"artifact_kind": {"type": "null"}, "unresolved_input_codes": {"minItems": 1}}}}
+  ]
+}

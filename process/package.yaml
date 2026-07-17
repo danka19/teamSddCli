@@ -27,6 +27,7 @@ schemas:
   operation_evidence: schemas/operation-evidence.schema.json
   read_pack_request: schemas/read-pack-request.schema.json
   task_launch: schemas/task-launch.schema.json
+  weak_model_operation_plan: schemas/weak-model-operation-plan.schema.json
   read_pack: schemas/read-pack.schema.json
   weak_model_operation_evidence: schemas/weak-model-operation-evidence.schema.json
   parallel_plan: schemas/parallel-plan.schema.json
@@ -70,6 +71,7 @@ distribution:
     - feedback_policy.py
     - model_adapter.py
     - operation_cli.py
+    - operation_plan.py
     - package.yaml
     - weak_model_kit.py
     - workflow.yaml

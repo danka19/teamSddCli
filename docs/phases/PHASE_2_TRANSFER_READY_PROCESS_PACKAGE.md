@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.10 are closed after implementation, review hardening, and coordinator verification; work item 2.11 is `in_progress` after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 preflight results with zero retries and no matrices. The 2026-07-17 ambiguity audit routes the next bounded remediation through planned change `determinize-weak-model-operational-decisions`. Work item 2.12 remains planned and blocked by 2.11.
+Work items 2.1-2.11 are closed after implementation, actual-model certification, and deterministic verification. Adapter `2.2` produced Qwen and DeepSeek 5/5 preflight followed by 15/15 matrices, while AI-disabled remained 11/11. Work item 2.12 is planned and is now the next sequential item.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -34,7 +34,7 @@ Status: accepted.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
 - Planned change `determinize-weak-model-operational-decisions` owns the post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.10 are closed; work item 2.11 is `in_progress` for bounded weak-model remediation, and 2.12 is blocked by 2.11.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.11 are closed; work item 2.12 is the next planned sequential item.
 
 ## Planning Acceptance Gate
 
@@ -447,7 +447,7 @@ Exit criteria: certification is repeatable, source-linked, privacy-safe, and exp
 
 ### 2.11 AI-Disabled And Weak-Model Certification
 
-Status: in_progress.
+Status: closed.
 
 Dependency status: sequential after 2.10.
 
@@ -479,6 +479,15 @@ fallback-only acceptance remains superseded, and the exact outcome is recorded
 in
 `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md`.
 
+Adapter `2.2` outcome on 2026-07-17: the launcher computes the action,
+artifact kind, reason codes, source inventory, unresolved inputs, and human
+route before generation. The model supplies only source-linked observations or
+a planned blocked summary. Frozen Qwen and DeepSeek each passed 5/5 preflight
+before passing 15/15 matrix cases; every accepted row used attempt 1. The fresh
+AI-disabled walkthrough passed 11/11. Transfer task 4.9 is complete and
+progress is 23/36. Exact evidence and limitations are recorded in
+`docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_2_AUDIT_2026-07-17.md`.
+
 #### Phase Change Intake: Weak-Model Adapter Remediation
 
 ```text
@@ -491,7 +500,7 @@ Affected specs: Existing define-transfer-ready-process-package weak-model-guardr
 Affected architecture: Add a thin model-family generation adapter, role-specific constrained response contracts, reasoning/final separation, and mechanical normalization ahead of the unchanged deterministic validator.
 Data contract impact: Replace the model-facing all-role compact envelope with a generated common decision envelope plus one role-specific payload; preserve the existing normalized operation-evidence contract downstream.
 Verification impact: Require adapter-focused TDD, negative authority/evidence/source tests, append-only retry evidence, 5/5 preflight for each model family before its matrix, and 15/15 matrix completion for both families.
-Status: adopted; adapter `2.0` and `2.1` implementations were reviewed before execution. Task 4.9 remains open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices, and work item 2.11 remains `in_progress`.
+Historical outcome as of 2026-07-16: adopted; adapter `2.0` and `2.1` implementations were reviewed before execution. Task 4.9 remained open after adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with no matrices, and work item 2.11 remained `in_progress`. This status was superseded by the adapter `2.2` outcome above.
 ```
 
 #### Phase Change Intake: Deterministic Operational Decision Plan
@@ -506,10 +515,10 @@ Affected specs: New weak-model-operational-decision-plan capability; existing tr
 Affected architecture: Add an identity-bound deterministic operation plan before the model call; model produces only source-grounded draft content or a planned block explanation.
 Data contract impact: Launcher owns action, artifact kind, reason codes, required source inventory, and human action codes; model content uses a smaller branch-specific schema.
 Verification impact: Add ambiguity regression fixtures, deterministic policy-projection evidence, field-scoped authority tests, actual Qwen/DeepSeek 5/5 then 15/15 gates, and AI-disabled 11/11.
-Status: planned in openspec/changes/determinize-weak-model-operational-decisions/.
+Status: in_progress in openspec/changes/determinize-weak-model-operational-decisions/.
 ```
 
-#### Planned Work Item 2.11 Remediation Slice
+#### Completed Work Item 2.11 Remediation Slice
 
 OpenSpec source:
 
@@ -561,7 +570,7 @@ Exit criteria:
 
 Status: planned.
 
-Dependency status: blocked by in-progress work item 2.11; sequential after 2.11 and requires 2.2 and 2.8.
+Dependency status: prerequisite 2.11 is closed; sequential after 2.11 and requires closed work items 2.2 and 2.8.
 
 Objective: generate/validate the release manifest, automate acceptance checks, rehearse migration/update/rollback, and prove equivalent Windows/Linux/macOS behavior.
 
@@ -686,7 +695,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. The adapter `2.0` remediation and adapter `2.1` follow-up are also append-only evidence. Adapter `2.1` produced Qwen 2/5 and DeepSeek 0/5 with zero retries and no matrices, so 2.11 remains `in_progress` and 2.12 remains planned and blocked.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11, so 2.11 is closed and 2.12 is the next planned item.
 
 Mandatory later evidence, not design decisions:
 

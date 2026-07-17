@@ -51,6 +51,7 @@ SCHEMA_FILES = {
     "operation_evidence": "operation-evidence.schema.json",
     "read_pack_request": "read-pack-request.schema.json",
     "task_launch": "task-launch.schema.json",
+    "weak_model_operation_plan": "weak-model-operation-plan.schema.json",
     "read_pack": "read-pack.schema.json",
     "weak_model_operation_evidence": "weak-model-operation-evidence.schema.json",
     "parallel_plan": "parallel-plan.schema.json",
