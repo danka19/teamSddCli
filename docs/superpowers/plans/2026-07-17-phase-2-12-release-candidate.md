@@ -61,19 +61,28 @@
 - Modify: `process/release_candidate.py`
 - Modify: `scripts/manage_release_candidate.py`
 - Modify: `tests/test_release_candidate.py`
+- Create: `process/release-certification-selection.yaml`
+- Create: `process/schemas/release-certification-selection.schema.json`
+- Create: `process/schemas/release-host-evidence.schema.json`
+- Modify: `process/package.yaml`
+- Modify: `process/release-allowlist.yaml`
+- Modify: `process/schemas/process-package.schema.json`
 - Modify: `docs/runbooks/TRANSFER_RELEASE_CANDIDATE.md`
 - Modify: `docs/runbooks/PROCESS_PACKAGE_SETUP.md`
 - Modify: `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`
 
 **Interfaces:**
-- `evaluate_release_acceptance(candidate_root: Path, manifest: Mapping[str, Any], evidence_root: Path, *, now: datetime | None = None) -> dict[str, Any]`; it independently validates evidence schema, required IDs/catalog membership, checksums, freshness, privacy, AI-disabled semantics, human-authority boundaries, and `payload_sha256`, never trusting caller-supplied status or paths.
-- `rehearse_release_candidate(candidate_root: Path, workspace: Path, *, platform_id: str, evidence_level: str) -> dict[str, Any]`
-- CLI modes: `accept --candidate --manifest --evidence-root`, `rehearse --candidate --workspace --platform-id --evidence-level --output`.
+- `evaluate_release_acceptance(candidate_root: Path, manifest: Mapping[str, Any], host_evidence_root: Path, raw_artifact_root: Path, *, now: datetime | None = None) -> dict[str, Any]`; it independently validates closed host-evidence and certification-selection schemas, required IDs/catalog membership, exact Windows/Linux root closure, checksums, freshness, privacy, AI-disabled semantics, human-authority boundaries, and `payload_sha256`, never trusting caller-supplied status or paths.
+- `RehearsalOptions(platform_id: str, evidence_level: str, mcp_status: str, mcp_evidence_ref: str | None, output: Path)` carries all observed host inputs; the CLI only parses it and owns no evidence logic.
+- `rehearse_release_candidate(candidate_root: Path, workspace: Path, options: RehearsalOptions) -> dict[str, Any]`
+- CLI modes: `accept --candidate --manifest --host-evidence-root --raw-artifact-root`, `rehearse --candidate --workspace --platform-id --evidence-level --mcp-status --mcp-evidence-ref --output`.
 
-- [ ] Write parametrized RED cases for `evidence-missing`, `evidence-stale`, `evidence-failed`, `evidence-private`, `evidence-ai-only`, `evidence-checksum-mismatch`, `candidate-digest-mismatch`, incompatible dependency, failed migration/update hold, and archive-history rewrite.
+- [ ] Write parametrized RED cases for `evidence-missing`, `evidence-stale`, `evidence-future`, `evidence-failed`, `evidence-private`, `evidence-ai-only`, `evidence-checksum-mismatch`, `candidate-digest-mismatch`, incompatible dependency, failed migration/update hold, and archive-history rewrite. Freshness is validator-owned: require canonical UTC `completed_at`, reject future timestamps and age greater than 30 days relative to injected `now`; never trust evidence-owned `valid_until`.
 - [ ] Write RED positive integration covering clean bootstrap, config compatibility, minor/major/hotfix creation, migration `check -> apply -> second apply no-op`, update, forced failed update/hold, rollback, and identical before/after archive-tree digest.
 - [ ] Run only `python -m pytest tests/test_release_candidate.py -q` and confirm expected RED diagnostics.
-- [ ] Implement acceptance and rehearsal orchestration by calling existing workflow/migration/config functions. Evidence must include platform inventory, exact commands, candidate digest, result, negative-case codes, archive digest, package/config versions, and rollback result; it must never record a human acceptance decision.
+- [ ] Implement acceptance and rehearsal orchestration by calling public workflow/migration/config functions. `release-certification-selection.yaml` must select exactly `phase-2-11-qwen-adapter-2-2-2026-07-17.yaml` and `phase-2-11-deepseek-adapter-2-2-2026-07-17.yaml` plus their declared raw logical roots. Resolve every manifest `artifact:` reference beneath the separate raw root, checksum bytes, and call public `validate_normalized_evidence` against each selected raw root. Recursively privacy-scan all host evidence and selected artifacts. Evidence must include fixed argv inventory commands executed with `shell=False`, explicit observed MCP status/reference, platform inventory, payload and manifest checksums, result, required scenario IDs/codes, archive digest, package/config versions, and rollback result.
+- [ ] Host-evidence root must close exactly to Windows full-rehearsal and Linux/WSL2 portability-smoke records. Require safe relative paths, no links/reparse ancestry, schema-valid rows, fixed scenario IDs, and exact payload/manifest bindings. Return only `evidence-complete` or `evidence-rejected` with `human_acceptance_required: true`; never emit `accepted`, `transfer_ready`, or a human decision.
+- [ ] `rehearse --output` is an exclusive external write: require a new/empty workspace, forbid candidate/workspace/output overlap and output beneath candidate or accepted/archive history, reject link/reparse ancestry, write temp + flush/fsync + no-replace, clean staging on failure, and never mutate payload or manifest. Extend the standalone allowlist smoke to `accept` and `rehearse` with exact expected exits.
 - [ ] Write platform-neutral installation, inventory, approved-secret-reference, MCP/adapter configuration, update, rollback/hold, and no-fork feedback procedures with exact Windows PowerShell and Linux Bash commands.
 - [ ] Run `python -m pytest tests/test_release_candidate.py tests/test_classification_migration.py tests/test_validate_process_config.py tests/test_packaged_flow.py tests/test_packaged_flow_hardening.py -q` once after stabilization.
 - [ ] Commit Task 2 files with `feat: enforce release acceptance and rollback rehearsal`.

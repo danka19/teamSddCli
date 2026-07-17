@@ -88,6 +88,8 @@ The package uses shared schemas, policy, workflow, and evidence contracts with t
 
 The candidate has an immutable `payload/` plus a pre-rehearsal `release-manifest.yaml`. The manifest is excluded from the canonical payload digest and records `payload_sha256`; Windows and Linux consume byte-identical payload and manifest content. Host evidence remains external, is schema-validated, binds to `payload_sha256`, and never mutates the candidate after the first rehearsal begins. Generator inputs cannot override derived package/config/OpenSpec identity, host requirements, inventory, checksums, certification references, or rollback source.
 
+Release acceptance keeps host rehearsal evidence and external raw model artifacts in separate safe roots. A committed schema-validated selection maps exactly the current Qwen and DeepSeek normalized certification records to their raw logical roots; historical failed records remain preserved but cannot satisfy current acceptance. Validator-owned policy checks canonical UTC completion time, future timestamps, a fixed 30-day evidence age, exact Windows/Linux host closure, payload/manifest binding, recursive privacy, and raw checksums. Rehearsal output is an external no-replace evidence write and reports `human_acceptance_required`; it never records transfer acceptance.
+
 Treating one workstation as proof of portability was rejected. Under `D-018`, Windows receives the full clean rehearsal, Linux/WSL2 receives a bounded equivalent smoke and negative matrix, and macOS is explicitly not certified.
 
 ### 9. Remediate weak-model generation through a bounded family adapter
