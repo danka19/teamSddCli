@@ -5,9 +5,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import errno
 import re
 import shutil
 import stat
+import sys
 import tempfile
 import unicodedata
 from collections.abc import Mapping
@@ -28,6 +30,46 @@ _DRIVE = re.compile(r"^[A-Za-z]:")
 _RESERVED = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
 _REPARSE_POINT = 0x400
 _MUTABLE_EVIDENCE_PARTS = {("process", "release", "evidence"), (".superpowers",), ("tests",)}
+_RUNBOOKS = (
+    "ARTIFACT_AND_LIFECYCLE_GATES.md", "CERTIFICATION_EVIDENCE.md",
+    "CLASSIFICATION_AND_MIGRATION.md", "CORPORATE_FLOW_CONTROLS.md",
+    "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
+    "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
+    "WEAK_MODEL_OPERATING_KIT.md",
+)
+_ENTRY_POINTS = (
+    ("bootstrap_team_specs.py", ("scripts/bootstrap_team_specs.py", "--help"), (0,)),
+    ("check_corporate_flow.py", ("scripts/check_corporate_flow.py", "--help"), (2,)),
+    ("check_lifecycle_transition.py", ("scripts/check_lifecycle_transition.py", "--help"), (0,)),
+    ("check_tech_lead_control.py", ("scripts/check_tech_lead_control.py", "--help"), (2,)),
+    ("classify_change.py", ("scripts/classify_change.py", "--help"), (0,)),
+    ("create_change.py", ("scripts/create_change.py", "--help"), (0,)),
+    ("evaluate_change_gates.py", ("scripts/evaluate_change_gates.py", "--help"), (0,)),
+    ("manage_release_candidate.py", ("scripts/manage_release_candidate.py", "validate", "--help"), (0,)),
+    ("manual_fallback.py", ("scripts/manual_fallback.py", "--help"), (0,)),
+    ("migrate_change_classification.py", ("scripts/migrate_change_classification.py", "--help"), (0,)),
+    ("prepare_archive.py", ("scripts/prepare_archive.py", "--help"), (0,)),
+    ("prepare_spec_pr.py", ("scripts/prepare_spec_pr.py", "--help"), (0,)),
+    ("review_tech_lead.py", ("scripts/review_tech_lead.py", "--help"), (2,)),
+    ("update_process_package.py", ("scripts/update_process_package.py", "--help"), (0,)),
+    ("validate_change.py", ("scripts/validate_change.py", "--help"), (0,)),
+    ("validate_external_mapping.py", ("scripts/validate_external_mapping.py", "--help"), (0,)),
+    ("validate_process_config.py", ("scripts/validate_process_config.py", "--help"), (0,)),
+    ("validate_traceability.py", ("scripts/validate_traceability.py", "--help"), (0,)),
+)
+_HOST_EVIDENCE = [
+    {"platform_id": "windows", "evidence_level": "full-clean-rehearsal"},
+    {"platform_id": "linux-wsl2", "evidence_level": "portability-smoke"},
+    {"platform_id": "macos", "evidence_level": "not-certified"},
+]
+_VERIFICATION_COMMANDS = [
+    "python -m pytest tests/test_release_candidate.py tests/test_process_package.py -q",
+    "python -m pytest tests/test_packaged_flow.py tests/test_packaged_flow_hardening.py tests/test_packaged_flow_cli.py -q",
+]
+_EVIDENCE_REQUIREMENTS = [
+    "windows-full-clean-rehearsal", "linux-wsl2-portability-smoke", "negative-acceptance-cases"
+]
+_ROLLBACK_REFERENCE = "docs/runbooks/PROCESS_PACKAGE_SETUP.md"
 
 
 @dataclass(frozen=True)
@@ -59,6 +101,18 @@ def _is_link_or_reparse(path: Path) -> bool:
     return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0) & _REPARSE_POINT)
 
 
+def _safe_directory_root(path: Path, missing_code: str) -> Path:
+    raw = Path(path)
+    try:
+        if _is_link_or_reparse(raw):
+            raise OperationError("release.link-forbidden", "root links and reparse points are forbidden")
+    except FileNotFoundError as error:
+        raise OperationError(missing_code, "required directory is missing", exit_code=3) from error
+    if not raw.is_dir():
+        raise OperationError(missing_code, "required directory is missing", exit_code=3)
+    return raw.resolve()
+
+
 def _assert_no_mutable_evidence(parts: tuple[str, ...]) -> None:
     folded = tuple(part.casefold() for part in parts)
     for denied in _MUTABLE_EVIDENCE_PARTS:
@@ -69,9 +123,7 @@ def _assert_no_mutable_evidence(parts: tuple[str, ...]) -> None:
 
 def payload_inventory(payload_root: Path) -> dict[str, Any]:
     """Inspect a payload and return its full sorted byte inventory and canonical digest."""
-    root = payload_root.resolve()
-    if not root.is_dir():
-        raise OperationError("release.payload-missing", "payload root is missing", exit_code=3)
+    root = _safe_directory_root(payload_root, "release.payload-missing")
     inventory: list[dict[str, Any]] = []
     identities: dict[str, str] = {}
     for path in sorted(root.rglob("*"), key=lambda p: p.relative_to(root).as_posix()):
@@ -114,6 +166,25 @@ def _validate_schema(document: Mapping[str, Any], schema_path: Path, code: str) 
         raise OperationError(code, "document does not satisfy its schema")
 
 
+def _expected_allowlist() -> dict[str, Any]:
+    return {
+        "schema_version": "1.0",
+        "requirements": ["requirements-test.txt"],
+        "template_roots": ["templates/team-specs"],
+        "runbooks": list(_RUNBOOKS),
+        "entry_points": [
+            {"name": name, "smoke": list(smoke), "expected_exit_codes": list(exits)}
+            for name, smoke, exits in _ENTRY_POINTS
+        ],
+    }
+
+
+def _validate_allowlist(allowlist: Mapping[str, Any], schema_path: Path) -> None:
+    _validate_schema(allowlist, schema_path, "release.allowlist-invalid")
+    if dict(allowlist) != _expected_allowlist():
+        raise OperationError("release.allowlist-invalid", "allowlist differs from the public release contract")
+
+
 def _assert_file(path: Path, relative: str) -> None:
     if not path.is_file() or _is_link_or_reparse(path):
         raise OperationError("release.asset-missing", f"declared asset is unavailable: {relative}", exit_code=3)
@@ -136,9 +207,7 @@ def _copy_tree(source: Path, target: Path, relative: str) -> None:
 
 
 def _raw_artifacts(root: Path) -> list[dict[str, Any]]:
-    resolved = root.resolve()
-    if not resolved.is_dir() or _is_link_or_reparse(resolved):
-        raise OperationError("release.raw-artifacts-invalid", "raw artifact root is missing or unsafe", exit_code=3)
+    resolved = _safe_directory_root(root, "release.raw-artifacts-invalid")
     result: list[dict[str, Any]] = []
     identities: set[str] = set()
     for path in sorted(resolved.rglob("*"), key=lambda p: p.relative_to(resolved).as_posix()):
@@ -176,52 +245,82 @@ def _certification_references(payload_root: Path) -> list[dict[str, str]]:
     return references
 
 
+def _validate_inputs(inputs: ReleaseInputs) -> None:
+    if (
+        not isinstance(inputs.release_id, str)
+        or not _RELEASE_ID.fullmatch(inputs.release_id)
+        or not isinstance(inputs.known_limitations, tuple)
+        or any(not isinstance(value, str) or not value for value in inputs.known_limitations)
+        or not isinstance(inputs.raw_artifact_root, Path)
+    ):
+        raise OperationError("input-invalid", "release inputs are malformed", exit_code=3)
+
+
+def _package_contract(root: Path) -> dict[str, Any]:
+    package = _load_mapping(root / "process/package.yaml", "release.package-invalid")
+    _validate_schema(package, root / "process/schemas/process-package.schema.json", "release.package-invalid")
+    return package
+
+
+def _dependency_contract(root: Path, package: Mapping[str, Any]) -> dict[str, Any]:
+    requirements: dict[str, str] = {}
+    try:
+        lines = (root / "requirements-test.txt").read_text(encoding="utf-8").splitlines()
+        for line in lines:
+            if line and not line.startswith("#"):
+                name, version = line.split("==", 1)
+                requirements[name] = version
+    except (OSError, UnicodeError, ValueError) as error:
+        raise OperationError("release.dependencies-invalid", "dependency pins are missing or malformed", exit_code=3) from error
+    return {
+        "python": "3.11+", "node": "20+", "git": "2.40+",
+        "openspec": package["openspec"]["cli_version"],
+        "mcp": "provisioned-or-explicitly-unavailable",
+        "shells": ["powershell-7+", "bash-5+"],
+        "packages": [{"name": name, "version": requirements[name]} for name in sorted(requirements)],
+    }
+
+
+def _derived_manifest_fields(root: Path) -> dict[str, Any]:
+    package = _package_contract(root)
+    allowlist = _load_mapping(root / "process/release-allowlist.yaml", "release.allowlist-invalid")
+    _validate_allowlist(allowlist, root / "process/schemas/release-allowlist.schema.json")
+    inspected = payload_inventory(root)
+    _validate_declared_assets(root, allowlist, package, inspected["inventory"])
+    try:
+        config_schema = json.loads((root / "process/schemas/sdd-config.schema.json").read_text(encoding="utf-8"))
+        config_version = config_schema["properties"]["config_schema_version"]["const"]
+    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError) as error:
+        raise OperationError("release.config-contract-invalid", "config identity cannot be derived", exit_code=3) from error
+    return {
+        "payload_sha256": inspected["payload_sha256"],
+        "inventory": inspected["inventory"],
+        "allowlist_sha256": hashlib.sha256((root / "process/release-allowlist.yaml").read_bytes()).hexdigest(),
+        "process_package": package["package"],
+        "config_schema_version": config_version,
+        "openspec": package["openspec"],
+        "host_evidence": [dict(row) for row in _HOST_EVIDENCE],
+        "compatibility": _dependency_contract(root, package),
+        "verification": {
+            "commands": list(_VERIFICATION_COMMANDS),
+            "evidence_requirements": list(_EVIDENCE_REQUIREMENTS),
+        },
+        "weak_model_certification": _certification_references(root),
+        "rollback_reference": _ROLLBACK_REFERENCE,
+    }
+
+
 def generate_release_manifest(payload_root: Path, inputs: ReleaseInputs) -> dict[str, Any]:
     """Generate a byte-stable manifest exclusively from inputs and inspected contracts."""
-    if not _RELEASE_ID.fullmatch(inputs.release_id) or any(not isinstance(v, str) or not v for v in inputs.known_limitations):
-        raise OperationError("input-invalid", "release inputs are malformed", exit_code=3)
-    root = payload_root.resolve()
-    package = _load_mapping(root / "process/package.yaml", "release.package-invalid")
-    config_schema = json.loads((root / "process/schemas/sdd-config.schema.json").read_text(encoding="utf-8"))
-    allowlist = _load_mapping(root / "process/release-allowlist.yaml", "release.allowlist-invalid")
-    _validate_schema(allowlist, root / "process/schemas/release-allowlist.schema.json", "release.allowlist-invalid")
-    inspected = payload_inventory(root)
-    requirements = {}
-    for line in (root / "requirements-test.txt").read_text(encoding="utf-8").splitlines():
-        if line and not line.startswith("#"):
-            name, version = line.split("==", 1)
-            requirements[name] = version
-    allowlist_bytes = (root / "process/release-allowlist.yaml").read_bytes()
+    _validate_inputs(inputs)
+    root = _safe_directory_root(payload_root, "release.payload-missing")
+    derived = _derived_manifest_fields(root)
     return {
         "schema_version": "2.0",
         "release_id": inputs.release_id,
-        "payload_sha256": inspected["payload_sha256"],
-        "inventory": inspected["inventory"],
-        "allowlist_sha256": hashlib.sha256(allowlist_bytes).hexdigest(),
-        "process_package": package["package"],
-        "config_schema_version": config_schema["properties"]["config_schema_version"]["const"],
-        "openspec": package["openspec"],
-        "host_evidence": [
-            {"platform_id": "windows", "evidence_level": "full-clean-rehearsal"},
-            {"platform_id": "linux-wsl2", "evidence_level": "portability-smoke"},
-            {"platform_id": "macos", "evidence_level": "not-certified"},
-        ],
-        "compatibility": {
-            "python": "3.11+", "node": "20+", "git": "2.40+", "openspec": package["openspec"]["cli_version"],
-            "mcp": "provisioned-or-explicitly-unavailable", "shells": ["powershell-7+", "bash-5+"],
-            "packages": [{"name": name, "version": requirements[name]} for name in sorted(requirements)],
-        },
-        "verification": {
-            "commands": [
-                "python -m pytest tests/test_release_candidate.py tests/test_process_package.py -q",
-                "python -m pytest tests/test_packaged_flow.py tests/test_packaged_flow_hardening.py tests/test_packaged_flow_cli.py -q",
-            ],
-            "evidence_requirements": ["windows-full-clean-rehearsal", "linux-wsl2-portability-smoke", "negative-acceptance-cases"],
-        },
+        **derived,
         "raw_artifacts": _raw_artifacts(inputs.raw_artifact_root),
-        "weak_model_certification": _certification_references(root),
         "known_limitations": list(inputs.known_limitations),
-        "rollback_reference": "docs/runbooks/PROCESS_PACKAGE_SETUP.md",
     }
 
 
@@ -235,7 +334,12 @@ def _declared_top_level(payload_root: Path, allowlist: Mapping[str, Any], packag
     return declared
 
 
-def _validate_declared_assets(payload_root: Path, allowlist: Mapping[str, Any], package: Mapping[str, Any]) -> None:
+def _validate_declared_assets(
+    payload_root: Path,
+    allowlist: Mapping[str, Any],
+    package: Mapping[str, Any],
+    inventory: list[dict[str, Any]],
+) -> None:
     expected_scripts = {item["name"] for item in allowlist["entry_points"]}
     actual_scripts = {path.name for path in (payload_root / "scripts").iterdir() if path.is_file()}
     if actual_scripts != expected_scripts:
@@ -243,6 +347,15 @@ def _validate_declared_assets(payload_root: Path, allowlist: Mapping[str, Any], 
     for relative in _declared_top_level(payload_root, allowlist, package):
         if not (payload_root / relative).exists():
             raise OperationError("release.asset-missing", "payload omits a declared release asset")
+    exact = set(allowlist["requirements"])
+    exact.update(f"docs/runbooks/{name}" for name in allowlist["runbooks"])
+    exact.update(f"scripts/{item['name']}" for item in allowlist["entry_points"])
+    exact.update(f"process/{name}" for name in package["distribution"]["files"])
+    roots = [*allowlist["template_roots"], *(f"process/{name}" for name in package["distribution"]["roots"])]
+    for item in inventory:
+        path = item["path"]
+        if path not in exact and not any(path.startswith(f"{root}/") for root in roots):
+            raise OperationError("release.allowlist-closure", "payload contains an undeclared asset")
 
 
 def validate_release_manifest(
@@ -250,36 +363,74 @@ def validate_release_manifest(
 ) -> dict[str, Any]:
     """Validate manifest schema and semantic binding to the immutable candidate payload."""
     del now  # Reserved for Task 2 evidence freshness without making Task 1 time-dependent.
-    candidate = candidate_root.resolve()
-    payload = candidate / "payload" if (candidate / "payload").is_dir() else candidate
+    candidate = _safe_directory_root(candidate_root, "release.candidate-missing")
+    payload_path = candidate / "payload"
+    if os.path.lexists(payload_path):
+        payload = _safe_directory_root(payload_path, "release.payload-missing")
+        entries = {path.name for path in candidate.iterdir()}
+        if entries != {"payload", "release-manifest.yaml"}:
+            raise OperationError("release.candidate-closure", "candidate root contains undeclared content")
+    else:
+        payload = candidate
     schema_path = payload / "process/schemas/release-manifest.schema.json"
+    derived = _derived_manifest_fields(payload)
+    for field, expected in derived.items():
+        if manifest.get(field) != expected:
+            raise OperationError("release.manifest-derived-mismatch", f"manifest field is not derived from payload: {field}")
     _validate_schema(manifest, schema_path, "release.manifest-invalid")
-    allowlist = _load_mapping(payload / "process/release-allowlist.yaml", "release.allowlist-invalid")
-    _validate_schema(allowlist, payload / "process/schemas/release-allowlist.schema.json", "release.allowlist-invalid")
-    package = _load_mapping(payload / "process/package.yaml", "release.package-invalid")
-    _validate_declared_assets(payload, allowlist, package)
-    actual = payload_inventory(payload)
-    if list(manifest["inventory"]) != actual["inventory"] or manifest["payload_sha256"] != actual["payload_sha256"]:
-        raise OperationError("release.inventory-mismatch", "manifest does not bind to exact payload bytes")
-    allowlist_sha = hashlib.sha256((payload / "process/release-allowlist.yaml").read_bytes()).hexdigest()
-    if manifest["allowlist_sha256"] != allowlist_sha:
-        raise OperationError("release.allowlist-mismatch", "manifest allowlist checksum differs")
-    return {"operation": "validate-release-manifest", "status": "valid", "release_id": manifest["release_id"], "payload_sha256": actual["payload_sha256"]}
+    return {
+        "operation": "validate-release-manifest", "status": "valid",
+        "release_id": manifest["release_id"], "payload_sha256": derived["payload_sha256"],
+    }
+
+
+def _publish_no_replace(staging: Path, target: Path) -> None:
+    """Atomically publish a directory and fail if the destination already exists."""
+    if os.name == "nt":
+        try:
+            os.rename(staging, target)
+        except OSError as error:
+            if os.path.lexists(target):
+                raise OperationError("release.destination-exists", "destination appeared during candidate construction") from error
+            raise
+        return
+    if sys.platform.startswith("linux"):
+        import ctypes
+
+        libc = ctypes.CDLL(None, use_errno=True)
+        renameat2 = getattr(libc, "renameat2", None)
+        if renameat2 is None:
+            raise OperationError("release.atomic-publish-unsupported", "atomic no-replace publication is unavailable", exit_code=3)
+        renameat2.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+        renameat2.restype = ctypes.c_int
+        result = renameat2(
+            -100, os.fsencode(staging), -100, os.fsencode(target), 1
+        )
+        if result == 0:
+            return
+        error_number = ctypes.get_errno()
+        if error_number == errno.EEXIST:
+            raise OperationError("release.destination-exists", "destination appeared during candidate construction")
+        raise OSError(error_number, os.strerror(error_number), str(target))
+    raise OperationError("release.atomic-publish-unsupported", "host is not certified for atomic publication", exit_code=3)
 
 
 def build_release_candidate(repository_root: Path, destination: Path, inputs: ReleaseInputs) -> dict[str, Any]:
     """Atomically create one immutable allowlisted candidate in a new destination."""
-    root = repository_root.resolve()
-    target = destination.resolve()
-    if not root.is_dir():
-        raise OperationError("release.repository-missing", "repository root is missing", exit_code=3)
+    _validate_inputs(inputs)
+    root = _safe_directory_root(repository_root, "release.repository-missing")
+    requested = Path(destination)
+    requested.parent.mkdir(parents=True, exist_ok=True)
+    parent = _safe_directory_root(requested.parent, "release.destination-parent-invalid")
+    validate_portable_path(requested.name)
+    target = parent / requested.name
     if target == root or root in target.parents or target in root.parents:
         raise OperationError("release.path-overlap", "source and destination must not overlap")
-    if target.exists():
+    if os.path.lexists(target):
         raise OperationError("release.destination-exists", "destination must not already exist")
     allowlist = _load_mapping(root / "process/release-allowlist.yaml", "release.allowlist-invalid")
-    _validate_schema(allowlist, root / "process/schemas/release-allowlist.schema.json", "release.allowlist-invalid")
-    package = _load_mapping(root / "process/package.yaml", "release.package-invalid")
+    _validate_allowlist(allowlist, root / "process/schemas/release-allowlist.schema.json")
+    package = _package_contract(root)
     staging = Path(tempfile.mkdtemp(prefix=f".{target.name}.", dir=target.parent))
     try:
         payload = staging / "payload"
@@ -301,8 +452,7 @@ def build_release_candidate(repository_root: Path, destination: Path, inputs: Re
         manifest_text = yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True, line_break="\n")
         (staging / "release-manifest.yaml").write_text(manifest_text, encoding="utf-8", newline="\n")
         validate_release_manifest(staging, manifest)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(str(staging), str(target))
+        _publish_no_replace(staging, target)
         return manifest
     except Exception:
         if staging.exists():

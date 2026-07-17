@@ -51,9 +51,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.mode == "build":
             values = _mapping(args.inputs)
             try:
+                limitations = values.get("known_limitations", [])
+                if not isinstance(limitations, list):
+                    raise TypeError("known_limitations must be a list")
                 inputs = ReleaseInputs(
                     release_id=values["release_id"],
-                    known_limitations=tuple(values.get("known_limitations", [])),
+                    known_limitations=tuple(limitations),
                     raw_artifact_root=Path(values["raw_artifact_root"]),
                 )
             except (KeyError, TypeError, ValueError) as error:

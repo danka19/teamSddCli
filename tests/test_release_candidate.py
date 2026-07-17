@@ -12,6 +12,7 @@ import pytest
 import yaml
 from jsonschema import Draft202012Validator
 
+import process.release_candidate as release_candidate_module
 from process.release_candidate import (
     ReleaseInputs,
     build_release_candidate,
@@ -88,6 +89,19 @@ def test_allowlist_is_schema_valid_and_exact() -> None:
     assert all(item["smoke"] for item in allowlist["entry_points"])
 
 
+@pytest.mark.parametrize("mutation", ["duplicate", "wrong-smoke", "wrong-exit"])
+def test_allowlist_rejects_non_exact_entry_point_contract(mutation: str) -> None:
+    allowlist = yaml.safe_load((ROOT / "process/release-allowlist.yaml").read_text(encoding="utf-8"))
+    schema = json.loads((ROOT / "process/schemas/release-allowlist.schema.json").read_text(encoding="utf-8"))
+    if mutation == "duplicate":
+        allowlist["entry_points"][-1] = copy.deepcopy(allowlist["entry_points"][0])
+    elif mutation == "wrong-smoke":
+        allowlist["entry_points"][0]["smoke"] = ["scripts/validate_change.py", "--help"]
+    else:
+        allowlist["entry_points"][0]["expected_exit_codes"] = [0, 1, 2, 3]
+    assert list(Draft202012Validator(schema).iter_errors(allowlist))
+
+
 def test_build_is_byte_stable_and_manifest_binds_payload_only(candidate_tmp: Path) -> None:
     first, manifest_a = _build(candidate_tmp, "candidate-a")
     second, manifest_b = _build(candidate_tmp, "candidate-b")
@@ -121,6 +135,59 @@ def test_candidate_contains_only_allowlisted_self_contained_assets(candidate_tmp
     assert validate_release_manifest(candidate, manifest)["status"] == "valid"
 
 
+@pytest.mark.parametrize("field", [
+    "process_package", "config_schema_version", "openspec", "host_evidence",
+    "compatibility", "verification_commands", "verification_requirements",
+    "certification_path", "certification_checksum", "rollback_reference",
+])
+def test_validator_rederives_every_committed_manifest_field(
+    candidate_tmp: Path, field: str
+) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    tampered = copy.deepcopy(manifest)
+    if field == "process_package":
+        tampered[field]["version"] = "9.9.9"
+    elif field == "config_schema_version":
+        tampered[field] = "9.9"
+    elif field == "openspec":
+        tampered[field]["cli_version"] = "9.9.9"
+    elif field == "host_evidence":
+        tampered[field][0]["evidence_level"] = "portability-smoke"
+    elif field == "compatibility":
+        tampered[field]["python"] = "99+"
+    elif field == "verification_commands":
+        tampered["verification"]["commands"][0] = "python arbitrary.py"
+    elif field == "verification_requirements":
+        tampered["verification"]["evidence_requirements"][0] = "arbitrary"
+    elif field == "certification_path":
+        tampered["weak_model_certification"][0]["path"] = tampered["weak_model_certification"][1]["path"]
+    elif field == "certification_checksum":
+        tampered["weak_model_certification"][0]["sha256"] = "0" * 64
+    else:
+        tampered[field] = "docs/runbooks/TRANSFER_RELEASE_CANDIDATE.md"
+    with pytest.raises(OperationError, match="release.manifest-derived-mismatch"):
+        validate_release_manifest(candidate, tampered)
+
+
+def test_recomputed_manifest_cannot_authorize_undeclared_payload_extra(candidate_tmp: Path) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    extra = candidate / "payload/undeclared.txt"
+    extra.write_text("not declared\n", encoding="utf-8")
+    recomputed = payload_inventory(candidate / "payload")
+    manifest["inventory"] = recomputed["inventory"]
+    manifest["payload_sha256"] = recomputed["payload_sha256"]
+    with pytest.raises(OperationError, match="release.allowlist-closure"):
+        validate_release_manifest(candidate, manifest)
+
+
+def test_returned_manifest_cannot_mutate_validator_derived_constants(candidate_tmp: Path) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    manifest["host_evidence"][0]["evidence_level"] = "portability-smoke"
+    manifest["verification"]["commands"][0] = "python arbitrary.py"
+    with pytest.raises(OperationError, match="release.manifest-derived-mismatch"):
+        validate_release_manifest(candidate, manifest)
+
+
 @pytest.mark.parametrize("unsafe", [
     "C:/escape.txt", "C:escape.txt", "//server/share.txt", "/absolute.txt",
     ".", "a/../b", "a/./b", "name:stream", "bad\x01name", "trail. ",
@@ -150,6 +217,39 @@ def test_inventory_rejects_unicode_casefold_collision_and_links(tmp_path: Path) 
         payload_inventory(root)
 
 
+def test_payload_root_link_or_reparse_is_rejected_before_resolution(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "payload"
+    root.mkdir()
+    (root / "asset.txt").write_text("x", encoding="utf-8")
+    original = release_candidate_module._is_link_or_reparse
+    seen: list[Path] = []
+
+    def fake(path: Path) -> bool:
+        seen.append(path)
+        return path == root or original(path)
+
+    monkeypatch.setattr(release_candidate_module, "_is_link_or_reparse", fake)
+    with pytest.raises(OperationError, match="release.link-forbidden"):
+        payload_inventory(root)
+    assert seen[0] == root
+
+
+def test_candidate_root_link_bypass_is_rejected(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    original = release_candidate_module._is_link_or_reparse
+
+    def fake(path: Path) -> bool:
+        return path == candidate or original(path)
+
+    monkeypatch.setattr(release_candidate_module, "_is_link_or_reparse", fake)
+    with pytest.raises(OperationError, match="release.link-forbidden"):
+        validate_release_manifest(candidate, manifest)
+
+
 def test_builder_rejects_overlap_and_preexisting_destination(candidate_tmp: Path) -> None:
     inputs = _inputs(candidate_tmp)
     existing = candidate_tmp / "existing"
@@ -162,10 +262,41 @@ def test_builder_rejects_overlap_and_preexisting_destination(candidate_tmp: Path
         build_release_candidate(ROOT, ROOT.parent, inputs)
 
 
+def test_builder_creates_missing_parent_before_atomic_staging(candidate_tmp: Path) -> None:
+    destination = candidate_tmp / "missing" / "parent" / "candidate"
+    manifest = build_release_candidate(ROOT, destination, _inputs(candidate_tmp))
+    assert destination.is_dir()
+    assert validate_release_manifest(destination, manifest)["status"] == "valid"
+
+
+def test_atomic_publish_rejects_destination_created_during_build(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    destination = candidate_tmp / "raced-candidate"
+    original = release_candidate_module._publish_no_replace
+
+    def race(staging: Path, target: Path) -> None:
+        target.mkdir()
+        original(staging, target)
+
+    monkeypatch.setattr(release_candidate_module, "_publish_no_replace", race)
+    with pytest.raises(OperationError, match="release.destination-exists"):
+        build_release_candidate(ROOT, destination, _inputs(candidate_tmp))
+    assert destination.is_dir()
+    assert not any(candidate_tmp.glob(".raced-candidate.*"))
+
+
+def test_release_inputs_reject_string_known_limitations(candidate_tmp: Path) -> None:
+    inputs = ReleaseInputs("phase-2-12-rc1", "not-a-list", _inputs(candidate_tmp).raw_artifact_root)  # type: ignore[arg-type]
+    with pytest.raises(OperationError, match="input-invalid") as raised:
+        build_release_candidate(ROOT, candidate_tmp / "bad-input", inputs)
+    assert raised.value.exit_code == 3
+
+
 def test_validator_rejects_payload_mutation_and_undeclared_extra(candidate_tmp: Path) -> None:
     candidate, manifest = _build(candidate_tmp)
     (candidate / "payload/undeclared.txt").write_text("extra", encoding="utf-8")
-    with pytest.raises(OperationError, match="release.inventory-mismatch"):
+    with pytest.raises(OperationError, match="release.allowlist-closure"):
         validate_release_manifest(candidate, manifest)
     (candidate / "payload/undeclared.txt").unlink()
     (candidate / "payload/process/release/evidence").mkdir(parents=True)

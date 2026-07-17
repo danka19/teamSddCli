@@ -16,55 +16,55 @@ runbooks:
 entry_points:
   - name: bootstrap_team_specs.py
     smoke: [scripts/bootstrap_team_specs.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: check_corporate_flow.py
     smoke: [scripts/check_corporate_flow.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [2]
   - name: check_lifecycle_transition.py
     smoke: [scripts/check_lifecycle_transition.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: check_tech_lead_control.py
     smoke: [scripts/check_tech_lead_control.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [2]
   - name: classify_change.py
     smoke: [scripts/classify_change.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: create_change.py
     smoke: [scripts/create_change.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: evaluate_change_gates.py
     smoke: [scripts/evaluate_change_gates.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: manage_release_candidate.py
     smoke: [scripts/manage_release_candidate.py, validate, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: manual_fallback.py
     smoke: [scripts/manual_fallback.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: migrate_change_classification.py
     smoke: [scripts/migrate_change_classification.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: prepare_archive.py
     smoke: [scripts/prepare_archive.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: prepare_spec_pr.py
     smoke: [scripts/prepare_spec_pr.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: review_tech_lead.py
     smoke: [scripts/review_tech_lead.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [2]
   - name: update_process_package.py
     smoke: [scripts/update_process_package.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: validate_change.py
     smoke: [scripts/validate_change.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: validate_external_mapping.py
     smoke: [scripts/validate_external_mapping.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: validate_process_config.py
     smoke: [scripts/validate_process_config.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
   - name: validate_traceability.py
     smoke: [scripts/validate_traceability.py, --help]
-    expected_exit_codes: [0, 2, 3]
+    expected_exit_codes: [0]
