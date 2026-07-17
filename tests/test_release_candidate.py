@@ -72,6 +72,12 @@ def _build(tmp_path: Path, name: str = "candidate") -> tuple[Path, dict]:
     return destination, manifest
 
 
+def _write_manifest(candidate: Path, manifest: dict) -> None:
+    (candidate / "release-manifest.yaml").write_text(
+        yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8"
+    )
+
+
 def test_allowlist_is_schema_valid_and_exact() -> None:
     allowlist = yaml.safe_load((ROOT / "process/release-allowlist.yaml").read_text(encoding="utf-8"))
     schema = json.loads((ROOT / "process/schemas/release-allowlist.schema.json").read_text(encoding="utf-8"))
@@ -165,6 +171,7 @@ def test_validator_rederives_every_committed_manifest_field(
         tampered["weak_model_certification"][0]["sha256"] = "0" * 64
     else:
         tampered[field] = "docs/runbooks/TRANSFER_RELEASE_CANDIDATE.md"
+    _write_manifest(candidate, tampered)
     with pytest.raises(OperationError, match="release.manifest-derived-mismatch"):
         validate_release_manifest(candidate, tampered)
 
@@ -176,6 +183,7 @@ def test_recomputed_manifest_cannot_authorize_undeclared_payload_extra(candidate
     recomputed = payload_inventory(candidate / "payload")
     manifest["inventory"] = recomputed["inventory"]
     manifest["payload_sha256"] = recomputed["payload_sha256"]
+    _write_manifest(candidate, manifest)
     with pytest.raises(OperationError, match="release.allowlist-closure"):
         validate_release_manifest(candidate, manifest)
 
@@ -184,6 +192,7 @@ def test_returned_manifest_cannot_mutate_validator_derived_constants(candidate_t
     candidate, manifest = _build(candidate_tmp)
     manifest["host_evidence"][0]["evidence_level"] = "portability-smoke"
     manifest["verification"]["commands"][0] = "python arbitrary.py"
+    _write_manifest(candidate, manifest)
     with pytest.raises(OperationError, match="release.manifest-derived-mismatch"):
         validate_release_manifest(candidate, manifest)
 
@@ -233,7 +242,7 @@ def test_payload_root_link_or_reparse_is_rejected_before_resolution(
     monkeypatch.setattr(release_candidate_module, "_is_link_or_reparse", fake)
     with pytest.raises(OperationError, match="release.link-forbidden"):
         payload_inventory(root)
-    assert seen[0] == root
+    assert seen[-1] == root
 
 
 def test_candidate_root_link_bypass_is_rejected(
@@ -250,6 +259,22 @@ def test_candidate_root_link_bypass_is_rejected(
         validate_release_manifest(candidate, manifest)
 
 
+def test_existing_ancestor_reparse_is_rejected_before_root_resolution(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ancestor = tmp_path / "alias"
+    payload = ancestor / "nested" / "payload"
+    payload.mkdir(parents=True)
+    original = release_candidate_module._is_link_or_reparse
+
+    def fake(path: Path) -> bool:
+        return path == ancestor or original(path)
+
+    monkeypatch.setattr(release_candidate_module, "_is_link_or_reparse", fake)
+    with pytest.raises(OperationError, match="release.link-forbidden"):
+        payload_inventory(payload)
+
+
 def test_builder_rejects_overlap_and_preexisting_destination(candidate_tmp: Path) -> None:
     inputs = _inputs(candidate_tmp)
     existing = candidate_tmp / "existing"
@@ -260,6 +285,31 @@ def test_builder_rejects_overlap_and_preexisting_destination(candidate_tmp: Path
         build_release_candidate(ROOT, ROOT / "nested-candidate", inputs)
     with pytest.raises(OperationError, match="release.path-overlap"):
         build_release_candidate(ROOT, ROOT.parent, inputs)
+
+
+def test_overlap_rejection_has_no_parent_creation_side_effect(tmp_path: Path) -> None:
+    new_parent = ROOT / f".overlap-side-effect-{tmp_path.name}"
+    assert not new_parent.exists()
+    with pytest.raises(OperationError, match="release.path-overlap"):
+        build_release_candidate(ROOT, new_parent / "candidate", _inputs(tmp_path))
+    assert not new_parent.exists()
+
+
+def test_destination_ancestor_reparse_is_rejected_before_child_creation(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ancestor = candidate_tmp / "alias"
+    ancestor.mkdir()
+    child = ancestor / "new-parent"
+    original = release_candidate_module._is_link_or_reparse
+
+    def fake(path: Path) -> bool:
+        return path == ancestor or original(path)
+
+    monkeypatch.setattr(release_candidate_module, "_is_link_or_reparse", fake)
+    with pytest.raises(OperationError, match="release.link-forbidden"):
+        build_release_candidate(ROOT, child / "candidate", _inputs(candidate_tmp))
+    assert not child.exists()
 
 
 def test_builder_creates_missing_parent_before_atomic_staging(candidate_tmp: Path) -> None:
@@ -303,6 +353,38 @@ def test_validator_rejects_payload_mutation_and_undeclared_extra(candidate_tmp: 
     (candidate / "payload/process/release/evidence/dev.yaml").write_text("private: true\n", encoding="utf-8")
     with pytest.raises(OperationError, match="release.mutable-evidence-forbidden"):
         payload_inventory(candidate / "payload")
+
+
+def test_validator_requires_supplied_manifest_to_equal_canonical_disk_file(candidate_tmp: Path) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    on_disk = copy.deepcopy(manifest)
+    on_disk["known_limitations"] = ["different caller-owned limitation"]
+    _write_manifest(candidate, on_disk)
+    with pytest.raises(OperationError, match="release.manifest-file-mismatch"):
+        validate_release_manifest(candidate, manifest)
+
+
+@pytest.mark.parametrize("kind", ["directory", "reparse", "malformed"])
+def test_validator_rejects_unsafe_or_malformed_disk_manifest(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch, kind: str
+) -> None:
+    candidate, manifest = _build(candidate_tmp)
+    path = candidate / "release-manifest.yaml"
+    if kind == "directory":
+        path.unlink()
+        path.mkdir()
+    elif kind == "reparse":
+        original = release_candidate_module._is_link_or_reparse
+        monkeypatch.setattr(
+            release_candidate_module,
+            "_is_link_or_reparse",
+            lambda candidate_path: candidate_path == path or original(candidate_path),
+        )
+    else:
+        path.write_text("not: [valid", encoding="utf-8")
+    code = "release.manifest-file-unsafe" if kind != "malformed" else "release.manifest-file-invalid"
+    with pytest.raises(OperationError, match=code):
+        validate_release_manifest(candidate, manifest)
 
 
 def test_every_entry_point_smokes_from_standalone_candidate(candidate_tmp: Path) -> None:

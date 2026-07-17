@@ -101,8 +101,28 @@ def _is_link_or_reparse(path: Path) -> bool:
     return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0) & _REPARSE_POINT)
 
 
+def _assert_existing_ancestry_safe(path: Path) -> Path:
+    absolute = Path(os.path.abspath(path))
+    chain: list[Path] = []
+    current = absolute
+    while True:
+        chain.append(current)
+        if current.parent == current:
+            break
+        current = current.parent
+    for component in reversed(chain):
+        if not os.path.lexists(component):
+            break
+        if _is_link_or_reparse(component):
+            raise OperationError(
+                "release.link-forbidden",
+                "existing path ancestry contains a link or reparse point",
+            )
+    return absolute
+
+
 def _safe_directory_root(path: Path, missing_code: str) -> Path:
-    raw = Path(path)
+    raw = _assert_existing_ancestry_safe(Path(path))
     try:
         if _is_link_or_reparse(raw):
             raise OperationError("release.link-forbidden", "root links and reparse points are forbidden")
@@ -371,7 +391,27 @@ def validate_release_manifest(
         if entries != {"payload", "release-manifest.yaml"}:
             raise OperationError("release.candidate-closure", "candidate root contains undeclared content")
     else:
-        payload = candidate
+        raise OperationError(
+            "release.candidate-closure",
+            "candidate root must contain payload and its canonical manifest",
+        )
+    manifest_path = candidate / "release-manifest.yaml"
+    try:
+        if _is_link_or_reparse(manifest_path) or not manifest_path.is_file():
+            raise OperationError(
+                "release.manifest-file-unsafe",
+                "candidate manifest must be one regular non-link file",
+            )
+    except FileNotFoundError as error:
+        raise OperationError(
+            "release.manifest-file-unsafe", "candidate manifest is missing"
+        ) from error
+    disk_manifest = _load_mapping(manifest_path, "release.manifest-file-invalid")
+    if disk_manifest != dict(manifest):
+        raise OperationError(
+            "release.manifest-file-mismatch",
+            "supplied manifest differs from the canonical candidate manifest",
+        )
     schema_path = payload / "process/schemas/release-manifest.schema.json"
     derived = _derived_manifest_fields(payload)
     for field, expected in derived.items():
@@ -419,15 +459,17 @@ def build_release_candidate(repository_root: Path, destination: Path, inputs: Re
     """Atomically create one immutable allowlisted candidate in a new destination."""
     _validate_inputs(inputs)
     root = _safe_directory_root(repository_root, "release.repository-missing")
-    requested = Path(destination)
-    requested.parent.mkdir(parents=True, exist_ok=True)
-    parent = _safe_directory_root(requested.parent, "release.destination-parent-invalid")
+    requested = Path(os.path.abspath(destination))
     validate_portable_path(requested.name)
-    target = parent / requested.name
+    _assert_existing_ancestry_safe(requested.parent)
+    target = requested
     if target == root or root in target.parents or target in root.parents:
         raise OperationError("release.path-overlap", "source and destination must not overlap")
     if os.path.lexists(target):
         raise OperationError("release.destination-exists", "destination must not already exist")
+    requested.parent.mkdir(parents=True, exist_ok=True)
+    parent = _safe_directory_root(requested.parent, "release.destination-parent-invalid")
+    target = parent / requested.name
     allowlist = _load_mapping(root / "process/release-allowlist.yaml", "release.allowlist-invalid")
     _validate_allowlist(allowlist, root / "process/schemas/release-allowlist.schema.json")
     package = _package_contract(root)
