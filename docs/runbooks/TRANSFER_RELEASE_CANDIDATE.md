@@ -71,11 +71,11 @@ artifact root is separate and must contain the exact logical roots selected by
 `process/release-certification-selection.yaml`.
 
 ```powershell
-python scripts/manage_release_candidate.py accept --candidate C:\release\candidate --manifest C:\release\candidate\release-manifest.yaml --host-evidence-root C:\release\host-evidence --raw-artifact-root C:\release\raw-artifacts
+python C:\release\candidate\payload\scripts\manage_release_candidate.py accept --candidate C:\release\candidate --manifest C:\release\candidate\release-manifest.yaml --host-evidence-root C:\release\host-evidence --raw-artifact-root C:\release\raw-artifacts
 ```
 
 ```bash
-python3 scripts/manage_release_candidate.py accept --candidate /mnt/c/release/candidate --manifest /mnt/c/release/candidate/release-manifest.yaml --host-evidence-root /mnt/c/release/host-evidence --raw-artifact-root /mnt/c/release/raw-artifacts
+python3 /mnt/c/release/candidate/payload/scripts/manage_release_candidate.py accept --candidate /mnt/c/release/candidate --manifest /mnt/c/release/candidate/release-manifest.yaml --host-evidence-root /mnt/c/release/host-evidence --raw-artifact-root /mnt/c/release/raw-artifacts
 ```
 
 The validator owns the 30-day freshness window and ignores evidence-provided

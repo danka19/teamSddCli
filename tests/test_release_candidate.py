@@ -143,6 +143,16 @@ def _host_row(candidate: Path, manifest: dict, platform: str) -> dict:
         "mcp": {"status": "explicitly-unavailable", "evidence_ref": None},
         "scenario_ids": WINDOWS_SCENARIOS if windows else LINUX_SCENARIOS,
         "scenario_codes": ["migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"],
+        "negative_acceptance_cases": [
+            {"case_id": case_id, "expected_code": code, "observed_codes": [code], "result": "passed"}
+            for case_id, code in (
+                ("missing", "evidence-missing"), ("stale", "evidence-stale"),
+                ("failed", "evidence-failed"), ("private", "evidence-private"),
+                ("ai-only", "evidence-ai-only"),
+                ("checksum-mismatch", "evidence-checksum-mismatch"),
+                ("payload-mismatch", "candidate-digest-mismatch"),
+            )
+        ],
         "result": "passed", "ai_disabled": True, "human_authority_substituted": False,
         "privacy_scan": "passed", "archive_digest_before": digest,
         "archive_digest_after": digest, "rollback_result": "passed",
@@ -302,6 +312,60 @@ def test_acceptance_rejects_negative_cases(
     assert expected in [row["code"] for row in result["diagnostics"]]
 
 
+@pytest.mark.parametrize(
+    ("status", "reference"),
+    [("provisioned", None), ("provisioned", ""), ("explicitly-unavailable", "evidence/mcp.json")],
+)
+def test_acceptance_rejects_inconsistent_mcp_observation(
+    candidate_tmp: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    status: str,
+    reference: str | None,
+) -> None:
+    candidate, manifest, raw = _acceptance_build(candidate_tmp)
+    hosts = _host_evidence(candidate_tmp, candidate, manifest)
+    monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    path = hosts / "windows.yaml"
+    row = yaml.safe_load(path.read_text(encoding="utf-8"))
+    row["mcp"] = {"status": status, "evidence_ref": reference}
+    path.write_text(yaml.safe_dump(row, sort_keys=False), encoding="utf-8")
+
+    result = evaluate_release_acceptance(candidate, manifest, hosts, raw, now=datetime(2026, 7, 17, 12, tzinfo=timezone.utc))
+
+    assert result["status"] == "evidence-rejected"
+    assert "evidence-mcp-inconsistent" in [item["code"] for item in result["diagnostics"]]
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("scenario_ids", [["unhashable"]]),
+        ("scenario_codes", [{"unhashable": True}]),
+        ("mcp", []),
+        ("inventory", []),
+        ("completed_at", {"wrong": "type"}),
+    ],
+)
+def test_acceptance_rejects_schema_invalid_host_rows_without_type_errors(
+    candidate_tmp: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    value: object,
+) -> None:
+    candidate, manifest, raw = _acceptance_build(candidate_tmp)
+    hosts = _host_evidence(candidate_tmp, candidate, manifest)
+    monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    path = hosts / "windows.yaml"
+    row = yaml.safe_load(path.read_text(encoding="utf-8"))
+    row[field] = value
+    path.write_text(yaml.safe_dump(row, sort_keys=False), encoding="utf-8")
+
+    result = evaluate_release_acceptance(candidate, manifest, hosts, raw, now=datetime(2026, 7, 17, 12, tzinfo=timezone.utc))
+
+    assert result["status"] == "evidence-rejected"
+    assert "evidence-invalid" in [item["code"] for item in result["diagnostics"]]
+
+
 def test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence(
     candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -332,6 +396,10 @@ def test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclus
     assert set(evidence["scenario_ids"]) == set(WINDOWS_SCENARIOS)
     assert evidence["archive_digest_before"] == evidence["archive_digest_after"]
     assert evidence["rollback_result"] == "passed"
+    assert {item["case_id"] for item in evidence["negative_acceptance_cases"]} == {
+        "missing", "stale", "failed", "private", "ai-only", "checksum-mismatch", "payload-mismatch"
+    }
+    assert all(item["result"] == "passed" for item in evidence["negative_acceptance_cases"])
     assert evidence["ai_disabled"] is True
     assert evidence["human_authority_substituted"] is False
     assert payload_inventory(candidate / "payload")["payload_sha256"] == payload_before
@@ -361,6 +429,26 @@ def test_inventory_runs_fixed_argv_without_shell(monkeypatch: pytest.MonkeyPatch
     assert all(shell is False for _, shell in calls)
     assert [argv for argv, _ in calls] == [row["argv"] for row in commands]
     assert set(inventory) == {"os", "architecture", "shell", "python", "node", "openspec", "git"}
+
+
+def test_negative_acceptance_matrix_fails_closed_when_expected_rejection_is_not_observed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(release_candidate_module, "_validate_host_evidence_row", lambda *args, **kwargs: [])
+    with pytest.raises(OperationError, match="release.negative-acceptance-failed"):
+        release_candidate_module._run_negative_acceptance_matrix(
+            {"platform_id": "windows"},
+            {"payload_sha256": "a" * 64, "compatibility": {}},
+            "b" * 64,
+            datetime(2026, 7, 17, tzinfo=timezone.utc),
+            ROOT / "process/schemas/release-host-evidence.schema.json",
+        )
+
+
+def test_runbook_accept_examples_use_candidate_payload_entry_point() -> None:
+    text = (ROOT / "docs/runbooks/TRANSFER_RELEASE_CANDIDATE.md").read_text(encoding="utf-8")
+    assert "C:\\release\\candidate\\payload\\scripts\\manage_release_candidate.py accept" in text
+    assert "/mnt/c/release/candidate/payload/scripts/manage_release_candidate.py accept" in text
 
 
 @pytest.mark.parametrize("mutation", ["duplicate", "wrong-smoke", "wrong-exit"])

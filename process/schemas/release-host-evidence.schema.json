@@ -24,9 +24,29 @@
       "properties": {"os": {"type": "string", "minLength": 1}, "architecture": {"type": "string", "minLength": 1}, "shell": {"type": "string", "minLength": 1}, "python": {"type": "string", "minLength": 1}, "node": {"type": "string", "minLength": 1}, "openspec": {"type": "string", "minLength": 1}, "git": {"type": "string", "minLength": 1}}
     },
     "inventory_commands": {"type": "array", "minItems": 5, "items": {"type": "object", "additionalProperties": false, "required": ["argv", "exit_code", "stdout"], "properties": {"argv": {"$ref": "#/$defs/argv"}, "exit_code": {"const": 0}, "stdout": {"type": "string", "minLength": 1}}}},
-    "mcp": {"type": "object", "additionalProperties": false, "required": ["status", "evidence_ref"], "properties": {"status": {"enum": ["provisioned", "explicitly-unavailable"]}, "evidence_ref": {"type": ["string", "null"]}}},
+    "mcp": {
+      "type": "object", "additionalProperties": false, "required": ["status", "evidence_ref"],
+      "properties": {"status": {"enum": ["provisioned", "explicitly-unavailable"]}, "evidence_ref": {"type": ["string", "null"]}},
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "provisioned"}}, "required": ["status"]}, "then": {"properties": {"evidence_ref": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"}}}},
+        {"if": {"properties": {"status": {"const": "explicitly-unavailable"}}, "required": ["status"]}, "then": {"properties": {"evidence_ref": {"type": "null"}}}}
+      ]
+    },
     "scenario_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "scenario_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "negative_acceptance_cases": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["case_id", "expected_code", "observed_codes", "result"],
+        "properties": {
+          "case_id": {"enum": ["missing", "stale", "failed", "private", "ai-only", "checksum-mismatch", "payload-mismatch"]},
+          "expected_code": {"type": "string", "minLength": 1},
+          "observed_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "result": {"const": "passed"}
+        }
+      }
+    },
     "result": {"const": "passed"},
     "ai_disabled": {"const": true},
     "human_authority_substituted": {"const": false},

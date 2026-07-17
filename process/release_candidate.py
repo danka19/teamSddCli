@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import copy
 import json
 import os
 import errno
@@ -15,7 +16,7 @@ import tempfile
 import unicodedata
 from collections.abc import Mapping
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -94,6 +95,15 @@ _LINUX_SCENARIOS = {
     "update-rollback-smoke", "negative-acceptance-cases", "ai-disabled",
 }
 _SCENARIO_CODES = {"migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"}
+_NEGATIVE_ACCEPTANCE = {
+    "missing": "evidence-missing",
+    "stale": "evidence-stale",
+    "failed": "evidence-failed",
+    "private": "evidence-private",
+    "ai-only": "evidence-ai-only",
+    "checksum-mismatch": "evidence-checksum-mismatch",
+    "payload-mismatch": "candidate-digest-mismatch",
+}
 _INVENTORY_ARGV = [
     ["python", "--version"], ["node", "--version"], ["openspec", "--version"],
     ["git", "--version"], ["python", "-c", "import platform;print(platform.platform())"],
@@ -153,8 +163,8 @@ def evaluate_release_acceptance(
     except OperationError:
         reject("evidence-missing")
         return _acceptance_result(manifest, diagnostics)
-    if entries != set(_HOST_FILES):
-        reject("evidence-missing" if not set(_HOST_FILES) <= entries else "evidence-root-not-closed")
+    for code in _validate_host_root_closure(entries):
+        reject(code)
     host_schema = payload / "process/schemas/release-host-evidence.schema.json"
     for filename, (platform_id, evidence_level) in _HOST_FILES.items():
         path = host_root / filename
@@ -166,44 +176,10 @@ def evaluate_release_acceptance(
         except OperationError:
             reject("evidence-failed")
             continue
-        if row.get("platform_id") != platform_id or row.get("evidence_level") != evidence_level:
-            reject("evidence-root-not-closed")
-        try:
-            _validate_schema(row, host_schema, "release.host-evidence-invalid")
-        except OperationError:
-            reject("evidence-failed")
-        if row.get("result") != "passed":
-            reject("evidence-failed")
-        if row.get("ai_disabled") is not True or row.get("human_authority_substituted") is not False:
-            reject("evidence-ai-only")
-        if row.get("payload_sha256") != manifest.get("payload_sha256") or row.get("manifest_sha256") != manifest_sha:
-            reject("candidate-digest-mismatch")
-        if row.get("process_package_version") != manifest.get("process_package", {}).get("version") or row.get("config_schema_version") != manifest.get("config_schema_version"):
-            reject("incompatible-dependency")
-        inventory = row.get("inventory", {})
-        if not _inventory_compatible(inventory, manifest.get("compatibility", {})):
-            reject("incompatible-dependency")
-        commands = row.get("inventory_commands", [])
-        if [item.get("argv") for item in commands if isinstance(item, dict)] != _INVENTORY_ARGV:
-            reject("incompatible-dependency")
-        completed = _canonical_completed_at(row.get("completed_at"))
-        if completed is None:
-            reject("evidence-failed")
-        elif completed > current:
-            reject("evidence-future")
-        elif (current - completed).total_seconds() > 30 * 86400:
-            reject("evidence-stale")
-        required_scenarios = _WINDOWS_SCENARIOS if platform_id == "windows" else _LINUX_SCENARIOS
-        if set(row.get("scenario_ids", [])) != required_scenarios:
-            reject("evidence-failed")
-        if not _SCENARIO_CODES <= set(row.get("scenario_codes", [])):
-            reject("failed-update-hold" if "failed-update-held" not in set(row.get("scenario_codes", [])) else "evidence-failed")
-        if row.get("archive_digest_before") != row.get("archive_digest_after"):
-            reject("archive-history-rewrite")
-        if row.get("rollback_result") != "passed":
-            reject("failed-update-hold")
-        if _contains_private(row):
-            reject("evidence-private")
+        for code in _validate_host_evidence_row(
+            row, platform_id, evidence_level, manifest, manifest_sha, current, host_schema
+        ):
+            reject(code)
 
     try:
         raw_root = _safe_directory_root(raw_artifact_root, "release.raw-artifacts-invalid")
@@ -218,8 +194,8 @@ def evaluate_release_acceptance(
                 actual[f"artifact:{relative}"] = hashlib.sha256(path.read_bytes()).hexdigest()
                 if _contains_private_bytes(path.read_bytes()):
                     reject("evidence-private")
-        if actual != declared:
-            reject("evidence-checksum-mismatch")
+        for code in _validate_raw_artifact_closure(declared, actual):
+            reject(code)
     except (OperationError, OSError):
         reject("evidence-checksum-mismatch")
         return _acceptance_result(manifest, diagnostics)
@@ -250,6 +226,179 @@ def evaluate_release_acceptance(
     except OperationError:
         reject("evidence-missing")
     return _acceptance_result(manifest, diagnostics)
+
+
+def _validate_host_root_closure(entries: Any) -> list[str]:
+    if not isinstance(entries, set) or not all(isinstance(item, str) for item in entries):
+        return ["evidence-invalid"]
+    if entries == set(_HOST_FILES):
+        return []
+    return ["evidence-missing" if not set(_HOST_FILES) <= entries else "evidence-root-not-closed"]
+
+
+def _validate_host_evidence_row(
+    row: Any,
+    platform_id: str,
+    evidence_level: str,
+    manifest: Mapping[str, Any],
+    manifest_sha: str,
+    current: datetime,
+    schema_path: Path,
+    *,
+    require_negative_matrix: bool = True,
+) -> list[str]:
+    diagnostics: list[str] = []
+
+    def add(code: str) -> None:
+        if code not in diagnostics:
+            diagnostics.append(code)
+
+    if not isinstance(row, Mapping):
+        return ["evidence-invalid"]
+    if row.get("platform_id") != platform_id or row.get("evidence_level") != evidence_level:
+        add("evidence-root-not-closed")
+    if row.get("result") != "passed":
+        add("evidence-failed")
+    if row.get("ai_disabled") is not True or row.get("human_authority_substituted") is not False:
+        add("evidence-ai-only")
+    mcp = row.get("mcp")
+    if not _mcp_consistent(mcp):
+        add("evidence-mcp-inconsistent")
+    try:
+        _validate_schema(row, schema_path, "release.host-evidence-invalid")
+    except OperationError:
+        add("evidence-invalid")
+        if _contains_private(row):
+            add("evidence-private")
+        return diagnostics
+    if row.get("payload_sha256") != manifest.get("payload_sha256") or row.get("manifest_sha256") != manifest_sha:
+        add("candidate-digest-mismatch")
+    package = manifest.get("process_package")
+    package_version = package.get("version") if isinstance(package, Mapping) else None
+    if row.get("process_package_version") != package_version or row.get("config_schema_version") != manifest.get("config_schema_version"):
+        add("incompatible-dependency")
+    if not _inventory_compatible(row.get("inventory"), manifest.get("compatibility")):
+        add("incompatible-dependency")
+    commands = row.get("inventory_commands")
+    if not isinstance(commands, list) or [item.get("argv") for item in commands if isinstance(item, Mapping)] != _INVENTORY_ARGV:
+        add("incompatible-dependency")
+    completed = _canonical_completed_at(row.get("completed_at"))
+    if completed is None:
+        add("evidence-failed")
+    elif completed > current:
+        add("evidence-future")
+    elif (current - completed).total_seconds() > 30 * 86400:
+        add("evidence-stale")
+    required_scenarios = _WINDOWS_SCENARIOS if platform_id == "windows" else _LINUX_SCENARIOS
+    scenario_ids = row.get("scenario_ids")
+    if not isinstance(scenario_ids, list) or set(scenario_ids) != required_scenarios:
+        add("evidence-failed")
+    scenario_codes = row.get("scenario_codes")
+    codes = set(scenario_codes) if isinstance(scenario_codes, list) else set()
+    if not _SCENARIO_CODES <= codes:
+        add("failed-update-hold" if "failed-update-held" not in codes else "evidence-failed")
+    if row.get("archive_digest_before") != row.get("archive_digest_after"):
+        add("archive-history-rewrite")
+    if row.get("rollback_result") != "passed":
+        add("failed-update-hold")
+    if require_negative_matrix and not _negative_matrix_complete(row.get("negative_acceptance_cases")):
+        add("evidence-failed")
+    if _contains_private(row):
+        add("evidence-private")
+    return diagnostics
+
+
+def _mcp_consistent(value: Any) -> bool:
+    if not isinstance(value, Mapping):
+        return False
+    status = value.get("status")
+    reference = value.get("evidence_ref")
+    if status == "explicitly-unavailable":
+        return reference is None
+    if status != "provisioned" or not isinstance(reference, str):
+        return False
+    return bool(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}", reference)) and ".." not in reference
+
+
+def _negative_matrix_complete(value: Any) -> bool:
+    if not isinstance(value, list) or len(value) != len(_NEGATIVE_ACCEPTANCE):
+        return False
+    by_id = {
+        item.get("case_id"): item for item in value
+        if isinstance(item, Mapping) and isinstance(item.get("case_id"), str)
+    }
+    if set(by_id) != set(_NEGATIVE_ACCEPTANCE):
+        return False
+    return all(
+        item.get("expected_code") == expected
+        and item.get("result") == "passed"
+        and isinstance(item.get("observed_codes"), list)
+        and expected in item["observed_codes"]
+        for case_id, expected in _NEGATIVE_ACCEPTANCE.items()
+        for item in (by_id[case_id],)
+    )
+
+
+def _validate_raw_artifact_closure(declared: Any, actual: Any) -> list[str]:
+    if not isinstance(declared, Mapping) or not isinstance(actual, Mapping):
+        return ["evidence-invalid"]
+    return [] if dict(actual) == dict(declared) else ["evidence-checksum-mismatch"]
+
+
+def _run_negative_acceptance_matrix(
+    base_row: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    manifest_sha: str,
+    current: datetime,
+    schema_path: Path,
+) -> list[dict[str, Any]]:
+    validation_base = copy.deepcopy(dict(base_row))
+    scenario_ids = validation_base.get("scenario_ids")
+    if isinstance(scenario_ids, list) and "negative-acceptance-cases" not in scenario_ids:
+        scenario_ids.append("negative-acceptance-cases")
+    rows: list[dict[str, Any]] = []
+    for case_id, expected in _NEGATIVE_ACCEPTANCE.items():
+        if case_id == "missing":
+            observed = _validate_host_root_closure({"windows.yaml"})
+        elif case_id == "checksum-mismatch":
+            observed = _validate_raw_artifact_closure(
+                {"artifact:synthetic/result.json": "a" * 64},
+                {"artifact:synthetic/result.json": "b" * 64},
+            )
+        else:
+            row = copy.deepcopy(validation_base)
+            if case_id == "stale":
+                row["completed_at"] = (current - timedelta(days=31)).strftime("%Y-%m-%dT%H:%M:%SZ")
+            elif case_id == "failed":
+                row["result"] = "failed"
+            elif case_id == "private":
+                row["mcp"] = {"status": "explicitly-unavailable", "evidence_ref": "api_key=sk-private-value-1234567890"}
+            elif case_id == "ai-only":
+                row["ai_disabled"] = False
+            elif case_id == "payload-mismatch":
+                row["payload_sha256"] = "b" * 64
+            observed = _validate_host_evidence_row(
+                row,
+                str(validation_base.get("platform_id", "")),
+                str(validation_base.get("evidence_level", "")),
+                manifest,
+                manifest_sha,
+                current,
+                schema_path,
+                require_negative_matrix=False,
+            )
+        if expected not in observed:
+            raise OperationError(
+                "release.negative-acceptance-failed",
+                "negative acceptance case did not observe its expected rejection",
+            )
+        rows.append({
+            "case_id": case_id,
+            "expected_code": expected,
+            "observed_codes": observed,
+            "result": "passed",
+        })
+    return rows
 
 
 def _acceptance_result(manifest: Mapping[str, Any], diagnostics: list[str]) -> dict[str, Any]:
@@ -318,9 +467,7 @@ def rehearse_release_candidate(
     expected_level = {"windows": "full-clean-rehearsal", "linux-wsl2": "portability-smoke"}
     if expected_level.get(options.platform_id) != options.evidence_level:
         raise OperationError("input-invalid", "platform and evidence level are incompatible", exit_code=3)
-    if options.mcp_status not in {"provisioned", "explicitly-unavailable"} or (
-        options.mcp_status == "provisioned"
-    ) != (isinstance(options.mcp_evidence_ref, str) and bool(options.mcp_evidence_ref)):
+    if not _mcp_consistent({"status": options.mcp_status, "evidence_ref": options.mcp_evidence_ref}):
         raise OperationError("input-invalid", "MCP observation is inconsistent", exit_code=3)
 
     candidate = _safe_directory_root(candidate_root, "release.candidate-missing")
@@ -415,13 +562,16 @@ def rehearse_release_candidate(
         if archive_before != archive_after or update.get("accepted_history_mutated") is not False or rollback.get("accepted_history_mutated") is not False:
             raise OperationError("release.archive-history-rewrite", "maintenance rewrote accepted history")
 
-        scenarios = sorted(_WINDOWS_SCENARIOS if options.platform_id == "windows" else _LINUX_SCENARIOS)
-        completed_at = datetime.now(timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+        required_scenarios = _WINDOWS_SCENARIOS if options.platform_id == "windows" else _LINUX_SCENARIOS
+        scenarios = sorted(required_scenarios - {"negative-acceptance-cases"})
+        completed = datetime.now(timezone.utc).replace(microsecond=0)
+        completed_at = completed.strftime("%Y-%m-%dT%H:%M:%SZ")
+        manifest_sha = hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest()
         evidence = {
             "schema_version": "1.0", "evidence_id": f"phase-2-12-{options.platform_id}",
             "platform_id": options.platform_id, "evidence_level": options.evidence_level,
             "completed_at": completed_at, "payload_sha256": manifest["payload_sha256"],
-            "manifest_sha256": hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest(),
+            "manifest_sha256": manifest_sha,
             "process_package_version": manifest["process_package"]["version"],
             "config_schema_version": manifest["config_schema_version"],
             "inventory": inventory, "inventory_commands": inventory_commands,
@@ -431,7 +581,12 @@ def rehearse_release_candidate(
             "privacy_scan": "passed", "archive_digest_before": archive_before,
             "archive_digest_after": archive_after, "rollback_result": "passed",
         }
-        _validate_schema(evidence, payload / "process/schemas/release-host-evidence.schema.json", "release.host-evidence-invalid")
+        host_schema = payload / "process/schemas/release-host-evidence.schema.json"
+        evidence["negative_acceptance_cases"] = _run_negative_acceptance_matrix(
+            evidence, manifest, manifest_sha, completed, host_schema
+        )
+        evidence["scenario_ids"] = sorted([*scenarios, "negative-acceptance-cases"])
+        _validate_schema(evidence, host_schema, "release.host-evidence-invalid")
         if _contains_private(evidence):
             raise OperationError("release.evidence-private", "rehearsal evidence contains private material")
         _write_yaml_no_replace(requested_output, evidence)
