@@ -9,19 +9,30 @@ import errno
 import re
 import shutil
 import stat
+import subprocess
 import sys
 import tempfile
 import unicodedata
 from collections.abc import Mapping
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
 from jsonschema import Draft202012Validator
 
+from .actual_certification import validate_normalized_evidence
 from .errors import OperationError
+from .validators.config_validation import secret_diagnostics
+from .validators.classification_migration import apply_migration, plan_migration
+from .validators.config_discovery import validate_configuration
+from .workflow_operations import (
+    bootstrap_team_specs,
+    create_change,
+    rollback_process_package,
+    update_process_package,
+)
 
 
 _RELEASE_ID = re.compile(r"^[a-z][a-z0-9.-]*$")
@@ -70,6 +81,24 @@ _EVIDENCE_REQUIREMENTS = [
     "windows-full-clean-rehearsal", "linux-wsl2-portability-smoke", "negative-acceptance-cases"
 ]
 _ROLLBACK_REFERENCE = "docs/runbooks/PROCESS_PACKAGE_SETUP.md"
+_SELECTION_FILE = "release-certification-selection.yaml"
+_HOST_FILES = {"windows.yaml": ("windows", "full-clean-rehearsal"), "linux-wsl2.yaml": ("linux-wsl2", "portability-smoke")}
+_WINDOWS_SCENARIOS = {
+    "clean-bootstrap", "config-compatibility", "minor-flow", "major-flow", "hotfix-flow",
+    "migration-check", "migration-apply", "migration-idempotent", "update",
+    "failed-update-hold", "rollback", "archive-history-preserved",
+    "negative-acceptance-cases", "ai-disabled",
+}
+_LINUX_SCENARIOS = {
+    "clean-bootstrap", "config-compatibility", "class-flow-smoke", "migration-smoke",
+    "update-rollback-smoke", "negative-acceptance-cases", "ai-disabled",
+}
+_SCENARIO_CODES = {"migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"}
+_INVENTORY_ARGV = [
+    ["python", "--version"], ["node", "--version"], ["openspec", "--version"],
+    ["git", "--version"], ["python", "-c", "import platform;print(platform.platform())"],
+]
+_PRIVATE_TEXT = re.compile(r"(?i)(?:[a-z]:[\\/]|/users/|\\\\users\\|https?://(?!127\.0\.0\.1|localhost)|api[_-]?key\s*[=:]|sk-[a-z0-9_-]{12,})")
 
 
 @dataclass(frozen=True)
@@ -77,6 +106,422 @@ class ReleaseInputs:
     release_id: str
     known_limitations: tuple[str, ...]
     raw_artifact_root: Path
+
+
+@dataclass(frozen=True)
+class RehearsalOptions:
+    platform_id: str
+    evidence_level: str
+    mcp_status: str
+    mcp_evidence_ref: str | None
+    output: Path
+
+
+def evaluate_release_acceptance(
+    candidate_root: Path,
+    manifest: Mapping[str, Any],
+    host_evidence_root: Path,
+    raw_artifact_root: Path,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    diagnostics: list[str] = []
+
+    def reject(code: str) -> None:
+        if code not in diagnostics:
+            diagnostics.append(code)
+
+    try:
+        validation = validate_release_manifest(candidate_root, manifest)
+        candidate = _safe_directory_root(candidate_root, "release.candidate-missing")
+        payload = _safe_directory_root(candidate / "payload", "release.payload-missing")
+    except OperationError as error:
+        reject("candidate-digest-mismatch" if "manifest" in error.code or "payload" in error.code else error.code)
+        return _acceptance_result(manifest, diagnostics)
+    if validation["payload_sha256"] != manifest.get("payload_sha256"):
+        reject("candidate-digest-mismatch")
+    manifest_sha = hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest()
+    current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None or current.utcoffset() is None:
+        reject("evidence-time-invalid")
+        current = current.replace(tzinfo=timezone.utc)
+    current = current.astimezone(timezone.utc)
+
+    try:
+        host_root = _safe_directory_root(host_evidence_root, "release.host-evidence-missing")
+        entries = {path.name for path in host_root.iterdir()}
+    except OperationError:
+        reject("evidence-missing")
+        return _acceptance_result(manifest, diagnostics)
+    if entries != set(_HOST_FILES):
+        reject("evidence-missing" if not set(_HOST_FILES) <= entries else "evidence-root-not-closed")
+    host_schema = payload / "process/schemas/release-host-evidence.schema.json"
+    for filename, (platform_id, evidence_level) in _HOST_FILES.items():
+        path = host_root / filename
+        if not path.is_file() or _is_link_or_reparse(path):
+            reject("evidence-missing")
+            continue
+        try:
+            row = _load_mapping(path, "release.host-evidence-invalid")
+        except OperationError:
+            reject("evidence-failed")
+            continue
+        if row.get("platform_id") != platform_id or row.get("evidence_level") != evidence_level:
+            reject("evidence-root-not-closed")
+        try:
+            _validate_schema(row, host_schema, "release.host-evidence-invalid")
+        except OperationError:
+            reject("evidence-failed")
+        if row.get("result") != "passed":
+            reject("evidence-failed")
+        if row.get("ai_disabled") is not True or row.get("human_authority_substituted") is not False:
+            reject("evidence-ai-only")
+        if row.get("payload_sha256") != manifest.get("payload_sha256") or row.get("manifest_sha256") != manifest_sha:
+            reject("candidate-digest-mismatch")
+        if row.get("process_package_version") != manifest.get("process_package", {}).get("version") or row.get("config_schema_version") != manifest.get("config_schema_version"):
+            reject("incompatible-dependency")
+        inventory = row.get("inventory", {})
+        if not _inventory_compatible(inventory, manifest.get("compatibility", {})):
+            reject("incompatible-dependency")
+        commands = row.get("inventory_commands", [])
+        if [item.get("argv") for item in commands if isinstance(item, dict)] != _INVENTORY_ARGV:
+            reject("incompatible-dependency")
+        completed = _canonical_completed_at(row.get("completed_at"))
+        if completed is None:
+            reject("evidence-failed")
+        elif completed > current:
+            reject("evidence-future")
+        elif (current - completed).total_seconds() > 30 * 86400:
+            reject("evidence-stale")
+        required_scenarios = _WINDOWS_SCENARIOS if platform_id == "windows" else _LINUX_SCENARIOS
+        if set(row.get("scenario_ids", [])) != required_scenarios:
+            reject("evidence-failed")
+        if not _SCENARIO_CODES <= set(row.get("scenario_codes", [])):
+            reject("failed-update-hold" if "failed-update-held" not in set(row.get("scenario_codes", [])) else "evidence-failed")
+        if row.get("archive_digest_before") != row.get("archive_digest_after"):
+            reject("archive-history-rewrite")
+        if row.get("rollback_result") != "passed":
+            reject("failed-update-hold")
+        if _contains_private(row):
+            reject("evidence-private")
+
+    try:
+        raw_root = _safe_directory_root(raw_artifact_root, "release.raw-artifacts-invalid")
+        declared = {item["reference"]: item["sha256"] for item in manifest.get("raw_artifacts", [])}
+        actual: dict[str, str] = {}
+        for path in sorted(raw_root.rglob("*")):
+            if _is_link_or_reparse(path):
+                raise OperationError("release.link-forbidden", "raw artifact links are forbidden")
+            if path.is_file():
+                relative = path.relative_to(raw_root).as_posix()
+                validate_portable_path(relative)
+                actual[f"artifact:{relative}"] = hashlib.sha256(path.read_bytes()).hexdigest()
+                if _contains_private_bytes(path.read_bytes()):
+                    reject("evidence-private")
+        if actual != declared:
+            reject("evidence-checksum-mismatch")
+    except (OperationError, OSError):
+        reject("evidence-checksum-mismatch")
+        return _acceptance_result(manifest, diagnostics)
+
+    try:
+        selection = _load_mapping(payload / f"process/{_SELECTION_FILE}", "release.certification-selection-invalid")
+        _validate_schema(
+            selection,
+            payload / "process/schemas/release-certification-selection.schema.json",
+            "release.certification-selection-invalid",
+        )
+        for selected in selection["selected"]:
+            logical_root = selected["raw_logical_root"]
+            evidence_path = selected["normalized_evidence_path"]
+            validate_portable_path(evidence_path)
+            evidence = _load_mapping(payload / "process" / evidence_path, "release.certification-evidence-invalid")
+            if evidence.get("status") != "passed" or evidence.get("raw_artifact", {}).get("logical_id") != logical_root:
+                reject("evidence-failed")
+                continue
+            artifact_path = raw_root / logical_root
+            if not artifact_path.is_dir():
+                reject("evidence-missing")
+                continue
+            if _contains_private(evidence):
+                reject("evidence-private")
+            if validate_normalized_evidence(evidence, artifact_path, repository_root=payload):
+                reject("evidence-failed")
+    except OperationError:
+        reject("evidence-missing")
+    return _acceptance_result(manifest, diagnostics)
+
+
+def _acceptance_result(manifest: Mapping[str, Any], diagnostics: list[str]) -> dict[str, Any]:
+    return {
+        "operation": "evaluate-release-acceptance",
+        "status": "evidence-rejected" if diagnostics else "evidence-complete",
+        "release_id": manifest.get("release_id"),
+        "payload_sha256": manifest.get("payload_sha256"),
+        "human_acceptance_required": True,
+        "diagnostics": [{"code": code} for code in diagnostics],
+    }
+
+
+def _canonical_completed_at(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", value):
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
+def _version_at_least(value: Any, minimum: str) -> bool:
+    try:
+        observed = tuple(int(part) for part in re.findall(r"\d+", str(value))[:2])
+        required = tuple(int(part) for part in re.findall(r"\d+", minimum)[:2])
+        return observed >= required
+    except (TypeError, ValueError):
+        return False
+
+
+def _inventory_compatible(inventory: Any, compatibility: Any) -> bool:
+    if not isinstance(inventory, dict) or not isinstance(compatibility, dict):
+        return False
+    return (
+        _version_at_least(inventory.get("python"), compatibility.get("python", "3.11"))
+        and _version_at_least(inventory.get("node"), compatibility.get("node", "20"))
+        and _version_at_least(inventory.get("git"), compatibility.get("git", "2.40"))
+        and str(inventory.get("openspec")) == str(compatibility.get("openspec"))
+    )
+
+
+def _contains_private(value: Any) -> bool:
+    return bool(secret_diagnostics(value, "release-evidence")) or bool(
+        _PRIVATE_TEXT.search(json.dumps(value, sort_keys=True))
+    )
+
+
+def _contains_private_bytes(data: bytes) -> bool:
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError:
+        value = text
+    return _contains_private(value)
+
+
+def rehearse_release_candidate(
+    candidate_root: Path, workspace: Path, options: RehearsalOptions
+) -> dict[str, Any]:
+    if not isinstance(options, RehearsalOptions):
+        raise OperationError("input-invalid", "rehearsal options must use the typed contract", exit_code=3)
+    expected_level = {"windows": "full-clean-rehearsal", "linux-wsl2": "portability-smoke"}
+    if expected_level.get(options.platform_id) != options.evidence_level:
+        raise OperationError("input-invalid", "platform and evidence level are incompatible", exit_code=3)
+    if options.mcp_status not in {"provisioned", "explicitly-unavailable"} or (
+        options.mcp_status == "provisioned"
+    ) != (isinstance(options.mcp_evidence_ref, str) and bool(options.mcp_evidence_ref)):
+        raise OperationError("input-invalid", "MCP observation is inconsistent", exit_code=3)
+
+    candidate = _safe_directory_root(candidate_root, "release.candidate-missing")
+    manifest = _load_mapping(candidate / "release-manifest.yaml", "release.manifest-file-invalid")
+    validate_release_manifest(candidate, manifest)
+    payload = _safe_directory_root(candidate / "payload", "release.payload-missing")
+    requested_workspace = Path(os.path.abspath(workspace))
+    requested_output = Path(os.path.abspath(options.output))
+    _assert_existing_ancestry_safe(requested_workspace)
+    _assert_existing_ancestry_safe(requested_output)
+    for first, second in (
+        (candidate, requested_workspace), (candidate, requested_output), (requested_workspace, requested_output)
+    ):
+        if first == second or first in second.parents or second in first.parents:
+            raise OperationError("release.path-overlap", "candidate, workspace, and output must not overlap")
+    if any(part.casefold() in {"archive", "accepted"} for part in requested_output.parts):
+        raise OperationError("release.output-history-forbidden", "rehearsal output cannot enter accepted history")
+    if os.path.lexists(requested_output):
+        raise OperationError("release.output-exists", "rehearsal output must not exist")
+    if requested_workspace.exists() and any(requested_workspace.iterdir()):
+        raise OperationError("release.workspace-not-empty", "rehearsal workspace must be new or empty")
+    requested_workspace.parent.mkdir(parents=True, exist_ok=True)
+    requested_output.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        inventory, inventory_commands = _observe_inventory()
+        bootstrap = bootstrap_team_specs(
+            payload / "process", payload / "templates/team-specs", requested_workspace
+        )
+        if bootstrap.get("ai_disabled") is not True:
+            raise OperationError("release.rehearsal-failed", "bootstrap did not prove AI-disabled operation")
+        synthetic_project = requested_workspace / "sample-app"
+        synthetic_project.mkdir()
+        config_result = validate_configuration(
+            requested_workspace / "team-specs", {"sample-app": synthetic_project},
+            lambda: str(manifest["openspec"]["cli_version"])
+        )
+        if config_result.exit_code != 0:
+            codes = ",".join(item.code for item in config_result.sorted_diagnostics())
+            raise OperationError("release.rehearsal-failed", f"configuration is incompatible: {codes}")
+        changes_root = requested_workspace / "team-specs/openspec/changes"
+        classes = ("minor", "major", "hotfix") if options.platform_id == "windows" else ("minor",)
+        for classification in classes:
+            change_type = {"minor": "behavior_change", "major": "new_feature", "hotfix": "bugfix"}[classification]
+            created = create_change(
+                requested_workspace / "process", changes_root,
+                change_id=f"rehearsal-{classification}", title=f"Synthetic {classification} rehearsal",
+                classification=classification, change_type=change_type,
+            )
+            if created.get("human_authority_substituted") is not False:
+                raise OperationError("release.rehearsal-failed", "change creation substituted human authority")
+
+        legacy = requested_workspace / "legacy/change.yaml"
+        legacy.parent.mkdir(parents=True)
+        legacy.write_text(_LEGACY_CHANGE, encoding="utf-8", newline="\n")
+        migration_plan = plan_migration(legacy)
+        migrated = apply_migration(legacy, expected_plan_digest=migration_plan.as_dict()["plan_digest"])
+        current_plan = plan_migration(legacy)
+        second = apply_migration(legacy, expected_plan_digest=current_plan.as_dict()["plan_digest"])
+        if migrated.as_dict().get("status") != "applied" or second.as_dict().get("status") != "already-current":
+            raise OperationError("release.rehearsal-failed", "migration did not apply idempotently")
+
+        archive = requested_workspace / "team-specs/openspec/changes/archive"
+        archive.mkdir(parents=True, exist_ok=True)
+        (archive / "accepted.md").write_text("immutable accepted history\n", encoding="utf-8")
+        archive_before = _tree_digest(archive)
+        candidate_package = requested_workspace / "update-candidate"
+        shutil.copytree(payload / "process", candidate_package)
+        package = _load_mapping(candidate_package / "package.yaml", "release.rehearsal-failed")
+        package["package"]["version"] = "0.3.0"
+        (candidate_package / "package.yaml").write_text(
+            yaml.safe_dump(package, sort_keys=False), encoding="utf-8", newline="\n"
+        )
+        (candidate_package / "VERSION").write_text("0.3.0\n", encoding="utf-8", newline="\n")
+        config_path = requested_workspace / "team-specs/sdd.config.yaml"
+        backups = requested_workspace / "rollback-snapshots"
+        update = update_process_package(requested_workspace / "process", candidate_package, config_path, backups)
+        bad_candidate = requested_workspace / "failed-update-candidate"
+        shutil.copytree(candidate_package, bad_candidate)
+        (bad_candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8", newline="\n")
+        failed_update_held = False
+        try:
+            update_process_package(requested_workspace / "process", bad_candidate, config_path, backups)
+        except OperationError:
+            failed_update_held = True
+        if not failed_update_held:
+            raise OperationError("release.rehearsal-failed", "failed update did not hold")
+        rollback = rollback_process_package(
+            requested_workspace / "process", backups / "0.2.0", config_path
+        )
+        archive_after = _tree_digest(archive)
+        if archive_before != archive_after or update.get("accepted_history_mutated") is not False or rollback.get("accepted_history_mutated") is not False:
+            raise OperationError("release.archive-history-rewrite", "maintenance rewrote accepted history")
+
+        scenarios = sorted(_WINDOWS_SCENARIOS if options.platform_id == "windows" else _LINUX_SCENARIOS)
+        completed_at = datetime.now(timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+        evidence = {
+            "schema_version": "1.0", "evidence_id": f"phase-2-12-{options.platform_id}",
+            "platform_id": options.platform_id, "evidence_level": options.evidence_level,
+            "completed_at": completed_at, "payload_sha256": manifest["payload_sha256"],
+            "manifest_sha256": hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest(),
+            "process_package_version": manifest["process_package"]["version"],
+            "config_schema_version": manifest["config_schema_version"],
+            "inventory": inventory, "inventory_commands": inventory_commands,
+            "mcp": {"status": options.mcp_status, "evidence_ref": options.mcp_evidence_ref},
+            "scenario_ids": scenarios, "scenario_codes": sorted(_SCENARIO_CODES),
+            "result": "passed", "ai_disabled": True, "human_authority_substituted": False,
+            "privacy_scan": "passed", "archive_digest_before": archive_before,
+            "archive_digest_after": archive_after, "rollback_result": "passed",
+        }
+        _validate_schema(evidence, payload / "process/schemas/release-host-evidence.schema.json", "release.host-evidence-invalid")
+        if _contains_private(evidence):
+            raise OperationError("release.evidence-private", "rehearsal evidence contains private material")
+        _write_yaml_no_replace(requested_output, evidence)
+        return {
+            "operation": "rehearse-release-candidate", "status": "rehearsal-complete",
+            "platform_id": options.platform_id, "evidence_level": options.evidence_level,
+            "payload_sha256": manifest["payload_sha256"],
+            "human_acceptance_required": True,
+        }
+    except Exception:
+        if requested_workspace.exists():
+            shutil.rmtree(requested_workspace, ignore_errors=True)
+        raise
+
+
+_LEGACY_CHANGE = """# Synthetic legacy migration input.
+id: sample-legacy-thin
+title: Sample legacy thin package
+mode: thin
+type: config_ops
+status: draft
+systems: [sample-app]
+quality: {strategy_ref: evidence/quality.md, regression_ref: evidence/regression.md}
+review: {owner_refs: [sample-tech-leads]}
+publication: {required: false}
+spec_change: {required: true, delta_paths: [specs/sample/spec.md]}
+classification_evidence:
+  - id: local-change
+    value: true
+    source: {kind: proposal, ref: proposal.md}
+    rationale: Synthetic migration evidence.
+decision: {owner_type: human, owner_id: sample-tech-lead, state: confirmed, evidence_ref: decisions/classification.md}
+policy: {id: sdd-core, version: 1.0.0}
+extensions: {sample-note: preserve-me}
+"""
+
+
+def _observe_inventory() -> tuple[dict[str, str], list[dict[str, Any]]]:
+    observed: list[dict[str, Any]] = []
+    for argv in _INVENTORY_ARGV:
+        try:
+            result = subprocess.run(
+                argv, shell=False, capture_output=True, text=True, timeout=20, check=False
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            raise OperationError("release.inventory-failed", "required inventory command failed", exit_code=3) from error
+        stdout = (result.stdout or result.stderr).strip()
+        if result.returncode != 0 or not stdout:
+            raise OperationError("release.inventory-failed", "required inventory command failed", exit_code=3)
+        observed.append({"argv": argv, "exit_code": result.returncode, "stdout": stdout})
+    return ({
+        "os": observed[4]["stdout"], "architecture": os.environ.get("PROCESSOR_ARCHITECTURE", "unknown"),
+        "shell": "PowerShell" if os.name == "nt" else "bash", "python": observed[0]["stdout"],
+        "node": observed[1]["stdout"], "openspec": observed[2]["stdout"], "git": observed[3]["stdout"],
+    }, observed)
+
+
+def _tree_digest(root: Path) -> str:
+    rows: list[dict[str, str]] = []
+    for path in sorted(root.rglob("*")):
+        if path.is_file():
+            rows.append({"path": path.relative_to(root).as_posix(), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    return hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def _write_yaml_no_replace(target: Path, value: Mapping[str, Any]) -> None:
+    temporary = target.with_name(f".{target.name}.{os.getpid()}.tmp")
+    if os.path.lexists(temporary):
+        raise OperationError("release.staging-exists", "evidence staging file already exists")
+    data = yaml.safe_dump(dict(value), sort_keys=False, allow_unicode=True).encode("utf-8")
+    try:
+        with temporary.open("xb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        try:
+            os.link(temporary, target)
+        except FileExistsError as error:
+            raise OperationError("release.output-exists", "rehearsal output appeared during publication") from error
+        temporary.unlink()
+        if hasattr(os, "O_DIRECTORY"):
+            descriptor = os.open(target.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+    except Exception:
+        if temporary.exists():
+            temporary.unlink()
+        raise
 
 
 def validate_portable_path(value: str) -> str:
@@ -187,15 +632,20 @@ def _validate_schema(document: Mapping[str, Any], schema_path: Path, code: str) 
 
 
 def _expected_allowlist() -> dict[str, Any]:
+    entry_points = [
+        {"name": name, "smoke": list(smoke), "expected_exit_codes": list(exits)}
+        for name, smoke, exits in _ENTRY_POINTS
+    ]
+    next(item for item in entry_points if item["name"] == "manage_release_candidate.py")["additional_smokes"] = [
+        ["scripts/manage_release_candidate.py", "accept", "--help"],
+        ["scripts/manage_release_candidate.py", "rehearse", "--help"],
+    ]
     return {
         "schema_version": "1.0",
         "requirements": ["requirements-test.txt"],
         "template_roots": ["templates/team-specs"],
         "runbooks": list(_RUNBOOKS),
-        "entry_points": [
-            {"name": name, "smoke": list(smoke), "expected_exit_codes": list(exits)}
-            for name, smoke, exits in _ENTRY_POINTS
-        ],
+        "entry_points": entry_points,
     }
 
 

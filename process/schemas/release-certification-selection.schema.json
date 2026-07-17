@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "release-certification-selection.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "selection_id", "selected"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "selection_id": {"const": "phase-2-12-certification-selection"},
+    "selected": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["model_family", "normalized_evidence_path", "raw_logical_root"],
+            "properties": {
+              "model_family": {"const": "qwen-class"},
+              "normalized_evidence_path": {"const": "certification/evidence/phase-2-11-qwen-adapter-2-2-2026-07-17.yaml"},
+              "raw_logical_root": {"const": "raw-artifact-v0.2.2-qwen-2026-07-17-certified-policy-v3"}
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["model_family", "normalized_evidence_path", "raw_logical_root"],
+            "properties": {
+              "model_family": {"const": "deepseek-class"},
+              "normalized_evidence_path": {"const": "certification/evidence/phase-2-11-deepseek-adapter-2-2-2026-07-17.yaml"},
+              "raw_logical_root": {"const": "raw-artifact-v0.2.2-deepseek-2026-07-17-certified-policy-v9"}
+            }
+          }
+        ]
+      },
+      "allOf": [
+        {"contains": {"type": "object", "properties": {"model_family": {"const": "qwen-class"}}, "required": ["model_family"]}},
+        {"contains": {"type": "object", "properties": {"model_family": {"const": "deepseek-class"}}, "required": ["model_family"]}}
+      ]
+    }
+  }
+}

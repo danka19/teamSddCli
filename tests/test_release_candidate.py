@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -14,10 +16,13 @@ from jsonschema import Draft202012Validator
 
 import process.release_candidate as release_candidate_module
 from process.release_candidate import (
+    RehearsalOptions,
     ReleaseInputs,
     build_release_candidate,
+    evaluate_release_acceptance,
     generate_release_manifest,
     payload_inventory,
+    rehearse_release_candidate,
     validate_portable_path,
     validate_release_manifest,
 )
@@ -44,6 +49,11 @@ EXPECTED_ENTRY_POINTS = {
     "validate_external_mapping.py",
     "validate_process_config.py",
     "validate_traceability.py",
+}
+
+EXPECTED_CERTIFICATIONS = {
+    "qwen-class": "phase-2-11-qwen-adapter-2-2-2026-07-17.yaml",
+    "deepseek-class": "phase-2-11-deepseek-adapter-2-2-2026-07-17.yaml",
 }
 
 
@@ -78,6 +88,77 @@ def _write_manifest(candidate: Path, manifest: dict) -> None:
     )
 
 
+WINDOWS_SCENARIOS = [
+    "clean-bootstrap", "config-compatibility", "minor-flow", "major-flow",
+    "hotfix-flow", "migration-check", "migration-apply", "migration-idempotent",
+    "update", "failed-update-hold", "rollback", "archive-history-preserved",
+    "negative-acceptance-cases", "ai-disabled",
+]
+LINUX_SCENARIOS = [
+    "clean-bootstrap", "config-compatibility", "class-flow-smoke", "migration-smoke",
+    "update-rollback-smoke", "negative-acceptance-cases", "ai-disabled",
+]
+
+
+def _acceptance_build(tmp_path: Path) -> tuple[Path, dict, Path]:
+    raw = tmp_path / "acceptance-raw"
+    selection = yaml.safe_load(
+        (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
+    )
+    for row in selection["selected"]:
+        target = raw / row["raw_logical_root"]
+        target.mkdir(parents=True)
+        (target / "result.json").write_text('{"result":"passed"}\n', encoding="utf-8")
+    candidate = tmp_path / "acceptance-candidate"
+    inputs = ReleaseInputs("phase-2-12-rc1", ("macOS is not certified",), raw)
+    manifest = build_release_candidate(ROOT, candidate, inputs)
+    return candidate, manifest, raw
+
+
+def _host_row(candidate: Path, manifest: dict, platform: str) -> dict:
+    windows = platform == "windows"
+    digest = "a" * 64
+    return {
+        "schema_version": "1.0",
+        "evidence_id": f"phase-2-12-{platform}",
+        "platform_id": platform,
+        "evidence_level": "full-clean-rehearsal" if windows else "portability-smoke",
+        "completed_at": "2026-07-17T00:00:00Z",
+        "payload_sha256": manifest["payload_sha256"],
+        "manifest_sha256": hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest(),
+        "process_package_version": manifest["process_package"]["version"],
+        "config_schema_version": manifest["config_schema_version"],
+        "inventory": {
+            "os": "Windows 11" if windows else "Ubuntu 24.04 on WSL2",
+            "architecture": "x86_64", "shell": "PowerShell 7" if windows else "bash 5",
+            "python": "3.13.5", "node": "22.17.0", "openspec": "1.4.1", "git": "2.50.1",
+        },
+        "inventory_commands": [
+            {"argv": ["python", "--version"], "exit_code": 0, "stdout": "Python 3.13.5"},
+            {"argv": ["node", "--version"], "exit_code": 0, "stdout": "v22.17.0"},
+            {"argv": ["openspec", "--version"], "exit_code": 0, "stdout": "1.4.1"},
+            {"argv": ["git", "--version"], "exit_code": 0, "stdout": "git version 2.50.1"},
+            {"argv": ["python", "-c", "import platform;print(platform.platform())"], "exit_code": 0, "stdout": "synthetic-host"},
+        ],
+        "mcp": {"status": "explicitly-unavailable", "evidence_ref": None},
+        "scenario_ids": WINDOWS_SCENARIOS if windows else LINUX_SCENARIOS,
+        "scenario_codes": ["migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"],
+        "result": "passed", "ai_disabled": True, "human_authority_substituted": False,
+        "privacy_scan": "passed", "archive_digest_before": digest,
+        "archive_digest_after": digest, "rollback_result": "passed",
+    }
+
+
+def _host_evidence(tmp_path: Path, candidate: Path, manifest: dict) -> Path:
+    root = tmp_path / "host-evidence"
+    root.mkdir()
+    for platform in ("windows", "linux-wsl2"):
+        (root / f"{platform}.yaml").write_text(
+            yaml.safe_dump(_host_row(candidate, manifest, platform), sort_keys=False), encoding="utf-8"
+        )
+    return root
+
+
 def test_allowlist_is_schema_valid_and_exact() -> None:
     allowlist = yaml.safe_load((ROOT / "process/release-allowlist.yaml").read_text(encoding="utf-8"))
     schema = json.loads((ROOT / "process/schemas/release-allowlist.schema.json").read_text(encoding="utf-8"))
@@ -93,6 +174,193 @@ def test_allowlist_is_schema_valid_and_exact() -> None:
     }
     assert {item["name"] for item in allowlist["entry_points"]} == EXPECTED_ENTRY_POINTS
     assert all(item["smoke"] for item in allowlist["entry_points"])
+    manage = next(item for item in allowlist["entry_points"] if item["name"] == "manage_release_candidate.py")
+    assert manage["additional_smokes"] == [
+        ["scripts/manage_release_candidate.py", "accept", "--help"],
+        ["scripts/manage_release_candidate.py", "rehearse", "--help"],
+    ]
+
+
+def test_release_certification_selection_is_schema_valid_and_exact() -> None:
+    selection = yaml.safe_load(
+        (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
+    )
+    schema = json.loads(
+        (ROOT / "process/schemas/release-certification-selection.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert list(Draft202012Validator(schema).iter_errors(selection)) == []
+    assert {
+        row["model_family"]: Path(row["normalized_evidence_path"]).name
+        for row in selection["selected"]
+    } == EXPECTED_CERTIFICATIONS
+    normalized = {
+        row["model_family"]: yaml.safe_load(
+            (ROOT / "process" / row["normalized_evidence_path"]).read_text(encoding="utf-8")
+        )
+        for row in selection["selected"]
+    }
+    assert all(
+        row["raw_logical_root"] == normalized[row["model_family"]]["raw_artifact"]["logical_id"]
+        for row in selection["selected"]
+    )
+
+
+def test_acceptance_closes_exact_hosts_and_selected_certification_roots(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    candidate, manifest, raw = _acceptance_build(candidate_tmp)
+    hosts = _host_evidence(candidate_tmp, candidate, manifest)
+    observed: list[Path] = []
+
+    def valid_selected(evidence: dict, artifact_root: Path, **_: object) -> list[str]:
+        observed.append(artifact_root)
+        assert evidence["status"] == "passed"
+        return []
+
+    monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", valid_selected)
+    result = evaluate_release_acceptance(
+        candidate, manifest, hosts, raw,
+        now=datetime(2026, 7, 17, 12, tzinfo=timezone.utc),
+    )
+
+    assert result == {
+        "operation": "evaluate-release-acceptance",
+        "status": "evidence-complete",
+        "release_id": "phase-2-12-rc1",
+        "payload_sha256": manifest["payload_sha256"],
+        "human_acceptance_required": True,
+        "diagnostics": [],
+    }
+    assert {path.name for path in observed} == {
+        row["raw_logical_root"]
+        for row in yaml.safe_load(
+            (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
+        )["selected"]
+    }
+
+
+@pytest.mark.parametrize(
+    ("case", "expected"),
+    [
+        ("evidence-missing", "evidence-missing"),
+        ("evidence-stale", "evidence-stale"),
+        ("evidence-future", "evidence-future"),
+        ("evidence-failed", "evidence-failed"),
+        ("evidence-private", "evidence-private"),
+        ("evidence-ai-only", "evidence-ai-only"),
+        ("evidence-checksum-mismatch", "evidence-checksum-mismatch"),
+        ("candidate-digest-mismatch", "candidate-digest-mismatch"),
+        ("incompatible-dependency", "incompatible-dependency"),
+        ("failed-update-hold", "failed-update-hold"),
+        ("archive-history-rewrite", "archive-history-rewrite"),
+    ],
+)
+def test_acceptance_rejects_negative_cases(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch, case: str, expected: str
+) -> None:
+    candidate, manifest, raw = _acceptance_build(candidate_tmp)
+    hosts = _host_evidence(candidate_tmp, candidate, manifest)
+    monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    windows_path = hosts / "windows.yaml"
+    windows = yaml.safe_load(windows_path.read_text(encoding="utf-8"))
+    if case == "evidence-missing":
+        (hosts / "linux-wsl2.yaml").unlink()
+    elif case == "evidence-stale":
+        windows["completed_at"] = "2026-06-16T00:00:00Z"
+    elif case == "evidence-future":
+        windows["completed_at"] = "2026-07-18T00:00:00Z"
+    elif case == "evidence-failed":
+        windows["result"] = "failed"
+    elif case == "evidence-private":
+        windows["mcp"]["evidence_ref"] = "api_key=sk-secret-value-1234567890"
+    elif case == "evidence-ai-only":
+        windows["ai_disabled"] = False
+    elif case == "evidence-checksum-mismatch":
+        selected = yaml.safe_load(
+            (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
+        )["selected"][0]
+        (raw / selected["raw_logical_root"] / "result.json").write_text("changed\n", encoding="utf-8")
+    elif case == "candidate-digest-mismatch":
+        windows["payload_sha256"] = "b" * 64
+    elif case == "incompatible-dependency":
+        windows["inventory"]["python"] = "2.7.18"
+    elif case == "failed-update-hold":
+        windows["scenario_codes"].remove("failed-update-held")
+    else:
+        windows["archive_digest_after"] = "b" * 64
+    windows_path.write_text(yaml.safe_dump(windows, sort_keys=False), encoding="utf-8")
+
+    result = evaluate_release_acceptance(
+        candidate, manifest, hosts, raw,
+        now=datetime(2026, 7, 17, 12, tzinfo=timezone.utc),
+    )
+
+    assert result["status"] == "evidence-rejected"
+    assert result["human_acceptance_required"] is True
+    assert expected in [row["code"] for row in result["diagnostics"]]
+
+
+def test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence(
+    candidate_tmp: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    candidate, manifest, _ = _acceptance_build(candidate_tmp)
+    payload_before = payload_inventory(candidate / "payload")["payload_sha256"]
+    inventory = _host_row(candidate, manifest, "windows")
+    monkeypatch.setattr(
+        release_candidate_module,
+        "_observe_inventory",
+        lambda: (inventory["inventory"], inventory["inventory_commands"]),
+        raising=False,
+    )
+    workspace = candidate_tmp / "rehearsal-workspace"
+    output = candidate_tmp / "windows-evidence.yaml"
+
+    result = rehearse_release_candidate(
+        candidate,
+        workspace,
+        RehearsalOptions("windows", "full-clean-rehearsal", "explicitly-unavailable", None, output),
+    )
+
+    assert result["status"] == "rehearsal-complete"
+    evidence = yaml.safe_load(output.read_text(encoding="utf-8"))
+    schema = json.loads(
+        (candidate / "payload/process/schemas/release-host-evidence.schema.json").read_text(encoding="utf-8")
+    )
+    assert list(Draft202012Validator(schema).iter_errors(evidence)) == []
+    assert set(evidence["scenario_ids"]) == set(WINDOWS_SCENARIOS)
+    assert evidence["archive_digest_before"] == evidence["archive_digest_after"]
+    assert evidence["rollback_result"] == "passed"
+    assert evidence["ai_disabled"] is True
+    assert evidence["human_authority_substituted"] is False
+    assert payload_inventory(candidate / "payload")["payload_sha256"] == payload_before
+    with pytest.raises(OperationError, match="release.output-exists"):
+        rehearse_release_candidate(
+            candidate,
+            candidate_tmp / "second-workspace",
+            RehearsalOptions("windows", "full-clean-rehearsal", "explicitly-unavailable", None, output),
+        )
+
+
+def test_inventory_runs_fixed_argv_without_shell(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    class Completed:
+        returncode = 0
+        stdout = "version 99\n"
+        stderr = ""
+
+    def run(argv: list[str], **kwargs: object) -> Completed:
+        calls.append((argv, bool(kwargs.get("shell"))))
+        return Completed()
+
+    monkeypatch.setattr(subprocess, "run", run)
+    inventory, commands = release_candidate_module._observe_inventory()
+    assert len(commands) == 5
+    assert all(shell is False for _, shell in calls)
+    assert [argv for argv, _ in calls] == [row["argv"] for row in commands]
+    assert set(inventory) == {"os", "architecture", "shell", "python", "node", "openspec", "git"}
 
 
 @pytest.mark.parametrize("mutation", ["duplicate", "wrong-smoke", "wrong-exit"])
@@ -396,12 +664,13 @@ def test_every_entry_point_smokes_from_standalone_candidate(candidate_tmp: Path)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     allowlist = yaml.safe_load((standalone / "process/release-allowlist.yaml").read_text(encoding="utf-8"))
     for item in allowlist["entry_points"]:
-        result = subprocess.run(
-            [sys.executable, *item["smoke"]], cwd=standalone, env=env,
-            capture_output=True, text=True, timeout=20,
-        )
-        assert result.returncode in item["expected_exit_codes"], (
-            item["name"], result.returncode, result.stdout, result.stderr
-        )
+        for smoke in [item["smoke"], *item.get("additional_smokes", [])]:
+            result = subprocess.run(
+                [sys.executable, *smoke], cwd=standalone, env=env,
+                capture_output=True, text=True, timeout=20,
+            )
+            assert result.returncode in item["expected_exit_codes"], (
+                item["name"], result.returncode, result.stdout, result.stderr
+            )
     copied_manifest = copy.deepcopy(manifest)
     assert generate_release_manifest(standalone, _inputs(candidate_tmp)) == copied_manifest

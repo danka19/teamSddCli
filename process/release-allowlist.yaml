@@ -37,6 +37,9 @@ entry_points:
     expected_exit_codes: [0]
   - name: manage_release_candidate.py
     smoke: [scripts/manage_release_candidate.py, validate, --help]
+    additional_smokes:
+      - [scripts/manage_release_candidate.py, accept, --help]
+      - [scripts/manage_release_candidate.py, rehearse, --help]
     expected_exit_codes: [0]
   - name: manual_fallback.py
     smoke: [scripts/manual_fallback.py, --help]

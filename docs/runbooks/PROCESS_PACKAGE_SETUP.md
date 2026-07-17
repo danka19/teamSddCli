@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is the next planned sequential item.
+Status: work items 2.1-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is in progress.
 
 ## Contract Sources
 
@@ -101,3 +101,41 @@ The gate input is a separate versioned operational record validated by `process/
 Tech Lead governance uses separate `tech-lead-review-input` and `tech-lead-control-record` v1.0 schemas plus the explicit `owners` v2.0 contract. The legacy owners v1.0 contract remains accepted for work items 2.1-2.5 but cannot silently become governance-ready. See `docs/runbooks/TECH_LEAD_GOVERNANCE.md`.
 
 Before integrating the work item, also run the complete command set recorded in `docs/phases/PHASE_2_EVIDENCE_INDEX.md`.
+
+## Platform Installation And Inventory
+
+Install only pinned test dependencies and the pinned OpenSpec CLI. Inventory
+commands are informational inputs to rehearsal; they do not authorize a
+workaround for incompatible versions.
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-test.txt
+npm install --global @fission-ai/openspec@1.4.1
+python --version
+node --version
+openspec --version
+git --version
+```
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-test.txt
+npm install --global @fission-ai/openspec@1.4.1
+python3 --version
+node --version
+openspec --version
+git --version
+```
+
+Keep secret values in the approved local secret store. Configuration contains
+only a non-secret reference such as `approved-secret:team-sdd-mcp`; do not put
+the resolved value in YAML, evidence, command arguments, or the release asset.
+Configure the approved MCP/adapter outside the reusable package, record either
+`provisioned` plus its approved reference or `explicitly-unavailable`, and use
+the deterministic AI-disabled fallback when unavailable.
+
+Reusable defects found during setup must be reported against the external
+canonical repository with candidate payload digest, package/config versions,
+diagnostic code, and sanitized reproduction. Do not patch the corporate copy
+or create an internal process fork.

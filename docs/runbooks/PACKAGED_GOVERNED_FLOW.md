@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work items 2.8-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is the next planned sequential item.
+Status: work items 2.8-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is in progress.
 
 ## Boundary
 
@@ -61,6 +61,19 @@ python scripts/update_process_package.py rollback C:/work/sample-workspace/proce
 Compatibility checks require matching package identity, internally matching `package.yaml`/`VERSION`, and a configuration pin/location that identifies the installed package. Update retains a complete prior package snapshot, replaces package and config pin transactionally, and restores both on failure. Rollback restores the retained package and prior pin transactionally. Neither operation enters `team-specs/openspec/`, so accepted specs and archived change history remain untouched.
 
 Normal update accepts only a strictly forward semantic version. The prior package is first copied to a temporary manifest-bounded snapshot, validated, atomically promoted, and bound to a rollback proof containing its deterministic digest and the exact from/to versions. Rollback is the only downgrade path and refuses a missing, stale, altered, or mismatched proof. Partial package, backup, proof, and config writes are removed or restored after failure.
+
+Linux/WSL2 uses the same arguments with portable paths:
+
+```bash
+python3 scripts/update_process_package.py check /work/sample-workspace/process /downloads/sdd-process-0.3.0 /work/sample-workspace/team-specs/sdd.config.yaml --json
+python3 scripts/update_process_package.py update /work/sample-workspace/process /downloads/sdd-process-0.3.0 /work/sample-workspace/team-specs/sdd.config.yaml --backup-root /work/sample-workspace/rollbacks --json
+python3 scripts/update_process_package.py rollback /work/sample-workspace/process /work/sample-workspace/rollbacks/0.2.0 /work/sample-workspace/team-specs/sdd.config.yaml --json
+```
+
+If update verification fails, keep the transition on hold, retain the failed
+diagnostic/evidence, verify that the package/config pin and archive-tree digest
+are unchanged, and roll back only from the bound snapshot proof. Do not delete
+the failed attempt or reinterpret it as success.
 
 ## AI-Disabled Fallback
 

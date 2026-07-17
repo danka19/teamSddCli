@@ -16,6 +16,8 @@ schemas:
   reference: schemas/reference.schema.json
   release_allowlist: schemas/release-allowlist.schema.json
   release_manifest: schemas/release-manifest.schema.json
+  release_certification_selection: schemas/release-certification-selection.schema.json
+  release_host_evidence: schemas/release-host-evidence.schema.json
   change_v2: schemas/change-v2.schema.json
   policy_manifest: schemas/policy-manifest.schema.json
   policy_document: schemas/policy-document.schema.json
@@ -76,6 +78,7 @@ distribution:
     - operation_plan.py
     - package.yaml
     - release-allowlist.yaml
+    - release-certification-selection.yaml
     - release_candidate.py
     - weak_model_kit.py
     - workflow.yaml
