@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.11 are closed and work item 2.12 is in progress. Adapter `2.2` moves deterministic routing and policy metadata into an identity-bound launcher plan; unchanged frozen Qwen and DeepSeek proxies each passed 5/5 preflight and 15/15 matrix gates, while AI-disabled passed 11/11. Human decision `D-013` makes `minor | major | hotfix`, class-aware DoR/DoD, Tech Lead governance, corporate flow controls, and pilot evidence the target process. `D-018` narrows platform certification to a full Windows rehearsal and bounded Linux/WSL2 portability smoke; macOS is not certified.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.12 are closed and work item 2.13 is next. Immutable candidate `phase-2-12-rc6` passed a full Windows rehearsal and bounded native-WSL2 portability smoke with identical payload, manifest, rollback, negative-case, and archive-preservation evidence; both acceptance checks returned `evidence-complete` while retaining mandatory human acceptance. macOS is not certified.
 
 ## Scope
 

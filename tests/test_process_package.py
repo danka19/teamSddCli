@@ -40,6 +40,8 @@ SCHEMA_FILES = {
     "reference": "reference.schema.json",
     "release": "release-manifest.schema.json",
     "release_allowlist": "release-allowlist.schema.json",
+    "release_certification_selection": "release-certification-selection.schema.json",
+    "release_host_evidence": "release-host-evidence.schema.json",
     "change_v2": "change-v2.schema.json",
     "policy_manifest": "policy-manifest.schema.json",
     "policy_document": "policy-document.schema.json",

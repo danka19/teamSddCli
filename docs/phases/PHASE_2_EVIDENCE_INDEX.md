@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.11 are closed; adapter `2.2` passed both frozen model-family gates and AI-disabled regression. Work item 2.12 is the next planned sequential item.
+Status: in_progress. Work items 2.1-2.12 are closed. Immutable candidate `phase-2-12-rc6` passed the Windows full rehearsal and Linux/WSL2 portability smoke; work item 2.13 is the next planned sequential item.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -661,4 +661,42 @@ Status: `closed`. Transfer tasks 4.4-4.5 and 4.7-4.9 plus NIS tasks 8.2-8.3 are 
 Transfer progress is 23/36. Task 4.9 is checked and work item 2.11 is closed.
 This is actual local proxy certification, but not corporate-runtime equivalence,
 cross-platform release acceptance, accepted-spec promotion/archive, Phase 3
-adaptation, or pilot acceptance. Work item 2.12 owns the next gate.
+adaptation, or pilot acceptance.
+
+## Work Item 2.12: Cross-Platform Release Candidate And Rollback
+
+Status: `closed`. Transfer tasks 5.1-5.4 and NIS task 8.4 are complete.
+
+### Immutable Candidate
+
+- External candidate: `phase-2-12-rc6-20260717` under the local ignored release-artifact root outside Git.
+- Release ID: `phase-2-12-rc6`.
+- Payload SHA-256: `232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43`.
+- Manifest SHA-256: `e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c`.
+- Raw acceptance snapshot contains exactly the selector-owned Qwen adapter `2.2` and DeepSeek adapter `2.2` logical roots; all 48 copied files matched source SHA-256 values.
+
+### Host And Acceptance Evidence
+
+- Windows 11 `10.0.26200`, AMD64, Python `3.13.14`, Node `24.16.0`, OpenSpec `1.4.1`, Git `2.54.0.windows.1`, PowerShell; MCP explicitly unavailable.
+- Ubuntu 24.04 on WSL2 kernel `6.6.114.1`, Python `3.12.3`, Node `22.23.1`, OpenSpec `1.4.1`, Git `2.43.0`, Bash; MCP explicitly unavailable.
+- Both rehearsals passed clean bootstrap, config compatibility, class flow, migration check/apply/idempotency, update, failed-update hold, rollback, AI-disabled operation, privacy, and archive preservation.
+- Both seven-case negative matrices observed the required rejection codes for missing, stale, failed, private, AI-only, raw-checksum-mismatched, and candidate-mismatched evidence.
+- Both acceptance executions returned `evidence-complete`, no diagnostics, and `human_acceptance_required: true`.
+- NTFS junction/reparse and POSIX root/descendant symlink candidates were rejected with `release.link-forbidden` and exit `1`.
+- Windows and Linux records have identical payload and manifest hashes, scenario codes, negative matrix, rollback result, and archive digest `50b61ec58babe87726d2af58995c13f7f58007ef3691854f6ab2a0045ab7f635`.
+
+### Repository Evidence
+
+- `process/release/release-manifest.yaml`.
+- `process/release/evidence/phase-2-12-windows-2026-07-17.yaml`.
+- `process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml`.
+- `docs/audits/PHASE_2_WORK_ITEM_2_12_RELEASE_AUDIT_2026-07-17.md`.
+- Initial full-suite RED: `681 passed, 4 skipped, 5 failed`; failures identified one missing coverage mapping and two omitted schema inventory registrations.
+- Focused reconciliation: the five previously failing nodes passed.
+- Necessary final full-suite rerun after payload-included reconciliation: `686 passed, 4 skipped` in `200.47s`.
+
+### Residual Limits
+
+- macOS is explicitly not certified.
+- WSL2 is portability evidence, not native bare-metal Linux certification.
+- The exact candidate remains subject to explicit human release-candidate acceptance before Phase 3; `evidence-complete` is not human acceptance.

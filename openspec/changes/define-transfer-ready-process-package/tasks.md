@@ -35,10 +35,10 @@
 
 ## 5. Release Candidate And Transfer Runbook
 
-- [ ] 5.1 Implement deterministic release-manifest generation and validation for package/config/OpenSpec versions, included assets, compatibility assumptions, normalized Git evidence, raw versioned-artifact references and checksums, known limitations, and rollback reference.
-- [ ] 5.2 Add clean-bootstrap and release-candidate acceptance automation that fails on missing, stale, failed, private, or AI-only evidence.
-- [ ] 5.3 Write installation, compatibility inventory, approved secret setup, integration-adapter configuration, update, rollback, and no-fork feedback procedures.
-- [ ] 5.4 Produce one full clean Windows transfer rehearsal and one shorter equivalent Linux portability smoke plus negative acceptance cases on WSL2 from the same immutable candidate, with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned; record macOS as not certified and produce the acceptance packet.
+- [x] 5.1 Implement deterministic release-manifest generation and validation for package/config/OpenSpec versions, included assets, compatibility assumptions, normalized Git evidence, raw versioned-artifact references and checksums, known limitations, and rollback reference.
+- [x] 5.2 Add clean-bootstrap and release-candidate acceptance automation that fails on missing, stale, failed, private, or AI-only evidence.
+- [x] 5.3 Write installation, compatibility inventory, approved secret setup, integration-adapter configuration, update, rollback, and no-fork feedback procedures.
+- [x] 5.4 Produce one full clean Windows transfer rehearsal and one shorter equivalent Linux portability smoke plus negative acceptance cases on WSL2 from the same immutable candidate, with documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies provisioned; record macOS as not certified and produce the acceptance packet.
 
 ## 6. Corporate Adaptation And Pilot Package
 

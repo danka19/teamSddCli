@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.11 are closed after implementation, actual-model certification, and deterministic verification. Adapter `2.2` produced Qwen and DeepSeek 5/5 preflight followed by 15/15 matrices, while AI-disabled remained 11/11. Work item 2.12 is in progress under the two-host verification scope accepted in `D-018`.
+Work items 2.1-2.12 are closed after implementation, actual-model certification, deterministic verification, and byte-identical Windows/WSL2 release-candidate evidence. Work item 2.13 is the next planned sequential item.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -34,7 +34,7 @@ Status: accepted.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
 - Planned change `determinize-weak-model-operational-decisions` owns the post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.11 are closed; work item 2.12 is the next planned sequential item.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.12 are closed; work item 2.13 is the next planned sequential item.
 
 ## Planning Acceptance Gate
 
@@ -568,7 +568,7 @@ Exit criteria:
 
 ### 2.12 Cross-Platform Release Candidate And Rollback
 
-Status: in_progress.
+Status: closed.
 
 Dependency status: prerequisite 2.11 is closed; sequential after 2.11 and requires closed work items 2.2 and 2.8.
 
@@ -585,6 +585,8 @@ Parallelization: Windows and Linux rehearsals may run concurrently from the same
 Documentation: installation, platform inventory, compatibility, update, rollback, secrets, adapters, and no-fork feedback.
 
 Exit criteria: one immutable candidate passes the full Windows rehearsal and bounded equivalent Linux/WSL2 smoke, rejects the required negative cases, records macOS as not certified, and can be rolled back safely.
+
+Observed outcome: immutable candidate `phase-2-12-rc6` passed Windows full rehearsal and native-WSL2 portability smoke with payload SHA-256 `232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43` and manifest SHA-256 `e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c`. Both host acceptance runs returned `evidence-complete` with no diagnostics and retained the mandatory human acceptance gate. The release audit records the necessary failed-suite RED and final `686 passed, 4 skipped` rerun.
 
 ### 2.13 Corporate Adaptation And Pilot Package
 
@@ -695,7 +697,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11, so 2.11 is closed and 2.12 is the next planned item.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; release candidate `phase-2-12-rc6` passed the accepted Windows/WSL2 contour, so 2.12 is closed and 2.13 is the next planned item.
 
 Mandatory later evidence, not design decisions:
 

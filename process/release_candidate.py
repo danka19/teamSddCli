@@ -108,7 +108,7 @@ _INVENTORY_ARGV = [
     ["python", "--version"], ["node", "--version"], ["openspec", "--version"],
     ["git", "--version"], ["python", "-c", "import platform;print(platform.platform())"],
 ]
-_PRIVATE_TEXT = re.compile(r"(?i)(?:[a-z]:[\\/]|/users/|\\\\users\\|https?://(?!127\.0\.0\.1|localhost)|api[_-]?key\s*[=:]|sk-[a-z0-9_-]{12,})")
+_PRIVATE_TEXT = re.compile(r"(?i)(?:(?<![a-z0-9])[a-z]:[\\/]|/users/|\\\\users\\|https?://(?!127\.0\.0\.1|localhost)|api[_-]?key\s*[=:]|sk-[a-z0-9_-]{12,})")
 
 
 @dataclass(frozen=True)
@@ -532,7 +532,9 @@ def rehearse_release_candidate(
 
         archive = requested_workspace / "team-specs/openspec/changes/archive"
         archive.mkdir(parents=True, exist_ok=True)
-        (archive / "accepted.md").write_text("immutable accepted history\n", encoding="utf-8")
+        (archive / "accepted.md").write_text(
+            "immutable accepted history\n", encoding="utf-8", newline="\n"
+        )
         archive_before = _tree_digest(archive)
         candidate_package = requested_workspace / "update-candidate"
         shutil.copytree(payload / "process", candidate_package)
@@ -627,9 +629,11 @@ extensions: {sample-note: preserve-me}
 def _observe_inventory() -> tuple[dict[str, str], list[dict[str, Any]]]:
     observed: list[dict[str, Any]] = []
     for argv in _INVENTORY_ARGV:
+        executable = shutil.which(argv[0]) or argv[0]
+        execution_argv = [executable, *argv[1:]]
         try:
             result = subprocess.run(
-                argv, shell=False, capture_output=True, text=True, timeout=20, check=False
+                execution_argv, shell=False, capture_output=True, text=True, timeout=20, check=False
             )
         except (OSError, subprocess.SubprocessError) as error:
             raise OperationError("release.inventory-failed", "required inventory command failed", exit_code=3) from error
@@ -956,6 +960,7 @@ def _declared_top_level(payload_root: Path, allowlist: Mapping[str, Any], packag
     declared.update(f"scripts/{item['name']}" for item in allowlist["entry_points"])
     declared.update(f"process/{name}" for name in package["distribution"]["files"])
     declared.update(f"process/{name}" for name in package["distribution"]["roots"])
+    declared.update(package["canonical_sources"])
     return declared
 
 
@@ -976,6 +981,7 @@ def _validate_declared_assets(
     exact.update(f"docs/runbooks/{name}" for name in allowlist["runbooks"])
     exact.update(f"scripts/{item['name']}" for item in allowlist["entry_points"])
     exact.update(f"process/{name}" for name in package["distribution"]["files"])
+    exact.update(package["canonical_sources"])
     roots = [*allowlist["template_roots"], *(f"process/{name}" for name in package["distribution"]["roots"])]
     for item in inventory:
         path = item["path"]
@@ -1086,6 +1092,8 @@ def build_release_candidate(repository_root: Path, destination: Path, inputs: Re
             _copy_file(root / "process" / name, payload / "process" / name, f"process/{name}")
         for name in package["distribution"]["roots"]:
             _copy_tree(root / "process" / name, payload / "process" / name, f"process/{name}")
+        for relative in package["canonical_sources"]:
+            _copy_file(root / relative, payload / relative, relative)
         for relative in allowlist["requirements"]:
             _copy_file(root / relative, payload / relative, relative)
         for relative in allowlist["template_roots"]:

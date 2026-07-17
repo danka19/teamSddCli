@@ -395,6 +395,9 @@ def test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclus
     assert list(Draft202012Validator(schema).iter_errors(evidence)) == []
     assert set(evidence["scenario_ids"]) == set(WINDOWS_SCENARIOS)
     assert evidence["archive_digest_before"] == evidence["archive_digest_after"]
+    assert (
+        workspace / "team-specs/openspec/changes/archive/accepted.md"
+    ).read_bytes() == b"immutable accepted history\n"
     assert evidence["rollback_result"] == "passed"
     assert {item["case_id"] for item in evidence["negative_acceptance_cases"]} == {
         "missing", "stale", "failed", "private", "ai-only", "checksum-mismatch", "payload-mismatch"
@@ -424,11 +427,63 @@ def test_inventory_runs_fixed_argv_without_shell(monkeypatch: pytest.MonkeyPatch
         return Completed()
 
     monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(
+        release_candidate_module.shutil,
+        "which",
+        lambda command: f"/resolved/{command}",
+    )
     inventory, commands = release_candidate_module._observe_inventory()
     assert len(commands) == 5
     assert all(shell is False for _, shell in calls)
-    assert [argv for argv, _ in calls] == [row["argv"] for row in commands]
+    assert [argv[0] for argv, _ in calls] == [f"/resolved/{row['argv'][0]}" for row in commands]
+    assert [argv[1:] for argv, _ in calls] == [row["argv"][1:] for row in commands]
     assert set(inventory) == {"os", "architecture", "shell", "python", "node", "openspec", "git"}
+
+
+def test_inventory_resolves_windows_command_shims_without_shell(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Completed:
+        returncode = 0
+        stdout = "version 99\n"
+        stderr = ""
+
+    def run(argv: list[str], **kwargs: object) -> Completed:
+        if argv[0] == "openspec":
+            raise FileNotFoundError("Windows cannot execute the PowerShell shim directly")
+        assert kwargs.get("shell") is False
+        return Completed()
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(
+        release_candidate_module.shutil,
+        "which",
+        lambda command: "C:/npm/openspec.CMD" if command == "openspec" else command,
+        raising=False,
+    )
+
+    _, commands = release_candidate_module._observe_inventory()
+
+    assert commands[2]["argv"] == ["openspec", "--version"]
+
+
+def test_candidate_includes_declared_canonical_sources_for_certification_revalidation(
+    candidate_tmp: Path,
+) -> None:
+    candidate, _, _ = _acceptance_build(candidate_tmp)
+    package = yaml.safe_load((ROOT / "process/package.yaml").read_text(encoding="utf-8"))
+
+    for relative in package["canonical_sources"]:
+        assert (candidate / "payload" / relative).read_bytes() == (ROOT / relative).read_bytes()
+
+
+def test_privacy_scan_allows_localhost_endpoint_but_rejects_windows_user_path() -> None:
+    assert not release_candidate_module._contains_private_bytes(
+        b'{"endpoint":"http://127.0.0.1:11434"}'
+    )
+    assert release_candidate_module._contains_private_bytes(
+        b'{"path":"C:\\\\Users\\\\private-user\\\\artifact.json"}'
+    )
 
 
 def test_negative_acceptance_matrix_fails_closed_when_expected_rejection_is_not_observed(

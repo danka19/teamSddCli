@@ -1945,6 +1945,13 @@ coverage:
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
+  scenario: Supported hosts produce proportionate governed evidence
+  evidence:
+  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
+  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
+- source_kind: delta
+  capability: transfer-readiness
+  requirement: Reproducible bootstrap and maintenance
   scenario: Clean environment can bootstrap the reference setup
   gap:
     owner: transfer-readiness-owner

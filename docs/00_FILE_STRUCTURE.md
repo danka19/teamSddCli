@@ -105,6 +105,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification.py` | Pure deterministic fixture runner, allowlisted validator dispatch, normalized/raw evidence boundary, and exact OpenSpec coverage inventory |
 | `process/model_adapter.py` | Generated closed role-specific response schemas, reasoning/final separation, exact parsing, structural retry classification, and mechanical normalization |
 | `process/certification/` | Synthetic reference repository, role-output goldens, golden case catalog, eight fail-closed negative families, explicit selector evidence manifest, and accepted/active scenario inventory |
+| `process/release/release-manifest.yaml` | Frozen Phase 2.12 release manifest for immutable candidate `phase-2-12-rc6` |
+| `process/release/evidence/phase-2-12-*.yaml` | External Windows full-rehearsal and Linux/WSL2 portability-smoke evidence bound to the frozen candidate |
 | `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml` | Normalized Qwen adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml` | Normalized DeepSeek adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-qwen-adapter-2-1-2026-07-16.yaml` | Normalized Qwen adapter `2.1` failed-preflight evidence: 2/5, zero retries, matrix not run, runtime/preflight/attempt checksums, and immutable adapter `2.0` baseline reference |
