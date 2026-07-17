@@ -19,6 +19,8 @@ from typing import Any
 import yaml
 from jsonschema import Draft202012Validator
 
+from .errors import OperationError
+
 from .validators.config_discovery import (
     BUNDLED_SCHEMA_ROOT,
     load_schema_resources,
@@ -52,15 +54,6 @@ FALLBACK_COMMANDS = {
     "mcp": "Use approved local files and record the unavailable connector as evidence.",
     "role-inbox": "Route the evidence pack to the configured human owner out of band.",
 }
-
-
-class OperationError(ValueError):
-    """Stable operator-safe workflow error."""
-
-    def __init__(self, code: str, message: str, *, exit_code: int = 1) -> None:
-        super().__init__(f"{code}: {message}")
-        self.code = code
-        self.exit_code = exit_code
 
 
 def load_yaml_input(path: Path) -> dict[str, Any]:

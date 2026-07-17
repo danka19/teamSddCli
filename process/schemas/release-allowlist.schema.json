@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "release-allowlist.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "requirements", "template_roots", "runbooks", "entry_points"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "requirements": {"const": ["requirements-test.txt"]},
+    "template_roots": {"const": ["templates/team-specs"]},
+    "runbooks": {
+      "const": [
+        "ARTIFACT_AND_LIFECYCLE_GATES.md", "CERTIFICATION_EVIDENCE.md",
+        "CLASSIFICATION_AND_MIGRATION.md", "CORPORATE_FLOW_CONTROLS.md",
+        "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
+        "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
+        "WEAK_MODEL_OPERATING_KIT.md"
+      ]
+    },
+    "entry_points": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "smoke", "expected_exit_codes"],
+        "properties": {
+          "name": {"enum": [
+            "bootstrap_team_specs.py", "check_corporate_flow.py", "check_lifecycle_transition.py",
+            "check_tech_lead_control.py", "classify_change.py", "create_change.py",
+            "evaluate_change_gates.py", "manage_release_candidate.py", "manual_fallback.py",
+            "migrate_change_classification.py", "prepare_archive.py", "prepare_spec_pr.py",
+            "review_tech_lead.py", "update_process_package.py", "validate_change.py",
+            "validate_external_mapping.py", "validate_process_config.py", "validate_traceability.py"
+          ]},
+          "smoke": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+          "expected_exit_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0, "maximum": 3}}
+        }
+      }
+    }
+  }
+}

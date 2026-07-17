@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -35,6 +35,7 @@
         "owners": {"type": "string", "minLength": 1},
         "project_adapter": {"type": "string", "minLength": 1},
         "reference": {"type": "string", "minLength": 1},
+        "release_allowlist": {"const": "schemas/release-allowlist.schema.json"},
         "release_manifest": {"type": "string", "minLength": 1},
         "change_v2": {"const": "schemas/change-v2.schema.json"},
         "policy_manifest": {"const": "schemas/policy-manifest.schema.json"},
@@ -127,7 +128,7 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "errors.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
           "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]

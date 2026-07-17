@@ -1,173 +1,91 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "release-manifest.schema.json",
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "portablePath": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*:)(?!.*[. ](?:/|$))[^\\\\\\u0000-\\u001f\\u007f]+$"}
+  },
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "release_id", "process_package", "config_schema_version", "openspec", "included_assets", "compatibility", "verification", "raw_artifacts", "weak_model_certification", "known_limitations", "rollback_reference"],
+  "required": [
+    "schema_version", "release_id", "payload_sha256", "inventory", "allowlist_sha256",
+    "process_package", "config_schema_version", "openspec", "host_evidence", "compatibility",
+    "verification", "raw_artifacts", "weak_model_certification", "known_limitations", "rollback_reference"
+  ],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "2.0"},
     "release_id": {"type": "string", "pattern": "^[a-z][a-z0-9.-]*$"},
-    "process_package": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "version"],
-      "properties": {
-        "id": {"const": "sdd-process"},
-        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
-      }
-    },
-    "config_schema_version": {"const": "1.1"},
-    "openspec": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["cli_version"],
-      "properties": {"cli_version": {"const": "1.4.1"}}
-    },
-    "included_assets": {
-      "type": "array",
-      "minItems": 1,
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "allowlist_sha256": {"$ref": "#/$defs/sha256"},
+    "inventory": {
+      "type": "array", "minItems": 1,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["path", "version", "sha256"],
+        "type": "object", "additionalProperties": false, "required": ["path", "size", "sha256"],
         "properties": {
-          "path": {"type": "string", "minLength": 1},
-          "version": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          "path": {"$ref": "#/$defs/portablePath"},
+          "size": {"type": "integer", "minimum": 0},
+          "sha256": {"$ref": "#/$defs/sha256"}
         }
       }
     },
+    "process_package": {
+      "type": "object", "additionalProperties": false, "required": ["id", "version"],
+      "properties": {"id": {"const": "sdd-process"}, "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}}
+    },
+    "config_schema_version": {"const": "1.1"},
+    "openspec": {
+      "type": "object", "additionalProperties": false, "required": ["cli_version"],
+      "properties": {"cli_version": {"const": "1.4.1"}}
+    },
+    "host_evidence": {
+      "const": [
+        {"platform_id": "windows", "evidence_level": "full-clean-rehearsal"},
+        {"platform_id": "linux-wsl2", "evidence_level": "portability-smoke"},
+        {"platform_id": "macos", "evidence_level": "not-certified"}
+      ]
+    },
     "compatibility": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["supported_hosts", "dependencies", "assumptions"],
+      "type": "object", "additionalProperties": false,
+      "required": ["python", "node", "git", "openspec", "mcp", "shells", "packages"],
       "properties": {
-        "supported_hosts": {
-          "type": "array",
-          "minItems": 3,
-          "maxItems": 3,
-          "uniqueItems": true,
+        "python": {"const": "3.11+"}, "node": {"const": "20+"}, "git": {"const": "2.40+"},
+        "openspec": {"const": "1.4.1"}, "mcp": {"const": "provisioned-or-explicitly-unavailable"},
+        "shells": {"const": ["powershell-7+", "bash-5+"]},
+        "packages": {
+          "type": "array", "minItems": 1,
           "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["os", "version_constraint", "architectures"],
-            "properties": {
-              "os": {"enum": ["windows", "linux", "macos"]},
-              "version_constraint": {"type": "string", "minLength": 1},
-              "architectures": {
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"}
-              }
-            }
-          },
-          "allOf": [
-            {"contains": {"type": "object", "properties": {"os": {"const": "windows"}}, "required": ["os"]}},
-            {"contains": {"type": "object", "properties": {"os": {"const": "linux"}}, "required": ["os"]}},
-            {"contains": {"type": "object", "properties": {"os": {"const": "macos"}}, "required": ["os"]}}
-          ]
-        },
-        "dependencies": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["python", "node", "git", "mcp", "shells", "packages"],
-          "properties": {
-            "python": {"type": "string", "minLength": 1},
-            "node": {"type": "string", "minLength": 1},
-            "git": {"type": "string", "minLength": 1},
-            "mcp": {"type": "string", "minLength": 1},
-            "shells": {
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": {"type": "string", "minLength": 1}
-            },
-            "packages": {
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["name", "version"],
-                "properties": {
-                  "name": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
-                  "version": {"type": "string", "minLength": 1}
-                }
-              }
-            }
+            "type": "object", "additionalProperties": false, "required": ["name", "version"],
+            "properties": {"name": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"}, "version": {"type": "string", "minLength": 1}}
           }
-        },
-        "assumptions": {
-          "type": "array",
-          "minItems": 1,
-          "items": {"type": "string", "minLength": 1}
         }
       }
     },
     "verification": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["commands", "normalized_evidence"],
+      "type": "object", "additionalProperties": false, "required": ["commands", "evidence_requirements"],
       "properties": {
-        "commands": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {"type": "string", "minLength": 1}
-        },
-        "normalized_evidence": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["path", "sha256"],
-            "properties": {
-              "path": {"type": "string", "minLength": 1},
-              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-            }
-          }
-        }
+        "commands": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "evidence_requirements": {"const": ["windows-full-clean-rehearsal", "linux-wsl2-portability-smoke", "negative-acceptance-cases"]}
       }
     },
     "raw_artifacts": {
-      "type": "array",
-      "minItems": 1,
+      "type": "array", "minItems": 1,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["reference", "version", "sha256"],
-        "properties": {
-          "reference": {"type": "string", "pattern": "^artifact:[a-z0-9._/-]+$"},
-          "version": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-        }
+        "type": "object", "additionalProperties": false, "required": ["reference", "sha256"],
+        "properties": {"reference": {"type": "string", "pattern": "^artifact:[^:]+$"}, "sha256": {"$ref": "#/$defs/sha256"}}
       }
     },
     "weak_model_certification": {
-      "type": "array",
-      "minItems": 2,
+      "type": "array", "minItems": 2,
       "allOf": [
         {"contains": {"type": "object", "properties": {"model_family": {"const": "qwen"}}, "required": ["model_family"]}},
         {"contains": {"type": "object", "properties": {"model_family": {"const": "deepseek"}}, "required": ["model_family"]}}
       ],
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["model_family", "reference", "sha256"],
-        "properties": {
-          "model_family": {"enum": ["qwen", "deepseek"]},
-          "reference": {"type": "string", "pattern": "^artifact:[a-z0-9._/-]+$"},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-        }
+        "type": "object", "additionalProperties": false, "required": ["model_family", "path", "sha256"],
+        "properties": {"model_family": {"enum": ["qwen", "deepseek"]}, "path": {"$ref": "#/$defs/portablePath"}, "sha256": {"$ref": "#/$defs/sha256"}}
       }
     },
-    "known_limitations": {
-      "type": "array",
-      "items": {"type": "string", "minLength": 1}
-    },
-    "rollback_reference": {"type": "string", "minLength": 1}
+    "known_limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "rollback_reference": {"const": "docs/runbooks/PROCESS_PACKAGE_SETUP.md"}
   }
 }

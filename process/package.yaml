@@ -14,6 +14,7 @@ schemas:
   owners: schemas/owners.schema.json
   project_adapter: schemas/project-adapter.schema.json
   reference: schemas/reference.schema.json
+  release_allowlist: schemas/release-allowlist.schema.json
   release_manifest: schemas/release-manifest.schema.json
   change_v2: schemas/change-v2.schema.json
   policy_manifest: schemas/policy-manifest.schema.json
@@ -68,11 +69,14 @@ distribution:
     - __init__.py
     - actual_certification.py
     - certification.py
+    - errors.py
     - feedback_policy.py
     - model_adapter.py
     - operation_cli.py
     - operation_plan.py
     - package.yaml
+    - release-allowlist.yaml
+    - release_candidate.py
     - weak_model_kit.py
     - workflow.yaml
     - workflow_operations.py

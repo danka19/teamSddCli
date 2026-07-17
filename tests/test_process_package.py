@@ -39,6 +39,7 @@ SCHEMA_FILES = {
     "adapter": "project-adapter.schema.json",
     "reference": "reference.schema.json",
     "release": "release-manifest.schema.json",
+    "release_allowlist": "release-allowlist.schema.json",
     "change_v2": "change-v2.schema.json",
     "policy_manifest": "policy-manifest.schema.json",
     "policy_document": "policy-document.schema.json",
@@ -271,7 +272,10 @@ def test_unsafe_repository_reference_fixtures_fail_at_reference_field() -> None:
 def test_release_manifest_base_contract_covers_accepted_transfer_evidence() -> None:
     release = load_yaml(FIXTURES / "valid" / "release-manifest.yaml")
     assert {
-        "included_assets",
+        "payload_sha256",
+        "inventory",
+        "allowlist_sha256",
+        "host_evidence",
         "compatibility",
         "verification",
         "raw_artifacts",
@@ -279,18 +283,18 @@ def test_release_manifest_base_contract_covers_accepted_transfer_evidence() -> N
         "known_limitations",
         "rollback_reference",
     } <= set(release)
-    hosts = release["compatibility"]["supported_hosts"]
-    assert all(isinstance(host, dict) for host in hosts)
-    assert {"windows", "linux", "macos"} == {host["os"] for host in hosts}
-    for host in hosts:
-        assert host["version_constraint"]
-        assert host["architectures"]
-    assert {"python", "node", "git", "mcp", "shells"} == set(
-        release["compatibility"]["dependencies"]
-    ) - {"packages"}
+    hosts = release["host_evidence"]
+    assert hosts == [
+        {"platform_id": "windows", "evidence_level": "full-clean-rehearsal"},
+        {"platform_id": "linux-wsl2", "evidence_level": "portability-smoke"},
+        {"platform_id": "macos", "evidence_level": "not-certified"},
+    ]
+    assert {"python", "node", "git", "openspec", "mcp", "shells", "packages"} == set(
+        release["compatibility"]
+    )
     package_versions = {
         package["name"]: package["version"]
-        for package in release["compatibility"]["dependencies"]["packages"]
+        for package in release["compatibility"]["packages"]
     }
     pinned_lines = (REPO_ROOT / "requirements-test.txt").read_text(
         encoding="utf-8"
@@ -300,11 +304,11 @@ def test_release_manifest_base_contract_covers_accepted_transfer_evidence() -> N
         for line in pinned_lines if line
     )
     assert package_versions == pinned_packages
-    for asset in release["included_assets"]:
-        assert {"path", "version", "sha256"} <= set(asset)
+    for asset in release["inventory"]:
+        assert {"path", "size", "sha256"} <= set(asset)
         assert re.fullmatch(r"[0-9a-f]{64}", asset["sha256"])
     assert release["verification"]["commands"]
-    assert release["verification"]["normalized_evidence"]
+    assert release["verification"]["evidence_requirements"]
     for artifact in release["raw_artifacts"]:
         assert re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"])
     assert {"qwen", "deepseek"} == {
@@ -318,7 +322,7 @@ def test_incomplete_release_manifest_fails_for_new_mandatory_sections() -> None:
         FIXTURES / "invalid" / "incomplete-release-manifest" / "release-manifest.yaml"
     )
     errors = schema_errors("release", fixture)
-    for field in ("verification", "raw_artifacts", "weak_model_certification"):
+    for field in ("inventory", "host_evidence", "verification", "raw_artifacts", "weak_model_certification"):
         assert any(
             error.validator == "required"
             and list(error.absolute_path) == []
@@ -326,18 +330,7 @@ def test_incomplete_release_manifest_fails_for_new_mandatory_sections() -> None:
             for error in errors
         ), f"release manifest did not require {field}: {errors}"
 
-    assert any(
-        error.validator == "required"
-        and list(error.absolute_path) == ["compatibility", "supported_hosts", 0]
-        and "'architectures' is a required property" == error.message
-        for error in errors
-    ), f"release manifest did not require host architectures: {errors}"
-    assert any(
-        error.validator == "required"
-        and list(error.absolute_path) == ["compatibility", "dependencies"]
-        and "'packages' is a required property" == error.message
-        for error in errors
-    ), f"release manifest did not require package dependencies: {errors}"
+    assert any(error.validator == "required" and "'compatibility' is a required property" == error.message for error in errors)
 
 
 def test_synthetic_central_topology_is_coherent() -> None:
@@ -399,9 +392,9 @@ def test_synthetic_central_topology_is_coherent() -> None:
     )
 
     repo_paths = {path.relative_to(REPO_ROOT).as_posix() for path in REPO_ROOT.rglob("*")}
-    manifest_paths = [asset["path"] for asset in release["included_assets"]]
+    manifest_paths = [asset["path"] for asset in release["inventory"]]
     manifest_paths.extend(
-        evidence["path"] for evidence in release["verification"]["normalized_evidence"]
+        evidence["path"] for evidence in release["weak_model_certification"]
     )
     manifest_paths.append(release["rollback_reference"])
     for manifest_path in manifest_paths:
