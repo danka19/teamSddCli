@@ -798,6 +798,54 @@ def test_validator_rejects_unsafe_or_malformed_disk_manifest(
         validate_release_manifest(candidate, manifest)
 
 
+SCENARIO_COVERAGE = {
+    "test_build_is_byte_stable_and_manifest_binds_payload_only": [
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Release evidence and auditability",
+            "scenario": "Release manifest identifies what was certified",
+        }
+    ],
+    "test_candidate_includes_declared_canonical_sources_for_certification_revalidation": [
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Transfer-ready release candidate contents",
+            "scenario": "Release candidate contains the reusable core",
+        }
+    ],
+    "test_privacy_scan_allows_localhost_endpoint_but_rejects_windows_user_path": [
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Transfer-ready release candidate contents",
+            "scenario": "Release candidate does not contain corporate values",
+        }
+    ],
+    "test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence": [
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Reproducible bootstrap and maintenance",
+            "scenario": "Supported hosts produce proportionate governed evidence",
+        },
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Reproducible bootstrap and maintenance",
+            "scenario": "Clean environment can bootstrap the reference setup",
+        },
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Reproducible bootstrap and maintenance",
+            "scenario": "Upgrade can be rolled back",
+        },
+    ],
+}
+
+
 def test_every_entry_point_smokes_from_standalone_candidate(candidate_tmp: Path) -> None:
     candidate, manifest = _build(candidate_tmp)
     standalone = candidate_tmp / "standalone"

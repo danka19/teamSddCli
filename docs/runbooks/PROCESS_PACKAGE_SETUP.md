@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is in progress.
+Status: work items 2.1-2.12 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. The implemented release process has passed one full Windows rehearsal and one bounded Linux/WSL2 portability smoke; work item 2.13 is next.
 
 ## Contract Sources
 
@@ -41,9 +41,9 @@ The schema-v2 contract records `minor | major | hotfix` separately from work typ
 
 All committed templates use `sample-*` identities and synthetic relative references. The separate committed-asset scanner and its negative fixtures reject secret/private and production-looking values without making those substrings illegal in real configured IDs. Replace template values only in an authorized environment-specific configuration; never place credentials, private specifications, real owner identities, production URLs, or secret values in the reusable package or templates.
 
-## Release Manifest Base Contract
+## Release Manifest And Host Evidence Contract
 
-The release-manifest schema and valid synthetic fixture represent the accepted transfer-evidence shape: versioned assets with SHA-256 checksums; typed Windows/Linux/macOS entries with version constraints and one-or-more architectures; Python/Node/Git/MCP/shell dependencies; exact PyYAML/jsonschema package pins from `requirements-test.txt`; normalized verification commands/evidence; versioned raw-artifact references; Qwen/DeepSeek certification references; limitations; and rollback reference. The sample host values, references, and hashes are schema fixtures, not release acceptance evidence. Manifest generation, checksum verification, host/package verification, certification execution, and release acceptance belong to later Phase 2 work items.
+The release-manifest schema, generator, semantic validator, rehearsal command, and acceptance command are implemented. The immutable candidate records versioned assets with SHA-256 checksums; Windows full-rehearsal and Linux/WSL2 portability-smoke host requirements; Python/Node/Git/MCP/shell dependencies; exact PyYAML/jsonschema pins from `requirements-test.txt`; normalized verification commands/evidence; versioned raw-artifact references; Qwen/DeepSeek certification references; limitations; and rollback reference. macOS is explicitly not certified under `D-018`; it is a limitation, not a third acceptance host. The valid synthetic fixture remains schema-only evidence, while dated release manifest and host-evidence files under `process/release/` record the observed candidate. An `evidence-complete` machine result never substitutes for the separate final human acceptance decision.
 
 ## Test The Skeleton
 

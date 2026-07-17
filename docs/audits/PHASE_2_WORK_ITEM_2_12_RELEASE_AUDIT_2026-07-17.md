@@ -4,6 +4,8 @@ Date: 2026-07-17
 Status: passed with remediated findings
 Scope: immutable external release candidate, Windows full rehearsal, Linux/WSL2 portability smoke, negative acceptance, update/rollback, archive preservation, privacy, and repository reconciliation.
 
+The designated human-review evidence assembly is `docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md`. That packet records machine evidence closure and keeps the final human decision explicitly pending.
+
 ## Boundary And Criteria
 
 This audit evaluates the accepted work item 2.12 contract only. It does not certify macOS, a native bare-metal Linux distribution, a corporate runtime, MCP provisioning, or human release acceptance.
@@ -22,15 +24,15 @@ Severity scale: Critical blocks the accepted safety or authority contract; High 
 
 ## Final Candidate
 
-- Release ID: `phase-2-12-rc6`.
-- External Windows path: `<external-release-root>/phase-2-12-rc6-20260717`.
-- Native WSL2 copy: `/root/teamSsdCli-release-artifacts/phase-2-12-rc6-20260717`.
-- Payload SHA-256: `232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43`.
-- Manifest SHA-256: `e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c`.
+- Release ID: `phase-2-12-rc7`.
+- External Windows path: `<external-release-root>/phase-2-12-rc7-20260717`.
+- Native WSL2 copy: `/root/teamSsdCli-release-artifacts/phase-2-12-rc7-20260717`.
+- Payload SHA-256: `f0fb1d7c6478fd3eedcaa6de26242870478ebfdbc2ca6b76356dc094f1d6f63f`.
+- Manifest SHA-256: `9a27a2ef036ac90774b60265b39fdc298fead01170437fff0d131aa70f38b301`.
 - The native WSL2 manifest checksum and semantic payload validation matched the Windows candidate before execution.
 - Repository copies: `process/release/release-manifest.yaml` and `process/release/evidence/phase-2-12-*.yaml`.
 
-Earlier `rc1` through `rc5` directories remain external rejected/diagnostic history. They are not accepted candidates and were not deleted or silently reused.
+Earlier `rc1` through `rc5` directories remain external rejected/diagnostic history. Prior passing candidate `rc6` also remains preserved. `rc7` supersedes it only because final review required payload documentation and traceability reconciliation; no prior evidence was deleted or silently reused.
 
 ## Raw Certification Closure
 
@@ -94,7 +96,7 @@ The records matched on payload SHA-256, manifest SHA-256, package/config identit
 - Evidence: Windows archive digest `a6eb3518...` differed from Linux `50b61ec5...`; hex inspection showed CRLF versus LF.
 - Root cause: the synthetic accepted-history file used platform-default newline translation.
 - Remediation: force `newline="\n"` and assert exact LF bytes.
-- Verification: RED byte assertion, focused GREEN, then identical rc6 archive digest on both hosts.
+- Verification: RED byte assertion, focused GREEN, then identical rc6 and rc7 archive digests on both hosts.
 
 ### F-003: Candidate omitted declared canonical certification sources
 
@@ -102,7 +104,7 @@ The records matched on payload SHA-256, manifest SHA-256, package/config identit
 - Evidence: packaged `validate_normalized_evidence` returned `actual-model.gate-raw-evidence-missing`; four source-manifest paths were absent from payload.
 - Root cause: `process/package.yaml` declared `canonical_sources`, but the candidate builder and closure validator ignored them.
 - Remediation: copy and close exactly the already-declared canonical files.
-- Verification: RED inclusion test, focused GREEN, then both selected model-family records revalidated from rc6.
+- Verification: RED inclusion test, focused GREEN, then both selected model-family records revalidated from rc6 and rc7.
 
 ### F-004: Privacy scanner misclassified allowed localhost endpoints
 
@@ -110,7 +112,7 @@ The records matched on payload SHA-256, manifest SHA-256, package/config identit
 - Evidence: the drive-path alternative matched `p:/` inside `http://127.0.0.1:11434`.
 - Root cause: an unbounded drive-letter regular-expression alternative.
 - Remediation: require a non-alphanumeric token boundary before a drive letter while retaining Windows user-path rejection.
-- Verification: RED localhost-versus-Windows-path regression, focused GREEN, and rc6 acceptance with no privacy diagnostics.
+- Verification: RED localhost-versus-Windows-path regression, focused GREEN, and rc6/rc7 acceptance with no privacy diagnostics.
 
 ### F-005: Initial full suite exposed incomplete reconciliation
 
@@ -128,6 +130,16 @@ The records matched on payload SHA-256, manifest SHA-256, package/config identit
 - The Linux inventory records architecture as `unknown` because the cross-platform evidence implementation reads the Windows-specific `PROCESSOR_ARCHITECTURE` environment variable. The OS probe independently records x86_64. This is a Low follow-up and does not alter candidate identity, required scenario results, dependency compatibility, or acceptance.
 - `evidence-complete` is machine evidence closure only. Human release acceptance remains mandatory before Phase 3.
 
+## Final Review Fix Wave
+
+The final high-risk review found three Important documentation/evidence-assembly gaps, not a failure of the rehearsed process behavior:
+
+1. a designated acceptance packet was added at `docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md`, explicitly separating machine evidence closure from the pending human decision;
+2. all observed transfer-readiness scenarios for manifest identity, coverage traceability, clean bootstrap, rollback, reusable-core closure, privacy, and supported-host evidence were rebound to exact rc evidence, tests, and the packet; obsolete work-item-2.11 gaps were removed only for those proven scenarios;
+3. Task 1-3 plan evidence and stale setup/audit status were reconciled to the accepted two-host `D-018` contour.
+
+Because the setup runbook and coverage/evidence manifests are payload inputs, these changes required immutable candidate `rc7`. Targeted release/process-package/coverage verification passed `140 passed, 3 skipped in 70.26s`. Windows and WSL2 rehearsals, negative matrices, rollback/archive parity, actual link rejection, and one final exact-root acceptance run all passed. The full suite was not repeated, per final-review direction; rc7 changes were limited to documentation, evidence bindings, and their marker declarations.
+
 ## Remediation Decision
 
-All Critical, High, and Medium findings within the accepted 2.12 contract were remediated before rc6. The Linux architecture display improvement is recorded as a non-blocking follow-up rather than expanding the stable candidate after final verification.
+All Critical, High, and Medium findings within the accepted 2.12 contract were remediated before rc6. The three final-review Important evidence-assembly findings were remediated in rc7. The Linux architecture display improvement remains a non-blocking follow-up rather than expanding the accepted contract.

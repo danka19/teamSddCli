@@ -2,9 +2,9 @@ schema_version: '1.0'
 evidence_id: phase-2-12-windows
 platform_id: windows
 evidence_level: full-clean-rehearsal
-completed_at: '2026-07-17T10:05:36Z'
-payload_sha256: 232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43
-manifest_sha256: e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c
+completed_at: '2026-07-17T10:37:02Z'
+payload_sha256: f0fb1d7c6478fd3eedcaa6de26242870478ebfdbc2ca6b76356dc094f1d6f63f
+manifest_sha256: 9a27a2ef036ac90774b60265b39fdc298fead01170437fff0d131aa70f38b301
 process_package_version: 0.2.0
 config_schema_version: '1.1'
 inventory:

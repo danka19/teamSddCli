@@ -1,6 +1,6 @@
 schema_version: '2.0'
-release_id: phase-2-12-rc6
-payload_sha256: 232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43
+release_id: phase-2-12-rc7
+payload_sha256: f0fb1d7c6478fd3eedcaa6de26242870478ebfdbc2ca6b76356dc094f1d6f63f
 inventory:
 - path: docs/runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md
   size: 6182
@@ -18,8 +18,8 @@ inventory:
   size: 8165
   sha256: ccb62c8d2d2cef74db43f09a69fa115e93130e4acf4588beeb4b969e5b3404a2
 - path: docs/runbooks/PROCESS_PACKAGE_SETUP.md
-  size: 11476
-  sha256: 4015691c82fde882e244d02826ea65713eb91bc7a57fa8f935d73ada3813130f
+  size: 11737
+  sha256: 9a523401f1e4e1b20152116a89c9f5f983564ce7fb4f8a196a688c62d21fdd36
 - path: docs/runbooks/TECH_LEAD_GOVERNANCE.md
   size: 5822
   sha256: 2df90f953c6492eed09a56b02f0f1b2f5010e44de45554639ba9fe39e922c91e
@@ -78,11 +78,11 @@ inventory:
   size: 3373
   sha256: 46b1cb08e964f3b473876701bdc97cb4f6d7c6939a2b9146ec97ecc33e40a4ff
 - path: process/certification/coverage.yaml
-  size: 6846
-  sha256: 9f31e340418a8bd384744a7983937f1eb2c92a1b0921906d92aae24de00fb33b
+  size: 6908
+  sha256: 389cb85917b7163f42158062ddbc751c4e766fba054f37de1b8cece7c88aebde
 - path: process/certification/evidence-manifest.yaml
-  size: 101213
-  sha256: ec27aecd772f3c2131c424da0114bb320b3bce8505a80fa24ac7bf09ac89123b
+  size: 101764
+  sha256: ec05f6f7b4bcc5f4b5e7cb1a9ac83da02d56d70f0320bc67ad888e62ffc1d22a
 - path: process/certification/evidence/phase-2-11-deepseek-2026-07-15.yaml
   size: 66524
   sha256: 542e1c297bfa57722709e8b7822b068941d958e28d95696dbd5aa9e12b97f7d6

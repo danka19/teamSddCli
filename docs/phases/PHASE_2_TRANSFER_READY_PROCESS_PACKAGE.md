@@ -586,7 +586,7 @@ Documentation: installation, platform inventory, compatibility, update, rollback
 
 Exit criteria: one immutable candidate passes the full Windows rehearsal and bounded equivalent Linux/WSL2 smoke, rejects the required negative cases, records macOS as not certified, and can be rolled back safely.
 
-Observed outcome: immutable candidate `phase-2-12-rc6` passed Windows full rehearsal and native-WSL2 portability smoke with payload SHA-256 `232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43` and manifest SHA-256 `e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c`. Both host acceptance runs returned `evidence-complete` with no diagnostics and retained the mandatory human acceptance gate. The release audit records the necessary failed-suite RED and final `686 passed, 4 skipped` rerun.
+Observed outcome: immutable candidate `phase-2-12-rc7` passed Windows full rehearsal and native-WSL2 portability smoke with payload SHA-256 `f0fb1d7c6478fd3eedcaa6de26242870478ebfdbc2ca6b76356dc094f1d6f63f` and manifest SHA-256 `9a27a2ef036ac90774b60265b39fdc298fead01170437fff0d131aa70f38b301`. The final exact-root machine acceptance run returned `evidence-complete` with no diagnostics and retained the mandatory human acceptance gate. Prior passing `rc6` evidence remains preserved. The release audit records the necessary failed-suite RED, final `686 passed, 4 skipped` suite, and the targeted rc7 review-fix verification.
 
 ### 2.13 Corporate Adaptation And Pilot Package
 
@@ -697,7 +697,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; release candidate `phase-2-12-rc6` passed the accepted Windows/WSL2 contour, so 2.12 is closed and 2.13 is the next planned item.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; release candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 contour, so 2.12 is closed and 2.13 is the next planned item. Prior passing `rc6` remains external release history.
 
 Mandatory later evidence, not design decisions:
 

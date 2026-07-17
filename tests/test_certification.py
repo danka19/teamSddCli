@@ -458,6 +458,18 @@ def test_coverage_rejects_unknown_duplicates_invalid_gaps_and_delta_targets(
         build_coverage_report(ROOT, custom)
 
 
+SCENARIO_COVERAGE = {
+    "test_coverage_composes_accepted_and_active_delta_scenarios": [
+        {
+            "source_kind": "delta",
+            "capability": "transfer-readiness",
+            "requirement": "Release evidence and auditability",
+            "scenario": "Verification coverage is traceable and gaps remain visible",
+        }
+    ]
+}
+
+
 def test_full_package_regression_includes_certification_inventory() -> None:
     package = load_yaml(PROCESS / "package.yaml")
     declared = set(package["distribution"]["files"])

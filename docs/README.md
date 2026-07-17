@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.12 are closed and work item 2.13 is next. Immutable candidate `phase-2-12-rc6` passed a full Windows rehearsal and bounded native-WSL2 portability smoke with identical payload, manifest, rollback, negative-case, and archive-preservation evidence; both acceptance checks returned `evidence-complete` while retaining mandatory human acceptance. macOS is not certified.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.12 are closed and work item 2.13 is next. Immutable candidate `phase-2-12-rc7` passed a full Windows rehearsal and bounded native-WSL2 portability smoke with identical payload, manifest, rollback, negative-case, and archive-preservation evidence; the final machine acceptance check returned `evidence-complete` while retaining mandatory human acceptance. macOS is not certified.
 
 ## Scope
 

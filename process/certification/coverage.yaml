@@ -146,6 +146,8 @@ delta_targets:
   capability: confluence-feedback-loop
   requirement: Unresolved feedback and publication blockers
 marker_sources:
+- tests/test_certification.py
+- tests/test_release_candidate.py
 - tests/test_artifact_gates.py
 - tests/test_classification.py
 - tests/test_classification_migration.py

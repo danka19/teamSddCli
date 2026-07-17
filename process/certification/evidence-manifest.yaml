@@ -1916,12 +1916,10 @@ coverage:
   capability: transfer-readiness
   requirement: Release evidence and auditability
   scenario: Release manifest identifies what was certified
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/release/release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_build_is_byte_stable_and_manifest_binds_payload_only
 - source_kind: delta
   capability: transfer-readiness
   requirement: Release evidence and auditability
@@ -1936,12 +1934,10 @@ coverage:
   capability: transfer-readiness
   requirement: Release evidence and auditability
   scenario: Verification coverage is traceable and gaps remain visible
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/certification/coverage.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_certification.py::test_coverage_composes_accepted_and_active_delta_scenarios
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
@@ -1949,16 +1945,17 @@ coverage:
   evidence:
   - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
   - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
   scenario: Clean environment can bootstrap the reference setup
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
+  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
@@ -1973,32 +1970,27 @@ coverage:
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
   scenario: Upgrade can be rolled back
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
+  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
   requirement: Transfer-ready release candidate contents
   scenario: Release candidate contains the reusable core
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/release/release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_candidate_includes_declared_canonical_sources_for_certification_revalidation
 - source_kind: delta
   capability: transfer-readiness
   requirement: Transfer-ready release candidate contents
   scenario: Release candidate does not contain corporate values
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: work-item-2.11
+  evidence:
+  - manual:process/release/release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - pytest:tests/test_release_candidate.py::test_privacy_scan_allows_localhost_endpoint_but_rejects_windows_user_path
 - source_kind: delta
   capability: waiver-policy
   requirement: Classification criteria cannot be waived

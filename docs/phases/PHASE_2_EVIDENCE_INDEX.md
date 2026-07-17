@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.12 are closed. Immutable candidate `phase-2-12-rc6` passed the Windows full rehearsal and Linux/WSL2 portability smoke; work item 2.13 is the next planned sequential item.
+Status: in_progress. Work items 2.1-2.12 are closed. Immutable candidate `phase-2-12-rc7` passed the Windows full rehearsal and Linux/WSL2 portability smoke; work item 2.13 is the next planned sequential item.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -669,10 +669,11 @@ Status: `closed`. Transfer tasks 5.1-5.4 and NIS task 8.4 are complete.
 
 ### Immutable Candidate
 
-- External candidate: `phase-2-12-rc6-20260717` under the local ignored release-artifact root outside Git.
-- Release ID: `phase-2-12-rc6`.
-- Payload SHA-256: `232e3da5737f569fe90cb32901f876103ec4a9fb0091abe46fe005502e1e4d43`.
-- Manifest SHA-256: `e1b362bb2dad779e7c3a6ebe2657a356f75ce2bd3f544510e491d74873b69e2c`.
+- External candidate: `phase-2-12-rc7-20260717` under the local ignored release-artifact root outside Git.
+- Release ID: `phase-2-12-rc7`.
+- Payload SHA-256: `f0fb1d7c6478fd3eedcaa6de26242870478ebfdbc2ca6b76356dc094f1d6f63f`.
+- Manifest SHA-256: `9a27a2ef036ac90774b60265b39fdc298fead01170437fff0d131aa70f38b301`.
+- Prior passing `phase-2-12-rc6` remains preserved as external release history.
 - Raw acceptance snapshot contains exactly the selector-owned Qwen adapter `2.2` and DeepSeek adapter `2.2` logical roots; all 48 copied files matched source SHA-256 values.
 
 ### Host And Acceptance Evidence
@@ -691,6 +692,7 @@ Status: `closed`. Transfer tasks 5.1-5.4 and NIS task 8.4 are complete.
 - `process/release/evidence/phase-2-12-windows-2026-07-17.yaml`.
 - `process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml`.
 - `docs/audits/PHASE_2_WORK_ITEM_2_12_RELEASE_AUDIT_2026-07-17.md`.
+- `docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md` is the designated evidence-complete packet for the still-pending final human decision.
 - Initial full-suite RED: `681 passed, 4 skipped, 5 failed`; failures identified one missing coverage mapping and two omitted schema inventory registrations.
 - Focused reconciliation: the five previously failing nodes passed.
 - Necessary final full-suite rerun after payload-included reconciliation: `686 passed, 4 skipped` in `200.47s`.
