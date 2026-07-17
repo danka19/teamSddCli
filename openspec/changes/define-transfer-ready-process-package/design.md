@@ -86,7 +86,9 @@ Unbounded multi-agent execution was rejected because throughput without ownershi
 
 The package uses shared schemas, policy, workflow, and evidence contracts with thin platform launch/path/shell adapters. Clean hosts provision documented Python, Node.js/OpenSpec, Git, MCP, shell, and package dependencies, then execute the same fixtures, deterministic flow, update, rollback, and evidence checks.
 
-Treating one workstation or one container as proof of portability was rejected because the human owner requires equivalent full desktop-host behavior across all three operating-system families.
+The candidate has an immutable `payload/` plus a pre-rehearsal `release-manifest.yaml`. The manifest is excluded from the canonical payload digest and records `payload_sha256`; Windows and Linux consume byte-identical payload and manifest content. Host evidence remains external, is schema-validated, binds to `payload_sha256`, and never mutates the candidate after the first rehearsal begins. Generator inputs cannot override derived package/config/OpenSpec identity, host requirements, inventory, checksums, certification references, or rollback source.
+
+Treating one workstation as proof of portability was rejected. Under `D-018`, Windows receives the full clean rehearsal, Linux/WSL2 receives a bounded equivalent smoke and negative matrix, and macOS is explicitly not certified.
 
 ### 9. Remediate weak-model generation through a bounded family adapter
 

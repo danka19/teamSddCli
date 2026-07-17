@@ -89,7 +89,8 @@ The SDD process SHALL make the release candidate and corporate pilot traceable t
 
 #### Scenario: Release manifest identifies what was certified
 - **WHEN** a release candidate is accepted
-- **THEN** its manifest records the process-package version, config-schema version, OpenSpec pin, included artifact versions, compatibility assumptions, verification commands or normalized evidence paths, raw-artifact references and checksums, weak-model certification references, known limitations, and rollback reference
+- **THEN** its pre-rehearsal manifest records the immutable payload file inventory and digest, process-package version, config-schema version, OpenSpec pin, included artifact versions, compatibility assumptions, required verification commands or normalized evidence paths, raw-artifact references and checksums, weak-model certification references, known limitations, and rollback reference
+- **AND** external host evidence binds to the immutable payload digest without mutating the candidate consumed by either host
 
 #### Scenario: Pilot evidence identifies installed state
 - **WHEN** pilot results are recorded
