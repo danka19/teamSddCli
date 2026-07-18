@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "corporate-environment-inventory.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "metadata", "inventory"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "kind": {"const": "environment-inventory"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inventory_id", "environment_ref", "collected_at", "collected_by_role", "source_release_id"],
+      "properties": {
+        "inventory_id": {"type": ["string", "null"], "minLength": 1},
+        "environment_ref": {"type": ["string", "null"], "minLength": 1},
+        "collected_at": {"type": ["string", "null"], "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})$"},
+        "collected_by_role": {"type": ["string", "null"], "minLength": 1},
+        "source_release_id": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "runtimes", "tools", "package_distribution", "network_policy", "integrations", "mcp", "ai"],
+      "properties": {
+        "host": {"$ref": "#/$defs/hostSection"},
+        "runtimes": {"$ref": "#/$defs/runtimeSection"},
+        "tools": {"$ref": "#/$defs/toolSection"},
+        "package_distribution": {"$ref": "#/$defs/distributionSection"},
+        "network_policy": {"$ref": "#/$defs/networkSection"},
+        "integrations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bitbucket", "jenkins", "jira", "confluence"],
+          "properties": {
+            "bitbucket": {"$ref": "#/$defs/integration"},
+            "jenkins": {"$ref": "#/$defs/integration"},
+            "jira": {"$ref": "#/$defs/integration"},
+            "confluence": {"$ref": "#/$defs/integration"}
+          }
+        },
+        "mcp": {"$ref": "#/$defs/mcpSection"},
+        "ai": {"$ref": "#/$defs/aiSection"}
+      }
+    }
+  },
+  "$defs": {
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_refs", "notes"],
+      "properties": {
+        "status": {"enum": ["verified", "unresolved", "not-applicable"]},
+        "value": {},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "notes": {"type": ["string", "null"]}
+      },
+      "oneOf": [
+        {"properties": {"status": {"const": "verified"}, "value": {"not": {"type": "null"}}, "evidence_refs": {"minItems": 1}}},
+        {"properties": {"status": {"const": "unresolved"}, "value": {"type": "null"}, "evidence_refs": {"maxItems": 0}, "notes": {"type": "string", "minLength": 1}}},
+        {"properties": {"status": {"const": "not-applicable"}, "value": {"type": "null"}, "evidence_refs": {"maxItems": 0}, "notes": {"type": "string", "minLength": 1}}}
+      ]
+    },
+    "hostSection": {"type": "object", "additionalProperties": false, "required": ["operating_system", "shells"], "properties": {"operating_system": {"$ref": "#/$defs/fact"}, "shells": {"$ref": "#/$defs/fact"}}},
+    "runtimeSection": {"type": "object", "additionalProperties": false, "required": ["python", "node"], "properties": {"python": {"$ref": "#/$defs/fact"}, "node": {"$ref": "#/$defs/fact"}}},
+    "toolSection": {"type": "object", "additionalProperties": false, "required": ["git", "openspec"], "properties": {"git": {"$ref": "#/$defs/fact"}, "openspec": {"$ref": "#/$defs/fact"}}},
+    "distributionSection": {"type": "object", "additionalProperties": false, "required": ["approved_channel", "integrity_verification", "installation_constraints"], "properties": {"approved_channel": {"$ref": "#/$defs/fact"}, "integrity_verification": {"$ref": "#/$defs/fact"}, "installation_constraints": {"$ref": "#/$defs/fact"}}},
+    "networkSection": {"type": "object", "additionalProperties": false, "required": ["outbound_access", "proxy_tls", "artifact_access"], "properties": {"outbound_access": {"$ref": "#/$defs/fact"}, "proxy_tls": {"$ref": "#/$defs/fact"}, "artifact_access": {"$ref": "#/$defs/fact"}}},
+    "mcpSection": {"type": "object", "additionalProperties": false, "required": ["policy", "available_servers", "provisioning"], "properties": {"policy": {"$ref": "#/$defs/fact"}, "available_servers": {"$ref": "#/$defs/fact"}, "provisioning": {"$ref": "#/$defs/fact"}}},
+    "aiSection": {"type": "object", "additionalProperties": false, "required": ["available_cli_adapters", "available_models", "ai_disabled_fallback"], "properties": {"available_cli_adapters": {"$ref": "#/$defs/fact"}, "available_models": {"$ref": "#/$defs/fact"}, "ai_disabled_fallback": {"$ref": "#/$defs/fact"}}},
+    "integration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["availability", "version", "capabilities", "authentication", "constraints"],
+      "properties": {
+        "availability": {"$ref": "#/$defs/fact"},
+        "version": {"$ref": "#/$defs/fact"},
+        "capabilities": {"$ref": "#/$defs/fact"},
+        "authentication": {"$ref": "#/$defs/fact"},
+        "constraints": {"$ref": "#/$defs/fact"}
+      }
+    }
+  }
+}

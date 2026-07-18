@@ -13,6 +13,7 @@ runbooks:
   - TECH_LEAD_GOVERNANCE.md
   - TRANSFER_RELEASE_CANDIDATE.md
   - WEAK_MODEL_OPERATING_KIT.md
+  - CORPORATE_ADAPTATION_AND_PILOT.md
 entry_points:
   - name: bootstrap_team_specs.py
     smoke: [scripts/bootstrap_team_specs.py, --help]
@@ -61,6 +62,9 @@ entry_points:
     expected_exit_codes: [0]
   - name: validate_change.py
     smoke: [scripts/validate_change.py, --help]
+    expected_exit_codes: [0]
+  - name: validate_corporate_adaptation.py
+    smoke: [scripts/validate_corporate_adaptation.py, --help]
     expected_exit_codes: [0]
   - name: validate_external_mapping.py
     smoke: [scripts/validate_external_mapping.py, --help]

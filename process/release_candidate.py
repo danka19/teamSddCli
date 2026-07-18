@@ -48,6 +48,7 @@ _RUNBOOKS = (
     "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
     "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
     "WEAK_MODEL_OPERATING_KIT.md",
+    "CORPORATE_ADAPTATION_AND_PILOT.md",
 )
 _ENTRY_POINTS = (
     ("bootstrap_team_specs.py", ("scripts/bootstrap_team_specs.py", "--help"), (0,)),
@@ -65,6 +66,7 @@ _ENTRY_POINTS = (
     ("review_tech_lead.py", ("scripts/review_tech_lead.py", "--help"), (2,)),
     ("update_process_package.py", ("scripts/update_process_package.py", "--help"), (0,)),
     ("validate_change.py", ("scripts/validate_change.py", "--help"), (0,)),
+    ("validate_corporate_adaptation.py", ("scripts/validate_corporate_adaptation.py", "--help"), (0,)),
     ("validate_external_mapping.py", ("scripts/validate_external_mapping.py", "--help"), (0,)),
     ("validate_process_config.py", ("scripts/validate_process_config.py", "--help"), (0,)),
     ("validate_traceability.py", ("scripts/validate_traceability.py", "--help"), (0,)),

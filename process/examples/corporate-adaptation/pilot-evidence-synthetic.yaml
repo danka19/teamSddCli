@@ -1,0 +1,59 @@
+schema_version: "1.0"
+kind: pilot-evidence
+evidence_kind: synthetic-example
+pilot_id: synthetic-pilot-001
+recorded_at: "2026-07-18T00:00:00Z"
+recorded_by_role: pilot-owner
+installed_state:
+  release_id: synthetic-release-001
+  payload_digest: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  configuration_revision: synthetic-config-rev-001
+  runtime_versions: [python-3.13, openspec-1.4.1, git-2.54]
+  adapter_versions: [qwen-class-disabled]
+  mcp_wiring_ref: evidence:synthetic-mcp-disabled
+selection:
+  change_id: synthetic-change-001
+  change_class: minor
+  class_rationale: "Synthetic bounded documentation-only behavior fixture with no corporate values."
+  bounded_scope: "One synthetic change package and its deterministic evidence."
+  risk_summary: "No external delivery, private data, credentials, or production integration."
+traceability:
+  requirement_ids: [synthetic-req-001]
+  scenario_ids: [synthetic-scn-001]
+  task_ids: [synthetic-task-001]
+  evidence_refs: [evidence:synthetic-traceability]
+gates:
+  definition_of_ready: {status: passed, evidence_refs: [evidence:synthetic-dor], decision_ref: decision:synthetic-dor, notes: null}
+  implementation_complete: {status: passed, evidence_refs: [evidence:synthetic-tests], decision_ref: null, notes: null}
+  definition_of_done: {status: passed, evidence_refs: [evidence:synthetic-dod], decision_ref: decision:synthetic-dod, notes: null}
+  release_or_transfer: {status: not-applicable, evidence_refs: [], decision_ref: decision:synthetic-release-na, notes: "The synthetic fixture is not delivered."}
+  archive_readiness: {status: passed, evidence_refs: [evidence:synthetic-archive], decision_ref: decision:synthetic-archive, notes: null}
+delivery:
+  pr_refs: [pr:synthetic-001]
+  test_refs: [test:synthetic-001]
+  verification_summary: "Synthetic schema, traceability, and AI-disabled checks passed."
+human_decisions:
+  - {decision_id: synthetic-dor, role: product-owner, outcome: approved, evidence_ref: decision:synthetic-dor}
+  - {decision_id: synthetic-dod, role: tech-lead, outcome: approved, evidence_ref: decision:synthetic-dod}
+  - {decision_id: synthetic-release-na, role: release-owner, outcome: not-applicable, evidence_ref: decision:synthetic-release-na}
+  - {decision_id: synthetic-archive, role: archive-owner, outcome: approved, evidence_ref: decision:synthetic-archive}
+failed_attempts:
+  - {attempt_id: synthetic-attempt-001, kind: validation, outcome: failed, version_or_configuration: synthetic-config-rev-000, owner_disposition: "Corrected the synthetic fixture and retained this attempt.", evidence_ref: evidence:synthetic-failure}
+interventions:
+  - {event_id: synthetic-intervention-001, reason: "Intentional negative-fixture failure.", actor_role: developer, effect: "Corrected fixture input only.", evidence_ref: evidence:synthetic-intervention}
+deviations:
+  - {event_id: synthetic-deviation-001, reason: "Synthetic adapter remained disabled.", actor_role: pilot-owner, effect: "Used the mandatory AI-disabled path without changing process rules.", evidence_ref: evidence:synthetic-deviation}
+privacy:
+  data_classification: synthetic-public
+  storage_ref: artifact:synthetic-evidence
+  retention_ref: policy:synthetic-retention
+  access_review_ref: evidence:synthetic-access-review
+  issues: []
+rollback_or_hold:
+  status: available
+  action: "Restore synthetic-config-rev-000 and hold the synthetic transition."
+  owner_role: platform-maintainer
+  evidence_refs: [evidence:synthetic-rollback]
+follow_up_changes:
+  - {change_ref: openspec-change:synthetic-follow-up, scope: "Synthetic reusable validator clarification.", owner_role: external-maintainer, status: proposed}
+outcome: passed

@@ -1,0 +1,16 @@
+schema_version: "1.0"
+kind: environment-inventory
+metadata: {inventory_id: synthetic-inventory, environment_ref: synthetic-lab, collected_at: "2026-07-18T00:00:00Z", collected_by_role: platform-maintainer, source_release_id: synthetic-release}
+inventory:
+  host: {operating_system: {status: verified, value: synthetic-os, evidence_refs: [evidence:host], notes: null}, shells: {status: verified, value: [synthetic-shell], evidence_refs: [evidence:shell], notes: null}}
+  runtimes: {python: {status: verified, value: "3.13", evidence_refs: [evidence:python], notes: null}, node: {status: verified, value: "22.0", evidence_refs: [evidence:node], notes: null}}
+  tools: {git: {status: verified, value: "2.54", evidence_refs: [evidence:git], notes: null}, openspec: {status: verified, value: "1.4.1", evidence_refs: [evidence:openspec], notes: null}}
+  package_distribution: {approved_channel: {status: verified, value: synthetic-channel, evidence_refs: [evidence:package], notes: null}, integrity_verification: {status: verified, value: sha256, evidence_refs: [evidence:integrity], notes: null}, installation_constraints: {status: verified, value: [synthetic-constraint], evidence_refs: [evidence:install], notes: null}}
+  network_policy: {outbound_access: {status: verified, value: denied-by-default, evidence_refs: [evidence:network], notes: null}, proxy_tls: {status: verified, value: synthetic-policy, evidence_refs: [evidence:proxy], notes: null}, artifact_access: {status: verified, value: synthetic-channel-only, evidence_refs: [evidence:artifact-access], notes: null}}
+  integrations:
+    bitbucket: &integration {availability: {status: verified, value: true, evidence_refs: [evidence:integration], notes: null}, version: {status: verified, value: synthetic-version, evidence_refs: [evidence:integration], notes: null}, capabilities: {status: verified, value: [pull-requests], evidence_refs: [evidence:integration], notes: null}, authentication: {status: verified, value: "secret-ref:synthetic/bitbucket", evidence_refs: [evidence:integration], notes: null}, constraints: {status: verified, value: [], evidence_refs: [evidence:integration], notes: null}}
+    jenkins: *integration
+    jira: *integration
+    confluence: *integration
+  mcp: {policy: {status: verified, value: approved-bounded-use, evidence_refs: [evidence:mcp], notes: null}, available_servers: {status: verified, value: [synthetic-mcp], evidence_refs: [evidence:mcp-servers], notes: null}, provisioning: {status: verified, value: synthetic-manual, evidence_refs: [evidence:mcp-provisioning], notes: null}}
+  ai: {available_cli_adapters: {status: verified, value: [synthetic-adapter], evidence_refs: [evidence:adapter], notes: null}, available_models: {status: verified, value: [synthetic-model], evidence_refs: [evidence:model], notes: null}, ai_disabled_fallback: {status: verified, value: true, evidence_refs: [evidence:ai-disabled], notes: null}}

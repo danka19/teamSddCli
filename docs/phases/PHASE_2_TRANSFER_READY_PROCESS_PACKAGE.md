@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.12 are closed after implementation, actual-model certification, deterministic verification, and byte-identical Windows/WSL2 release-candidate evidence. Work item 2.13 is the next planned sequential item.
+Work items 2.1-2.13 are closed after implementation, actual-model certification, deterministic verification, byte-identical Windows/WSL2 release-candidate evidence, and the non-secret corporate-adaptation package. Work item 2.14 is next.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -34,7 +34,7 @@ Status: accepted.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
 - Planned change `determinize-weak-model-operational-decisions` owns the post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.12 are closed; work item 2.13 is the next planned sequential item.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.13 are closed; work item 2.14 is next.
 
 ## Planning Acceptance Gate
 
@@ -134,6 +134,19 @@ Compatibility rules:
 - Cross-platform differences stay in thin launch/path/shell adapters; policy and evidence contracts remain shared.
 
 ## Change Intake
+
+```text
+Idea: Permit the frozen repository-only `process/release/` evidence snapshot without treating it as a distributable process-package root.
+Source: Work item 2.13 complete-regression verification on 2026-07-18.
+Type: bug_fix, verification_change
+Decision: adopt_now
+Reason: The package-closure validator predates the Phase 2.12 repository evidence snapshot and currently rejects all packaged-flow operations before they can validate an otherwise closed distribution. The snapshot is explicitly excluded from release-candidate payloads and must not become a distribution root.
+Affected specs: Existing transfer-readiness release-evidence and package-closure requirements; no new capability or acceptance criterion.
+Affected architecture: Keep `process/release/` as repository evidence and keep the distributable package closed; add only an explicit validator distinction for this established repository-only root.
+Data contract impact: None. `process/package.yaml` distribution fields and the release-candidate contract remain unchanged.
+Verification impact: Preserve rejection of arbitrary undeclared files/directories, add a focused regression for the repository evidence root, and repeat the complete pytest suite.
+Status: adopted for work item 2.13 closure verification.
+```
 
 ```text
 Idea: Close the eight uncovered deterministic NIS feedback/publication-boundary scenarios with focused policy/config validation and exact scenario evidence.
@@ -590,7 +603,7 @@ Observed outcome: immutable candidate `phase-2-12-rc7` passed Windows full rehea
 
 ### 2.13 Corporate Adaptation And Pilot Package
 
-Status: planned.
+Status: closed.
 
 Dependency status: sequential after 2.12.
 
@@ -607,6 +620,8 @@ Parallelization: inventory, entry checklist, and pilot evidence template may use
 Documentation: corporate adaptation and governed pilot runbooks.
 
 Exit criteria: Phase 3 can configure and pilot without inventing reusable behavior or storing real corporate values in the external package.
+
+Observed outcome: four closed schemas, five unresolved templates, two synthetic examples, a check-only validator/CLI, package registration, privacy/secret enforcement, pilot-entry gating, evidence integrity, and content-derived no-fork validation passed all six task review gates. Final review findings were corrected in one batch; focused verification passed `50/50` and the complete suite passed `710` with `4` skipped. No real corporate configuration, pilot, or model run occurred. Phase 2.14 owns release reconciliation and human acceptance.
 
 ### 2.14 Documentation, Final Verification, And Human Acceptance
 
@@ -697,7 +712,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; release candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 contour, so 2.12 is closed and 2.13 is the next planned item. Prior passing `rc6` remains external release history.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; release candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 contour, and the non-secret corporate-adaptation package passed deterministic closure/privacy/no-fork verification. Work items 2.1-2.13 are closed and 2.14 is next. Prior passing `rc6` remains external release history.
 
 Mandatory later evidence, not design decisions:
 

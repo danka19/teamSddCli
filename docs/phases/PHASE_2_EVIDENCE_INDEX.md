@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.12 are closed. Immutable candidate `phase-2-12-rc7` passed the Windows full rehearsal and Linux/WSL2 portability smoke; work item 2.13 is the next planned sequential item.
+Status: in_progress. Work items 2.1-2.13 are closed. Immutable candidate `phase-2-12-rc7` remains preserved; work item 2.14 is next.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -702,3 +702,33 @@ Status: `closed`. Transfer tasks 5.1-5.4 and NIS task 8.4 are complete.
 - macOS is explicitly not certified.
 - WSL2 is portability evidence, not native bare-metal Linux certification.
 - The exact candidate remains subject to explicit human release-candidate acceptance before Phase 3; `evidence-complete` is not human acceptance.
+
+## Work Item 2.13: Corporate Adaptation And Pilot Package
+
+Status: `closed`. Transfer tasks 6.1-6.4 and all six task-level reviewer gates are complete.
+
+### Implemented Contracts
+
+- Four closed Draft 2020-12 schemas cover environment inventory, configuration/pilot-entry checklists, pilot evidence, and no-fork assessment.
+- Five unresolved templates contain no real environment, project, owner, integration, credential, model, or pilot values.
+- The environment inventory requires OS/shells, Python/Node, Git/OpenSpec, distribution/integrity, network/proxy/artifact access, Bitbucket/Jenkins/Jira/Confluence, MCP, available adapters/models, and AI-disabled fallback facts. Unresolved and not-applicable facts cannot carry inferred values.
+- A `green` configuration or pilot-entry checklist is schema- and semantic-bound to evaluated identity, evidence-bearing mandatory checks, external release acceptance, privacy, rollback/hold, and AI-disabled execution.
+- Pilot evidence binds installed release/configuration, class rationale, requirement/scenario/task traceability, gates, PR/tests, human decisions, runtime/adapters, retained failures, interventions/deviations, privacy, rollback/hold, and follow-up changes. Gate decision references resolve to unique human decision IDs.
+- No-fork evidence derives fork state from recorded package changes and finding-level modification flags. Reusable gaps require an external OpenSpec change; hidden internal package forks block compliance.
+
+### Deterministic Validation And Privacy
+
+- `process/corporate_adaptation.py` and `scripts/validate_corporate_adaptation.py` validate one explicit contract or the exact shipped template/example inventory without mutation.
+- External-package mode rejects inline secrets, email addresses, internal hosts, production-like IDs, IPv4 addresses, user/UNC/POSIX paths, and real or non-reserved URL schemes.
+- Package mode rejects missing, malformed, linked, or extra adaptation YAML and scans discovered extras before failure.
+- The CLI emits stable JSON for valid, invalid, usage, and operational outcomes.
+
+### Synthetic Evidence And Review State
+
+- `process/examples/corporate-adaptation/pilot-evidence-synthetic.yaml` is complete synthetic evidence, including one retained failed attempt, intervention, deviation, human decisions, privacy, rollback, and routed follow-up. It is not a real pilot or model run.
+- `process/examples/corporate-adaptation/no-fork-routed-synthetic.yaml` demonstrates one reusable external change and one local configuration finding without an internal fork.
+- Task-level reviewer gates 1-4 completed sequentially. Each review produced one full finding batch, followed by one batched correction and focused rerun; no repeated reviewer loop was used.
+- Task 5 package integration/documentation review passed without findings. Task 6 returned one four-finding batch; all findings were corrected together, then focused verification passed `50/50` and the complete suite passed `710` with `4` skipped.
+- Focused pre-integration evidence: environment inventory 4/4, checklists 5/5, pilot evidence 4/4, and validator/no-fork/privacy/CLI 9/9.
+
+No model was run. No real corporate configuration or pilot evidence was created. `phase-2-12-rc7` remains immutable historical release-candidate evidence; work item 2.13 is closed, and its changes require Phase 2.14 candidate/acceptance reconciliation rather than rewriting rc7.

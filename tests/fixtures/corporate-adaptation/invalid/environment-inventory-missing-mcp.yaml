@@ -1,0 +1,15 @@
+schema_version: "1.0"
+kind: environment-inventory
+metadata: {inventory_id: null, environment_ref: null, collected_at: null, collected_by_role: null, source_release_id: null}
+inventory:
+  host: {operating_system: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}
+  runtimes: {python: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}
+  tools: {git: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}
+  package_distribution: {approved_channel: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}
+  network_policy: {outbound_access: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}
+  integrations:
+    bitbucket: &integration {availability: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}, version: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}, capabilities: {status: unresolved, value: [], evidence_refs: [], notes: "unknown"}, authentication: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}, constraints: {status: unresolved, value: [], evidence_refs: [], notes: "unknown"}}
+    jenkins: *integration
+    jira: *integration
+    confluence: *integration
+  ai: {ai_disabled_fallback: {status: unresolved, value: null, evidence_refs: [], notes: "unknown"}}

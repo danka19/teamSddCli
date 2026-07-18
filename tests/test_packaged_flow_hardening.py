@@ -40,8 +40,9 @@ def _update_fixture(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
     candidate = tmp_path / "candidate"
     central = tmp_path / "team-specs"
     backups = tmp_path / "rollbacks"
-    shutil.copytree(PROCESS, installed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    shutil.copytree(PROCESS, candidate, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    package_ignore = shutil.ignore_patterns("__pycache__", "*.pyc", "release")
+    shutil.copytree(PROCESS, installed, ignore=package_ignore)
+    shutil.copytree(PROCESS, candidate, ignore=package_ignore)
     shutil.copytree(TEAM_TEMPLATE, central)
     package = _yaml(candidate / "package.yaml")
     package["package"]["version"] = "0.3.0"
@@ -51,6 +52,18 @@ def _update_fixture(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
     config["process_package"]["location"] = "../process"
     _write_yaml(central / "sdd.config.yaml", config)
     return installed, candidate, central / "sdd.config.yaml", backups
+
+
+def test_repository_release_evidence_is_not_treated_as_a_distribution_root(
+    tmp_path: Path,
+) -> None:
+    operations._validate_standalone_package(PROCESS)
+    installed, candidate, config, _ = _update_fixture(tmp_path)
+    (candidate / "release").mkdir()
+    (candidate / "release" / "injected.txt").write_text("undeclared", encoding="utf-8")
+
+    with pytest.raises(OperationError, match="package-asset-undeclared"):
+        check_package_compatibility(installed, candidate, config)
 
 
 def test_standalone_package_validation_rejects_missing_declared_asset_before_write(

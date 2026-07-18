@@ -263,8 +263,9 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
 ) -> None:
     installed = tmp_path / "process"
     candidate = tmp_path / "candidate"
-    shutil.copytree(PROCESS, installed)
-    shutil.copytree(PROCESS, candidate)
+    package_ignore = shutil.ignore_patterns("release")
+    shutil.copytree(PROCESS, installed, ignore=package_ignore)
+    shutil.copytree(PROCESS, candidate, ignore=package_ignore)
     candidate_package = _yaml(candidate / "package.yaml")
     candidate_package["package"]["version"] = "0.3.0"
     (candidate / "package.yaml").write_text(
@@ -300,7 +301,7 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert history.read_bytes() == history_before
 
     bad = tmp_path / "bad-candidate"
-    shutil.copytree(PROCESS, bad)
+    shutil.copytree(PROCESS, bad, ignore=shutil.ignore_patterns("release"))
     (bad / "VERSION").write_text("9.9.9\n", encoding="utf-8")
     installed_before = (installed / "VERSION").read_bytes()
     config_before = config_path.read_bytes()

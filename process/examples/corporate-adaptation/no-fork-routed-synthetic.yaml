@@ -1,0 +1,24 @@
+schema_version: "1.0"
+kind: no-fork-assessment
+assessment_id: synthetic-no-fork-001
+recorded_at: "2026-07-18T00:00:00Z"
+recorded_by_role: external-maintainer
+canonical_external_source: openspec-change:synthetic-corporate-gap
+internal_package_fork_detected: false
+internal_process_package_changes: []
+findings:
+  - finding_id: synthetic-validator-gap
+    scope: reusable-gap
+    description: "A synthetic reusable validation rule needs clarification."
+    disposition: external-openspec-change
+    external_change_ref: openspec-change:synthetic-corporate-gap
+    internal_package_modified: false
+    evidence_refs: [evidence:synthetic-gap]
+  - finding_id: synthetic-owner-map
+    scope: local-configuration
+    description: "A synthetic owner mapping is missing."
+    disposition: local-configuration
+    external_change_ref: null
+    internal_package_modified: false
+    evidence_refs: [evidence:synthetic-owner-map]
+conclusion: compliant

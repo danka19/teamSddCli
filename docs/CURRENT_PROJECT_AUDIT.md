@@ -2,7 +2,13 @@
 
 Status: in_progress.
 
-Last status reconciliation: 2026-07-17.
+Last status reconciliation: 2026-07-18.
+
+## Phase And OpenSpec Status Reconciliation (2026-07-18)
+
+- Phase 2 remains `in_progress`; work items 2.1-2.13 are `closed`, and work item 2.14 is the next sequential item.
+- Transfer tasks 6.1-6.4 are implementation-complete: four closed schemas, five unresolved templates, two fully synthetic examples, a read-only validator/CLI, privacy and secret rejection, green-checklist gating, pilot-evidence integrity, rollback/hold coverage, and content-derived no-fork detection are registered in the versioned package. Transfer progress is 31/36.
+- All six task-level reviewer gates are complete. Tasks 1-4 each used one batched correction, task 5 passed cleanly, and task 6 used one final four-finding correction batch followed by `50 passed` focused and `710 passed, 4 skipped` complete verification. No real corporate configuration, pilot, or model run was performed.
 
 ## Phase And OpenSpec Status Reconciliation (2026-07-17)
 
@@ -29,7 +35,7 @@ Last status reconciliation: 2026-07-17.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 20/33 tasks complete and 13 remaining; `adopt-nis-corporate-process-governance` has 38/43 tasks complete and 5 remaining. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are execution-complete. Task 7.5 and NIS task 8.8 remain Phase 3 work. Both changes remain `in_progress`.
 - This historical 2026-07-15 snapshot predates adapter `2.2` and `D-018`. Its earlier fallback-only and adapter `2.1` blockers are superseded; the current accepted contour is Windows plus Linux/WSL2 with macOS explicitly not certified, and work item 2.12 is closed.
 
-Last updated: 2026-07-17.
+Last updated: 2026-07-18.
 
 ## Repository Baseline
 
@@ -107,7 +113,7 @@ Last updated: 2026-07-17.
 | AUDIT-017 | OpenSpec `1.4.1` is pinned and enforced by the reviewed central/project discovery and compatibility validator. Work item 2.2 verifies config/package/adapter versions, the exact runtime, local-only schema graphs, registries, secrets, and human/JSON diagnostics before mutation. | Phase 2 (work item 2.2) | closed |
 | AUDIT-018 | Analytics-source readiness is partially resolved: the language decision is made (Russian prose, English keywords/IDs), the corporate approval template is fully analyzed with a migration plan in `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`, and the 2026-07-09 decisions keep the existing Confluence analytics corpus as a read-only archive, avoid bulk migration for the first pilot, use Git-managed source or source+export with stable IDs for accepted diagrams/screens, and keep approval readiness minimal/validator-backed for now. Still open: concrete future schemas and validator checks for typed analytics artifacts and asset metadata. Local photos of the template live in git-ignored `arch-screenshots/analytic-template/` and must never be committed. | Phase 1/4 | open |
 | AUDIT-019 | Screenshots of an internal OpenSpec customization / repository-topology approach are available locally in git-ignored `arch-screenshots/openspec-de/`; they were reviewed on 2026-07-09 against the product goal, thin-MVP boundary, analytics-template mapping, and work item 1.4 criteria. The review is captured in `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` with the criteria frame in `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md`, and the recommendations are now routed into `define-repo-topology-config`, `define-change-artifact-contracts`, `define-change-lifecycle`, and weak-model planning docs. Binding topology/config/OpenSpec-version decisions were approved at gate 1.5 on 2026-07-09. | Phase 1 (work items 1.4/1.5) | closed |
-| AUDIT-020 | Transfer readiness is explicitly defined. Work items 2.1-2.12 are closed. Historical adapter `1.0`/`2.0`/`2.1` failures remain immutable; adapter `2.2` passed both model-family gates and AI-disabled 11/11. Immutable candidate `phase-2-12-rc7` passed Windows/WSL2 rehearsal, rollback, negative acceptance, archive preservation, and machine evidence closure; prior passing `rc6` remains preserved. Transfer progress is 27/36. Corporate adaptation, pilot materials, and human release acceptance remain open. | Phase 2/3 | mitigated |
+| AUDIT-020 | Transfer readiness is explicitly defined. Work items 2.1-2.13 are closed and 2.14 is next. Historical adapter `1.0`/`2.0`/`2.1` failures remain immutable; adapter `2.2` passed both model-family gates and AI-disabled 11/11. Immutable candidate `phase-2-12-rc7` passed Windows/WSL2 rehearsal, rollback, negative acceptance, archive preservation, and machine evidence closure; prior passing `rc6` remains preserved. Transfer progress is 31/36 after corporate-adaptation tasks 6.1-6.4. Final documentation/release reconciliation and human release acceptance remain open; no real corporate pilot was executed. | Phase 2/3 | mitigated |
 | AUDIT-021 | Actual-certification execution now binds a fresh full model digest and Ollama runtime version from an immutable runtime-identity catalog into preflight evidence and re-probes immediately before every matrix model call. All phase raw/result destinations fail closed before side effects unless they are new, external, non-aliased, non-reparse, non-overlapping paths under one artifact root. Historical raw and normalized evidence remains unchanged and validation-compatible. Ollama tag invocation is not digest-addressed, so a residual observation-to-call race remains documented. | Phase 2.11 | mitigated |
 | AUDIT-024 | Adapter `2.0` and `2.1` are immutable failed historical attempts. Adapter `2.2` resolves their operational ambiguity without weakening human authority; `simplify-weak-model-decision-contract` remains blocked and unpromoted because its own contract did not certify. | Phase 2.11 | mitigated |
 | AUDIT-025 | The 2026-07-17 ambiguity finding is resolved for the supported catalog. An identity-bound deterministic plan owns routing metadata; the model supplies only source-linked branch content; field-scoped authority checks accept safe human-handoff language and reject positive model authority. Both frozen families passed 5/5 and 15/15, AI-disabled passed 11/11, and no classifier agent, semantic retry, generic rules engine, or parallel documentation hierarchy was added. | Phase 2.11 | closed |

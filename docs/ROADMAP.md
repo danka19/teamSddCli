@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work items 2.1-2.12 are closed. Immutable candidate `phase-2-12-rc7` passed Windows full rehearsal and native-WSL2 portability smoke; transfer progress is 27/36 and work item 2.13 is the next planned sequential item.
+- Current roadmap focus: work items 2.1-2.13 are closed. Immutable candidate `phase-2-12-rc7` remains preserved; corporate-adaptation tasks 6.1-6.4 passed deterministic verification without real corporate values or model runs. Transfer progress is 31/36 and work item 2.14 is next.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -75,7 +75,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.12 are closed. Adapter `1.0`, `2.0`, and `2.1` evidence remains immutable historical baseline evidence; adapter `2.2` passed both frozen model-family gates, and immutable candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 release contour. Work item 2.13 is the next planned sequential item.
+Work items 2.1-2.13 are closed. Adapter `1.0`, `2.0`, and `2.1` evidence remains immutable historical baseline evidence; adapter `2.2` passed both frozen model-family gates, immutable candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 release contour, and the non-secret corporate-adaptation package passed deterministic closure/privacy/no-fork verification. Work item 2.14 is next.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 

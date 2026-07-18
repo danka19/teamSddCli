@@ -1,0 +1,17 @@
+schema_version: "1.0"
+kind: pilot-entry-checklist
+checklist_id: synthetic-pilot-entry
+evaluated_at: "2026-07-18T00:00:00Z"
+evaluated_by_role: pilot-owner
+status: green
+checks:
+  external_release_acceptance: {status: verified, evidence_refs: [decision:synthetic-release-acceptance], notes: null}
+  environment_inventory: {status: verified, evidence_refs: [evidence:inventory], notes: null}
+  configuration: {status: verified, evidence_refs: [evidence:configuration], notes: null}
+  pilot_candidate: {status: verified, evidence_refs: [change:synthetic-change], notes: null}
+  human_owners: {status: verified, evidence_refs: [evidence:owners], notes: null}
+  deterministic_gates: {status: verified, evidence_refs: [evidence:gates], notes: null}
+  ai_disabled_gates: {status: verified, evidence_refs: [evidence:ai-disabled], notes: null}
+  privacy_controls: {status: verified, evidence_refs: [evidence:privacy], notes: null}
+  rollback_or_hold: {status: verified, evidence_refs: [evidence:rollback], notes: null}
+  entry_decision: {status: verified, evidence_refs: [decision:synthetic-entry], notes: null}

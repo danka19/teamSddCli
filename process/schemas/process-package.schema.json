@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result", "corporate_environment_inventory", "corporate_adaptation_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -60,29 +60,40 @@
         "coverage_report": {"const": "schemas/coverage-report.schema.json"},
         "feedback_policy": {"const": "schemas/feedback-policy.schema.json"},
         "role_output_fixture": {"const": "schemas/role-output-fixture.schema.json"},
-        "actual_certification_operational_result": {"const": "schemas/actual-certification-operational-result.schema.json"}
+        "actual_certification_operational_result": {"const": "schemas/actual-certification-operational-result.schema.json"},
+        "corporate_environment_inventory": {"const": "schemas/corporate-environment-inventory.schema.json"},
+        "corporate_adaptation_checklist": {"const": "schemas/corporate-adaptation-checklist.schema.json"},
+        "corporate_pilot_evidence": {"const": "schemas/corporate-pilot-evidence.schema.json"},
+        "corporate_no_fork_assessment": {"const": "schemas/corporate-no-fork-assessment.schema.json"}
       }
     },
     "templates": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["change_v2", "change_package"],
+      "required": ["change_v2", "change_package", "corporate_environment_inventory", "corporate_configuration_checklist", "corporate_pilot_entry_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
         "change_v2": {"const": "templates/change-v2/change.yaml"},
-        "change_package": {"const": "templates/change/change.yaml"}
+        "change_package": {"const": "templates/change/change.yaml"},
+        "corporate_environment_inventory": {"const": "templates/corporate-adaptation/environment-inventory.yaml"},
+        "corporate_configuration_checklist": {"const": "templates/corporate-adaptation/configuration-checklist.yaml"},
+        "corporate_pilot_entry_checklist": {"const": "templates/corporate-adaptation/pilot-entry-checklist.yaml"},
+        "corporate_pilot_evidence": {"const": "templates/corporate-adaptation/pilot-evidence.yaml"},
+        "corporate_no_fork_assessment": {"const": "templates/corporate-adaptation/no-fork-assessment.yaml"}
       }
     },
     "examples": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["classification"],
+      "required": ["classification", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
         "classification": {
           "type": "array",
           "minItems": 3,
           "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
-        }
+        },
+        "corporate_pilot_evidence": {"const": "examples/corporate-adaptation/pilot-evidence-synthetic.yaml"},
+        "corporate_no_fork_assessment": {"const": "examples/corporate-adaptation/no-fork-routed-synthetic.yaml"}
       }
     },
     "read_packs": {
@@ -130,7 +141,7 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "errors.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
           "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]

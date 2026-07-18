@@ -1,0 +1,23 @@
+schema_version: "1.0"
+kind: pilot-evidence
+evidence_kind: synthetic-example
+pilot_id: synthetic-invalid
+recorded_at: "2026-07-18T00:00:00Z"
+recorded_by_role: pilot-owner
+installed_state: {release_id: synthetic-release, payload_digest: synthetic-digest, configuration_revision: synthetic-config, runtime_versions: [], adapter_versions: [], mcp_wiring_ref: null}
+selection: {change_id: synthetic-change, change_class: minor, class_rationale: "Synthetic rationale.", bounded_scope: "Synthetic scope.", risk_summary: "Synthetic risk."}
+traceability: {requirement_ids: [synthetic-req], scenario_ids: [synthetic-scn], task_ids: [], evidence_refs: []}
+gates:
+  definition_of_ready: &gate {status: not-evaluated, evidence_refs: [], decision_ref: null, notes: null}
+  implementation_complete: *gate
+  definition_of_done: *gate
+  release_or_transfer: *gate
+  archive_readiness: *gate
+delivery: {pr_refs: [], test_refs: [], verification_summary: null}
+failed_attempts: []
+interventions: []
+deviations: []
+privacy: {data_classification: synthetic-public, storage_ref: null, retention_ref: null, access_review_ref: null, issues: []}
+rollback_or_hold: {status: available, action: "Synthetic hold.", owner_role: maintainer, evidence_refs: []}
+follow_up_changes: []
+outcome: held

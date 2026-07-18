@@ -14,7 +14,7 @@
         "CLASSIFICATION_AND_MIGRATION.md", "CORPORATE_FLOW_CONTROLS.md",
         "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
         "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
-        "WEAK_MODEL_OPERATING_KIT.md"
+        "WEAK_MODEL_OPERATING_KIT.md", "CORPORATE_ADAPTATION_AND_PILOT.md"
       ]
     },
     "entry_points": {
@@ -34,6 +34,7 @@
         {"name": "review_tech_lead.py", "smoke": ["scripts/review_tech_lead.py", "--help"], "expected_exit_codes": [2]},
         {"name": "update_process_package.py", "smoke": ["scripts/update_process_package.py", "--help"], "expected_exit_codes": [0]},
         {"name": "validate_change.py", "smoke": ["scripts/validate_change.py", "--help"], "expected_exit_codes": [0]},
+        {"name": "validate_corporate_adaptation.py", "smoke": ["scripts/validate_corporate_adaptation.py", "--help"], "expected_exit_codes": [0]},
         {"name": "validate_external_mapping.py", "smoke": ["scripts/validate_external_mapping.py", "--help"], "expected_exit_codes": [0]},
         {"name": "validate_process_config.py", "smoke": ["scripts/validate_process_config.py", "--help"], "expected_exit_codes": [0]},
         {"name": "validate_traceability.py", "smoke": ["scripts/validate_traceability.py", "--help"], "expected_exit_codes": [0]}

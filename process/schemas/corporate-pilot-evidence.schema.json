@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "corporate-pilot-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "evidence_kind", "pilot_id", "recorded_at", "recorded_by_role", "installed_state", "selection", "traceability", "gates", "delivery", "human_decisions", "failed_attempts", "interventions", "deviations", "privacy", "rollback_or_hold", "follow_up_changes", "outcome"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "kind": {"const": "pilot-evidence"},
+    "evidence_kind": {"enum": ["template", "synthetic-example", "real-pilot"]},
+    "pilot_id": {"type": ["string", "null"], "minLength": 1},
+    "recorded_at": {"type": ["string", "null"], "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})$"},
+    "recorded_by_role": {"type": ["string", "null"], "minLength": 1},
+    "installed_state": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_id", "payload_digest", "configuration_revision", "runtime_versions", "adapter_versions", "mcp_wiring_ref"],
+      "properties": {
+        "release_id": {"type": ["string", "null"]},
+        "payload_digest": {"type": ["string", "null"]},
+        "configuration_revision": {"type": ["string", "null"]},
+        "runtime_versions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "adapter_versions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "mcp_wiring_ref": {"type": ["string", "null"]}
+      }
+    },
+    "selection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["change_id", "change_class", "class_rationale", "bounded_scope", "risk_summary"],
+      "properties": {
+        "change_id": {"type": ["string", "null"]},
+        "change_class": {"enum": ["minor", "major", "hotfix", null]},
+        "class_rationale": {"type": ["string", "null"]},
+        "bounded_scope": {"type": ["string", "null"]},
+        "risk_summary": {"type": ["string", "null"]}
+      }
+    },
+    "traceability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requirement_ids", "scenario_ids", "task_ids", "evidence_refs"],
+      "properties": {
+        "requirement_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "scenario_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "task_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "gates": {
+      "type": "object", "additionalProperties": false,
+      "required": ["definition_of_ready", "implementation_complete", "definition_of_done", "release_or_transfer", "archive_readiness"],
+      "properties": {
+        "definition_of_ready": {"$ref": "#/$defs/evidenceRecord"},
+        "implementation_complete": {"$ref": "#/$defs/evidenceRecord"},
+        "definition_of_done": {"$ref": "#/$defs/evidenceRecord"},
+        "release_or_transfer": {"$ref": "#/$defs/evidenceRecord"},
+        "archive_readiness": {"$ref": "#/$defs/evidenceRecord"}
+      }
+    },
+    "delivery": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pr_refs", "test_refs", "verification_summary"],
+      "properties": {
+        "pr_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "test_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "verification_summary": {"type": ["string", "null"]}
+      }
+    },
+    "human_decisions": {"type": "array", "items": {"$ref": "#/$defs/decision"}},
+    "failed_attempts": {"type": "array", "items": {"$ref": "#/$defs/attempt"}},
+    "interventions": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "deviations": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["data_classification", "storage_ref", "retention_ref", "access_review_ref", "issues"],
+      "properties": {
+        "data_classification": {"type": ["string", "null"]},
+        "storage_ref": {"type": ["string", "null"]},
+        "retention_ref": {"type": ["string", "null"]},
+        "access_review_ref": {"type": ["string", "null"]},
+        "issues": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "rollback_or_hold": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "action", "owner_role", "evidence_refs"],
+      "properties": {
+        "status": {"enum": ["not-evaluated", "available", "executed", "held", "unavailable"]},
+        "action": {"type": ["string", "null"]},
+        "owner_role": {"type": ["string", "null"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "follow_up_changes": {"type": "array", "items": {"$ref": "#/$defs/followUp"}},
+    "outcome": {"enum": ["not-executed", "passed", "failed", "held"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"evidence_kind": {"enum": ["synthetic-example", "real-pilot"]}}},
+      "then": {
+        "properties": {
+          "pilot_id": {"type": "string", "minLength": 1},
+          "recorded_at": {"type": "string", "format": "date-time"},
+          "recorded_by_role": {"type": "string", "minLength": 1},
+          "human_decisions": {"minItems": 1},
+          "installed_state": {"properties": {"release_id": {"type": "string", "minLength": 1}, "payload_digest": {"type": "string", "minLength": 1}, "configuration_revision": {"type": "string", "minLength": 1}, "runtime_versions": {"minItems": 1}, "adapter_versions": {"minItems": 1}, "mcp_wiring_ref": {"type": "string", "minLength": 1}}},
+          "selection": {"properties": {"change_id": {"type": "string", "minLength": 1}, "change_class": {"enum": ["minor", "major", "hotfix"]}, "class_rationale": {"type": "string", "minLength": 1}, "bounded_scope": {"type": "string", "minLength": 1}, "risk_summary": {"type": "string", "minLength": 1}}},
+          "traceability": {"properties": {"requirement_ids": {"minItems": 1}, "scenario_ids": {"minItems": 1}, "task_ids": {"minItems": 1}, "evidence_refs": {"minItems": 1}}},
+          "delivery": {"properties": {"pr_refs": {"minItems": 1}, "test_refs": {"minItems": 1}, "verification_summary": {"type": "string", "minLength": 1}}},
+          "privacy": {"properties": {"data_classification": {"type": "string", "minLength": 1}, "storage_ref": {"type": "string", "minLength": 1}, "retention_ref": {"type": "string", "minLength": 1}, "access_review_ref": {"type": "string", "minLength": 1}}},
+          "rollback_or_hold": {"properties": {"action": {"type": "string", "minLength": 1}, "owner_role": {"type": "string", "minLength": 1}, "evidence_refs": {"minItems": 1}}},
+          "outcome": {"enum": ["passed", "failed", "held"]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"outcome": {"const": "passed"}}},
+      "then": {
+        "properties": {
+          "gates": {"properties": {
+            "definition_of_ready": {"properties": {"status": {"const": "passed"}}},
+            "implementation_complete": {"properties": {"status": {"const": "passed"}}},
+            "definition_of_done": {"properties": {"status": {"const": "passed"}}},
+            "release_or_transfer": {"properties": {"status": {"enum": ["passed", "not-applicable"]}}},
+            "archive_readiness": {"properties": {"status": {"const": "passed"}}}
+          }},
+          "rollback_or_hold": {"properties": {"status": {"enum": ["available", "executed"]}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"outcome": {"enum": ["failed", "held"]}}},
+      "then": {"properties": {"rollback_or_hold": {"properties": {"status": {"enum": ["executed", "held"]}}}}}
+    }
+  ],
+  "$defs": {
+    "evidenceRecord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence_refs", "decision_ref", "notes"],
+      "properties": {
+        "status": {"enum": ["not-evaluated", "passed", "failed", "held", "not-applicable"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "decision_ref": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "oneOf": [
+        {"properties": {"status": {"const": "not-evaluated"}, "evidence_refs": {"maxItems": 0}, "decision_ref": {"type": "null"}}},
+        {"properties": {"status": {"const": "passed"}, "evidence_refs": {"minItems": 1}}},
+        {"properties": {"status": {"const": "failed"}, "evidence_refs": {"minItems": 1}, "notes": {"type": "string", "minLength": 1}}},
+        {"properties": {"status": {"const": "held"}, "evidence_refs": {"minItems": 1}, "decision_ref": {"type": "string", "minLength": 1}, "notes": {"type": "string", "minLength": 1}}},
+        {"properties": {"status": {"const": "not-applicable"}, "evidence_refs": {"maxItems": 0}, "decision_ref": {"type": "string", "minLength": 1}, "notes": {"type": "string", "minLength": 1}}}
+      ]
+    },
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_id", "role", "outcome", "evidence_ref"],
+      "properties": {
+        "decision_id": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "outcome": {"enum": ["approved", "rejected", "held", "accepted-risk", "not-applicable"]},
+        "evidence_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "attempt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt_id", "kind", "outcome", "version_or_configuration", "owner_disposition", "evidence_ref"],
+      "properties": {
+        "attempt_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["validation", "ai", "adapter", "integration", "workflow"]},
+        "outcome": {"enum": ["failed", "held", "aborted"]},
+        "version_or_configuration": {"type": "string", "minLength": 1},
+        "owner_disposition": {"type": "string", "minLength": 1},
+        "evidence_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["event_id", "reason", "actor_role", "effect", "evidence_ref"],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "actor_role": {"type": "string", "minLength": 1},
+        "effect": {"type": "string", "minLength": 1},
+        "evidence_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "followUp": {
+      "type": "object", "additionalProperties": false,
+      "required": ["change_ref", "scope", "owner_role", "status"],
+      "properties": {
+        "change_ref": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1},
+        "owner_role": {"type": "string", "minLength": 1},
+        "status": {"enum": ["proposed", "accepted", "rejected", "deferred"]}
+      }
+    }
+  }
+}

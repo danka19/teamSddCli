@@ -1,0 +1,15 @@
+schema_version: "1.0"
+kind: configuration-checklist
+checklist_id: null
+evaluated_at: null
+evaluated_by_role: null
+status: not-evaluated
+checks:
+  installed_package: {status: unresolved, evidence_refs: [], notes: "Verify release ID, payload digest, package version, config schema, and OpenSpec pin."}
+  project_mappings: {status: unresolved, evidence_refs: [], notes: "Verify real project IDs and paths in approved local configuration."}
+  owner_mappings: {status: unresolved, evidence_refs: [], notes: "Verify accountable owner groups, delegates, and escalation routes."}
+  secret_references: {status: unresolved, evidence_refs: [], notes: "Verify references to approved secret storage; never record secret values."}
+  integration_wiring: {status: unresolved, evidence_refs: [], notes: "Verify only approved Bitbucket, Jenkins, Jira, Confluence, and MCP wiring."}
+  rollback_path: {status: unresolved, evidence_refs: [], notes: "Rehearse restore of the previous pinned package/config without rewriting OpenSpec history."}
+  ai_disabled_fallback: {status: unresolved, evidence_refs: [], notes: "Run every mandatory gate with AI disabled."}
+  unresolved_inputs: {status: unresolved, evidence_refs: [], notes: "List unresolved environment facts; unresolved mandatory inputs block pilot entry."}

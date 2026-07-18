@@ -1,0 +1,16 @@
+schema_version: "1.0"
+kind: pilot-entry-checklist
+checklist_id: synthetic-invalid
+evaluated_at: "2026-07-18T00:00:00Z"
+evaluated_by_role: pilot-owner
+status: blocked
+checks:
+  external_release_acceptance: &check {status: unresolved, evidence_refs: [], notes: "missing"}
+  environment_inventory: *check
+  configuration: *check
+  pilot_candidate: *check
+  human_owners: *check
+  deterministic_gates: *check
+  privacy_controls: *check
+  rollback_or_hold: *check
+  entry_decision: *check

@@ -55,6 +55,8 @@ FALLBACK_COMMANDS = {
     "role-inbox": "Route the evidence pack to the configured human owner out of band.",
 }
 
+BUNDLED_PACKAGE_ROOT = Path(__file__).resolve().parent
+
 
 def load_yaml_input(path: Path) -> dict[str, Any]:
     """Load one CLI input mapping with stable operational-failure semantics."""
@@ -608,6 +610,10 @@ def _validate_standalone_package(
         _declared_directory(root, relative)
     for child in root.iterdir():
         if child.name in {"__pycache__", ".DS_Store"}:
+            continue
+        # Frozen host/release evidence is retained beside the trusted repository
+        # source package, but is deliberately absent from standalone candidates.
+        if child.name == "release" and root == BUNDLED_PACKAGE_ROOT:
             continue
         if child.is_file() and child.name not in declared_files:
             raise OperationError("package-asset-undeclared", "package root contains an undeclared file")

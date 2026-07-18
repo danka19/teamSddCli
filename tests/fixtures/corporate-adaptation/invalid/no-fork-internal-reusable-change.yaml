@@ -1,0 +1,17 @@
+schema_version: "1.0"
+kind: no-fork-assessment
+assessment_id: synthetic-invalid-fork
+recorded_at: "2026-07-18T00:00:00Z"
+recorded_by_role: internal-maintainer
+canonical_external_source: null
+internal_package_fork_detected: true
+internal_process_package_changes: [process/validators/private_rule.py]
+findings:
+  - finding_id: reusable-gap-kept-internal
+    scope: reusable-gap
+    description: "A reusable behavior change was implemented only inside the environment."
+    disposition: local-configuration
+    external_change_ref: null
+    internal_package_modified: true
+    evidence_refs: [evidence:synthetic-invalid]
+conclusion: compliant

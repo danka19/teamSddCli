@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "corporate-adaptation-checklist.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "checklist_id", "evaluated_at", "evaluated_by_role", "status", "checks"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "kind": {"enum": ["configuration-checklist", "pilot-entry-checklist"]},
+    "checklist_id": {"type": ["string", "null"], "minLength": 1},
+    "evaluated_at": {"type": ["string", "null"], "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})$"},
+    "evaluated_by_role": {"type": ["string", "null"], "minLength": 1},
+    "status": {"enum": ["not-evaluated", "green", "blocked"]},
+    "checks": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "configuration-checklist"}}},
+      "then": {"properties": {"checks": {"$ref": "#/$defs/configurationChecks"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "pilot-entry-checklist"}}},
+      "then": {"properties": {"checks": {"$ref": "#/$defs/pilotEntryChecks"}}}
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["green", "blocked"]}}},
+      "then": {
+        "properties": {
+          "checklist_id": {"type": "string", "minLength": 1},
+          "evaluated_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})$"},
+          "evaluated_by_role": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "configuration-checklist"}, "status": {"const": "green"}}},
+      "then": {"properties": {"checks": {"$ref": "#/$defs/configurationGreenChecks"}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "pilot-entry-checklist"}, "status": {"const": "green"}}},
+      "then": {"properties": {"checks": {"$ref": "#/$defs/pilotGreenChecks"}}}
+    }
+  ],
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence_refs", "notes"],
+      "properties": {
+        "status": {"enum": ["verified", "unresolved", "not-applicable", "failed"]},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "notes": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "verified"}}}, "then": {"properties": {"evidence_refs": {"minItems": 1}}}},
+        {"if": {"properties": {"status": {"enum": ["unresolved", "failed", "not-applicable"]}}}, "then": {"properties": {"notes": {"type": "string", "minLength": 1}}}}
+      ]
+    },
+    "configurationChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installed_package", "project_mappings", "owner_mappings", "secret_references", "integration_wiring", "rollback_path", "ai_disabled_fallback", "unresolved_inputs"],
+      "properties": {
+        "installed_package": {"$ref": "#/$defs/check"},
+        "project_mappings": {"$ref": "#/$defs/check"},
+        "owner_mappings": {"$ref": "#/$defs/check"},
+        "secret_references": {"$ref": "#/$defs/check"},
+        "integration_wiring": {"$ref": "#/$defs/check"},
+        "rollback_path": {"$ref": "#/$defs/check"},
+        "ai_disabled_fallback": {"$ref": "#/$defs/check"},
+        "unresolved_inputs": {"$ref": "#/$defs/check"}
+      }
+    },
+    "pilotEntryChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["external_release_acceptance", "environment_inventory", "configuration", "pilot_candidate", "human_owners", "deterministic_gates", "ai_disabled_gates", "privacy_controls", "rollback_or_hold", "entry_decision"],
+      "properties": {
+        "external_release_acceptance": {"$ref": "#/$defs/check"},
+        "environment_inventory": {"$ref": "#/$defs/check"},
+        "configuration": {"$ref": "#/$defs/check"},
+        "pilot_candidate": {"$ref": "#/$defs/check"},
+        "human_owners": {"$ref": "#/$defs/check"},
+        "deterministic_gates": {"$ref": "#/$defs/check"},
+        "ai_disabled_gates": {"$ref": "#/$defs/check"},
+        "privacy_controls": {"$ref": "#/$defs/check"},
+        "rollback_or_hold": {"$ref": "#/$defs/check"},
+        "entry_decision": {"$ref": "#/$defs/check"}
+      }
+    },
+    "verifiedCheck": {
+      "allOf": [
+        {"$ref": "#/$defs/check"},
+        {"properties": {"status": {"const": "verified"}}}
+      ]
+    },
+    "configurationGreenChecks": {
+      "type": "object",
+      "properties": {
+        "installed_package": {"$ref": "#/$defs/verifiedCheck"},
+        "project_mappings": {"$ref": "#/$defs/verifiedCheck"},
+        "owner_mappings": {"$ref": "#/$defs/verifiedCheck"},
+        "secret_references": {"$ref": "#/$defs/verifiedCheck"},
+        "integration_wiring": {"$ref": "#/$defs/verifiedCheck"},
+        "rollback_path": {"$ref": "#/$defs/verifiedCheck"},
+        "ai_disabled_fallback": {"$ref": "#/$defs/verifiedCheck"},
+        "unresolved_inputs": {
+          "allOf": [
+            {"$ref": "#/$defs/check"},
+            {"properties": {"status": {"enum": ["verified", "not-applicable"]}}}
+          ]
+        }
+      }
+    },
+    "pilotGreenChecks": {
+      "type": "object",
+      "properties": {
+        "external_release_acceptance": {"$ref": "#/$defs/verifiedCheck"},
+        "environment_inventory": {"$ref": "#/$defs/verifiedCheck"},
+        "configuration": {"$ref": "#/$defs/verifiedCheck"},
+        "pilot_candidate": {"$ref": "#/$defs/verifiedCheck"},
+        "human_owners": {"$ref": "#/$defs/verifiedCheck"},
+        "deterministic_gates": {"$ref": "#/$defs/verifiedCheck"},
+        "ai_disabled_gates": {"$ref": "#/$defs/verifiedCheck"},
+        "privacy_controls": {"$ref": "#/$defs/verifiedCheck"},
+        "rollback_or_hold": {"$ref": "#/$defs/verifiedCheck"},
+        "entry_decision": {"$ref": "#/$defs/verifiedCheck"}
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+schema_version: "1.0"
+kind: no-fork-assessment
+assessment_id: null
+recorded_at: null
+recorded_by_role: null
+canonical_external_source: null
+internal_package_fork_detected: false
+internal_process_package_changes: []
+findings: []
+conclusion: template

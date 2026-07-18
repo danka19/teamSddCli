@@ -1,0 +1,24 @@
+schema_version: "1.0"
+kind: pilot-evidence
+evidence_kind: template
+pilot_id: null
+recorded_at: null
+recorded_by_role: null
+installed_state: {release_id: null, payload_digest: null, configuration_revision: null, runtime_versions: [], adapter_versions: [], mcp_wiring_ref: null}
+selection: {change_id: null, change_class: null, class_rationale: null, bounded_scope: null, risk_summary: null}
+traceability: {requirement_ids: [], scenario_ids: [], task_ids: [], evidence_refs: []}
+gates:
+  definition_of_ready: &gate {status: not-evaluated, evidence_refs: [], decision_ref: null, notes: null}
+  implementation_complete: *gate
+  definition_of_done: *gate
+  release_or_transfer: *gate
+  archive_readiness: *gate
+delivery: {pr_refs: [], test_refs: [], verification_summary: null}
+human_decisions: []
+failed_attempts: []
+interventions: []
+deviations: []
+privacy: {data_classification: null, storage_ref: null, retention_ref: null, access_review_ref: null, issues: []}
+rollback_or_hold: {status: not-evaluated, action: null, owner_role: null, evidence_refs: []}
+follow_up_changes: []
+outcome: not-executed

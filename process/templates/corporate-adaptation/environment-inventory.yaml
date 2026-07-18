@@ -1,0 +1,59 @@
+schema_version: "1.0"
+kind: environment-inventory
+metadata:
+  inventory_id: null
+  environment_ref: null
+  collected_at: null
+  collected_by_role: null
+  source_release_id: null
+inventory:
+  host:
+    operating_system: {status: unresolved, value: null, evidence_refs: [], notes: "Record the verified OS version and architecture."}
+    shells: {status: unresolved, value: null, evidence_refs: [], notes: "Record available PowerShell or Bash versions."}
+  runtimes:
+    python: {status: unresolved, value: null, evidence_refs: [], notes: "Record the executable and version."}
+    node: {status: unresolved, value: null, evidence_refs: [], notes: "Record the executable and version."}
+  tools:
+    git: {status: unresolved, value: null, evidence_refs: [], notes: "Record the Git version and policy restrictions."}
+    openspec: {status: unresolved, value: null, evidence_refs: [], notes: "Verify the pinned OpenSpec version."}
+  package_distribution:
+    approved_channel: {status: unresolved, value: null, evidence_refs: [], notes: "Record the approved artifact channel without credentials."}
+    integrity_verification: {status: unresolved, value: null, evidence_refs: [], notes: "Record checksum and signature capabilities."}
+    installation_constraints: {status: unresolved, value: null, evidence_refs: [], notes: "Record restrictions that affect installation."}
+  network_policy:
+    outbound_access: {status: unresolved, value: null, evidence_refs: [], notes: "Record approved destinations and denial rules."}
+    proxy_tls: {status: unresolved, value: null, evidence_refs: [], notes: "Record proxy and certificate requirements without secrets."}
+    artifact_access: {status: unresolved, value: null, evidence_refs: [], notes: "Record repository and package-registry access policy."}
+  integrations:
+    bitbucket:
+      availability: {status: unresolved, value: null, evidence_refs: [], notes: "Verify availability."}
+      version: {status: unresolved, value: null, evidence_refs: [], notes: "Record the verified product version."}
+      capabilities: {status: unresolved, value: null, evidence_refs: [], notes: "Record PR, reviewer, and hook capabilities."}
+      authentication: {status: unresolved, value: null, evidence_refs: [], notes: "Record only an approved secret-reference mechanism."}
+      constraints: {status: unresolved, value: null, evidence_refs: [], notes: "Record policy limitations."}
+    jenkins:
+      availability: {status: unresolved, value: null, evidence_refs: [], notes: "Verify availability."}
+      version: {status: unresolved, value: null, evidence_refs: [], notes: "Record the verified product version."}
+      capabilities: {status: unresolved, value: null, evidence_refs: [], notes: "Record pipeline and artifact capabilities."}
+      authentication: {status: unresolved, value: null, evidence_refs: [], notes: "Record only an approved secret-reference mechanism."}
+      constraints: {status: unresolved, value: null, evidence_refs: [], notes: "Record policy limitations."}
+    jira:
+      availability: {status: unresolved, value: null, evidence_refs: [], notes: "Verify availability."}
+      version: {status: unresolved, value: null, evidence_refs: [], notes: "Record the verified product version."}
+      capabilities: {status: unresolved, value: null, evidence_refs: [], notes: "Record tracker and automation capabilities."}
+      authentication: {status: unresolved, value: null, evidence_refs: [], notes: "Record MCP or another approved secret-reference mechanism."}
+      constraints: {status: unresolved, value: null, evidence_refs: [], notes: "Record policy limitations."}
+    confluence:
+      availability: {status: unresolved, value: null, evidence_refs: [], notes: "Verify availability."}
+      version: {status: unresolved, value: null, evidence_refs: [], notes: "Record the verified product version."}
+      capabilities: {status: unresolved, value: null, evidence_refs: [], notes: "Record publication and comment capabilities."}
+      authentication: {status: unresolved, value: null, evidence_refs: [], notes: "Record MCP or another approved secret-reference mechanism."}
+      constraints: {status: unresolved, value: null, evidence_refs: [], notes: "Record policy limitations."}
+  mcp:
+    policy: {status: unresolved, value: null, evidence_refs: [], notes: "Record approved MCP use and prohibited surfaces."}
+    available_servers: {status: unresolved, value: null, evidence_refs: [], notes: "Record approved server identifiers and capabilities."}
+    provisioning: {status: unresolved, value: null, evidence_refs: [], notes: "Record manual or managed provisioning and fallback."}
+  ai:
+    available_cli_adapters: {status: unresolved, value: null, evidence_refs: [], notes: "Record adapter names and versions only after verification."}
+    available_models: {status: unresolved, value: null, evidence_refs: [], notes: "Record actual model identifiers and context limits only after verification."}
+    ai_disabled_fallback: {status: unresolved, value: null, evidence_refs: [], notes: "Verify every pilot gate without AI."}

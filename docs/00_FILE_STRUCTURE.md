@@ -61,6 +61,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
 | `docs/runbooks/CORPORATE_FLOW_CONTROLS.md` | Check-only corporate-flow, release handoff, role/WIP/pilot safety, and immutable failed-run operating contract |
+| `docs/runbooks/CORPORATE_ADAPTATION_AND_PILOT.md` | Phase 3 environment inventory, local configuration, pilot-entry, pilot-evidence, rollback/hold, privacy, and no-fork operating procedure |
 
 ## OpenSpec
 
@@ -117,6 +118,11 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/operation_plan.py` | Minimal deterministic case evaluator that binds weak-model action, artifact kind, reason codes, verified source inventory, unresolved inputs, and accountable human route before generation |
 | `process/schemas/weak-model-operation-plan.schema.json` | Closed identity-bound adapter `2.2` operation-plan contract |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
+| `process/corporate_adaptation.py` | Pure closed-schema, secret/privacy, green-checklist, pilot-evidence decision-reference, package-completeness, and no-fork validation |
+| `process/templates/corporate-adaptation/` | Non-secret unresolved templates for environment inventory, configuration, pilot entry, pilot evidence, and no-fork assessment |
+| `process/examples/corporate-adaptation/` | Fully synthetic pilot-evidence and routed no-fork examples; never real pilot or corporate configuration evidence |
+| `scripts/validate_corporate_adaptation.py` | Read-only human/JSON validator for one adaptation document or the closed shipped template/example package |
+| `tests/test_corporate_adaptation.py`, `tests/fixtures/corporate-adaptation/` | Scenario-first positive/negative schema, privacy, readiness, no-fork, CLI, and package-completeness evidence for work item 2.13 |
 | `tests/test_*.py` `SCENARIO_COVERAGE` markers | Test-source-owned exact selector-to-pytest-node bindings used to reject duplicate, unknown, unused, or unrelated evidence substitution |
 | `tests/test_feedback_policy.py` | Eight exact deterministic scenarios for the modified NIS feedback/publication-boundary requirement |
 | `scripts/build_read_pack.py`, `scripts/launch_role_task.py`, `scripts/check_weak_model_evidence.py`, `scripts/check_parallel_plan.py` | Stable AI-disabled weak-model kit entry points |
@@ -147,15 +153,13 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/runbooks/TECH_LEAD_GOVERNANCE.md` | Work item 2.6 owner/review/control inputs, commands, stable exits, non-mutation boundary, and synthetic AI-disabled evidence |
 | `tests/fixtures/tech-lead/` | Synthetic event/checkpoint, stop/resume, and forbidden-AI cases; explicitly not actual Qwen/DeepSeek certification |
 
-## Planned Phase 2 Project Structure
+## Phase 2 External Evidence
 
-The base `process/`, central-topology templates, schemas, and fixtures now exist. The following later-work-item paths remain planned:
+The reusable package, templates, schemas, fixtures, release candidate, and corporate-adaptation package now exist in the repository. Raw model and rehearsal output remains outside Git by policy:
 
 | Path | Purpose |
 |---|---|
 | External versioned `raw-artifact-v0.2.*-*-2026-07-*` roots | Immutable AI-disabled and actual Qwen/DeepSeek raw evidence outside Git for adapters `1.0`-`2.2`; normalized evidence and checksums are committed. Adapter `2.2` certified both model families and closed work item 2.11 |
-| Additional `docs/runbooks/` files | Update/rollback, governed lifecycle gates, Tech Lead, release, corporate adaptation, and pilot runbooks |
-| `scripts/bootstrap_team_specs.py` | Planned deterministic central-topology bootstrap entry point |
 
 ## Skills
 

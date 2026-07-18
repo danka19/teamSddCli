@@ -1,0 +1,17 @@
+schema_version: "1.0"
+kind: pilot-entry-checklist
+checklist_id: null
+evaluated_at: null
+evaluated_by_role: null
+status: not-evaluated
+checks:
+  external_release_acceptance: {status: unresolved, evidence_refs: [], notes: "Record the human acceptance decision for the exact external release candidate."}
+  environment_inventory: {status: unresolved, evidence_refs: [], notes: "Require a complete verified inventory with explicit unresolved facts."}
+  configuration: {status: unresolved, evidence_refs: [], notes: "Require a green configuration checklist."}
+  pilot_candidate: {status: unresolved, evidence_refs: [], notes: "Record bounded scope, class, rationale, risks, and selection owner."}
+  human_owners: {status: unresolved, evidence_refs: [], notes: "Confirm product, Tech Lead, QA, security when applicable, release, and rollback owners."}
+  deterministic_gates: {status: unresolved, evidence_refs: [], notes: "Run the applicable class-aware gates against real non-secret configuration."}
+  ai_disabled_gates: {status: unresolved, evidence_refs: [], notes: "Prove pilot entry and hold/rollback paths without AI."}
+  privacy_controls: {status: unresolved, evidence_refs: [], notes: "Verify data handling, logging, retention, access, and evidence storage."}
+  rollback_or_hold: {status: unresolved, evidence_refs: [], notes: "Verify the executable rollback or hold path and responsible owner."}
+  entry_decision: {status: unresolved, evidence_refs: [], notes: "Record the accountable human go, hold, or reject decision."}
