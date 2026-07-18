@@ -461,6 +461,11 @@ def _contains_private_bytes(data: bytes) -> bool:
     return _contains_private(value)
 
 
+def _host_evidence_id(release_id: str, platform_id: str) -> str:
+    release_series = re.sub(r"-rc\d+$", "", release_id)
+    return f"{release_series}-{platform_id}"
+
+
 def rehearse_release_candidate(
     candidate_root: Path, workspace: Path, options: RehearsalOptions
 ) -> dict[str, Any]:
@@ -572,7 +577,8 @@ def rehearse_release_candidate(
         completed_at = completed.strftime("%Y-%m-%dT%H:%M:%SZ")
         manifest_sha = hashlib.sha256((candidate / "release-manifest.yaml").read_bytes()).hexdigest()
         evidence = {
-            "schema_version": "1.0", "evidence_id": f"phase-2-12-{options.platform_id}",
+            "schema_version": "1.0",
+            "evidence_id": _host_evidence_id(manifest["release_id"], options.platform_id),
             "platform_id": options.platform_id, "evidence_level": options.evidence_level,
             "completed_at": completed_at, "payload_sha256": manifest["payload_sha256"],
             "manifest_sha256": manifest_sha,

@@ -160,6 +160,10 @@ def _host_row(candidate: Path, manifest: dict, platform: str) -> dict:
     }
 
 
+def test_host_evidence_id_is_derived_from_release_series() -> None:
+    assert release_candidate_module._host_evidence_id("phase-2-14-rc2", "windows") == "phase-2-14-windows"
+
+
 def _host_evidence(tmp_path: Path, candidate: Path, manifest: dict) -> Path:
     root = tmp_path / "host-evidence"
     root.mkdir()
