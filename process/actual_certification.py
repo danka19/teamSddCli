@@ -391,6 +391,10 @@ def adapter_generation_contract(
     raise ActualCertificationError("actual-model.unsupported-adapter-version")
 
 
+def _request_num_ctx(generation: dict[str, Any], model: dict[str, Any]) -> int | None:
+    return generation.get("num_ctx", model.get("context_length"))
+
+
 def _valid_fallback_route(route: Any) -> bool:
     if not isinstance(route, dict) or set(route) != {"mandatory_human_owner", "mandatory_human_decision"}:
         return False
@@ -702,13 +706,8 @@ def validate_phase_gate(
                 "num_predict": generation.get("num_predict"),
                 "response_schema_sha256": schema_sha256,
                 **(
-                    {
-                        "num_ctx": generation.get(
-                            "num_ctx", model["context_length"]
-                        )
-                    }
-                    if isinstance(model, dict)
-                    and model.get("context_length") is not None
+                    {"num_ctx": request_num_ctx}
+                    if isinstance(request_num_ctx := _request_num_ctx(generation, model), int)
                     else {}
                 ),
             }
@@ -1705,7 +1704,7 @@ def execute_model_catalog(
                 response_schema=response_schema,
                 think=generation["think"],
                 num_predict=generation["num_predict"],
-                num_ctx=generation.get("num_ctx", model.get("context_length")),
+                num_ctx=_request_num_ctx(generation, model),
                 contract_version=adapter["schema_version"],
                 launch_identity=launch["identity"],
             )

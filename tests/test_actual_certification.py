@@ -1613,6 +1613,13 @@ def test_runtime_adapter_profiles_are_versioned_and_fail_closed(tmp_path: Path) 
             load_adapter_profile(tmp_path, "qwen-class")
 
 
+def test_request_context_uses_adapter_profile_when_catalog_omits_context_length() -> None:
+    assert actual_certification._request_num_ctx(
+        {"num_ctx": 131072},
+        {"family": "qwen-class", "name": "qwen3.5:9b"},
+    ) == 131072
+
+
 def test_adapter_2_1_phase_gate_accepts_exact_identity_and_rejects_any_downgrade(
     tmp_path: Path,
 ) -> None:
