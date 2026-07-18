@@ -638,6 +638,35 @@ def test_inventory_rejects_unicode_casefold_collision_and_links(tmp_path: Path) 
         payload_inventory(root)
 
 
+@pytest.mark.parametrize(
+    "relative",
+    ["process/validators/__pycache__/check.cpython-313.pyc", "process/validators/check.pyc", "process/validators/check.pyo"],
+)
+def test_inventory_rejects_python_bytecode(tmp_path: Path, relative: str) -> None:
+    root = tmp_path / "payload"
+    target = root / relative
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"compiled-python-bytecode")
+
+    with pytest.raises(OperationError, match="release.bytecode-forbidden"):
+        payload_inventory(root)
+
+
+def test_copy_tree_excludes_python_bytecode_from_source(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    (source / "__pycache__").mkdir(parents=True)
+    (source / "validator.py").write_text("VALUE = 1\n", encoding="utf-8")
+    (source / "validator.pyc").write_bytes(b"compiled-python-bytecode")
+    (source / "__pycache__/validator.cpython-313.pyc").write_bytes(b"compiled-python-bytecode")
+
+    release_candidate_module._copy_tree(source, target, "process/validators")
+
+    assert (target / "validator.py").is_file()
+    assert not (target / "validator.pyc").exists()
+    assert not (target / "__pycache__").exists()
+
+
 def test_payload_root_link_or_reparse_is_rejected_before_resolution(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

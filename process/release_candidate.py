@@ -747,7 +747,17 @@ def _assert_no_mutable_evidence(parts: tuple[str, ...]) -> None:
             raise OperationError("release.mutable-evidence-forbidden", "mutable development or release evidence is not payload content")
 
 
-def payload_inventory(payload_root: Path) -> dict[str, Any]:
+def _is_python_bytecode(parts: tuple[str, ...]) -> bool:
+    folded = tuple(part.casefold() for part in parts)
+    return "__pycache__" in folded or folded[-1].endswith((".pyc", ".pyo"))
+
+
+def _assert_no_python_bytecode(parts: tuple[str, ...]) -> None:
+    if _is_python_bytecode(parts):
+        raise OperationError("release.bytecode-forbidden", "Python bytecode is not release payload content")
+
+
+def payload_inventory(payload_root: Path, *, _exclude_python_bytecode: bool = False) -> dict[str, Any]:
     """Inspect a payload and return its full sorted byte inventory and canonical digest."""
     root = _safe_directory_root(payload_root, "release.payload-missing")
     inventory: list[dict[str, Any]] = []
@@ -755,7 +765,11 @@ def payload_inventory(payload_root: Path) -> dict[str, Any]:
     for path in sorted(root.rglob("*"), key=lambda p: p.relative_to(root).as_posix()):
         relative = path.relative_to(root).as_posix()
         validate_portable_path(relative)
-        _assert_no_mutable_evidence(tuple(PurePosixPath(relative).parts))
+        parts = tuple(PurePosixPath(relative).parts)
+        _assert_no_mutable_evidence(parts)
+        if _exclude_python_bytecode and _is_python_bytecode(parts):
+            continue
+        _assert_no_python_bytecode(parts)
         identity = unicodedata.normalize("NFC", relative).casefold()
         previous = identities.setdefault(identity, relative)
         if previous != relative:
@@ -833,8 +847,15 @@ def _copy_tree(source: Path, target: Path, relative: str) -> None:
     if not source.is_dir() or _is_link_or_reparse(source):
         raise OperationError("release.asset-missing", f"declared asset root is unavailable: {relative}", exit_code=3)
     # Inspect source bytes and links before copying; destination receives regular files only.
-    payload_inventory(source)
-    shutil.copytree(source, target)
+    payload_inventory(source, _exclude_python_bytecode=True)
+
+    def ignore_bytecode(_directory: str, names: list[str]) -> set[str]:
+        return {
+            name for name in names
+            if name.casefold() == "__pycache__" or name.casefold().endswith((".pyc", ".pyo"))
+        }
+
+    shutil.copytree(source, target, ignore=ignore_bytecode)
 
 
 def _raw_artifacts(root: Path) -> list[dict[str, Any]]:
