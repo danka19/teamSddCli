@@ -8,8 +8,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Artifact height rules
@@ -18,8 +18,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
@@ -82,8 +82,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
@@ -92,8 +92,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
@@ -102,8 +102,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Future journey and screen artifacts
@@ -190,8 +190,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Archive history convention
@@ -200,8 +200,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Archive history convention
@@ -210,8 +210,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-lifecycle
   requirement: Delivered state is external to archive state
@@ -232,8 +232,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Derived approval and verification display
@@ -242,8 +242,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Derived approval and verification display
@@ -252,8 +252,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-lifecycle
   requirement: Deterministic transition gates
@@ -316,8 +316,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-lifecycle
   requirement: Lifecycle states
@@ -392,8 +392,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-package-foundation
   requirement: Classification-aware placeholder validation
@@ -432,8 +432,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Local change package validation
@@ -442,8 +442,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Local change package validation
@@ -452,8 +452,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Pre-commit validation entrypoint
@@ -462,8 +462,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Pre-commit validation entrypoint
@@ -472,8 +472,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Template placeholder validation mode
@@ -482,8 +482,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Template placeholder validation mode
@@ -492,8 +492,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-package-foundation
   requirement: Versioned corporate classification metadata
@@ -514,8 +514,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Confluence is generated publication
@@ -524,8 +524,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Confluence is generated publication
@@ -534,8 +534,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Evidence-backed status display
@@ -544,8 +544,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Evidence-backed status display
@@ -554,8 +554,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
@@ -564,8 +564,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
@@ -574,8 +574,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
@@ -584,8 +584,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
@@ -594,8 +594,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Generated publication assets
@@ -604,8 +604,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Generated publication assets
@@ -614,8 +614,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: confluence-feedback-loop
   requirement: Unresolved feedback and publication blockers
@@ -996,8 +996,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: AI verification checklist evidence
@@ -1006,8 +1006,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
@@ -1016,8 +1016,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
@@ -1026,8 +1026,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
@@ -1036,8 +1036,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Docs versus OpenSpec responsibility
@@ -1046,8 +1046,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Docs versus OpenSpec responsibility
@@ -1056,8 +1056,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
@@ -1066,8 +1066,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
@@ -1076,8 +1076,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
@@ -1086,8 +1086,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Human feedback memory
@@ -1096,8 +1096,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Human feedback memory
@@ -1106,8 +1106,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
@@ -1116,8 +1116,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
@@ -1126,8 +1126,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
@@ -1136,8 +1136,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
@@ -1146,8 +1146,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
@@ -1156,8 +1156,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
@@ -1166,8 +1166,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
@@ -1176,8 +1176,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
@@ -1186,8 +1186,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: readiness-completion-gates
   requirement: Archive readiness and archive approval
@@ -1346,8 +1346,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: First supported topology
@@ -1356,8 +1356,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: First supported topology
@@ -1366,8 +1366,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
@@ -1376,8 +1376,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
@@ -1386,8 +1386,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
@@ -1396,8 +1396,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
@@ -1406,8 +1406,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
@@ -1416,8 +1416,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
@@ -1426,8 +1426,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
@@ -1436,8 +1436,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
@@ -1446,8 +1446,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
@@ -1456,8 +1456,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
@@ -1466,8 +1466,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
@@ -1476,8 +1476,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
@@ -1486,8 +1486,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
@@ -1496,8 +1496,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
@@ -1506,8 +1506,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
@@ -1516,8 +1516,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
@@ -1526,8 +1526,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
@@ -1536,8 +1536,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
@@ -1546,8 +1546,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
@@ -1556,8 +1556,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
@@ -1566,8 +1566,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
@@ -1576,8 +1576,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
@@ -1586,8 +1586,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: repo-topology-config
   requirement: Tech lead ownership registry
@@ -1740,8 +1740,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
@@ -1840,8 +1840,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: traceability-contract
   requirement: Legacy baseline traceability
@@ -1850,8 +1850,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: traceability-contract
   requirement: Review-minimum traceability
@@ -1860,8 +1860,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: traceability-contract
   requirement: Review-minimum traceability
@@ -1870,8 +1870,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: traceability-contract
   requirement: Waived traceability links
@@ -1880,8 +1880,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: traceability-contract
   requirement: Waived traceability links
@@ -1890,8 +1890,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: First transfer boundary preserves later-layer exclusions
@@ -1900,8 +1900,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: First transfer boundary preserves later-layer exclusions
@@ -1910,8 +1910,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: Release evidence and auditability
@@ -1928,8 +1928,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: Release evidence and auditability
@@ -1964,8 +1964,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
@@ -2053,8 +2053,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
@@ -2063,8 +2063,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
@@ -2073,8 +2073,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
@@ -2083,8 +2083,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
@@ -2093,8 +2093,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
@@ -2103,8 +2103,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
@@ -2113,8 +2113,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
@@ -2123,8 +2123,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver policy baseline status
@@ -2133,8 +2133,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver policy baseline status
@@ -2143,8 +2143,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver record
@@ -2153,8 +2153,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver record
@@ -2163,8 +2163,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: AI remains advisory and non-authoritative
@@ -2179,8 +2179,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
@@ -2189,8 +2189,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
@@ -2199,8 +2199,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
@@ -2227,8 +2227,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Deterministic workflow launch
@@ -2237,8 +2237,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Evidence-backed weak-model output
@@ -2247,8 +2247,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Evidence-backed weak-model output
@@ -2269,8 +2269,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
@@ -2279,8 +2279,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
@@ -2289,8 +2289,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
@@ -2299,8 +2299,8 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Weak-model artifacts preserve source ownership
@@ -2309,11 +2309,76 @@ coverage:
     owner: transfer-readiness-owner
     risk: medium
     reason: no exact executable evidence is asserted for this scenario
-    compensation: manual source-linked review remains required
-    follow_up: phase-2.14-evidence-review
+    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Weak-model artifacts preserve source ownership
   scenario: Derived artifact conflict is corrected from source
   evidence:
   - case:conflicting-sources
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Certification records the evaluated runtime
+  evidence: [manual:phase-2-14-runtime-and-normalized-evidence]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Matrix execution rejects runtime identity drift
+  evidence: [manual:phase-2-14-preflight-matrix-gate]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Actual certification destinations are external and non-aliased
+  evidence: [manual:phase-2-14-external-raw-roots]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Model-facing contract is role specific and schema constrained
+  evidence: [manual:phase-2-14-launch-provenance]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Normalization cannot repair model semantics
+  evidence: [manual:phase-2-14-normalized-raw-binding]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Technical retry is bounded and retained
+  evidence: [manual:phase-2-14-attempt-ledger]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Preflight gates matrix execution
+  evidence: [manual:phase-2-14-preflight-matrix-gate]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Failed preflight evidence is retained without a matrix
+  evidence: [manual:phase-2-14-fail-closed-gate-evidence]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Certification covers first pilot roles
+  evidence: [manual:phase-2-14-qwen-deepseek-matrices]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Certification uses the accepted risk-oriented matrix
+  evidence: [manual:phase-2-14-qwen-deepseek-matrices]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Fluency does not substitute for compliance
+  evidence: [manual:phase-2-14-deterministic-gate]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Model limitation is routed explicitly
+  evidence: [manual:phase-2-14-normalized-limitations]
+- source_kind: delta
+  capability: weak-model-guardrails
+  requirement: Actual weak-model certification
+  scenario: Certification evidence is stored without private raw data in Git
+  evidence: [manual:phase-2-14-manifest-and-raw-snapshot]

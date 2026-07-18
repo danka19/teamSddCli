@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 and documentation gate 2.14.1 are closed. Immutable candidate `phase-2-12-rc7` remains preserved as historical evidence; final technical gate 2.14.2 is next.
+Status: in_progress. Work items 2.1-2.13 and gates 2.14.1-2.14.2 are closed. Immutable candidate `phase-2-14-rc2` has final candidate-bound evidence; historical candidate `phase-2-12-rc7` remains preserved. Evidence-only review gate 2.14.3 is next.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -737,7 +737,7 @@ No model was run. No real corporate configuration or pilot evidence was created.
 
 Status: `closed`. Transfer task 7.1 is complete; transfer tasks 7.2-7.4 and NIS tasks 8.5-8.7 remain open.
 
-- Roadmap, phase plan, current audit, repository map, verification checklist, and this evidence index now agree that 2.14 is in progress and 2.14.2 is next.
+- At the 2.14.1 closure checkpoint, the roadmap, phase plan, current audit, repository map, verification checklist, and this evidence index agreed that 2.14 was in progress and 2.14.2 was next. The current state is recorded at the top of this index and in the following 2.14.2 section.
 - The phase plan records the four 2.14 gates and the single allowed final model sequence: Qwen 5/5 then 15/15, full Qwen export, DeepSeek `num_ctx=8192` 5/5 then 15/15, full DeepSeek export, one normalization, and one gate-validation.
 - The historical rc7 manifest, host records, normalized evidence, raw logical roots, and acceptance packet remain checksum-valid and immutable. They do not cover the 2.13 package additions and cannot be presented as final-candidate evidence.
 - Coverage future-work routing now distinguishes historical evidence from final-candidate 2.14.2 work and real Phase 3 corporate/pilot execution. All 110 explicit residual gaps now route to `phase-2.14-evidence-review` rather than the closed 2.11 work item.
@@ -745,3 +745,16 @@ Status: `closed`. Transfer task 7.1 is complete; transfer tasks 7.2-7.4 and NIS 
 - The final candidate must exclude Python bytecode/cache residue, include the 14 corporate-adaptation payload assets added after rc7, and generate a separate 2.14 acceptance packet. These are 2.14.2 technical/evidence obligations, not retroactive rc7 edits.
 
 Durable audit: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md`.
+
+## Work Item 2.14.2: Final Technical Verification
+
+Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer progress is 33/36 and NIS progress is 40/43.
+
+- Immutable candidate `phase-2-14-rc2`: payload SHA-256 `c6efeb177f9e4a02a7590a34b2658f398e048cc3e8d5cb9bfe2083c2aaa55ccf`, manifest SHA-256 `97cccd5d360a47135b092a6de7451f9b800bbf9a996839640502b8475051ae7f`, 194 inventory files, zero bytecode/cache entries, and 48 checksum-bound raw references.
+- AI-disabled passed 11/11. Qwen and DeepSeek each passed the required 5/5 preflight followed by 15/15 matrix, all on attempt 1. The sequence used one normalization phase and one aggregate gate-validation pass; no model was rerun after contract-bound evidence was generated.
+- Windows full rehearsal and Linux/WSL2 portability smoke passed against the same manifest, including negative acceptance, rollback, archive preservation, privacy, and AI-disabled operation. macOS remains explicitly not certified.
+- Coverage is 334 effective scenarios: 204 covered, 110 explicit residual gaps routed to human acceptance, and 20 later-work scenarios. Gaps remain visible and are not represented as passing evidence.
+- Diagnostic candidate rc1 and the two failed WSL setup attempts remain retained as fail-closed history; neither was converted into passing evidence.
+- Final repository verification passed: focused regression `322 passed, 4 skipped`; complete suite `716 passed, 4 skipped in 241.87s`; strict OpenSpec validation 12/12; roadmap/OpenSpec validator 0 errors with two expected historical status warnings; final privacy scan found no tracked raw artifacts or personal workspace paths.
+
+Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`, `docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md`, `process/release/phase-2-14-release-manifest.yaml`, and the Phase 2.14 host/model evidence documents.

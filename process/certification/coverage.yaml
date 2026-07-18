@@ -65,14 +65,10 @@ sources:
   path: openspec/changes/adopt-nis-corporate-process-governance/specs/waiver-policy/spec.md
 evidence_manifest: process/certification/evidence-manifest.yaml
 future_work:
-- capability: weak-model-guardrails
-  requirement: Actual weak-model certification
-  work_item: '2.14.2'
-  reason: historical 2.11 certification is preserved, but the final immutable candidate requires one fresh candidate-bound model certification sequence
 - capability: transfer-readiness
   requirement: External release acceptance gate
-  work_item: 2.14.2-2.14.4
-  reason: historical rc7 machine evidence is preserved, while the final candidate still requires fresh technical evidence, review gates, and human acceptance
+  work_item: 2.14.3-2.14.4
+  reason: final candidate technical evidence is complete; evidence-only review gates and explicit human acceptance remain required
 - capability: transfer-readiness
   requirement: Corporate adaptation boundary
   work_item: Phase 3

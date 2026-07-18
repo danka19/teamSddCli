@@ -257,7 +257,13 @@ def test_coverage_composes_accepted_and_active_delta_scenarios() -> None:
     assert all(row["scenario"] and (row.get("evidence") or row.get("gap")) for row in report["coverage"])
     assert all(not isinstance(ref, str) or not (ref.startswith("pytest:") and "::" not in ref) for row in report["coverage"] for ref in row.get("evidence", []))
     future_selectors = {(row["capability"], row["requirement"], row.get("scenario")) for row in report["future_work"]}
-    assert ("weak-model-guardrails", "Actual weak-model certification", None) in future_selectors
+    assert ("weak-model-guardrails", "Actual weak-model certification", None) not in future_selectors
+    assert all(
+        row.get("evidence")
+        for row in report["coverage"]
+        if row["capability"] == "weak-model-guardrails"
+        and row["requirement"] == "Actual weak-model certification"
+    )
     assert not any(row["capability"] == "change-artifact-contracts" and row["requirement"] in {"Thin change artifact contract", "Full package artifact contract"} and row["source_kind"] == "accepted" for row in report["coverage"])
 
 

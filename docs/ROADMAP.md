@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work items 2.1-2.13 are closed and work item 2.14 is in progress. Documentation gate 2.14.1 is closed; immutable historical candidate `phase-2-12-rc7` remains preserved; transfer progress is 32/36 and final technical gate 2.14.2 is next.
+- Current roadmap focus: work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.2 are closed; immutable candidate `phase-2-14-rc2` has candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, and WSL2 evidence; transfer progress is 33/36 and evidence-only review gate 2.14.3 is next. Historical candidate `phase-2-12-rc7` remains preserved.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -75,7 +75,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.13 are closed and work item 2.14 is in progress. Documentation gate 2.14.1 is closed. Adapter `1.0`, `2.0`, and `2.1` evidence and candidate `phase-2-12-rc7` remain immutable history; transfer progress is 32/36 and final candidate-specific technical gate 2.14.2 is next.
+Work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.2 are closed. Candidate `phase-2-14-rc2` is frozen with its own manifest and certification evidence; adapter `1.0`, `2.0`, and `2.1` evidence and candidate `phase-2-12-rc7` remain immutable history. Transfer progress is 33/36 and evidence-only review gate 2.14.3 is next.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
