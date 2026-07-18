@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.13 are closed and work item 2.14 is next. Immutable candidate `phase-2-12-rc7` passed a full Windows rehearsal and bounded native-WSL2 portability smoke; the later non-secret corporate-adaptation templates passed deterministic closure, privacy, and no-fork verification without running a real pilot or model. Final release reconciliation and human acceptance remain mandatory. macOS is not certified.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.13 are closed, documentation gate 2.14.1 is closed, and final technical gate 2.14.2 is next. Immutable historical candidate `phase-2-12-rc7` passed a full Windows rehearsal and bounded native-WSL2 portability smoke; the later non-secret corporate-adaptation templates passed deterministic closure, privacy, and no-fork verification without running a real pilot or model. The final candidate still requires one candidate-bound technical/model certification, evidence-only review gates, and human acceptance. macOS is not certified.
 
 ## Scope
 

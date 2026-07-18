@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 are closed. Immutable candidate `phase-2-12-rc7` remains preserved; work item 2.14 is next.
+Status: in_progress. Work items 2.1-2.13 and documentation gate 2.14.1 are closed. Immutable candidate `phase-2-12-rc7` remains preserved as historical evidence; final technical gate 2.14.2 is next.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -529,7 +529,7 @@ Status: closed after implementation, independent architecture/review hardening, 
 
 ## Work Item 2.11: AI-Disabled And Weak-Model Certification Slice
 
-Status: `closed`. Transfer tasks 4.4-4.5 and 4.7-4.9 plus NIS tasks 8.2-8.3 are complete. Historical adapter `1.0`/`2.0`/`2.1` evidence remains immutable; adapter `2.2` passed both frozen model families and AI-disabled 11/11. Work item 2.12 is the next planned sequential item.
+Status: `closed`. Transfer tasks 4.4-4.5 and 4.7-4.9 plus NIS tasks 8.2-8.3 are complete. Historical adapter `1.0`/`2.0`/`2.1` evidence remains immutable; adapter `2.2` passed both frozen model families and AI-disabled 11/11. At this historical closure checkpoint, work item 2.12 became the next planned sequential item; current status is recorded at the top of this index.
 
 ### Evidence And Scope
 
@@ -732,3 +732,16 @@ Status: `closed`. Transfer tasks 6.1-6.4 and all six task-level reviewer gates a
 - Focused pre-integration evidence: environment inventory 4/4, checklists 5/5, pilot evidence 4/4, and validator/no-fork/privacy/CLI 9/9.
 
 No model was run. No real corporate configuration or pilot evidence was created. `phase-2-12-rc7` remains immutable historical release-candidate evidence; work item 2.13 is closed, and its changes require Phase 2.14 candidate/acceptance reconciliation rather than rewriting rc7.
+
+## Work Item 2.14.1: Documentation Reconciliation
+
+Status: `closed`. Transfer task 7.1 is complete; transfer tasks 7.2-7.4 and NIS tasks 8.5-8.7 remain open.
+
+- Roadmap, phase plan, current audit, repository map, verification checklist, and this evidence index now agree that 2.14 is in progress and 2.14.2 is next.
+- The phase plan records the four 2.14 gates and the single allowed final model sequence: Qwen 5/5 then 15/15, full Qwen export, DeepSeek `num_ctx=8192` 5/5 then 15/15, full DeepSeek export, one normalization, and one gate-validation.
+- The historical rc7 manifest, host records, normalized evidence, raw logical roots, and acceptance packet remain checksum-valid and immutable. They do not cover the 2.13 package additions and cannot be presented as final-candidate evidence.
+- Coverage future-work routing now distinguishes historical evidence from final-candidate 2.14.2 work and real Phase 3 corporate/pilot execution. All 110 explicit residual gaps now route to `phase-2.14-evidence-review` rather than the closed 2.11 work item.
+- Privacy reconciliation removed tracked personal workspace/username paths from current and historical operational docs. Tracked normalized evidence contains no raw model output, high-confidence credentials, email, private IP, or internal-host values. NIS/PPRB derived summaries remain subject to human data-classification confirmation before external publication.
+- The final candidate must exclude Python bytecode/cache residue, include the 14 corporate-adaptation payload assets added after rc7, and generate a separate 2.14 acceptance packet. These are 2.14.2 technical/evidence obligations, not retroactive rc7 edits.
+
+Durable audit: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md`.

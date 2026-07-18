@@ -20,7 +20,7 @@ Classification uses `pass`, `verified limitation`, `verified defect`, or `unveri
 
 ## Reproducible Evidence
 
-Environment: Windows workspace `C:\Users\danoc\Documents\projects\teamSsdCli`, branch `codex/phase-2-transfer-readiness-plan`, 2026-07-14.
+Environment: Windows workspace `<repository-root>`, branch `codex/phase-2-transfer-readiness-plan`, 2026-07-14.
 
 Commands:
 

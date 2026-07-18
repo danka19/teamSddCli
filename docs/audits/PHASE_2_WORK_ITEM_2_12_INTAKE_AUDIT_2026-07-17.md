@@ -27,7 +27,7 @@ Commands executed from the repository root:
 ```powershell
 git status --short
 git branch --show-current
-node "$env:USERPROFILE\.codex\skills\roadmap-openspec-validator\scripts\validate-roadmap-openspec.mjs" --root "C:\Users\danoc\Documents\projects\teamSsdCli" --json
+node "$env:USERPROFILE\.codex\skills\roadmap-openspec-validator\scripts\validate-roadmap-openspec.mjs" --root . --json
 openspec list
 openspec list --specs
 openspec validate --all --strict

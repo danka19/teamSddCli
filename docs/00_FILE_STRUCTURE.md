@@ -13,6 +13,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `.pre-commit-config.yaml` | Local pre-commit hook configuration for deterministic SDD change validation |
 | `pytest.ini` | Pytest configuration; uses a repository-local temp folder for this Windows workspace |
 | `requirements-test.txt` | Reproducible PyYAML and JSON Schema dependencies for process-package contract tests |
+| `process/` | Versioned deterministic process package, policies, schemas, templates, certification metadata/evidence, and historical release evidence |
 | `docs/handoffs/` | Bounded task handoffs to Claude (global `handoff-to-claude` skill) |
 | `openspec/` | Project OpenSpec changes and accepted specs for teamSddCli behavior |
 | `templates/` | Copyable SDD process templates |
@@ -53,10 +54,15 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_REMEDIATION_AUDIT_2026-07-16.md` | Dated adapter `2.0` remediation outcome, exact Qwen/DeepSeek failure evidence, AI-disabled regression, raw checksums, and residual human decision |
 | `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_1_AUDIT_2026-07-16.md` | Dated adapter `2.1` outcome with the adapter `2.0` ten-response classification, Qwen 2/5 and DeepSeek 0/5 evidence, zero retries, runtime/result checksums, AI-disabled 11/11, and residual limitations |
 | `docs/audits/PHASE_2_WORK_ITEM_2_11_ADAPTER_2_2_AUDIT_2026-07-17.md` | Dated passing adapter `2.2` audit covering deterministic operation planning, Qwen/DeepSeek 5/5 and 15/15 gates, AI-disabled 11/11, simplicity review, and residual limitations |
+| `docs/audits/PHASE_2_WORK_ITEM_2_11_OPERATIONAL_AMBIGUITY_AUDIT_2026-07-17.md` | Root-cause audit that separates model limitations from hidden validator/operation-plan ambiguity and motivates adapter `2.2` |
+| `docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md` | Immutable historical acceptance packet for `phase-2-12-rc7`; it must not be rewritten for the final 2.14 candidate |
+| `docs/audits/PHASE_2_WORK_ITEM_2_12_RELEASE_AUDIT_2026-07-17.md` | Windows/WSL2 release rehearsal, rollback, negative acceptance, and release evidence audit for rc7 |
+| `docs/audits/PHASE_2_WORK_ITEM_2_13_CORPORATE_ADAPTATION_AUDIT_2026-07-18.md` | Deterministic corporate-adaptation schema/template/privacy/no-fork evidence; no real corporate values, pilot, or model execution |
+| `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md` | Dated 2.14.1 audit of status, roadmap/OpenSpec, repository map, manifest/evidence links, privacy, and residual release-readiness work |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
-| `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | Ready Phase 2 plan for the external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
+| `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | In-progress Phase 2 plan for the external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
 | `docs/phases/PHASE_2_EVIDENCE_INDEX.md` | Phase 2 work-item source, implementation, verification, and independent-review evidence index |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
@@ -75,7 +81,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/specs/documentation-governance/spec.md` | Accepted spec for documentation source ownership, AI verification evidence, TDD-style checks, canonical language, localized generated views, write-once/reference-many rules, and weak-model read packs |
 | `openspec/specs/repo-topology-config/spec.md` | Accepted spec for the first supported repository topology, config files, process package distribution, OpenSpec version pin/upgrade policy, and owner/reviewer registry |
 | `openspec/specs/confluence-feedback-loop/spec.md` | Accepted spec for Confluence as generated publication/read model, feedback dispositions, blocker handling, configurable SLA, publication pipeline boundaries, and evidence-backed status display |
-| `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 36 implementation tasks; 23/36 are complete after work item 2.11 certification |
+| `openspec/changes/define-transfer-ready-process-package/` | Active apply-ready change proposing transfer-readiness and weak-model-guardrail capabilities, technical design, and 36 implementation tasks; 32/36 are complete after documentation gate 2.14.1 |
 | `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot safety, failed-run retention, and affected accepted-capability deltas |
 | `openspec/changes/determinize-weak-model-operational-decisions/` | In-progress Phase 2.11 remediation change with all 13 implementation tasks complete; it moves operation action, policy reason codes, required source inventory, artifact routing, and human action codes into an identity-bound deterministic plan while limiting the model to source-grounded draft or block explanation content |
 | `openspec/changes/simplify-weak-model-decision-contract/` | Blocked, unarchived historical adapter `2.1` remediation change for decision-discriminated role responses, non-leading guidance, structural-only retry, compatibility, runtime/evidence hardening, and append-only recertification; all 15 technical tasks are complete, but its own failed certification gate prevents accepted-spec promotion/archive. Its former work-item blocker was superseded by passing adapter `2.2`; work item 2.11 is closed |

@@ -67,20 +67,20 @@ evidence_manifest: process/certification/evidence-manifest.yaml
 future_work:
 - capability: weak-model-guardrails
   requirement: Actual weak-model certification
-  work_item: '2.11'
-  reason: actual model runtimes are intentionally not executed by fixture certification
+  work_item: '2.14.2'
+  reason: historical 2.11 certification is preserved, but the final immutable candidate requires one fresh candidate-bound model certification sequence
 - capability: transfer-readiness
   requirement: External release acceptance gate
-  work_item: 2.11/2.14
-  reason: AI-disabled and model runs plus human acceptance remain future work
+  work_item: 2.14.2-2.14.4
+  reason: historical rc7 machine evidence is preserved, while the final candidate still requires fresh technical evidence, review gates, and human acceptance
 - capability: transfer-readiness
   requirement: Corporate adaptation boundary
-  work_item: '2.13'
-  reason: corporate adaptation remains future work
+  work_item: Phase 3
+  reason: reusable templates and deterministic checks were implemented in 2.13, but real corporate values, approved wiring, and environment evidence remain Phase 3 work
 - capability: transfer-readiness
   requirement: Corporate pilot entry and acceptance
-  work_item: 2.13/Phase 3
-  reason: pilot work is outside this item
+  work_item: Phase 3
+  reason: pilot-entry and evidence contracts were implemented in 2.13, but the selected real governed-change pilot and its acceptance remain Phase 3 work
 - capability: change-artifact-contracts
   requirement: Future journey and screen artifacts
   work_item: Phase 4

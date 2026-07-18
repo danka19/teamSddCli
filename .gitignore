@@ -37,3 +37,7 @@ outputs/
 
 # Claude Code local settings
 .claude/settings.local.json
+.claude/launch.json
+
+# Local frontend/tool caches
+.vite/

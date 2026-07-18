@@ -25,10 +25,10 @@
 ### Task 1: Build the source-slide and content map
 
 **Files:**
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/template-audit.txt`
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/template-frame-map.json`
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/deviation-log.txt`
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/source-notes.txt`
+- Create: `<presentation-workspace>/template-audit.txt`
+- Create: `<presentation-workspace>/template-frame-map.json`
+- Create: `<presentation-workspace>/deviation-log.txt`
+- Create: `<presentation-workspace>/source-notes.txt`
 
 **Interfaces:**
 - Consumes: the approved presentation design, the 17-slide source deck inventory, `docs/audits/NIS_V1_6_PRESENTATION_COMPARISON_REPORT_2026-07-13.md`, and active NIS OpenSpec artifacts.
@@ -39,9 +39,8 @@
 Run:
 
 ```powershell
-$env:HOME='C:\Users\danoc'
 $env:PATH='C:\Program Files\Git\usr\bin;'+$env:PATH
-node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\template_following_scripts\inspect_template_deck.mjs" --workspace "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp" --pptx "C:\Users\danoc\Documents\projects\teamSsdCli\outputs\team-sdd-project-overview.pptx"
+node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\template_following_scripts\inspect_template_deck.mjs" --workspace "<presentation-workspace>" --pptx "<repository-root>\outputs\team-sdd-project-overview.pptx"
 ```
 
 Expected: exit code `0`, manifest reports `slideCount: 17`, and 17 source-slide PNGs plus 17 layout JSON files exist.
@@ -55,7 +54,7 @@ Create the four task files. The frame map must use source slides `1, 3, 4, 10, 8
 Run:
 
 ```powershell
-node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\template_following_scripts\validate_template_plan.mjs" --workspace "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp" --map "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-frame-map.json"
+node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\template_following_scripts\validate_template_plan.mjs" --workspace "<presentation-workspace>" --map "<presentation-workspace>\template-frame-map.json"
 ```
 
 Expected: exit code `0`; all 15 output slides and all inherited edit targets resolve.
@@ -63,8 +62,8 @@ Expected: exit code `0`; all 15 output slides and all inherited edit targets res
 ### Task 2: Create and author the inherited presentation
 
 **Files:**
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/template-starter.pptx`
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/build-deck.mjs`
+- Create: `<presentation-workspace>/template-starter.pptx`
+- Create: `<presentation-workspace>/build-deck.mjs`
 - Create: `outputs/nis-vs-team-sdd-engineering-evolution.pptx`
 
 **Interfaces:**
@@ -76,7 +75,7 @@ Expected: exit code `0`; all 15 output slides and all inherited edit targets res
 Run:
 
 ```powershell
-node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\template_following_scripts\prepare_template_starter_deck.mjs" --workspace "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp" --pptx "C:\Users\danoc\Documents\projects\teamSsdCli\outputs\team-sdd-project-overview.pptx" --map "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-frame-map.json" --out "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter.pptx" --preview-dir "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter-preview" --layout-dir "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter-layout" --contact-sheet "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter-contact-sheet.png"
+node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\template_following_scripts\prepare_template_starter_deck.mjs" --workspace "<presentation-workspace>" --pptx "<repository-root>\outputs\team-sdd-project-overview.pptx" --map "<presentation-workspace>\template-frame-map.json" --out "<presentation-workspace>\template-starter.pptx" --preview-dir "<presentation-workspace>\template-starter-preview" --layout-dir "<presentation-workspace>\template-starter-layout" --contact-sheet "<presentation-workspace>\template-starter-contact-sheet.png"
 ```
 
 Expected: exit code `0`; starter deck contains exactly 15 inherited slides.
@@ -86,7 +85,7 @@ Expected: exit code `0`; starter deck contains exactly 15 inherited slides.
 Run:
 
 ```powershell
-node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\container_tools\setup_artifact_tool_workspace.mjs" --workspace "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp"
+node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\container_tools\setup_artifact_tool_workspace.mjs" --workspace "<presentation-workspace>"
 ```
 
 Expected: `node_modules/@oai/artifact-tool` resolves inside the scratch workspace.
@@ -100,7 +99,7 @@ import fs from "node:fs/promises";
 import { FileBlob, PresentationFile } from "@oai/artifact-tool";
 
 const presentation = await PresentationFile.importPptx(
-  await FileBlob.load("C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/template-starter.pptx"),
+  await FileBlob.load("<presentation-workspace>/template-starter.pptx"),
 );
 
 // Resolve only inherited targets declared in template-frame-map.json.
@@ -109,8 +108,8 @@ const presentation = await PresentationFile.importPptx(
 // Export slide renders/layouts and the final editable PPTX.
 
 const pptx = await PresentationFile.exportPptx(presentation);
-await fs.mkdir("C:/Users/danoc/Documents/projects/teamSsdCli/outputs", { recursive: true });
-await pptx.save("C:/Users/danoc/Documents/projects/teamSsdCli/outputs/nis-vs-team-sdd-engineering-evolution.pptx");
+await fs.mkdir("<repository-root>/outputs", { recursive: true });
+await pptx.save("<repository-root>/outputs/nis-vs-team-sdd-engineering-evolution.pptx");
 ```
 
 The completed module must contain the exact approved Russian visible copy and notes for all 15 slides; it must not create parallel replacement layouts over inherited slides.
@@ -120,7 +119,7 @@ The completed module must contain the exact approved Russian visible copy and no
 Run:
 
 ```powershell
-node "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\build-deck.mjs"
+node "<presentation-workspace>\build-deck.mjs"
 ```
 
 Expected: exit code `0`; final PPTX exists and contains 15 slides.
@@ -128,8 +127,8 @@ Expected: exit code `0`; final PPTX exists and contains 15 slides.
 ### Task 3: Verify content, notes, and visual fidelity
 
 **Files:**
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/qa/content-check.txt`
-- Create: `C:/Users/danoc/AppData/Local/Temp/codex-presentations/019f5ef7-618d-7d72-bf1f-b9649a27d5d3/nis-team-sdd/tmp/qa/slide-review.txt`
+- Create: `<presentation-workspace>/qa/content-check.txt`
+- Create: `<presentation-workspace>/qa/slide-review.txt`
 
 **Interfaces:**
 - Consumes: final PPTX, final renders/layouts, approved design, and current NIS comparison report.
@@ -140,7 +139,7 @@ Expected: exit code `0`; final PPTX exists and contains 15 slides.
 Run:
 
 ```powershell
-python "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\container_tools\slides_test.py" "C:\Users\danoc\Documents\projects\teamSsdCli\outputs\nis-vs-team-sdd-engineering-evolution.pptx"
+python "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\container_tools\slides_test.py" "<repository-root>\outputs\nis-vs-team-sdd-engineering-evolution.pptx"
 ```
 
 Expected: exit code `0`; no slide content exceeds the canvas.
@@ -150,7 +149,7 @@ Expected: exit code `0`; no slide content exceeds the canvas.
 Run:
 
 ```powershell
-node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\26.709.11516\skills\presentations\template_following_scripts\check_template_fidelity.mjs" --workspace "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp" --starter-pptx "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter.pptx" --final-pptx "C:\Users\danoc\Documents\projects\teamSsdCli\outputs\nis-vs-team-sdd-engineering-evolution.pptx" --map "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-frame-map.json" --starter-layout-dir "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\template-starter-layout" --final-layout-dir "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp\layout\final" --edit-dir "C:\Users\danoc\AppData\Local\Temp\codex-presentations\019f5ef7-618d-7d72-bf1f-b9649a27d5d3\nis-team-sdd\tmp"
+node "$env:USERPROFILE\.codex\plugins\cache\openai-primary-runtime\presentations\<presentations-runtime-version>\skills\presentations\template_following_scripts\check_template_fidelity.mjs" --workspace "<presentation-workspace>" --starter-pptx "<presentation-workspace>\template-starter.pptx" --final-pptx "<repository-root>\outputs\nis-vs-team-sdd-engineering-evolution.pptx" --map "<presentation-workspace>\template-frame-map.json" --starter-layout-dir "<presentation-workspace>\template-starter-layout" --final-layout-dir "<presentation-workspace>\layout\final" --edit-dir "<presentation-workspace>"
 ```
 
 Expected: exit code `0`; no unauthorized template divergence or unresolved inherited placeholder remains.
