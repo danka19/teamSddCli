@@ -8,7 +8,7 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.13 and gates 2.14.1-2.14.2 are closed. Immutable candidate `phase-2-14-rc2` has its own manifest plus deterministic, AI-disabled, Qwen, DeepSeek, Windows, and bounded native-WSL2 evidence; evidence-only review gate 2.14.3 is next, followed by explicit human acceptance. Historical candidate `phase-2-12-rc7` remains preserved. No real corporate configuration or pilot has run, and macOS is not certified.
+> Phase 1 has produced the first accepted OpenSpec baseline. Phase 2 is in progress: work items 2.1-2.13 and gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` has its own manifest plus deterministic, AI-disabled, Qwen, DeepSeek, Windows, bounded native-WSL2, source-linked coverage, and passing review evidence. Explicit human acceptance is now required. Historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. No real corporate configuration or pilot has run, and macOS is not certified.
 
 ## Scope
 

@@ -61,6 +61,6 @@
 - [x] 8.3 Run the approved Qwen-class and DeepSeek-class certification matrix, including authority-boundary, failed-run, manual-intervention, and QA-review cases.
 - [x] 8.4 Rehearse check/apply migration, idempotency, process-package version rollback/hold, and no-archive-rewrite behavior on synthetic legacy and current packages.
 - [x] 8.5 Update the transfer manifest, adaptation checklist, operating runbook, phase evidence index, and release-candidate acceptance packet with all new schemas, reports, role evidence, limitations, and follow-ups.
-- [ ] 8.6 Run `openspec validate --all --strict`, project verification, secret/privacy scans, documentation-sync audit, and a source-linked human acceptance-readiness review before requesting human acceptance for the transfer-ready release.
+- [x] 8.6 Run `openspec validate --all --strict`, project verification, secret/privacy scans, documentation-sync audit, and a source-linked human acceptance-readiness review before requesting human acceptance for the transfer-ready release.
 - [ ] 8.7 Stop at the external release-candidate human-owner gate with mandatory Tech Lead and QA evidence plus security evidence when applicable; do not begin corporate configuration or the pilot before acceptance.
 - [ ] 8.8 After external acceptance, configure real corporate values and run one monitored Phase 3 change without creating an internal behavior fork.

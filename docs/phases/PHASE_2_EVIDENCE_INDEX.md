@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 and gates 2.14.1-2.14.2 are closed. Immutable candidate `phase-2-14-rc2` has final candidate-bound evidence; historical candidate `phase-2-12-rc7` remains preserved. Evidence-only review gate 2.14.3 is next.
+Status: in_progress. Work items 2.1-2.13 and gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` has final candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. Mandatory human gate 2.14.4 is next.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -750,7 +750,7 @@ Durable audit: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_
 
 Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer progress is 33/36 and NIS progress is 40/43.
 
-- Immutable candidate `phase-2-14-rc2`: payload SHA-256 `c6efeb177f9e4a02a7590a34b2658f398e048cc3e8d5cb9bfe2083c2aaa55ccf`, manifest SHA-256 `97cccd5d360a47135b092a6de7451f9b800bbf9a996839640502b8475051ae7f`, 194 inventory files, zero bytecode/cache entries, and 48 checksum-bound raw references.
+- Immutable candidate `phase-2-14-rc4`: payload SHA-256 `4159e43961c5c59005d63fb6f305f9b0b5bac18517f8fd02d3e6b27e711ed6e1`, manifest SHA-256 `33aa240261ed0a660a3fc6b7ef85d847215cf5a3cd1f5afb423f28ca45cd02cb`, 194 inventory files, zero bytecode/cache entries, and 48 checksum-bound raw references. Rc2 and rc3 are retained as diagnostic review-failed candidates because their coverage/evidence payloads were not final-source-resolvable.
 - AI-disabled passed 11/11. Qwen and DeepSeek each passed the required 5/5 preflight followed by 15/15 matrix, all on attempt 1. The sequence used one normalization phase and one aggregate gate-validation pass; no model was rerun after contract-bound evidence was generated.
 - Windows full rehearsal and Linux/WSL2 portability smoke passed against the same manifest, including negative acceptance, rollback, archive preservation, privacy, and AI-disabled operation. macOS remains explicitly not certified.
 - Coverage is 334 effective scenarios: 204 covered, 110 explicit residual gaps routed to human acceptance, and 20 later-work scenarios. Gaps remain visible and are not represented as passing evidence.
@@ -758,3 +758,14 @@ Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer prog
 - Final repository verification passed: focused regression `322 passed, 4 skipped`; complete suite `716 passed, 4 skipped in 241.87s`; strict OpenSpec validation 12/12; roadmap/OpenSpec validator 0 errors with two expected historical status warnings; final privacy scan found no tracked raw artifacts or personal workspace paths.
 
 Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`, `docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md`, `process/release/phase-2-14-release-manifest.yaml`, and the Phase 2.14 host/model evidence documents.
+
+## Work Item 2.14.3: Review Gates
+
+Status: `closed`. Transfer task 7.3 and NIS task 8.6 are complete; transfer progress is 34/36 and NIS progress is 41/43.
+
+- Initial reviewer and architecture findings correctly rejected rc2/rc3 provenance: final coverage files were not frozen at the right boundary, free-form manual evidence was not resolvable, and final-candidate scenarios still cited rc7.
+- The correction batch made manual evidence fail closed, replaced stale/free-form references with exact final paths, rebuilt rc4, and repeated Windows/WSL2 rehearsal plus machine acceptance without changing or rerunning model-bound contracts.
+- Worker, independent reviewer, independent architecture, and integration-owner verification-fallback gates passed. Reviewers ran no model and no complete pytest suite.
+- No unresolved review finding remains. Human acceptance is not inferred from these technical reviews.
+
+Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md`.

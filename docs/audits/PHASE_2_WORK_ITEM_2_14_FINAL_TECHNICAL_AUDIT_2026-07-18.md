@@ -6,15 +6,15 @@ Status: passed; evidence-only review gates remain required before human acceptan
 
 ## Certified Candidate
 
-- Release ID: `phase-2-14-rc2`.
-- Source commit at candidate construction: `08b4732434e69312c53a7c0bf22868f82a4522ab`.
-- Payload SHA-256: `c6efeb177f9e4a02a7590a34b2658f398e048cc3e8d5cb9bfe2083c2aaa55ccf`.
-- Manifest SHA-256: `97cccd5d360a47135b092a6de7451f9b800bbf9a996839640502b8475051ae7f`.
+- Release ID: `phase-2-14-rc4`.
+- Source commit at candidate construction: `588bbbd2de7089d5dd4935b53cd2350c54fb0965`.
+- Payload SHA-256: `4159e43961c5c59005d63fb6f305f9b0b5bac18517f8fd02d3e6b27e711ed6e1`.
+- Manifest SHA-256: `33aa240261ed0a660a3fc6b7ef85d847215cf5a3cd1f5afb423f28ca45cd02cb`.
 - Payload inventory: 194 files; Python bytecode/cache entries: 0.
 - Raw manifest references: 48 files across the complete Qwen and DeepSeek roots.
 - Machine acceptance: `evidence-complete`, no diagnostics, `human_acceptance_required: true`.
 
-Candidate `phase-2-14-rc1` is retained as diagnostic history. It was not rehearsed or accepted because pre-rehearsal inspection found that host evidence IDs were still hard-coded to the historical Phase 2.12 series. Rc2 contains the corrected release-series binding.
+Candidates rc1-rc3 are retained as diagnostic history. Rc1 was rejected before rehearsal because host evidence IDs were still hard-coded to Phase 2.12. Review found that rc2 froze pre-final coverage/evidence files, and rc3 was built before manual evidence provenance became fail-closed. Rc4 contains the final reconciled coverage/evidence files and resolvable manual references; both host rehearsals and machine acceptance were repeated for its new digest. Model-bound contracts did not change, so the one allowed model sequence was not repeated.
 
 ## Deterministic Verification
 
@@ -25,6 +25,7 @@ Candidate `phase-2-14-rc1` is retained as diagnostic history. It was not rehears
 | Package/config/corporate-adaptation tests | `84 passed` |
 | Actual-certification focused tests | `109 passed, 1 skipped` after context-binding correction |
 | Coverage reconciliation tests | `48 passed, 2 skipped`; 334 effective scenarios = 204 covered + 110 explicit gaps + 20 later-work scenarios |
+| Post-review provenance regression | `130 passed, 3 skipped` across certification and release-candidate tests; includes fail-closed manual evidence resolution |
 | Legacy template | `python scripts/validate_change.py --allow-placeholders templates/change` passed |
 | Package validator | `python scripts/validate_corporate_adaptation.py --package --json` returned `valid` |
 | Complete suite | `716 passed, 4 skipped in 241.87s` |
@@ -60,6 +61,7 @@ The first WSL invocation retained a useful fail-closed diagnostic: executing the
 1. Release builder/validator admitted generated Python bytecode. Fixed with exclusion plus fail-closed validation and regression tests.
 2. Adapter `2.2` gate revalidation omitted adapter-owned `num_ctx` when the model catalog did not duplicate `context_length`. Fixed without repeating the already valid Qwen preflight; saved raw bytes then passed revalidation.
 3. Host evidence IDs were hard-coded to Phase 2.12. Fixed by deriving the release series from the manifest release ID; rc1 was superseded by rc2 rather than mutated.
+4. Review found that rc2/rc3 did not contain final source-resolvable coverage provenance. Manual evidence references now fail closed unless they resolve to repository files; stale rc7 and free-form Phase 2.14 labels were replaced by exact final manifest, host, normalized evidence, and audit paths. Rc4 was rebuilt and both host rehearsals were repeated.
 
 No prompt, response schema, operation plan, authority/source semantics, model identity, or runtime profile changed after the actual-model sequence. No model was rerun.
 

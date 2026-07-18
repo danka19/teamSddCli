@@ -51,6 +51,6 @@
 
 - [x] 7.1 Update repository structure, setup, operations, context, roadmap, audit, and role-facing documentation to reference canonical OpenSpec requirements without duplicating normative text.
 - [x] 7.2 Run focused tests, full tests, template/config/package validation, AI-disabled certification, actual weak-model certification, `openspec list`, `openspec list --specs`, `openspec validate --all --strict`, and `git diff --check`.
-- [ ] 7.3 Complete worker, reviewer, architecture-checker, and verification-checker gates for each Phase 2 work item when execution tooling is available, or record the local fallback and limitation.
+- [x] 7.3 Complete worker, reviewer, architecture-checker, and verification-checker gates for each Phase 2 work item when execution tooling is available, or record the local fallback and limitation.
 - [ ] 7.4 Stop for final human-owner acceptance of the external release candidate, supported by mandatory Tech Lead and QA evidence plus security evidence when applicable, before any corporate pilot starts.
 - [ ] 7.5 After successful corporate adaptation and pilot evidence, stop for human acceptance before promoting or archiving the new OpenSpec capabilities.
