@@ -130,3 +130,10 @@ Adapter `2.2` requires at least one canonical citation in every draft branch.
 For DeepSeek it also bounds the actual Ollama request to `num_ctx=8192`; the
 catalog's 131072 value remains model capability metadata, not the operational
 allocation used by certification.
+
+Final work item 2.14 certification is normalized at
+`phase-2-14-qwen-adapter-2-2-2026-07-18.yaml` and
+`phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml`. Both frozen families again
+passed 5/5 preflight and 15/15 matrix cases on attempt 1; the retained
+AI-disabled artifact passed 11/11. The release selector points only to these
+candidate-specific normalized records and their complete external raw roots.
