@@ -1917,8 +1917,8 @@ coverage:
   requirement: Release evidence and auditability
   scenario: Release manifest identifies what was certified
   evidence:
-  - manual:process/release/release-manifest.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/phase-2-14-release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_build_is_byte_stable_and_manifest_binds_payload_only
 - source_kind: delta
   capability: transfer-readiness
@@ -1936,25 +1936,25 @@ coverage:
   scenario: Verification coverage is traceable and gaps remain visible
   evidence:
   - manual:process/certification/coverage.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md
   - pytest:tests/test_certification.py::test_coverage_composes_accepted_and_active_delta_scenarios
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
   scenario: Supported hosts produce proportionate governed evidence
   evidence:
-  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
-  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/evidence/phase-2-14-windows-2026-07-18.yaml
+  - manual:process/release/evidence/phase-2-14-linux-wsl2-2026-07-18.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
   scenario: Clean environment can bootstrap the reference setup
   evidence:
-  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
-  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/evidence/phase-2-14-windows-2026-07-18.yaml
+  - manual:process/release/evidence/phase-2-14-linux-wsl2-2026-07-18.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
@@ -1971,25 +1971,25 @@ coverage:
   requirement: Reproducible bootstrap and maintenance
   scenario: Upgrade can be rolled back
   evidence:
-  - manual:process/release/evidence/phase-2-12-windows-2026-07-17.yaml
-  - manual:process/release/evidence/phase-2-12-linux-wsl2-2026-07-17.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/evidence/phase-2-14-windows-2026-07-18.yaml
+  - manual:process/release/evidence/phase-2-14-linux-wsl2-2026-07-18.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_rehearsal_orchestrates_ai_disabled_migration_update_rollback_and_exclusive_evidence
 - source_kind: delta
   capability: transfer-readiness
   requirement: Transfer-ready release candidate contents
   scenario: Release candidate contains the reusable core
   evidence:
-  - manual:process/release/release-manifest.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/phase-2-14-release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_candidate_includes_declared_canonical_sources_for_certification_revalidation
 - source_kind: delta
   capability: transfer-readiness
   requirement: Transfer-ready release candidate contents
   scenario: Release candidate does not contain corporate values
   evidence:
-  - manual:process/release/release-manifest.yaml
-  - manual:docs/audits/PHASE_2_WORK_ITEM_2_12_ACCEPTANCE_PACKET_2026-07-17.md
+  - manual:process/release/phase-2-14-release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_privacy_scan_allows_localhost_endpoint_but_rejects_windows_user_path
 - source_kind: delta
   capability: waiver-policy
@@ -2321,64 +2321,88 @@ coverage:
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Certification records the evaluated runtime
-  evidence: [manual:phase-2-14-runtime-and-normalized-evidence]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Matrix execution rejects runtime identity drift
-  evidence: [manual:phase-2-14-preflight-matrix-gate]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Actual certification destinations are external and non-aliased
-  evidence: [manual:phase-2-14-external-raw-roots]
+  evidence:
+  - manual:process/release/phase-2-14-release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Model-facing contract is role specific and schema constrained
-  evidence: [manual:phase-2-14-launch-provenance]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Normalization cannot repair model semantics
-  evidence: [manual:phase-2-14-normalized-raw-binding]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Technical retry is bounded and retained
-  evidence: [manual:phase-2-14-attempt-ledger]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Preflight gates matrix execution
-  evidence: [manual:phase-2-14-preflight-matrix-gate]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Failed preflight evidence is retained without a matrix
-  evidence: [manual:phase-2-14-fail-closed-gate-evidence]
+  evidence:
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Certification covers first pilot roles
-  evidence: [manual:phase-2-14-qwen-deepseek-matrices]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Certification uses the accepted risk-oriented matrix
-  evidence: [manual:phase-2-14-qwen-deepseek-matrices]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Fluency does not substitute for compliance
-  evidence: [manual:phase-2-14-deterministic-gate]
+  evidence:
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Model limitation is routed explicitly
-  evidence: [manual:phase-2-14-normalized-limitations]
+  evidence:
+  - manual:process/certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
+  - manual:process/certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Actual weak-model certification
   scenario: Certification evidence is stored without private raw data in Git
-  evidence: [manual:phase-2-14-manifest-and-raw-snapshot]
+  evidence:
+  - manual:process/release/phase-2-14-release-manifest.yaml
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md

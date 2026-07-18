@@ -434,6 +434,7 @@ def test_role_output_rejects_linked_canonical_source(tmp_path: Path) -> None:
 @pytest.mark.parametrize("mutation,code", [
     ("unknown-case", "coverage.unknown-case"),
     ("unknown-pytest", "coverage.unknown-pytest"),
+    ("unknown-manual", "coverage.unknown-manual"),
     ("duplicate", "coverage.duplicate-selector"),
     ("gap-fields", "coverage.invalid-gap"),
     ("delta-target", "coverage.unknown-delta-target"),
@@ -448,6 +449,8 @@ def test_coverage_rejects_unknown_duplicates_invalid_gaps_and_delta_targets(
         evidence_row["evidence"] = ["case:does-not-exist"]
     elif mutation == "unknown-pytest":
         evidence_row["evidence"] = ["pytest:tests/test_certification.py::does_not_exist"]
+    elif mutation == "unknown-manual":
+        evidence_row["evidence"] = ["manual:docs/audits/does-not-exist.md"]
     elif mutation == "duplicate":
         manifest["coverage"].append(copy.deepcopy(manifest["coverage"][0]))
     elif mutation == "gap-fields":

@@ -508,6 +508,13 @@ def build_coverage_report(repository_root: Path, inventory_path: Path) -> dict[s
                     if marker_binding not in marker_bindings:
                         raise CertificationError("coverage.binding-mismatch")
                     used_marker_bindings.add(marker_binding)
+                if reference.startswith("manual:"):
+                    manual_relative = _safe_relative(reference[7:])
+                    manual_path = root / Path(*manual_relative.parts)
+                    manual_parents = [root / Path(*manual_relative.parts[:index]) for index in range(1, len(manual_relative.parts))]
+                    if (not manual_path.is_file() or _is_link_or_reparse(manual_path)
+                            or any(_is_link_or_reparse(parent) for parent in manual_parents if parent.exists())):
+                        raise CertificationError("coverage.unknown-manual")
                 if not reference.startswith(("case:", "pytest:", "manual:")):
                     raise CertificationError("coverage.invalid-evidence")
         coverage.append({**row, **({"evidence": evidence} if evidence else {"gap": gap})})
