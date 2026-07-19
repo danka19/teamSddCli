@@ -62,6 +62,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md` | Final candidate-bound deterministic, AI-disabled, Qwen/DeepSeek, Windows/WSL2, rollback, privacy, and limitation evidence for gate 2.14.2 |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md` | Human decision packet for immutable candidate `phase-2-14-rc4`, including checksums, source-linked role evidence, risks, and residual gaps |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md` | Worker, reviewer, architecture, and verification gate results, correction batch, fallback limitation, and final rc4 review judgment |
+| `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md` | Provenance, exact counts, 46-requirement inventory, five-way routing, and acceptance consequences for rc4's 110 mechanically uniform residual-gap rows |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |

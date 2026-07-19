@@ -2,7 +2,15 @@
 
 Status: in_progress.
 
-Last status reconciliation: 2026-07-18.
+Last status reconciliation: 2026-07-19.
+
+## Residual-Gap Reconciliation (2026-07-19)
+
+- The 110 rc4 residual-gap rows were traced to the Phase 2.10 transition from aggregate/default coverage to exact source-local `SCENARIO_COVERAGE` bindings. They are verified missing exact evidence bindings, not 110 independently discovered product defects.
+- All 110 rows have mechanically identical owner/risk/reason/compensation/follow-up metadata. The repeated `risk: medium` is therefore a fallback classification, not an individual risk assessment.
+- The dated routing audit accounts for all 110 scenarios across 46 requirements: 75 Phase 2 exact-evidence-debt rows, 22 governance/manual-evidence rows, 2 Phase 3 corporate-evidence rows, 10 Phase 4 publication-evidence rows, and 1 Phase 2 scope-boundary evidence row.
+- Immutable candidate `phase-2-14-rc4` was not changed. Gate 2.14.4 remains `ready` for an explicit human accept/reject decision using the clarified packet. Correcting candidate evidence rows or closing exact evidence debt requires rejecting rc4, building a successor candidate, and repeating candidate-bound certification.
+- Durable evidence: `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md`.
 
 ## Phase And OpenSpec Status Reconciliation (2026-07-18)
 
@@ -36,7 +44,7 @@ Last status reconciliation: 2026-07-18.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 20/33 tasks complete and 13 remaining; `adopt-nis-corporate-process-governance` has 38/43 tasks complete and 5 remaining. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are execution-complete. Task 7.5 and NIS task 8.8 remain Phase 3 work. Both changes remain `in_progress`.
 - This historical 2026-07-15 snapshot predates adapter `2.2` and `D-018`. Its earlier fallback-only and adapter `2.1` blockers are superseded; the current accepted contour is Windows plus Linux/WSL2 with macOS explicitly not certified, and work item 2.12 is closed.
 
-Last updated: 2026-07-18.
+Last updated: 2026-07-19.
 
 ## Repository Baseline
 
@@ -121,6 +129,7 @@ Last updated: 2026-07-18.
 | AUDIT-021 | `D-013` accepts the NIS-aligned target process. Work items 2.7 and 2.8 completed check-only flow enforcement, QA authority, scoped exceptions, release handoff, role/WIP/pilot-safety checks, append-only failed-run retention, packaged workflow operations, and broader traceability without replacing human decisions or mutating external state. Real corporate wiring and pilot execution remain Phase 3 work. | Phase 2/3 | mitigated |
 | AUDIT-022 | `D-014` makes AI-disabled deterministic operation the first required delivery state and permanent fallback, not the final AI-minimal product direction. Later accepted changes are expected to progressively automate bounded orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation while deterministic checks remain the control plane and accountable human authority remains explicit. Presentation-facing and project-direction documentation now carry this two-horizon message; implementation of the later horizon remains future scope. | Phase 2/4 | open |
 | AUDIT-023 | `D-016` makes broader risk-oriented positive/negative testing and end-to-end requirement/scenario evidence traceability explicit reliability mechanisms, and safe parallel AI execution an explicit throughput mechanism. The transfer change now requires independent ownership/write scopes, separate evidence, serialization of conflicts, and a deterministic combined integration gate. This is not the excluded process-effectiveness measurement program. | Phase 2/4 | open |
+| AUDIT-027 | Rc4 contains 110 exact-evidence gap rows across 46 requirements. Their identical `transfer-readiness-owner`/`medium`/generic-reason metadata is a mechanical fallback created after aggregate evidence was removed, not an individual risk assessment. The 2026-07-19 routing audit assigns 75 rows to Phase 2 exact-evidence review, 22 to governance/manual evidence, 2 to Phase 3 corporate evidence, 10 to Phase 4 publication evidence, and 1 to the Phase 2 scope-boundary decision. Rc4 remains immutable; row-level correction requires a successor candidate and recertification. | Phase 2/3/4 | open |
 
 ## Accepted Human Decisions
 

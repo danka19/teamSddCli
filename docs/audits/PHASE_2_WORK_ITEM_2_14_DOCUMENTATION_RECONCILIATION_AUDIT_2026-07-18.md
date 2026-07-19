@@ -92,6 +92,8 @@ Classification: stale evidence metadata. Severity: important.
 
 All 110 permitted residual gaps pointed to `work-item-2.11`, which is closed. They now point to `phase-2.14-evidence-review`. Final technical/review gates must either bind an exact final-candidate evidence reference, retain the gap as an explicit accepted residual risk, or route it to the real Phase 3/4 owner. Aggregate pass claims must not hide these rows.
 
+2026-07-19 clarification: the bulk reroute repaired stale ownership but did not classify the rows. The later provenance audit proves that all 110 retained identical fallback owner/risk/reason/compensation fields and separates them into Phase 2 exact-evidence debt, governance/manual evidence, Phase 3 corporate evidence, Phase 4 publication evidence, and one Phase 2 scope-boundary record. Therefore this historical audit must not be read as 110 individual medium-risk assessments. See `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md`.
+
 Future-work selectors now distinguish:
 
 - fresh final-candidate weak-model and release evidence: 2.14.2-2.14.4;

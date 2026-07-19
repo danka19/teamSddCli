@@ -33,7 +33,7 @@ Candidates rc1-rc3 are retained as diagnostic history. Rc1 was rejected before r
 | Roadmap/OpenSpec consistency | Validator passed with 0 errors and two expected historical complete-but-unaccepted warnings |
 | Privacy scan | Zero tracked raw-artifact paths, zero personal workspace paths, and no non-test high-confidence credential material; seven credential-like values are intentional fail-closed negative samples |
 
-The 110 residual scenario gaps are not hidden or relabelled as passing. Each is routed to `phase-2.14-human-acceptance` with the compensation that the owner must accept the explicit residual risk or require exact evidence before Phase 3.
+The 110 residual scenario gaps are not hidden or relabelled as passing. Each is routed in the immutable rc4 manifest to `phase-2.14-human-acceptance` with the compensation that the owner must accept the missing exact evidence or require it before Phase 3. A 2026-07-19 provenance audit later established that this is mechanically uniform fallback metadata, not 110 individual risk assessments; its five-way recommended routing is linked from the acceptance packet.
 
 ## AI-Disabled And Actual-Model Evidence
 
@@ -74,4 +74,4 @@ No prompt, response schema, operation plan, authority/source semantics, model id
 - WSL2 architecture remains `unknown` in the structured field, while the OS probe independently records `x86_64`.
 - Real corporate values, approved integration wiring, privacy/retention decisions, and the monitored pilot remain Phase 3 work.
 - External publication classification of derived NIS/PPRB summaries remains a human decision.
-- 110 explicit medium residual gaps require human risk acceptance or additional exact evidence before Phase 3.
+- 110 explicit missing-evidence rows require human acceptance of rc4's coarse residual uncertainty or additional exact evidence in a fully recertified successor candidate. The stored `medium` value was not individually assessed.

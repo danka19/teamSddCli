@@ -44,6 +44,8 @@ The raw artifact reference contains:
 
 There is no aggregate default evidence. An allowed residual gap contains all five non-empty fields: `owner`, `risk`, `reason`, `compensation`, and `follow_up`, wins over any capability rule, increments the gap count, and makes report status `gaps`. Structured future-work selectors remove unperformed 2.11-2.14 scenarios from covered/gap rows and count them separately.
 
+A schema-valid gap row proves only that the selector has no accepted exact evidence binding and that a disposition record exists. It does not by itself prove missing product behavior or an independently reviewed risk rating. Bulk-identical owner/risk/reason/follow-up values must be identified as fallback metadata in acceptance material. Before release acceptance, heterogeneous gaps should be classified as current exact-evidence debt, exact manual/governance evidence, explicit future work, or individually assessed residual risk. Changing a frozen candidate's coverage/evidence rows creates a new candidate identity and requires candidate-bound verification again.
+
 The CLI exposes one canonical JSON representation only; it does not maintain a second human-output projection. Operators may format that JSON externally without changing semantic fields.
 
 The eight NIS feedback/publication-boundary scenarios use `process/feedback_policy.py` and exact nodes in `tests/test_feedback_policy.py`. This pure check validates SLA configuration/defaults, comment dispositions/follow-up, no fabricated core-route evidence, future class-aware ownership, read-only legacy input, and corporate generated-view selection. It does not call Confluence or publish anything.

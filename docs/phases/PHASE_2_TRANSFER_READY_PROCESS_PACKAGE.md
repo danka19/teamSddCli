@@ -136,6 +136,19 @@ Compatibility rules:
 ## Change Intake
 
 ```text
+Idea: Determine what the 110 rc4 residual gaps represent and attach them to the correct evidence owner and roadmap phase before human acceptance.
+Source: Human documentation and verification request on 2026-07-19.
+Type: verification_change, documentation_change
+Decision: adopt_now
+Reason: The immutable evidence manifest uses one copied owner/risk/reason/follow-up for 110 heterogeneous scenarios. Treating that fallback as 110 individual medium-risk assessments would make the human acceptance packet misleading.
+Affected specs: No behavior or acceptance-criterion change. The audit uses the effective accepted-plus-delta scenario set as the canonical selector inventory.
+Affected architecture: None. Deterministic exact-evidence validation and candidate immutability remain unchanged.
+Data contract impact: None for rc4. Any future row-level manifest correction changes candidate evidence identity and requires a successor candidate plus recertification.
+Verification impact: Reproduce counts and Git provenance, account for all 110 rows by capability/requirement, separate exact-evidence debt from governance and future Phase 3/4 work, reconcile the acceptance packet/current audit/evidence index, and rerun documentation/OpenSpec/governance checks.
+Status: adopted as a documentation/evidence clarification for gate 2.14.4; rc4 remains immutable and the human accept/reject decision remains required.
+```
+
+```text
 Idea: Permit the frozen repository-only `process/release/` evidence snapshot without treating it as a distributable process-package root.
 Source: Work item 2.13 complete-regression verification on 2026-07-18.
 Type: bug_fix, verification_change
@@ -650,7 +663,7 @@ Exit criteria: the human owner accepts or rejects the exact external candidate u
 | 2.14.1 Documentation reconciliation | closed | Reconcile roadmap, current audit, phase plan, repository map, manifest/evidence links, doc-sync findings, OpenSpec validation, and privacy scan. Documentation-only corrections do not require model execution or a complete pytest run. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md`. |
 | 2.14.2 Final technical verification | closed | Candidate `phase-2-14-rc4` is frozen with its own manifest, checksums, host evidence, normalized evidence, 48 raw-artifact references, launch provenance, and fail-closed manual-evidence resolution. AI-disabled passed 11/11; Qwen and DeepSeek each passed 5/5 preflight and 15/15 matrix; Windows full rehearsal and WSL2 portability smoke passed. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`. |
 | 2.14.3 Review gates | closed | Worker, independent reviewer, independent architecture, and verification-fallback gates passed after one provenance correction batch. Reviewers consumed existing evidence and did not rerun the complete pytest suite or models. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md`. |
-| 2.14.4 Human acceptance | ready | The human owner receives immutable candidate rc4, manifest/checksums, platform and rollback evidence, AI-disabled evidence, Qwen/DeepSeek evidence, source-linked Tech Lead/QA/security evidence, limitations, and risks. No Phase 3 work begins without an explicit decision. |
+| 2.14.4 Human acceptance | ready | The human owner receives immutable candidate rc4, manifest/checksums, platform and rollback evidence, AI-disabled evidence, Qwen/DeepSeek evidence, source-linked Tech Lead/QA/security evidence, limitations, and the 2026-07-19 five-way provenance/routing audit for all 110 mechanically uniform missing-evidence rows. No Phase 3 work begins without an explicit decision. |
 
 The single actual-model sequence for 2.14.2 is fixed: Qwen 5/5 preflight, then Qwen 15/15 only after a passing preflight, then one complete Qwen raw export; DeepSeek with `num_ctx=8192` 5/5 preflight, then DeepSeek 15/15 only after a passing preflight, then one complete DeepSeek raw export; finally one normalization pass and one gate-validation pass. No intermediate model run is allowed after 2.12 and before this sequence unless the adapter, prompt, response schema, operation plan, authority/source validation, or model/runtime profile changes. Reviewers consume this evidence rather than reproducing it.
 
