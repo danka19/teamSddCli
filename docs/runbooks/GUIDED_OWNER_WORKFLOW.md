@@ -1,4 +1,4 @@
-# Guided Owner Workflow
+# Руководство по сопровождаемому workflow владельца
 
 <!-- guided-catalog-sha256: 2d3b10a3b364b95dba33ecdfb74692fe5722c1654fa9fec398288022cdd30a48 -->
 
