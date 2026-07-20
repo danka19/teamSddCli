@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Decision `D-021` adds a new external Phase 3 for self-service guided operation before any corporate work. Transfer progress remains 35/36 and NIS progress remains 42/43; former pilot tasks 7.5 and 8.8 now belong to Phase 4. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
+- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Decision `D-021` adds a new external Phase 3 for self-service guided operation before any corporate work. Decision `D-023` accepts successor `guided-owner-v0.3.1-rc4` for merge after the guided contract, exact baseline-reuse closure, fresh model preflight, and Windows rehearsal; Linux/WSL2 portability evidence is an explicit deferred prerequisite before Phase 4. Transfer progress remains 35/36 and NIS progress remains 42/43; former pilot tasks 7.5 and 8.8 now belong to Phase 4. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -203,8 +203,8 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
-| `allow-certified-baseline-reuse` | P3 | P4 | in_progress |
-| `add-guided-owner-workflow` | P3 | P4, P5 | in_progress |
+| `allow-certified-baseline-reuse` | P3 | P4 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
+| `add-guided-owner-workflow` | P3 | P4, P5 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

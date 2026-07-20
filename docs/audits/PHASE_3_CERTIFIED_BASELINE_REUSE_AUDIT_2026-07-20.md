@@ -74,19 +74,21 @@ preflight исчезнет или завершится ошибкой, либо 
   содержит только exact closure плюс отдельно зарегистрированные fresh preflight
   current package.
 
-### BR-002: Linux/WSL2 host evidence ещё не получен
+### BR-002: Linux/WSL2 host evidence отложен решением владельца
 
-- Классификация: verified environment blocker, medium severity.
-- Влияние: `rc3` не может получить `evidence-complete`, потому что acceptance
+- Классификация: accepted residual risk, medium severity, `D-023`.
+- Влияние: `rc4` не может получить `evidence-complete`, потому что acceptance
   требует ровно два host-файла: Windows full-clean rehearsal и Linux/WSL2
-  portability smoke. Windows уже passed; macOS остаётся явно `not-certified`.
+  portability smoke. Windows already passed; macOS остаётся явно `not-certified`.
 - Подтверждение: `wsl --list --quiet` сообщает, что на машине нет установленного
   Linux-дистрибутива. Поэтому нельзя честно создавать `linux-wsl2.yaml` из
   Windows-сеанса.
-- Рекомендованное действие: выполнить Linux/WSL2 rehearsal на доступном Linux
-  или после установки дистрибутива WSL, затем запустить `accept` для rc3. Полная
-  Qwen/DeepSeek matrix при этом не требуется: условия baseline-reuse уже
-  проверены и текущие preflight прошли.
+- Решение: владелец принял `rc4` и разрешил слияние в `main` по `D-023`; это
+  является human acceptance исходного guided workflow, но не подменяет
+  техническое Linux evidence.
+- Обязательное продолжение: выполнить Linux/WSL2 rehearsal на доступном Linux
+  или после установки дистрибутива WSL до Phase 4 corporate adaptation, wiring
+  или pilot. Полная Qwen/DeepSeek matrix при этом не требуется.
 
 ### BR-003: Управляющий CLI изменял payload кандидата bytecode-файлами
 
@@ -102,7 +104,7 @@ preflight исчезнет или завершится ошибкой, либо 
 
 ## Следующий шаг
 
-Владелец должен предоставить среду Linux/WSL2 для portability smoke или
-разрешить установку WSL-дистрибутива на этой машине. После этого агент выполнит
-строго предусмотренную репетицию и `accept` для уже созданного rc3. Human
-acceptance остаётся отдельным решением после `evidence-complete`.
+Непосредственный этап завершён человеческим принятием `D-023` и слиянием в
+`main`. Перед началом Phase 4 владелец должен предоставить среду Linux/WSL2
+для portability smoke либо разрешить установку WSL-дистрибутива; после этого
+следует выполнить предусмотренную репетицию и сохранить техническое evidence.

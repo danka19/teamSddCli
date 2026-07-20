@@ -18,10 +18,11 @@ SHA-256 и собран чистый exact bundle без лишних runtime pr
 `rc3` был отклонён, потому что его управляющий CLI записывал Python bytecode в
 payload; причина устранена отдельным регрессионным тестом. Новый immutable
 candidate `guided-owner-v0.3.1-rc4` собран, его manifest валиден до и после
-Windows full-clean rehearsal, которая passed. Его acceptance пока намеренно
-fail-closed: на данной машине нет
-установленного WSL-дистрибутива, а для честного завершения требуется отдельный
-Linux/WSL2 portability smoke. Новая полная matrix для этого не требуется.
+Windows full-clean rehearsal, которая passed. Владелец принял этот кандидат по
+`D-023` и разрешил его слияние в `main`. Автоматический `accept` не может
+вернуть `evidence-complete`, потому что на машине нет WSL-дистрибутива для
+Linux/WSL2 portability smoke; это явно принятое остаточное ограничение, а не
+сфабрикованный passed result. Linux/WSL2 проверка обязательна до Phase 4.
 
 ## Scope
 

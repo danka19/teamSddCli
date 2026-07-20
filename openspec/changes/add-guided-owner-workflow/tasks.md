@@ -21,4 +21,4 @@
 - [x] 4.1 Run synthetic human walkthroughs for minor, major, and hotfix routes, including Delta Spec, implementation, QA, and archive preparation.
 - [x] 4.2 Run AI-disabled and available-model route exercises; record unavailable runtime as an explicit fallback, not a fabricated pass.
 - [x] 4.3 Verify failed-run retention, stop/hold/resume, privacy, update/rollback, and forbidden authority cases through the guided route.
-- [ ] 4.4 Update package version, release evidence, transfer documentation, and roadmap status only after all focused and complete checks pass.
+- [x] 4.4 Обновить версию пакета, release evidence, transfer documentation и roadmap status. Владелец принял `guided-owner-v0.3.1-rc4` по `D-023`; отсутствующая Linux/WSL2 portability smoke явно зафиксирована как отложенное условие перед Phase 4, а не как выполненная проверка.

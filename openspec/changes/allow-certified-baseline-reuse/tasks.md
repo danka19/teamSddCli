@@ -11,4 +11,4 @@
 ## 3. Проверка successor candidate
 
 - [x] 3.1 Запустить focused release/actual-certification tests и зафиксировать свежий Qwen/DeepSeek preflight evidence.
-- [ ] 3.2 Подготовить versioned successor package и candidate-bound transfer evidence без повторной полной matrix.
+- [x] 3.2 Подготовить versioned successor package и candidate-bound transfer evidence без повторной полной matrix. Immutable `guided-owner-v0.3.1-rc4` принят владельцем по `D-023`; Linux/WSL2 portability smoke остаётся отложенной обязательной проверкой перед Phase 4.
