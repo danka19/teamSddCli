@@ -4,22 +4,14 @@ coverage:
   capability: change-artifact-contracts
   requirement: Artifact height rules
   scenario: Proposal stays business and scope focused
-  gap:
-    owner: phase-2-verification-owner
-    risk: medium
-    reason: Add a focused negative test for implementation-detail leakage in proposal.md against the existing artifact gate.
-    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
-    follow_up: successor-candidate-focused-tests
+  evidence:
+  - pytest:tests/test_validate_change.py::test_proposal_templates_stay_business_and_scope_focused
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Artifact height rules
   scenario: Tasks stay executable and parseable
-  gap:
-    owner: phase-2-verification-owner
-    risk: medium
-    reason: Add a focused parser test for stable task identifiers and executable checkbox structure in tasks.md.
-    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
-    follow_up: successor-candidate-focused-tests
+  evidence:
+  - pytest:tests/test_validate_change.py::test_task_templates_are_executable_and_parseable
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
@@ -1267,12 +1259,8 @@ coverage:
   capability: repo-topology-config
   requirement: Process package distribution
   scenario: Manual forks are not the default reuse model
-  gap:
-    owner: phase-2-verification-owner
-    risk: medium
-    reason: Add a focused distribution test proving bootstrap/update reuse the versioned package instead of creating mutable forks.
-    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
-    follow_up: successor-candidate-focused-tests
+  evidence:
+  - pytest:tests/test_packaged_flow.py::test_bootstrap_reuses_one_versioned_package_without_policy_fork
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
@@ -1283,12 +1271,8 @@ coverage:
   capability: repo-topology-config
   requirement: Repository content split
   scenario: Project repos own implementation truth
-  gap:
-    owner: phase-2-verification-owner
-    risk: medium
-    reason: Add a focused topology test proving central team-specs references project evidence without absorbing implementation artifacts.
-    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
-    follow_up: successor-candidate-focused-tests
+  evidence:
+  - pytest:tests/test_process_package.py::test_central_specs_and_project_implementation_truth_stay_separate
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
@@ -1587,12 +1571,8 @@ coverage:
   capability: transfer-readiness
   requirement: First transfer boundary preserves later-layer exclusions
   scenario: Later integrations do not block transfer readiness
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: This is an explicit Phase 2 acceptance-boundary judgment, not missing executable product behavior.
-    compensation: Keep the first-MVP exclusion list and rc4 technical evidence visible during human acceptance.
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: delta
   capability: transfer-readiness
   requirement: Release evidence and auditability

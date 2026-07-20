@@ -420,6 +420,32 @@ def test_synthetic_central_topology_is_coherent() -> None:
     assert referential_errors(config, projects, owners, adapter) == []
 
 
+def test_central_specs_and_project_implementation_truth_stay_separate() -> None:
+    config = load_yaml(TEAM_SPECS / "sdd.config.yaml")
+    projects = load_yaml(TEAM_SPECS / "projects.yaml")
+    adapter = load_yaml(PROJECT_ADAPTER)
+
+    assert set(config["canonical_paths"]) == {
+        "changes",
+        "specs",
+        "analytics",
+        "traceability",
+        "waivers",
+        "evidence",
+        "publication",
+    }
+    assert not {"code", "tests"} & set(config["canonical_paths"])
+    assert projects["projects"][0]["repository"] == {"reference": "sibling:sample-app"}
+    assert projects["projects"][0]["local_paths"] == {"code": "src", "tests": "tests"}
+    assert adapter["local_paths"] == {"code": "src", "tests": "tests"}
+    assert adapter["team_specs"] == {
+        "reference": "sibling:team-specs",
+        "config_path": "sdd.config.yaml",
+    }
+    assert not (TEAM_SPECS / "src").exists()
+    assert not (TEAM_SPECS / "tests").exists()
+
+
 def test_clean_templates_and_positive_fixtures_have_no_sensitive_values() -> None:
     files = [
         PROCESS_ROOT / "package.yaml",
@@ -510,4 +536,4 @@ def test_sensitive_negative_fixtures_fail_with_stable_category(
     assert expected_category in scan_categories(fixture)
 
 
-SCENARIO_COVERAGE = {"test_synthetic_central_topology_is_coherent":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Central team-specs is the recommended first topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"OpenSpec version is pinned centrally"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Central config declares supported process assumptions"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"team-specs owns process and requirement truth"}],"test_workflow_contract_declares_packaged_flow_dependencies_without_owning_policy":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"Artifact dependencies are shared by skills and validators"}]}
+SCENARIO_COVERAGE = {"test_central_specs_and_project_implementation_truth_stay_separate":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"Project repos own implementation truth"}],"test_synthetic_central_topology_is_coherent":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Central team-specs is the recommended first topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"OpenSpec version is pinned centrally"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Central config declares supported process assumptions"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"team-specs owns process and requirement truth"}],"test_workflow_contract_declares_packaged_flow_dependencies_without_owning_policy":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"Artifact dependencies are shared by skills and validators"}]}

@@ -83,6 +83,23 @@ def test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence(
     json.dumps(created, sort_keys=True)
 
 
+def test_bootstrap_reuses_one_versioned_package_without_policy_fork(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "workspace"
+
+    bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, target)
+
+    config = _yaml(target / "team-specs" / "sdd.config.yaml")
+    package_root = (target / "team-specs" / config["process_package"]["location"]).resolve()
+    assert package_root == (target / "process").resolve()
+    assert (package_root / "package.yaml").is_file()
+    assert (package_root / "policies" / "manifest.yaml").is_file()
+    assert not (target / "team-specs" / "process").exists()
+    assert not (target / "team-specs" / "policies").exists()
+    assert list(target.rglob("package.yaml")) == [target / "process" / "package.yaml"]
+
+
 def test_bootstrap_and_create_reject_unsafe_or_existing_destinations(
     tmp_path: Path,
 ) -> None:
@@ -312,7 +329,7 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert history.read_bytes() == history_before
 
 
-SCENARIO_COVERAGE = {"test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"One versioned folder carries process assets"}],"test_spec_pr_and_archive_preparation_collect_evidence_without_authority":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Archive readiness links implementation evidence"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"Code PR references canonical specs"}],
+SCENARIO_COVERAGE = {"test_bootstrap_reuses_one_versioned_package_without_policy_fork":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"Manual forks are not the default reuse model"}],"test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"One versioned folder carries process assets"}],"test_spec_pr_and_archive_preparation_collect_evidence_without_authority":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Archive readiness links implementation evidence"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"Code PR references canonical specs"}],
  'test_manual_fallback_covers_unavailable_integrations_without_ai': [{'capability': 'change-artifact-contracts',
                                                                       'requirement': 'Artifact matrix baseline status',
                                                                       'scenario': 'Deferred integrations are explicit',

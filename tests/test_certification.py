@@ -285,8 +285,8 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
     assert report["summary"]["future_work"] == 32
     assert report["summary"] == {
         "effective_scenarios": 334,
-        "covered": 284,
-        "gaps": 18,
+        "covered": 289,
+        "gaps": 13,
         "future_work": 32,
     }
     assert {
@@ -338,16 +338,14 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
         if "gap" in row
     )
     assert gap_routes == {
-        "focused-test": 4,
         "product-gap": 13,
-        "human-boundary": 1,
     }
 
 
 def test_explicit_residual_gap_wins_and_requires_all_fields(tmp_path: Path) -> None:
     coverage = load_yaml(PROCESS / "certification" / "coverage.yaml")
     manifest = load_yaml(PROCESS / "certification" / "evidence-manifest.yaml")
-    row = manifest["coverage"][0]
+    row = next(item for item in manifest["coverage"] if "gap" in item)
     row.pop("evidence", None); row.pop("binding_id", None)
     row["gap"] = {
         "owner": "example-qa-owner", "risk": "medium", "reason": "synthetic gap",

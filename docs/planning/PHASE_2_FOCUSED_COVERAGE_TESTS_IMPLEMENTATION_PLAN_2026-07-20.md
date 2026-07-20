@@ -30,10 +30,10 @@
 - Consumes: human direction dated 2026-07-20 and transfer-readiness scenario `Later integrations do not block transfer readiness`.
 - Produces: decision `D-019` and `manual:docs/DECISIONS.md` coverage evidence.
 
-- [ ] Change the coverage regression expectation from one human-boundary gap to no human-boundary gap and from `284/18/32` to `285/17/32`.
-- [ ] Run `python -m pytest tests/test_certification.py::test_residual_gap_review_routes_later_phases_and_governance_exactly -q`; expect failure because the manifest still contains the gap.
-- [ ] Replace only that selector's gap record with `manual:docs/DECISIONS.md`.
-- [ ] Re-run the focused test; expect pass.
+- [x] Change the coverage regression expectation from one human-boundary gap to no human-boundary gap and from `284/18/32` to `285/17/32`.
+- [x] Run `python -m pytest tests/test_certification.py::test_residual_gap_review_routes_later_phases_and_governance_exactly -q`; expect failure because the manifest still contains the gap.
+- [x] Replace only that selector's gap record with `manual:docs/DECISIONS.md`.
+- [x] Re-run the focused test; expect pass.
 
 ### Task 2: Add exact artifact-height tests
 
@@ -46,10 +46,10 @@
 - Consumes: `templates/change/proposal.md`, `templates/change/tasks.md`, `process/templates/change/proposal.md`, and `process/templates/change/tasks.md`.
 - Produces: `test_proposal_templates_stay_business_and_scope_focused` and `test_task_templates_are_executable_and_parseable`.
 
-- [ ] Point both selectors at the named, not-yet-existing pytest nodes and run the coverage regression; expect `coverage.unknown-pytest`.
-- [ ] Add the two tests. Proposal assertions allow only business/scope/acceptance headings and reject implementation/code fences. Task assertions require unique stable `TASK-*` IDs, unchecked Markdown task syntax, and substantive action text in both canonical templates.
-- [ ] Add exact accepted-spec selector rows to the local `SCENARIO_COVERAGE` mapping.
-- [ ] Run the two pytest nodes and the coverage regression; expect pass.
+- [x] Point both selectors at the named, not-yet-existing pytest nodes and run the coverage regression; expect `coverage.unknown-pytest`.
+- [x] Add the two tests. Proposal assertions allow only business/scope/acceptance headings and reject implementation/code fences. Task assertions require unique stable `TASK-*` IDs, unchecked Markdown task syntax, and substantive action text in both canonical templates.
+- [x] Add exact accepted-spec selector rows to the local `SCENARIO_COVERAGE` mapping.
+- [x] Run the two pytest nodes and the coverage regression; expect pass.
 
 ### Task 3: Add exact distribution and repository-split tests
 
@@ -63,11 +63,11 @@
 - Consumes: `bootstrap_team_specs`, `templates/team-specs/sdd.config.yaml`, `templates/team-specs/projects.yaml`, and `templates/project-adapter/.sdd-project.yaml`.
 - Produces: `test_bootstrap_reuses_one_versioned_package_without_policy_fork` and `test_central_specs_and_project_implementation_truth_stay_separate`.
 
-- [ ] Point both selectors at the named, not-yet-existing pytest nodes and run the coverage regression; expect `coverage.unknown-pytest`.
-- [ ] Add a bootstrap test that proves one sibling `process` package is referenced by `team-specs`, while no copied policy/process tree appears under canonical team-specs.
-- [ ] Add a topology test that proves central canonical paths contain spec/evidence surfaces, repository records and adapters own `src`/`tests`, and no implementation root becomes a central canonical path.
-- [ ] Add exact accepted-spec selector rows to the local `SCENARIO_COVERAGE` mappings.
-- [ ] Run the two pytest nodes and the coverage regression; expect pass.
+- [x] Point both selectors at the named, not-yet-existing pytest nodes and run the coverage regression; expect `coverage.unknown-pytest`.
+- [x] Add a bootstrap test that proves one sibling `process` package is referenced by `team-specs`, while no copied policy/process tree appears under canonical team-specs.
+- [x] Add a topology test that proves central canonical paths contain spec/evidence surfaces, repository records and adapters own `src`/`tests`, and no implementation root becomes a central canonical path.
+- [x] Add exact accepted-spec selector rows to the local `SCENARIO_COVERAGE` mappings.
+- [x] Run the two pytest nodes and the coverage regression; expect pass.
 
 ### Task 4: Reconcile evidence and verify the bounded change
 
@@ -82,11 +82,11 @@
 - Consumes: four passing pytest nodes plus `D-019`.
 - Produces: working-source coverage `289 covered / 13 gaps / 32 future_work`, with all remaining gaps routed to product OpenSpec intake.
 
-- [ ] Update the dated audit without rewriting its historical review result: append the accepted boundary and focused-test remediation outcome.
-- [ ] Update current roadmap/audit/evidence summaries while keeping rc4 at `204/110/20` and the successor source explicitly uncertified.
-- [ ] Run the four focused nodes, certification coverage test, changed-file suite, full pytest suite, `openspec validate --all --strict`, and roadmap/OpenSpec validator.
-- [ ] Require `git diff --check` and an empty diff under `process/release/`.
-- [ ] Commit the bounded implementation separately from the later product-gap intake.
+- [x] Update the dated audit without rewriting its historical review result: append the accepted boundary and focused-test remediation outcome.
+- [x] Update current roadmap/audit/evidence summaries while keeping rc4 at `204/110/20` and the successor source explicitly uncertified.
+- [x] Run the four focused nodes, certification coverage test, changed-file suite, full pytest suite, `openspec validate --all --strict`, and roadmap/OpenSpec validator.
+- [x] Require `git diff --check` and an empty diff under `process/release/`.
+- [x] Commit the bounded implementation separately from the later product-gap intake.
 
 ## Self-review
 

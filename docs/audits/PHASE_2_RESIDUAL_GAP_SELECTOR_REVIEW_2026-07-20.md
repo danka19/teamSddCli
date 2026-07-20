@@ -18,13 +18,13 @@ The 110 `rc4` residual rows were not 110 equivalent product defects. The source 
 | Governance evidence | 22 | The selector is a documentation/decision-governance rule and is proven by an exact primary decision, phase record, checklist, or audit rather than a product test. |
 | Human Phase 2 scope decision | 1 | The first-MVP exclusion boundary still requires explicit human acceptance. |
 
-The resulting working-source coverage is `334 effective = 284 covered + 18 gaps + 32 future_work`. The 18 gaps are the 4 focused-test rows, 13 product gaps, and 1 human scope-boundary row.
+The initial review result was `334 effective = 284 covered + 18 gaps + 32 future_work`: 4 focused-test rows, 13 product gaps, and 1 human scope-boundary row. The accepted follow-up recorded below changes the working successor source to `289 covered + 13 gaps + 32 future_work`.
 
 ## Immutability boundary
 
 No file under the `rc4` release snapshot was edited. This review changes the working coverage source and test-owned selector metadata only. It therefore prepares a successor candidate; it does not rewrite, re-label, or re-certify `rc4`.
 
-Any release claim based on the new `284/18/32` inventory requires a newly built candidate and candidate-bound certification. The historical `rc4` result remains `204 covered / 110 gaps / 20 future_work`.
+Any release claim based on the remediated `289/13/32` inventory requires a newly built candidate and candidate-bound certification. The historical `rc4` result remains `204 covered / 110 gaps / 20 future_work`.
 
 ## List 1 — existing Phase 2 evidence (58)
 
@@ -102,7 +102,7 @@ These are not product gaps yet. The relevant artifact or topology behavior exist
 | Process package distribution / Manual forks are not the default reuse model | Bootstrap/update reuse a versioned package, but the anti-fork invariant is not directly asserted. | Add a distribution test proving no writable copied policy fork becomes canonical. |
 | Repository content split / Project repos own implementation truth | The central topology separates repositories structurally, but no exact negative test rejects implementation artifacts in `team-specs`. | Add a topology/content-boundary fixture and deterministic diagnostic. |
 
-All four stay visible with owner `phase-2-verification-owner` and follow-up `successor-candidate-focused-tests`.
+All four were initially kept visible with owner `phase-2-verification-owner` and follow-up `successor-candidate-focused-tests`; the follow-up below closes them with exact pytest evidence.
 
 ## List 3 — genuine product gaps (13)
 
@@ -148,10 +148,8 @@ Every row is now bound to one or more exact `manual:` paths. The certification e
 
 ## What remains blocked
 
-1. The 4 focused-test selectors cannot be marked covered until their new exact tests exist.
-2. The 13 product gaps cannot be implemented as incidental Phase 2.14 cleanup; they require explicit change intake and accepted OpenSpec deltas.
-3. `Later integrations do not block transfer readiness` remains a human acceptance judgment. It is not converted to future work because it defines whether the present first-MVP boundary is acceptable.
-4. The working-source improvement does not certify a release. A successor candidate must be frozen and certified after the selected remediation scope is complete.
+1. The 13 product gaps cannot be implemented as incidental Phase 2.14 cleanup; they require explicit change intake and accepted OpenSpec deltas.
+2. The working-source improvement does not certify a release. A successor candidate must be frozen and certified after the selected remediation scope is complete.
 
 ## Recommended execution sequence
 
@@ -160,3 +158,16 @@ Every row is now bound to one or more exact `manual:` paths. The certification e
 3. Triage the six proposed product-gap OpenSpec changes; prioritize Delta vocabulary, archive convention, and reviewed upgrades as release-integrity controls.
 4. Keep Phase 3/4 declarations out of Phase 2 acceptance calculations.
 5. Freeze a new candidate only after the chosen Phase 2 remediation set is complete, then run candidate-bound certification and independent review.
+
+## Accepted follow-up: boundary and focused tests
+
+Human decision `D-019` confirms that explicitly deferred integrations do not block first-MVP transfer readiness while deterministic fallback, visible deferral, mandatory human gates, and named Phase 3/4 ownership remain intact. This closes `Later integrations do not block transfer readiness` with `manual:docs/DECISIONS.md`; it does not accept rc4 or start Phase 3.
+
+Four exact pytest nodes close the test-only debt without production-code changes:
+
+- `test_proposal_templates_stay_business_and_scope_focused`;
+- `test_task_templates_are_executable_and_parseable`;
+- `test_bootstrap_reuses_one_versioned_package_without_policy_fork`;
+- `test_central_specs_and_project_implementation_truth_stay_separate`.
+
+Working successor-source coverage after this follow-up is `334 effective = 289 covered + 13 gaps + 32 future_work`. All 13 remaining gaps are genuine product gaps listed above.

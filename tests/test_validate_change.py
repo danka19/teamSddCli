@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import sys
 from textwrap import dedent
 
@@ -247,7 +248,59 @@ def test_valid_thin_change_package_passes_validation(tmp_path: Path) -> None:
     assert errors == []
 
 
-SCENARIO_COVERAGE = {"test_template_skeleton_validates_in_placeholder_mode":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Change package template","scenario":"Template contains required artifacts"},{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Template placeholder validation mode","scenario":"Template validates in placeholder mode"}],"test_valid_thin_change_package_passes_validation":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Valid package passes validation"},{"source_kind":"accepted","capability":"traceability-contract","requirement":"Review-minimum traceability","scenario":"Requirement links to scenario"}],"test_missing_full_package_artifacts_are_reported_without_waiver":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Missing artifact fails validation"}],"test_missing_traceability_row_is_reported":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Missing traceability fails validation"}],"test_staged_discovery_ignores_plain_project_openspec_changes":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Pre-commit validation entrypoint","scenario":"Plain OpenSpec project change is ignored"},{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Pre-commit validation entrypoint","scenario":"SDD package is validated"}],"test_placeholder_values_are_rejected_in_production_mode":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Template placeholder validation mode","scenario":"Real package rejects placeholders"}],"test_requirement_without_scenario_is_reported":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Review-minimum traceability","scenario":"Missing scenario blocks review readiness"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Waiver cannot hide behavior scenario coverage"}],"test_full_archive_rejects_non_automation_waiver_for_missing_automation_evidence":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Waived traceability links","scenario":"Missing automation link requires waiver"}],"test_full_archive_requires_waiver_to_match_same_requirement_and_scenario":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Waived traceability links","scenario":"Waiver does not hide requirement coverage"}],"test_waiver_approver_rejects_bot_or_unknown_labels":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"AI cannot approve a waiver"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Role-appropriate approver is required"}],"test_waiver_approver_accepts_owner_group_reference_from_metadata":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Approver matches waived obligation"}],"test_invalid_waiver_shape_is_reported":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Residual risk requires follow-up"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver record","scenario":"Waiver has required audit fields"}],"test_refactor_can_use_no_spec_change_rationale":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Non-behavior work is reclassified instead of waived"}],"test_thin_package_rejects_risky_quality_triggers":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Waiver cannot bypass mandatory risk review"}],"test_behavior_change_rejects_no_spec_change_rationale":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver record","scenario":"Free-text exception is rejected"}]}
+def test_proposal_templates_stay_business_and_scope_focused() -> None:
+    allowed_headings = {
+        "# Proposal",
+        "## Problem",
+        "## Goal",
+        "## Scope",
+        "### In",
+        "### Out",
+        "## Acceptance Criteria",
+    }
+    required_headings = {"# Proposal", "## Problem", "## Acceptance Criteria"}
+
+    for template in (
+        REPO_ROOT / "templates/change/proposal.md",
+        REPO_ROOT / "process/templates/change/proposal.md",
+    ):
+        content = template.read_text(encoding="utf-8")
+        headings = {line for line in content.splitlines() if line.startswith("#")}
+
+        assert required_headings <= headings
+        assert headings <= allowed_headings
+        assert "```" not in content
+        assert not {
+            "## Implementation",
+            "## Technical Design",
+            "## API Design",
+            "## Database Design",
+        } & headings
+
+
+def test_task_templates_are_executable_and_parseable() -> None:
+    task_pattern = re.compile(
+        r"^- \[ \] (?P<id>TASK-[A-Z0-9]+(?:-[A-Z0-9]+)+) "
+        r"(?P<action>[A-Z][^\n]+[.!?])$"
+    )
+
+    for template in (
+        REPO_ROOT / "templates/change/tasks.md",
+        REPO_ROOT / "process/templates/change/tasks.md",
+    ):
+        task_lines = [
+            line for line in template.read_text(encoding="utf-8").splitlines()
+            if line.startswith("- ")
+        ]
+        matches = [task_pattern.fullmatch(line) for line in task_lines]
+
+        assert task_lines and all(matches)
+        task_ids = [match.group("id") for match in matches if match]
+        assert len(task_ids) == len(set(task_ids))
+        assert all(len(match.group("action").split()) >= 4 for match in matches if match)
+
+
+SCENARIO_COVERAGE = {"test_proposal_templates_stay_business_and_scope_focused":[{"source_kind":"accepted","capability":"change-artifact-contracts","requirement":"Artifact height rules","scenario":"Proposal stays business and scope focused"}],"test_task_templates_are_executable_and_parseable":[{"source_kind":"accepted","capability":"change-artifact-contracts","requirement":"Artifact height rules","scenario":"Tasks stay executable and parseable"}],"test_template_skeleton_validates_in_placeholder_mode":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Change package template","scenario":"Template contains required artifacts"},{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Template placeholder validation mode","scenario":"Template validates in placeholder mode"}],"test_valid_thin_change_package_passes_validation":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Valid package passes validation"},{"source_kind":"accepted","capability":"traceability-contract","requirement":"Review-minimum traceability","scenario":"Requirement links to scenario"}],"test_missing_full_package_artifacts_are_reported_without_waiver":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Missing artifact fails validation"}],"test_missing_traceability_row_is_reported":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Local change package validation","scenario":"Missing traceability fails validation"}],"test_staged_discovery_ignores_plain_project_openspec_changes":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Pre-commit validation entrypoint","scenario":"Plain OpenSpec project change is ignored"},{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Pre-commit validation entrypoint","scenario":"SDD package is validated"}],"test_placeholder_values_are_rejected_in_production_mode":[{"source_kind":"accepted","capability":"change-package-foundation","requirement":"Template placeholder validation mode","scenario":"Real package rejects placeholders"}],"test_requirement_without_scenario_is_reported":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Review-minimum traceability","scenario":"Missing scenario blocks review readiness"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Waiver cannot hide behavior scenario coverage"}],"test_full_archive_rejects_non_automation_waiver_for_missing_automation_evidence":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Waived traceability links","scenario":"Missing automation link requires waiver"}],"test_full_archive_requires_waiver_to_match_same_requirement_and_scenario":[{"source_kind":"accepted","capability":"traceability-contract","requirement":"Waived traceability links","scenario":"Waiver does not hide requirement coverage"}],"test_waiver_approver_rejects_bot_or_unknown_labels":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"AI cannot approve a waiver"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Role-appropriate approver is required"}],"test_waiver_approver_accepts_owner_group_reference_from_metadata":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Approver matches waived obligation"}],"test_invalid_waiver_shape_is_reported":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver approval ownership","scenario":"Residual risk requires follow-up"},{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver record","scenario":"Waiver has required audit fields"}],"test_refactor_can_use_no_spec_change_rationale":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Non-behavior work is reclassified instead of waived"}],"test_thin_package_rejects_risky_quality_triggers":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver negative cases","scenario":"Waiver cannot bypass mandatory risk review"}],"test_behavior_change_rejects_no_spec_change_rationale":[{"source_kind":"accepted","capability":"waiver-policy","requirement":"Waiver record","scenario":"Free-text exception is rejected"}]}
 
 
 def test_valid_full_change_package_with_waiver_passes_validation(tmp_path: Path) -> None:
