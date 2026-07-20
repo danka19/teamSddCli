@@ -92,7 +92,10 @@ def test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence(
 
     assert bootstrap["status"] == "created"
     assert bootstrap["operation"] == "bootstrap-team-specs"
-    assert bootstrap["package"] == {"id": "sdd-process", "version": "0.3.0"}
+    assert bootstrap["package"] == {
+        "id": "sdd-process",
+        "version": (PROCESS / "VERSION").read_text(encoding="utf-8").strip(),
+    }
     assert bootstrap["ai_disabled"] is True
     assert bootstrap["human_authority_substituted"] is False
     assert (target / "process" / "templates" / "change" / "change.yaml").is_file()
