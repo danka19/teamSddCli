@@ -139,4 +139,3 @@ The reviewer independently revalidated the manifest, payload inventory, tracked-
 - `process/certification/evidence/phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml`
 - `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md`
 - `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md`
-
