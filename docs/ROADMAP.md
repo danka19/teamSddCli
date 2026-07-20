@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Transfer progress is 35/36 and NIS progress is 42/43; only Phase 3 pilot tasks 7.5 and 8.8 remain. Before corporate configuration, wiring, or pilot work begins, the human owner will complete the local synthetic framework walkthrough defined in `docs/planning/LOCAL_OWNER_FRAMEWORK_WALKTHROUGH_2026-07-20.md`. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
+- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Decision `D-021` adds a new external Phase 3 for self-service guided operation before any corporate work. Transfer progress remains 35/36 and NIS progress remains 42/43; former pilot tasks 7.5 and 8.8 now belong to Phase 4. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -75,7 +75,7 @@ Current work:
 
 Status: closed.
 
-Work items 2.1-2.13 and all work item 2.14 gates are closed. Human decision `D-020` accepts immutable candidate `phase-2-14-rc6` with the exact hashes recorded in its acceptance packet. Transfer progress is 35/36 and NIS progress is 42/43; tasks 7.5 and 8.8 remain Phase 3 pilot work. Corporate adaptation remains gated by the local owner walkthrough rather than by additional Phase 2 candidate work.
+Work items 2.1-2.13 and all work item 2.14 gates are closed. Human decision `D-020` accepts immutable candidate `phase-2-14-rc6` with the exact hashes recorded in its acceptance packet. Decision `D-021` adds a successor-package usability gate in Phase 3 before corporate adaptation; tasks 7.5 and 8.8 move to the Phase 4 pilot workstream.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -104,19 +104,41 @@ Phase gate:
 
 - Human accepts the reproducible external release candidate after all deterministic, AI-disabled, Qwen-class, DeepSeek-class, rollback, privacy, and documentation checks pass.
 
-## Phase 3. Corporate Adaptation And Real Governed-Change Pilot
+## Phase 3. Self-Service Onboarding And Guided Operation
 
 Status: planned.
 
 A detailed phase plan has not been accepted yet.
 
-Goal: install the accepted Phase 2 release candidate in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real minor, major, or hotfix pilot selected through the approved pilot criteria.
+Goal: make the external reusable process package self-service for a human or AI assistant before any corporate installation. A user starts with a business situation and receives only the applicable commands, evidence expectations, deterministic fallbacks, and explicit human decision boundaries.
 
 Dependency gate:
 
 - The Phase 2 external release candidate is accepted under `D-020`.
+- The local owner walkthrough has identified and `D-021` has accepted the self-service usability gap.
+- No corporate configuration, wiring, credentials, integration, or pilot execution may begin until this phase produces and verifies a successor reusable package.
+
+Likely scope:
+
+- Define a versioned situation-to-operation catalog shared by human guidance, AI instructions, and a guided CLI entry point.
+- Publish and validate one onboarding guide beginning with a business requirement, then progressing through Delta Spec, gates, implementation, QA, evidence, release, and archive preparation.
+- Provide deterministic blocks and manual/AI-disabled fallback for missing context, unavailable models/integrations, failed operations, and human-decision gates.
+- Prove the minor, major, hotfix, negative authority, and failed-run routes using synthetic evidence; do not use corporate data, credentials, or services.
+- Version and verify the successor package before it becomes the corporate adaptation baseline.
+
+## Phase 4. Corporate Adaptation And Real Governed-Change Pilot
+
+Status: planned.
+
+A detailed phase plan has not been accepted yet.
+
+Goal: install the accepted successor process package in the corporate environment, populate real non-secret configuration, wire approved standard tools and the available weak-model adapter, and execute one monitored real minor, major, or hotfix pilot selected through the approved pilot criteria.
+
+Dependency gate:
+
+- The Phase 2 external release candidate is accepted under `D-020` and the Phase 3 successor usability package is accepted.
 - Before corporate configuration, wiring, or pilot execution starts, the human owner must complete and review the local synthetic walkthrough record.
-- Phase 3 must not redesign reusable process behavior or maintain an internal package fork. Reusable gaps return to the external OpenSpec/change workflow.
+- Phase 4 must not redesign reusable process behavior or maintain an internal package fork. Reusable gaps return to the external OpenSpec/change workflow.
 
 Likely scope:
 
@@ -137,7 +159,7 @@ Explicitly deferred from the first MVP:
 - `sdd at propose`
 - `sdd inbox`
 
-## Phase 4. Post-Pilot Hardening And Expansion
+## Phase 5. Post-Pilot Hardening And Expansion
 
 Status: planned.
 
@@ -180,11 +202,12 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
-| `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
-| `close-release-integrity-gaps` | P2 | P3 | accepted |
-| `determinize-weak-model-operational-decisions` | P2 | P3 | in_progress |
-| `define-transfer-ready-process-package` | P2 | P3 | in_progress |
-| `simplify-weak-model-decision-contract` | P2 | P3 | blocked |
+| `add-guided-owner-workflow` | P3 | P4, P5 | planned |
+| `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
+| `close-release-integrity-gaps` | P2 | P4 | accepted |
+| `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |
+| `define-transfer-ready-process-package` | P2 | P4 | in_progress |
+| `simplify-weak-model-decision-contract` | P2 | P4 | blocked |
 
 ## Phase Planning Rule
 

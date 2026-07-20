@@ -41,6 +41,8 @@ Development happens in two environments, in order:
 1. External development environment (current): Claude Code and comparable strong AI CLIs are available. The reusable toolchain is designed, implemented, and certified here, including actual Qwen-class and DeepSeek-class weak-model runs plus an AI-disabled walkthrough.
 2. Internal corporate environment (target): Qwen/DeepSeek/GigaCode-class assistants may be available and perform noticeably worse than Claude for this kind of work. Only an externally accepted release candidate is transferred; internal work is limited to real configuration, approved integration wiring, thin adapter setup, environment checks, and a monitored pilot.
 
+Before that transfer, `D-021` requires one externally maintained self-service guided-operation layer: a human or AI assistant starts from a business situation and receives the applicable commands, evidence expectations, deterministic fallback, and explicit human decision boundary. This is reusable package behavior, not corporate adaptation work.
+
 Portability rules derived from this constraint:
 
 - All guarantees stay in the deterministic layer (section 1 hard rule); the weaker corporate assistant only degrades convenience, never correctness.

@@ -41,6 +41,6 @@ None. The existing accepted specs do not yet contain this proposed adapter behav
 
 Execution phase: P2
 
-Related phases: P3
+Related phases: P4
 
 Lifecycle status: blocked

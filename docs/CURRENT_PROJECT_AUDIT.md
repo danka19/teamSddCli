@@ -6,6 +6,12 @@ Phase 2 is closed and Phase 3 entry is gated by the local owner walkthrough.
 
 Last status reconciliation: 2026-07-20.
 
+## Guided Owner Workflow Intake (2026-07-20)
+
+- Human decision `D-021` adopts a new pre-corporate Phase 3 for self-service guided operation. The current package exposes valid bounded commands but lacks a single situation-based entry point for a colleague who starts with a business requirement, an existing change, a hotfix, or a blocked operation.
+- Active proposed change `add-guided-owner-workflow` owns the reusable catalog, guided CLI entry point, shared human/AI onboarding guide, authority boundary, synthetic route evidence, and successor-package verification. It is not a corporate configuration task and it must not modify immutable RC6, archived specs, historical raw evidence, or external systems.
+- Corporate adaptation and the real governed-change pilot move to Phase 4. Post-pilot hardening moves to Phase 5. No corporate configuration, wiring, credentials, integration, or pilot may begin until the new Phase 3 completion gate is met.
+
 ## Rc6 Documentation-Sync Audit (2026-07-20)
 
 - Human decision `D-020` accepts exact immutable `phase-2-14-rc6` as the external transfer baseline and closes Phase 2. Transfer task 7.4 and NIS task 8.7 are complete; progress is now 35/36 and 42/43. Corporate configuration and pilot work remain paused until the owner completes and reviews the local synthetic walkthrough.
