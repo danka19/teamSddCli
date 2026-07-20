@@ -33,6 +33,6 @@
 
 - [x] 6.1 Run focused suites, complete pytest, strict OpenSpec validation, roadmap/OpenSpec validation, package closure, privacy checks, and immutable-release diff checks.
 - [x] 6.2 Complete independent product, architecture, security/authority, verification, and documentation review of the implemented release-integrity change.
-- [ ] 6.3 Freeze a new immutable successor candidate only after implementation and review findings are closed.
-- [ ] 6.4 Run candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, rollback, privacy, source-coverage, and independent-review certification without reusing rc4 evidence as successor proof.
-- [ ] 6.5 Reconcile the roadmap, phase plan, current audit, evidence index, acceptance packet, checksums, limitations, and final human accept/reject gate from the new candidate evidence.
+- [x] 6.3 Freeze a new immutable successor candidate only after implementation and review findings are closed.
+- [x] 6.4 Run candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, rollback, privacy, source-coverage, and independent-review certification without reusing rc4 evidence as successor proof.
+- [x] 6.5 Reconcile the roadmap, phase plan, current audit, evidence index, acceptance packet, checksums, limitations, and final human accept/reject gate from the new candidate evidence.

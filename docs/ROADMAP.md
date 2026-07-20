@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work items 2.1-2.13 are closed and work item 2.14 is in progress. Historical rc4 gates 2.14.1-2.14.3 are closed; immutable candidate `phase-2-14-rc4` remains historical at `204/110/20`. Working package `0.3.0` implements the six selected release-integrity scenarios and reaches `295/7/32`; the seven remaining product gaps are explicitly deferred to P3/P4 under `D-019`. Transfer progress remains 34/36, and mandatory human gate 2.14.4 is blocked until implementation verification and independent review close, a successor is frozen, and fresh candidate-bound certification passes. Historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved.
+- Current roadmap focus: Phase 2 is `pending_acceptance`. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed; immutable successor `phase-2-14-rc6` has complete candidate-bound model, AI-disabled, Windows/WSL2, rollback, privacy, exact-raw-closure, coverage, and independent-review evidence. Working/candidate coverage is `295/7/32`, and the seven remaining product gaps are explicitly deferred to P3/P4 under `D-019`. Transfer progress remains 34/36 and NIS progress 41/43 because mandatory human gate 2.14.4/7.4/8.7 is still open. Historical rc4 remains unchanged; rc5 is retained as diagnostic rejected history after an undeclared raw probe caused exact-inventory rejection.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -73,9 +73,9 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: in_progress.
+Status: pending_acceptance.
 
-Work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.3 are closed for historical candidate `phase-2-14-rc4`, whose manifest, certification, host, coverage, and review evidence remain immutable. Transfer progress is 34/36; `close-release-integrity-gaps` is the next implementation item, and 2.14.4 is blocked until a remediated successor receives fresh candidate-bound evidence.
+Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Work item 2.14 is waiting at human gate 2.14.4 for immutable candidate `phase-2-14-rc6`, whose fresh candidate-bound evidence is complete and independently reviewed `READY`. Transfer progress remains 34/36 and NIS progress 41/43 until the human owner accepts or rejects the exact candidate; Phase 3 cannot start meanwhile.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -180,7 +180,7 @@ Likely scope:
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
 | `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
-| `close-release-integrity-gaps` | P2 | P3 | in_progress |
+| `close-release-integrity-gaps` | P2 | P3 | pending_acceptance |
 | `determinize-weak-model-operational-decisions` | P2 | P3 | in_progress |
 | `define-transfer-ready-process-package` | P2 | P3 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P3 | blocked |

@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.13 are closed. Historical adapter `2.2` and candidate rc4 retain their passing Qwen/DeepSeek, AI-disabled, Windows, and WSL2 evidence; release-integrity remediation is in progress before a new candidate is frozen and freshly certified.
+Status: work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Immutable candidate rc6 has complete package-0.3.0 Qwen/DeepSeek, AI-disabled, Windows, WSL2, exact-raw-closure, rollback, privacy, coverage, and independent-review evidence. Human gate 2.14.4 remains open; rc4 is historical and rc5 is diagnostic rejected history.
 
 ## Contract Sources
 

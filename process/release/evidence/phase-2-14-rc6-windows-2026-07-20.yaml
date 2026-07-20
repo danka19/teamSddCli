@@ -1,0 +1,115 @@
+schema_version: '1.0'
+evidence_id: phase-2-14-windows
+platform_id: windows
+evidence_level: full-clean-rehearsal
+completed_at: '2026-07-20T02:52:43Z'
+payload_sha256: 172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951
+manifest_sha256: 0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146
+process_package_version: 0.3.0
+config_schema_version: '1.1'
+inventory:
+  os: Windows-11-10.0.26200-SP0
+  architecture: AMD64
+  shell: PowerShell
+  python: Python 3.13.14
+  node: v24.16.0
+  openspec: 1.4.1
+  git: git version 2.54.0.windows.1
+inventory_commands:
+- argv:
+  - python
+  - --version
+  exit_code: 0
+  stdout: Python 3.13.14
+- argv:
+  - node
+  - --version
+  exit_code: 0
+  stdout: v24.16.0
+- argv:
+  - openspec
+  - --version
+  exit_code: 0
+  stdout: 1.4.1
+- argv:
+  - git
+  - --version
+  exit_code: 0
+  stdout: git version 2.54.0.windows.1
+- argv:
+  - python
+  - -c
+  - import platform;print(platform.platform())
+  exit_code: 0
+  stdout: Windows-11-10.0.26200-SP0
+mcp:
+  status: explicitly-unavailable
+  evidence_ref: null
+scenario_ids:
+- ai-disabled
+- archive-history-preserved
+- clean-bootstrap
+- config-compatibility
+- failed-update-hold
+- hotfix-flow
+- major-flow
+- migration-apply
+- migration-check
+- migration-idempotent
+- minor-flow
+- negative-acceptance-cases
+- rollback
+- update
+scenario_codes:
+- archive-unchanged
+- failed-update-held
+- migration-ok
+- rollback-ok
+- update-ok
+result: passed
+ai_disabled: true
+human_authority_substituted: false
+privacy_scan: passed
+archive_digest_before: 50b61ec58babe87726d2af58995c13f7f58007ef3691854f6ab2a0045ab7f635
+archive_digest_after: 50b61ec58babe87726d2af58995c13f7f58007ef3691854f6ab2a0045ab7f635
+rollback_result: passed
+negative_acceptance_cases:
+- case_id: missing
+  expected_code: evidence-missing
+  observed_codes:
+  - evidence-missing
+  result: passed
+- case_id: stale
+  expected_code: evidence-stale
+  observed_codes:
+  - evidence-stale
+  result: passed
+- case_id: failed
+  expected_code: evidence-failed
+  observed_codes:
+  - evidence-failed
+  - evidence-invalid
+  result: passed
+- case_id: private
+  expected_code: evidence-private
+  observed_codes:
+  - evidence-mcp-inconsistent
+  - evidence-invalid
+  - evidence-private
+  result: passed
+- case_id: ai-only
+  expected_code: evidence-ai-only
+  observed_codes:
+  - evidence-ai-only
+  - evidence-invalid
+  result: passed
+- case_id: checksum-mismatch
+  expected_code: evidence-checksum-mismatch
+  observed_codes:
+  - evidence-checksum-mismatch
+  result: passed
+- case_id: payload-mismatch
+  expected_code: candidate-digest-mismatch
+  observed_codes:
+  - candidate-digest-mismatch
+  result: passed

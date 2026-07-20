@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` retains its candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. `close-release-integrity-gaps` implementation and independent review are complete; human gate 2.14.4 remains blocked until a successor is frozen and receives fresh candidate-bound certification.
+Status: pending_acceptance. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc6` has complete fresh candidate-bound certification and independent review; human gate 2.14.4 remains open. Historical rc4 and `phase-2-12-rc7` remain unchanged, while rc2, rc3, and rc5 remain diagnostic rejected history.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -753,7 +753,7 @@ Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer prog
 - Immutable candidate `phase-2-14-rc4`: payload SHA-256 `4159e43961c5c59005d63fb6f305f9b0b5bac18517f8fd02d3e6b27e711ed6e1`, manifest SHA-256 `33aa240261ed0a660a3fc6b7ef85d847215cf5a3cd1f5afb423f28ca45cd02cb`, 194 inventory files, zero bytecode/cache entries, and 48 checksum-bound raw references. Rc2 and rc3 are retained as diagnostic review-failed candidates because their coverage/evidence payloads were not final-source-resolvable.
 - AI-disabled passed 11/11. Qwen and DeepSeek each passed the required 5/5 preflight followed by 15/15 matrix, all on attempt 1. The sequence used one normalization phase and one aggregate gate-validation pass; no model was rerun after contract-bound evidence was generated.
 - Windows full rehearsal and Linux/WSL2 portability smoke passed against the same manifest, including negative acceptance, rollback, archive preservation, privacy, and AI-disabled operation. macOS remains explicitly not certified.
-- Immutable rc4 coverage is 334 effective scenarios: 204 covered, 110 explicit missing-evidence rows, and 20 later-work scenarios. Working package `0.3.0` is 334 effective scenarios: 295 covered, 7 gaps, and 32 future-work scenarios. The seven gaps are the explicitly deferred feedback, CODEOWNERS, advisory-traceability, and legacy-baseline selectors. This working result is not candidate-bound release evidence until independent review passes and a successor candidate is frozen and certified.
+- Immutable rc4 coverage is 334 effective scenarios: 204 covered, 110 explicit missing-evidence rows, and 20 later-work scenarios. At this remediation checkpoint, package `0.3.0` was 334 effective scenarios: 295 covered, 7 gaps, and 32 future-work scenarios. The later rc6 section records the completed candidate-bound certification of that inventory.
 - Diagnostic candidate rc1 and the two failed WSL setup attempts remain retained as fail-closed history; neither was converted into passing evidence.
 - Final repository verification passed: focused regression `322 passed, 4 skipped`; complete suite `716 passed, 4 skipped in 241.87s`; strict OpenSpec validation 12/12; roadmap/OpenSpec validator 0 errors with two expected historical status warnings; final privacy scan found no tracked raw artifacts or personal workspace paths.
 
@@ -762,7 +762,7 @@ Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer prog
 - Working package `0.3.0` closes the selected Delta, archive-history, and reviewed-upgrade selectors and composes the three active `MODIFIED` deltas into effective coverage: `295 covered / 7 gaps / 32 future_work`.
 - Independent review initially blocked freeze on archive readiness/path safety, upgrade provenance, Delta semantics, and effective-selector evidence. Three correction/review cycles closed all Critical and Important findings; final independent verdict is `READY`.
 - Final working-source verification passed `736 passed, 4 skipped`; strict OpenSpec passed 13/13; roadmap/OpenSpec reported 0 errors and two historical lifecycle warnings; check-only deterministic certification passed; `process/release/` remained unchanged.
-- This checkpoint authorizes creation of a successor candidate. It is not candidate-bound certification or human release acceptance.
+- This historical checkpoint authorized creation of a successor candidate. The later rc6 section records completed candidate-bound certification; human release acceptance remains separate.
 
 Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`, `docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md`, `process/release/phase-2-14-release-manifest.yaml`, and the Phase 2.14 host/model evidence documents.
 
@@ -776,3 +776,17 @@ Status: `closed`. Transfer task 7.3 and NIS task 8.6 are complete; transfer prog
 - No unresolved review finding remains. Human acceptance is not inferred from these technical reviews.
 
 Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md`.
+
+## Work Item 2.14 Successor Certification (2026-07-20)
+
+Status: `pending_acceptance`. Technical successor work is complete; transfer task 7.4 and NIS task 8.7 remain the same explicit human-owner gate.
+
+- Source implementation commit `5f92fc6` closed the Delta, archive-history, and reviewed-upgrade product gaps. Evidence-selection commit `4ffc44a` bound fresh package `0.3.0` Qwen and DeepSeek evidence without changing historical rc4.
+- AI-disabled execution passed 11/11. Qwen `qwen3.5:9b` and DeepSeek `deepseek-r1:8b`, Ollama `0.30.11`, adapter `2.2`, each passed runtime identity, 5/5 preflight, and 15/15 matrix gates with empty diagnostics.
+- Rc5 was correctly rejected during aggregate evaluation: a superseded top-level runtime probe had been copied into its raw bundle but was not declared by normalized evidence, producing `actual-model.result-inventory-mismatch`. Rc5 remains immutable diagnostic history.
+- Exact-inventory rc6 contains the same reviewed payload bytes and only the 48 normalized raw references. Payload SHA-256 is `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`; manifest SHA-256 is `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`; payload inventory is 199 files.
+- Windows full-clean rehearsal and Linux/WSL2 portability smoke both passed against rc6 with AI disabled, unchanged archive digest, successful rollback, privacy pass, no human-authority substitution, and complete negative-acceptance matrices. The WSL2 host required exact Linux wheels in an ephemeral `/tmp` dependency path and a temporary `python -> python3` PATH shim; neither changed the candidate or system package installation.
+- Aggregate evaluation returned `evidence-complete`, `diagnostics: []`, and `human_acceptance_required: true`. Independent candidate-bound review returned `READY` with no Critical, Important, or Minor findings.
+- Final repository verification passed `736 passed, 4 skipped in 266.67s`; strict OpenSpec validation passed 13/13. Technical readiness does not accept the release or authorize Phase 3.
+
+Durable evidence: `process/release/phase-2-14-rc6-release-manifest.yaml`, `process/release/evidence/phase-2-14-rc6-windows-2026-07-20.yaml`, `process/release/evidence/phase-2-14-rc6-linux-wsl2-2026-07-20.yaml`, `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md`, and `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md`.

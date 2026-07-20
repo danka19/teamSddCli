@@ -65,6 +65,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md` | Worker, reviewer, architecture, and verification gate results, correction batch, fallback limitation, and final rc4 review judgment |
 | `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md` | Provenance, exact counts, 46-requirement inventory, five-way routing, and acceptance consequences for rc4's 110 mechanically uniform residual-gap rows |
 | `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md` | Six-group intake for the 13 genuine product gaps, with Phase 2 release-integrity routing, Phase 3/4 deferrals, and the successor-candidate execution gate |
+| `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md` | Successor certification audit covering rc5 fail-closed history, immutable rc6 identity, fresh model/AI-disabled/platform evidence, exact raw closure, verification, and independent review |
+| `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Human accept/reject packet for exact immutable candidate rc6, including checksums, evidence, limits, consequences, and recommended decision |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
@@ -123,6 +125,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/release/evidence/phase-2-12-*.yaml` | External Windows full-rehearsal and Linux/WSL2 portability-smoke evidence bound to the frozen candidate |
 | `process/release/phase-2-14-release-manifest.yaml` | Frozen final Phase 2 release manifest for immutable candidate `phase-2-14-rc4` |
 | `process/release/evidence/phase-2-14-*.yaml` | Windows full-rehearsal and Linux/WSL2 portability evidence bound to final candidate `phase-2-14-rc4` |
+| `process/release/phase-2-14-rc6-release-manifest.yaml` | Frozen successor manifest for immutable candidate `phase-2-14-rc6`; rc4 manifest remains historical and unchanged |
+| `process/release/evidence/phase-2-14-rc6-*.yaml` | Fresh Windows full-rehearsal and Linux/WSL2 portability evidence bound to immutable rc6 |
 | `process/certification/evidence/phase-2-11-qwen-remediation-2026-07-16.yaml` | Normalized Qwen adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml` | Normalized DeepSeek adapter `2.0` failed-preflight evidence with immutable adapter `1.0` baseline reference and external raw checksums |
 | `process/certification/evidence/phase-2-11-qwen-adapter-2-1-2026-07-16.yaml` | Normalized Qwen adapter `2.1` failed-preflight evidence: 2/5, zero retries, matrix not run, runtime/preflight/attempt checksums, and immutable adapter `2.0` baseline reference |
@@ -130,6 +134,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification/evidence/phase-2-11-qwen-adapter-2-2-2026-07-17.yaml` | Normalized Qwen adapter `2.2` certification evidence: 5/5 preflight, 15/15 matrix, attempt-1 results, operation-plan identities, raw checksums, and immutable adapter `2.1` baseline reference |
 | `process/certification/evidence/phase-2-11-deepseek-adapter-2-2-2026-07-17.yaml` | Normalized DeepSeek adapter `2.2` certification evidence: 5/5 preflight, 15/15 matrix, attempt-1 results, operation-plan identities, raw checksums, and immutable adapter `2.1` baseline reference |
 | `process/certification/evidence/phase-2-14-*-adapter-2-2-2026-07-18.yaml` | Final candidate-specific Qwen and DeepSeek normalized evidence: 5/5 preflight, 15/15 matrix, full external raw-root binding, launch provenance, and adapter `2.1` baseline references |
+| `process/certification/evidence/phase-2-14-rc5-*-adapter-2-2-2026-07-20.yaml` | Fresh package-0.3.0 Qwen and DeepSeek evidence selected by rc6: runtime identity, 5/5 preflight, 15/15 matrix, exact raw references, and advisory-only authority |
 | `process/certification/runtime-identities.yaml` | Immutable full-digest extension to the semantic matrix catalog, used by fresh preflight and per-matrix-call runtime probes without duplicating tag/runtime ownership or rewriting historical evidence |
 | `process/operation_plan.py` | Minimal deterministic case evaluator that binds weak-model action, artifact kind, reason codes, verified source inventory, unresolved inputs, and accountable human route before generation |
 | `process/schemas/weak-model-operation-plan.schema.json` | Closed identity-bound adapter `2.2` operation-plan contract |
