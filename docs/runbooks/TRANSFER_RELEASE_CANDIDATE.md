@@ -82,3 +82,30 @@ The validator owns the 30-day freshness window and ignores evidence-provided
 expiry claims. A complete packet returns `evidence-complete` and
 `human_acceptance_required: true`; only the human owner may accept or reject
 transfer readiness.
+
+## Повторное использование сертифицированной model matrix
+
+`baseline-reuse` — не сокращённая сертификация и не решение об acceptance. Это
+явный режим в `process/release-certification-selection.yaml`, который допускает
+использование полной исторической matrix только для нового package, не
+изменившего модельный контракт.
+
+Перед тем как использовать режим, валидатор проверяет три независимые границы:
+
+1. Каждый зарегистрированный SHA-256 adapter, model catalog, role instruction,
+   response schema и model-operation plan совпадает с baseline.
+2. Исторический normalized evidence имеет ожидаемый SHA-256, ссылается на
+   passed matrix и её точный внешний raw-artifact root.
+3. Для каждого model family есть свежий passed preflight текущей версии
+   package. Он заново проверяет launcher/read-pack и не может быть заменён
+   старым результатом.
+
+Если отсутствует любой файл, hash не совпадает, preflight не прошёл или режим
+не указан явно, acceptance завершится отказом. В таком случае нужно выполнить
+новую полную matrix для обоих model family; валидатор не подменяет её прошлым
+evidence и не создаёт фиктивный pass.
+
+Полная matrix не повторяется только когда изменения ограничены не-AI workflow
+или usability-слоем. Причина reuse обязана быть записана в selection, чтобы
+владелец мог проверить, почему выбрана эта граница. Исторические normalized
+evidence и raw artifacts не редактируются: successor только ссылается на них.

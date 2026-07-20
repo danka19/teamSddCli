@@ -10,6 +10,11 @@ Current checkpoint:
 
 > Phase 1 produced the accepted OpenSpec baseline and Phase 2 is closed under `D-020`: immutable candidate `phase-2-14-rc6` is the external transfer baseline with process package `0.3.0`, payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, and `295 covered / 7 gaps / 32 future_work`. `D-021` adds a new pre-corporate Phase 3: the reusable package must become self-service through a situation-based guided-operation contract for humans and AI assistants before any corporate configuration or pilot. The guided workflow has passed its focused synthetic, AI-disabled, local Qwen/DeepSeek preflight, and negative-path checks; its separately versioned successor candidate is still pending. RC6 remains immutable; Phase 4 performs corporate adaptation and a monitored pilot. Historical rc4 remains unchanged, rc5 is retained as diagnostic rejected history, and macOS is not certified.
 
+Текущий пакет `0.3.1` содержит проверяемый `baseline-reuse`: свежие Qwen и
+DeepSeek preflight прошли, а полная matrix `0.3.0` связана с ними точными
+hashes. Successor candidate пока не готов: в доступном архиве отсутствуют два
+исторических raw-artifact root; без них acceptance намеренно fail-closed.
+
 ## Scope
 
 In scope:

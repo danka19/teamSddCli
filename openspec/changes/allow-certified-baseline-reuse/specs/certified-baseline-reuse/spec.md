@@ -8,8 +8,9 @@ preflight.
 
 #### Scenario: Совместимый successor использует baseline matrix
 - **WHEN** successor package изменяет версию или не-AI workflow, а adapter,
-  role instruction, model catalog, response schema и launcher/read-pack
-  contract совпадают с baseline по зарегистрированным SHA-256
+  role instruction, model catalog, response schema и model-operation plan
+  совпадают с baseline по зарегистрированным SHA-256; изменённый launcher/read-pack
+  слой проходит свежий preflight на текущей версии
 - **THEN** release evidence связывает candidate с baseline matrix и свежим
   preflight, указывает причину reuse и проходит только после проверки всех
   этих полей
