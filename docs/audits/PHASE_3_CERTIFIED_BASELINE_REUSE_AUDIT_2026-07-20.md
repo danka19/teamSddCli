@@ -7,6 +7,15 @@
 контракта и свежем preflight. Это не меняет accepted `phase-2-14-rc6`, не
 создаёт автоматического acceptance и не запускает корпоративную адаптацию.
 
+## Критерии
+
+1. Reuse указан явно и не может быть выведен из одной только версии package.
+2. Все зарегистрированные AI-contract hashes совпадают с текущим payload.
+3. Историческая matrix и её raw root остаются неизменяемыми и доступны для
+   candidate-bound проверки.
+4. Qwen и DeepSeek имеют отдельные свежие passed preflight текущей версии.
+5. При любой неполноте acceptance отказывает, а не понижает проверку.
+
 ## Что сделано
 
 - В selection schema добавлены явные режимы `full-matrix` и `baseline-reuse`.
@@ -45,14 +54,26 @@ preflight исчезнет или завершится ошибкой, либо 
 | DeepSeek actual preflight | 5/5, `deepseek-r1:8b`, local family proxy |
 | `validate_phase_gate` обоих fresh result | `[]` |
 
-## Блокер candidate-bound acceptance
+## Findings
 
-В доступном внешнем хранилище отсутствуют два historical raw roots,
-зарегистрированные baseline evidence `0.3.0`. Поэтому невозможно честно
-собрать raw bundle и получить `evidence-complete` для successor candidate без
-повторного полного matrix или восстановления именно этих архивных артефактов.
-Созданная пустая временная папка `guided-owner-v0.3.1-candidate-raw-2026-07-20`
-не является evidence и не используется как результат.
+### BR-001: Historical raw bundle недоступен
+
+- Классификация: verified limitation, medium severity.
+- Влияние: successor candidate `0.3.1` не может получить
+  `evidence-complete`; Phase 3 и `add-guided-owner-workflow` не готовы к
+  archive или human acceptance.
+- Воспроизводимое evidence: рекурсивный поиск во внешнем
+  `teamSsdCli-release-artifacts` не нашёл
+  `raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20` и
+  `raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20`.
+- Подтверждённая причина: в доступном внешнем хранилище нет именно двух roots,
+  на которые ссылается неизменяемый selection baseline.
+- Остаточная неопределённость: неизвестно, существуют ли roots в другом
+  release archive, недоступном в этой сессии.
+- Рекомендованное действие: восстановить exact roots либо явно разрешить новую
+  полную Qwen/DeepSeek matrix. Пустая временная папка
+  `guided-owner-v0.3.1-candidate-raw-2026-07-20` не является evidence и не
+  используется как результат.
 
 ## Следующий шаг
 
