@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 and gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` has final candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. Mandatory human gate 2.14.4 is next.
+Status: in_progress. Work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` retains its candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. Human gate 2.14.4 is blocked until `close-release-integrity-gaps` is implemented and reviewed and a successor receives fresh candidate-bound certification.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 

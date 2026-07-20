@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.3 are closed; immutable candidate `phase-2-14-rc4` has candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, source-linked coverage, and passing review evidence. Rc4 retains its historical `204/110/20` coverage. The 2026-07-20 selector review plus bounded focused tests prepare a successor source at `289 covered / 13 gaps / 32 future_work`: all four focused-test debts are closed, `D-019` binds the first-MVP exclusion boundary, 22 governance selectors bind exact decisions/audits, and only 13 genuine product gaps remain. Transfer progress is 34/36 and mandatory human gate 2.14.4 is next; no successor candidate is certified yet. Historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved.
+- Current roadmap focus: work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.3 are closed; immutable candidate `phase-2-14-rc4` remains historical at `204/110/20`. The 2026-07-20 selector review plus bounded focused tests prepare a successor source at `289/13/32`. Six-group intake routes six release-integrity selectors into apply-ready Phase 2 change `close-release-integrity-gaps` and defers seven visible gaps to P3/P4 under `D-019`. Transfer progress remains 34/36, but mandatory human gate 2.14.4 is blocked until the selected remediation is implemented, a successor is frozen, and fresh candidate-bound certification and review pass. Historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -75,7 +75,7 @@ Current work:
 
 Status: in_progress.
 
-Work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.3 are closed. Candidate `phase-2-14-rc4` is frozen with its own manifest, certification, host, source-linked coverage, and review evidence; adapter `1.0`, `2.0`, and `2.1` evidence, candidate `phase-2-12-rc7`, and diagnostic rc2/rc3 remain immutable history. Transfer progress is 34/36 and mandatory human gate 2.14.4 is next.
+Work items 2.1-2.13 are closed and work item 2.14 is in progress. Gates 2.14.1-2.14.3 are closed for historical candidate `phase-2-14-rc4`, whose manifest, certification, host, coverage, and review evidence remain immutable. Transfer progress is 34/36; `close-release-integrity-gaps` is the next implementation item, and 2.14.4 is blocked until a remediated successor receives fresh candidate-bound evidence.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -180,6 +180,7 @@ Likely scope:
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
 | `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
+| `close-release-integrity-gaps` | P2 | P3 | in_progress |
 | `determinize-weak-model-operational-decisions` | P2 | P3 | in_progress |
 | `define-transfer-ready-process-package` | P2 | P3 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P3 | blocked |

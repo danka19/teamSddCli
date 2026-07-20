@@ -155,7 +155,7 @@ Every row is now bound to one or more exact `manual:` paths. The certification e
 
 1. Accept or reject the first-MVP boundary explicitly.
 2. Implement the four focused tests as one bounded successor-candidate verification change.
-3. Triage the six proposed product-gap OpenSpec changes; prioritize Delta vocabulary, archive convention, and reviewed upgrades as release-integrity controls.
+3. Triage the six normalized product-gap groups; prioritize Delta vocabulary, archive convention, and reviewed upgrades as release-integrity controls.
 4. Keep Phase 3/4 declarations out of Phase 2 acceptance calculations.
 5. Freeze a new candidate only after the chosen Phase 2 remediation set is complete, then run candidate-bound certification and independent review.
 
@@ -171,3 +171,5 @@ Four exact pytest nodes close the test-only debt without production-code changes
 - `test_central_specs_and_project_implementation_truth_stay_separate`.
 
 Working successor-source coverage after this follow-up is `334 effective = 289 covered + 13 gaps + 32 future_work`. All 13 remaining gaps are genuine product gaps listed above.
+
+The completed intake is recorded in `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md`. It resolves the earlier six-group/seven-change-ID ambiguity, routes the six prioritized release-integrity scenarios into apply-ready change `close-release-integrity-gaps`, and keeps the other seven selectors as explicit P3/P4 gaps.

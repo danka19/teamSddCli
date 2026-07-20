@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Work items 2.1-2.13 are closed after implementation, actual-model certification, deterministic verification, byte-identical Windows/WSL2 release-candidate evidence, and the non-secret corporate-adaptation package. Work item 2.14 is in progress: documentation, final technical, and review gates 2.14.1-2.14.3 are closed, and mandatory human gate 2.14.4 is next.
+Work items 2.1-2.13 are closed after implementation, actual-model certification, deterministic verification, byte-identical Windows/WSL2 release-candidate evidence, and the non-secret corporate-adaptation package. Work item 2.14 is in progress: historical rc4 gates 2.14.1-2.14.3 are closed, but the selected release-integrity remediation now blocks mandatory human gate 2.14.4 until a successor is implemented, frozen, and freshly certified.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -34,7 +34,7 @@ Status: accepted.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
 - Active change `determinize-weak-model-operational-decisions` contains the completed post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history. Its tasks are complete, but its lifecycle remains `in_progress` pending an explicit human lifecycle decision.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.13 are closed; work item 2.14 is in progress, with 2.14.1-2.14.3 closed and 2.14.4 next.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.13 are closed; work item 2.14 is in progress, with historical rc4 gates 2.14.1-2.14.3 closed and 2.14.4 blocked on the remediated successor.
 
 ## Planning Acceptance Gate
 
@@ -155,7 +155,7 @@ Source: Human direction on 2026-07-20 following the residual-gap selector review
 
 Type: `scope_refinement`, `verification_change`, `documentation_change`.
 
-Decision: `adopt_now` for the boundary decision and four focused tests; `create_openspec_change` intake is required for the six product-gap groups before implementation.
+Decision: `adopt_now` for the boundary decision and four focused tests; `create_openspec_change` for the three release-integrity groups; `defer` for feedback disposition, CODEOWNERS, and the combined later capability-expansion group.
 
 Reason: `D-019` confirms that named Phase 3/4 integrations do not block the first MVP under deterministic fallback, visible deferral, and unchanged mandatory gates. The four focused tests prove existing contracts and are independent of rc4 acceptance. The 13 genuine gaps change behavior or acceptance and therefore cannot enter Phase 2.14 as incidental cleanup.
 
@@ -166,7 +166,7 @@ Affected architecture: no architecture change; Git/OpenSpec remains canonical an
 Data contract impact: none for the boundary decision or focused tests. Product-gap intake will assess contracts separately.
 
 Verification impact: bind the boundary selector to `D-019`; add four exact pytest nodes and source-owned coverage markers; run focused, coverage, full regression, OpenSpec, roadmap, and release-snapshot immutability checks.
-Status: boundary and focused-test substeps are `closed`; product-gap intake is next. The bounded plan is `docs/planning/PHASE_2_FOCUSED_COVERAGE_TESTS_IMPLEMENTATION_PLAN_2026-07-20.md`.
+Status: boundary and focused-test substeps are `closed`; product-gap intake is complete in `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md`. `close-release-integrity-gaps` is apply-ready and is the next Phase 2 implementation item. Candidate freeze remains blocked until its six scenarios pass RED/GREEN implementation and independent review.
 ```
 
 ```text
@@ -684,7 +684,7 @@ Exit criteria: the human owner accepts or rejects the exact external candidate u
 | 2.14.1 Documentation reconciliation | closed | Reconcile roadmap, current audit, phase plan, repository map, manifest/evidence links, doc-sync findings, OpenSpec validation, and privacy scan. Documentation-only corrections do not require model execution or a complete pytest run. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md`. |
 | 2.14.2 Final technical verification | closed | Candidate `phase-2-14-rc4` is frozen with its own manifest, checksums, host evidence, normalized evidence, 48 raw-artifact references, launch provenance, and fail-closed manual-evidence resolution. AI-disabled passed 11/11; Qwen and DeepSeek each passed 5/5 preflight and 15/15 matrix; Windows full rehearsal and WSL2 portability smoke passed. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`. |
 | 2.14.3 Review gates | closed | Worker, independent reviewer, independent architecture, and verification-fallback gates passed after one provenance correction batch. Reviewers consumed existing evidence and did not rerun the complete pytest suite or models. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md`. |
-| 2.14.4 Human acceptance | ready | The human owner receives immutable candidate rc4, manifest/checksums, platform and rollback evidence, AI-disabled evidence, Qwen/DeepSeek evidence, source-linked Tech Lead/QA/security evidence, limitations, the 2026-07-19 provenance audit, and the 2026-07-20 exact selector review. Rc4 still reports `204/110/20`; the improved `289/13/32` working source is successor preparation and is not certified. `D-019` accepts only the first-MVP exclusion boundary and does not start Phase 3. |
+| 2.14.4 Human acceptance | blocked | Rc4 remains immutable historical evidence at `204/110/20`. The human selected successor remediation instead of accepting that candidate: implement and independently review `close-release-integrity-gaps`, reach exact passing evidence for its six scenarios, freeze a successor, and repeat all candidate-bound certification before this gate becomes ready. `D-019` accepts only the first-MVP exclusion boundary and does not start Phase 3. |
 
 The single actual-model sequence for 2.14.2 is fixed: Qwen 5/5 preflight, then Qwen 15/15 only after a passing preflight, then one complete Qwen raw export; DeepSeek with `num_ctx=8192` 5/5 preflight, then DeepSeek 15/15 only after a passing preflight, then one complete DeepSeek raw export; finally one normalization pass and one gate-validation pass. No intermediate model run is allowed after 2.12 and before this sequence unless the adapter, prompt, response schema, operation plan, authority/source validation, or model/runtime profile changes. Reviewers consume this evidence rather than reproducing it.
 
@@ -780,7 +780,7 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; historical release candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 contour, and the non-secret corporate-adaptation package passed deterministic closure/privacy/no-fork verification. Final candidate `phase-2-14-rc4` now has its own passing deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, source-linked coverage, and review evidence. Rc2 and rc3 remain immutable diagnostic review-failed history. Work items 2.1-2.13 and gates 2.14.1-2.14.3 are closed; mandatory human gate 2.14.4 is next. Prior passing `rc6` remains external release history.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Adapter `2.2` passed both family gates and AI-disabled 11/11; historical release candidate `phase-2-12-rc7` passed the accepted Windows/WSL2 contour, and the non-secret corporate-adaptation package passed deterministic closure/privacy/no-fork verification. Candidate `phase-2-14-rc4` has its own passing deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, source-linked coverage, and review evidence but remains historical after the selected successor-remediation path. Rc2 and rc3 remain immutable diagnostic review-failed history. Work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 are closed; mandatory human gate 2.14.4 is blocked pending the remediated successor. Prior passing `rc6` remains external release history.
 
 Mandatory later evidence, not design decisions:
 
