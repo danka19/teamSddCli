@@ -10,7 +10,7 @@ The evaluator and migration tools are deterministic, local, non-interactive, and
 
 ## Classify A Schema-V2 Change
 
-Use the validated central config that pins process package `0.2.0` and policy set `sdd-core` `1.0.0`:
+Use the validated central config that pins current process package `0.3.0` and policy set `sdd-core` `1.0.0`:
 
 ```text
 python scripts/classify_change.py PATH/TO/change.yaml --config PATH/TO/sdd.config.yaml

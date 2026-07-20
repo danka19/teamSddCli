@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 from pathlib import Path
 
@@ -34,6 +35,54 @@ def _yaml(path: Path) -> dict:
     return value
 
 
+def _upgrade_evidence(root: Path, to_version: str = "0.4.0") -> Path:
+    document = {
+        "schema_version": "1.0",
+        "change_id": "synthetic-process-upgrade",
+        "review": {"owner_type": "human", "state": "approved", "decision_ref": "decisions/process-upgrade.yaml"},
+        "from": {"package_version": "0.3.0", "openspec_version": "1.4.1"},
+        "to": {"package_version": to_version, "openspec_version": "1.4.1"},
+        "checks": {
+            "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
+            "openspec_strict": {"status": "passed", "evidence_ref": "evidence/openspec-strict.txt"},
+            "validator_templates": {"status": "passed", "evidence_ref": "evidence/validator-templates.txt"},
+        },
+        "rollback_or_hold": {"strategy": "rollback", "instructions": "Restore the retained package snapshot and configuration pin."},
+        "evidence_sha256": {},
+    }
+    root.mkdir(parents=True, exist_ok=True)
+    change = _yaml(PROCESS / "templates" / "change-v2" / "change.yaml")
+    change["id"] = document["change_id"]
+    change["decision"]["state"] = "confirmed"
+    (root / "change.yaml").write_text(yaml.safe_dump(change, sort_keys=False), encoding="utf-8")
+    (root / "proposal.md").write_text("# Reviewed process upgrade\n", encoding="utf-8")
+    (root / "tasks.md").write_text("# Tasks\n\n- [x] Verify upgrade.\n", encoding="utf-8")
+    delta = root / change["spec_change"]["delta_paths"][0]
+    delta.parent.mkdir(parents=True, exist_ok=True)
+    delta.write_text("## MODIFIED Requirements\n", encoding="utf-8")
+    references = ["decisions/process-upgrade.yaml", "evidence/package-compatibility.json", "evidence/openspec-strict.txt", "evidence/validator-templates.txt"]
+    for reference in references:
+        path = root / reference
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if reference == document["review"]["decision_ref"]:
+            kind, status, producer = "human-decision", "approved", "human"
+        elif reference in document["checks"]["compatibility_evidence_refs"]:
+            kind, status, producer = "compatibility", "compatible", "deterministic-validator"
+        elif reference == document["checks"]["openspec_strict"]["evidence_ref"]:
+            kind, status, producer = "openspec-strict", "passed", "deterministic-validator"
+        else:
+            kind, status, producer = "validator-templates", "passed", "deterministic-validator"
+        path.write_text(yaml.safe_dump({
+            "schema_version": "1.0", "evidence_kind": kind,
+            "change_id": document["change_id"], "from": document["from"], "to": document["to"],
+            "status": status, "produced_by": producer,
+        }, sort_keys=False), encoding="utf-8")
+        document["evidence_sha256"][reference] = hashlib.sha256(path.read_bytes()).hexdigest()
+    evidence = root / "upgrade-evidence.yaml"
+    evidence.write_text(yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
+    return evidence
+
+
 def test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence(
     tmp_path: Path,
 ) -> None:
@@ -43,7 +92,7 @@ def test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence(
 
     assert bootstrap["status"] == "created"
     assert bootstrap["operation"] == "bootstrap-team-specs"
-    assert bootstrap["package"] == {"id": "sdd-process", "version": "0.2.0"}
+    assert bootstrap["package"] == {"id": "sdd-process", "version": "0.3.0"}
     assert bootstrap["ai_disabled"] is True
     assert bootstrap["human_authority_substituted"] is False
     assert (target / "process" / "templates" / "change" / "change.yaml").is_file()
@@ -284,11 +333,11 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     shutil.copytree(PROCESS, installed, ignore=package_ignore)
     shutil.copytree(PROCESS, candidate, ignore=package_ignore)
     candidate_package = _yaml(candidate / "package.yaml")
-    candidate_package["package"]["version"] = "0.3.0"
+    candidate_package["package"]["version"] = "0.4.0"
     (candidate / "package.yaml").write_text(
         yaml.safe_dump(candidate_package, sort_keys=False), encoding="utf-8"
     )
-    (candidate / "VERSION").write_text("0.3.0\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
     central = tmp_path / "team-specs"
     shutil.copytree(TEAM_TEMPLATE, central)
     config_path = central / "sdd.config.yaml"
@@ -301,20 +350,26 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     history_before = history.read_bytes()
     backups = tmp_path / "rollbacks"
 
-    update = update_process_package(installed, candidate, config_path, backups)
+    update = update_process_package(
+        installed,
+        candidate,
+        config_path,
+        backups,
+        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review"),
+    )
 
     assert update["status"] == "updated"
-    assert update["from_version"] == "0.2.0"
-    assert update["to_version"] == "0.3.0"
-    assert _yaml(config_path)["process_package"]["version"] == "0.3.0"
+    assert update["from_version"] == "0.3.0"
+    assert update["to_version"] == "0.4.0"
+    assert _yaml(config_path)["process_package"]["version"] == "0.4.0"
     assert history.read_bytes() == history_before
-    backup = backups / "0.2.0"
+    backup = backups / "0.3.0"
     assert backup.is_dir()
 
     rollback = rollback_process_package(installed, backup, config_path)
 
     assert rollback["status"] == "rolled-back"
-    assert _yaml(config_path)["process_package"]["version"] == "0.2.0"
+    assert _yaml(config_path)["process_package"]["version"] == "0.3.0"
     assert history.read_bytes() == history_before
 
     bad = tmp_path / "bad-candidate"

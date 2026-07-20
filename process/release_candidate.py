@@ -97,6 +97,92 @@ _LINUX_SCENARIOS = {
     "update-rollback-smoke", "negative-acceptance-cases", "ai-disabled",
 }
 _SCENARIO_CODES = {"migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"}
+
+
+def _synthetic_upgrade_evidence(from_version: str, to_version: str) -> dict[str, Any]:
+    """Build bounded rehearsal evidence; production callers supply their reviewed record."""
+    return {
+        "schema_version": "1.0",
+        "change_id": "release-rehearsal-upgrade",
+        "review": {
+            "owner_type": "human",
+            "state": "approved",
+            "decision_ref": "decisions/release-rehearsal-upgrade.yaml",
+        },
+        "from": {"package_version": from_version, "openspec_version": "1.4.1"},
+        "to": {"package_version": to_version, "openspec_version": "1.4.1"},
+        "checks": {
+            "compatibility_evidence_refs": ["evidence/release-rehearsal-compatibility.json"],
+            "openspec_strict": {
+                "status": "passed",
+                "evidence_ref": "evidence/release-rehearsal-openspec.txt",
+            },
+            "validator_templates": {
+                "status": "passed",
+                "evidence_ref": "evidence/release-rehearsal-package-tests.txt",
+            },
+        },
+        "rollback_or_hold": {
+            "strategy": "rollback",
+            "instructions": "Restore the retained package snapshot and configuration pin.",
+        },
+        "evidence_sha256": {},
+    }
+
+
+def _materialize_synthetic_upgrade_evidence(
+    root: Path, process_root: Path, from_version: str, to_version: str
+) -> Path:
+    """Create checksum-bound synthetic rehearsal inputs outside the candidate payload."""
+    document = _synthetic_upgrade_evidence(from_version, to_version)
+    root.mkdir(parents=True, exist_ok=False)
+    change = _load_mapping(
+        process_root / "templates" / "change-v2" / "change.yaml",
+        "release.rehearsal-failed",
+    )
+    change["id"] = document["change_id"]
+    change["decision"]["state"] = "confirmed"
+    (root / "change.yaml").write_text(
+        yaml.safe_dump(change, sort_keys=False), encoding="utf-8", newline="\n"
+    )
+    (root / "proposal.md").write_text("# Reviewed rehearsal upgrade\n", encoding="utf-8", newline="\n")
+    (root / "tasks.md").write_text("# Tasks\n\n- [x] Verify rehearsal upgrade.\n", encoding="utf-8", newline="\n")
+    delta = root / change["spec_change"]["delta_paths"][0]
+    delta.parent.mkdir(parents=True, exist_ok=True)
+    delta.write_text("## MODIFIED Requirements\n", encoding="utf-8", newline="\n")
+    references = [
+        document["review"]["decision_ref"],
+        *document["checks"]["compatibility_evidence_refs"],
+        document["checks"]["openspec_strict"]["evidence_ref"],
+        document["checks"]["validator_templates"]["evidence_ref"],
+    ]
+    for reference in references:
+        path = root / reference
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if reference == document["review"]["decision_ref"]:
+            kind, status, producer = "human-decision", "approved", "human"
+        elif reference in document["checks"]["compatibility_evidence_refs"]:
+            kind, status, producer = "compatibility", "compatible", "deterministic-validator"
+        elif reference == document["checks"]["openspec_strict"]["evidence_ref"]:
+            kind, status, producer = "openspec-strict", "passed", "deterministic-validator"
+        else:
+            kind, status, producer = "validator-templates", "passed", "deterministic-validator"
+        path.write_text(yaml.safe_dump({
+            "schema_version": "1.0", "evidence_kind": kind,
+            "change_id": document["change_id"], "from": document["from"], "to": document["to"],
+            "status": status, "produced_by": producer,
+        }, sort_keys=False), encoding="utf-8", newline="\n")
+        document["evidence_sha256"][reference] = hashlib.sha256(path.read_bytes()).hexdigest()
+    evidence_path = root / "upgrade-evidence.yaml"
+    evidence_path.write_text(
+        yaml.safe_dump(document, sort_keys=False), encoding="utf-8", newline="\n"
+    )
+    return evidence_path
+
+
+def _next_minor_version(version: str) -> str:
+    major, minor, _patch = (int(part) for part in version.split("."))
+    return f"{major}.{minor + 1}.0"
 _NEGATIVE_ACCEPTANCE = {
     "missing": "evidence-missing",
     "stale": "evidence-stale",
@@ -546,26 +632,48 @@ def rehearse_release_candidate(
         candidate_package = requested_workspace / "update-candidate"
         shutil.copytree(payload / "process", candidate_package)
         package = _load_mapping(candidate_package / "package.yaml", "release.rehearsal-failed")
-        package["package"]["version"] = "0.3.0"
+        installed_version = str(package["package"]["version"])
+        candidate_version = _next_minor_version(installed_version)
+        package["package"]["version"] = candidate_version
         (candidate_package / "package.yaml").write_text(
             yaml.safe_dump(package, sort_keys=False), encoding="utf-8", newline="\n"
         )
-        (candidate_package / "VERSION").write_text("0.3.0\n", encoding="utf-8", newline="\n")
+        (candidate_package / "VERSION").write_text(f"{candidate_version}\n", encoding="utf-8", newline="\n")
         config_path = requested_workspace / "team-specs/sdd.config.yaml"
         backups = requested_workspace / "rollback-snapshots"
-        update = update_process_package(requested_workspace / "process", candidate_package, config_path, backups)
+        upgrade_evidence = _materialize_synthetic_upgrade_evidence(
+            requested_workspace / "upgrade-review",
+            requested_workspace / "process",
+            installed_version,
+            candidate_version,
+        )
+        update = update_process_package(
+            requested_workspace / "process",
+            candidate_package,
+            config_path,
+            backups,
+            upgrade_evidence=upgrade_evidence,
+        )
         bad_candidate = requested_workspace / "failed-update-candidate"
         shutil.copytree(candidate_package, bad_candidate)
-        (bad_candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8", newline="\n")
+        (bad_candidate / "VERSION").write_text(
+            f"{_next_minor_version(candidate_version)}\n", encoding="utf-8", newline="\n"
+        )
         failed_update_held = False
         try:
-            update_process_package(requested_workspace / "process", bad_candidate, config_path, backups)
+            update_process_package(
+                requested_workspace / "process",
+                bad_candidate,
+                config_path,
+                backups,
+                upgrade_evidence=upgrade_evidence,
+            )
         except OperationError:
             failed_update_held = True
         if not failed_update_held:
             raise OperationError("release.rehearsal-failed", "failed update did not hold")
         rollback = rollback_process_package(
-            requested_workspace / "process", backups / "0.2.0", config_path
+            requested_workspace / "process", backups / installed_version, config_path
         )
         archive_after = _tree_digest(archive)
         if archive_before != archive_after or update.get("accepted_history_mutated") is not False or rollback.get("accepted_history_mutated") is not False:

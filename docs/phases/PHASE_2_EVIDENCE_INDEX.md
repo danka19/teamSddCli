@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: in_progress. Work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` retains its candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. Human gate 2.14.4 is blocked until `close-release-integrity-gaps` is implemented and reviewed and a successor receives fresh candidate-bound certification.
+Status: in_progress. Work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc4` retains its candidate-bound, source-linked, and reviewed evidence; historical candidate `phase-2-12-rc7` and diagnostic rc2/rc3 remain preserved. `close-release-integrity-gaps` implementation and independent review are complete; human gate 2.14.4 remains blocked until a successor is frozen and receives fresh candidate-bound certification.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -753,9 +753,16 @@ Status: `closed`. Transfer task 7.2 and NIS task 8.5 are complete; transfer prog
 - Immutable candidate `phase-2-14-rc4`: payload SHA-256 `4159e43961c5c59005d63fb6f305f9b0b5bac18517f8fd02d3e6b27e711ed6e1`, manifest SHA-256 `33aa240261ed0a660a3fc6b7ef85d847215cf5a3cd1f5afb423f28ca45cd02cb`, 194 inventory files, zero bytecode/cache entries, and 48 checksum-bound raw references. Rc2 and rc3 are retained as diagnostic review-failed candidates because their coverage/evidence payloads were not final-source-resolvable.
 - AI-disabled passed 11/11. Qwen and DeepSeek each passed the required 5/5 preflight followed by 15/15 matrix, all on attempt 1. The sequence used one normalization phase and one aggregate gate-validation pass; no model was rerun after contract-bound evidence was generated.
 - Windows full rehearsal and Linux/WSL2 portability smoke passed against the same manifest, including negative acceptance, rollback, archive preservation, privacy, and AI-disabled operation. macOS remains explicitly not certified.
-- Immutable rc4 coverage is 334 effective scenarios: 204 covered, 110 explicit missing-evidence rows, and 20 later-work scenarios. The working successor source is 334 effective scenarios: 289 covered, 13 gaps, and 32 future-work scenarios. All 13 visible gaps are genuine product gaps; focused-test debt and the human scope-boundary selector are closed. This working result is not candidate-bound release evidence until a successor candidate is frozen and certified.
+- Immutable rc4 coverage is 334 effective scenarios: 204 covered, 110 explicit missing-evidence rows, and 20 later-work scenarios. Working package `0.3.0` is 334 effective scenarios: 295 covered, 7 gaps, and 32 future-work scenarios. The seven gaps are the explicitly deferred feedback, CODEOWNERS, advisory-traceability, and legacy-baseline selectors. This working result is not candidate-bound release evidence until independent review passes and a successor candidate is frozen and certified.
 - Diagnostic candidate rc1 and the two failed WSL setup attempts remain retained as fail-closed history; neither was converted into passing evidence.
 - Final repository verification passed: focused regression `322 passed, 4 skipped`; complete suite `716 passed, 4 skipped in 241.87s`; strict OpenSpec validation 12/12; roadmap/OpenSpec validator 0 errors with two expected historical status warnings; final privacy scan found no tracked raw artifacts or personal workspace paths.
+
+### 2026-07-20 Successor Remediation Checkpoint
+
+- Working package `0.3.0` closes the selected Delta, archive-history, and reviewed-upgrade selectors and composes the three active `MODIFIED` deltas into effective coverage: `295 covered / 7 gaps / 32 future_work`.
+- Independent review initially blocked freeze on archive readiness/path safety, upgrade provenance, Delta semantics, and effective-selector evidence. Three correction/review cycles closed all Critical and Important findings; final independent verdict is `READY`.
+- Final working-source verification passed `736 passed, 4 skipped`; strict OpenSpec passed 13/13; roadmap/OpenSpec reported 0 errors and two historical lifecycle warnings; check-only deterministic certification passed; `process/release/` remained unchanged.
+- This checkpoint authorizes creation of a successor candidate. It is not candidate-bound certification or human release acceptance.
 
 Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`, `docs/audits/PHASE_2_WORK_ITEM_2_14_ACCEPTANCE_PACKET_2026-07-18.md`, `process/release/phase-2-14-release-manifest.yaml`, and the Phase 2.14 host/model evidence documents.
 

@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.12 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. The implemented release process has passed one full Windows rehearsal and one bounded Linux/WSL2 portability smoke; work item 2.13 is next.
+Status: work items 2.1-2.13 are closed. Historical adapter `2.2` and candidate rc4 retain their passing Qwen/DeepSeek, AI-disabled, Windows, and WSL2 evidence; release-integrity remediation is in progress before a new candidate is frozen and freshly certified.
 
 ## Contract Sources
 
@@ -14,7 +14,7 @@ This runbook does not restate those normative requirements.
 ## Initial Identifiers
 
 - Process package ID: `sdd-process`.
-- Process package version: `0.2.0`.
+- Process package version: `0.3.0`.
 - Configuration and project-adapter schema contract version: `1.1`.
 - Change metadata schema version: integer `2`.
 - Policy document schema version: `1.0`.
@@ -23,7 +23,7 @@ This runbook does not restate those normative requirements.
 - OpenSpec CLI pin: `1.4.1`.
 - Supported first topology: `central-team-specs`.
 
-These identifiers move atomically. A mixed `0.1.0`/`0.2.0` package, `1.0`/`1.1` config, adapter, or policy-set pin is incompatible rather than silently upgraded.
+These identifiers move atomically. A mixed `0.2.0`/`0.3.0` package, `1.0`/`1.1` config, adapter, or policy-set pin is incompatible rather than silently upgraded. Version `0.3.0` adds deterministic Delta semantics, guarded archive history, and mandatory reviewed upgrade evidence; historical `0.2.0` candidates and evidence remain immutable.
 
 ## Reference Layout
 

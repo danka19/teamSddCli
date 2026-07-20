@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import hashlib
 import shutil
 import subprocess
 from pathlib import Path
@@ -22,6 +23,54 @@ from process.workflow_operations import (
 
 ROOT = Path(__file__).resolve().parents[1]
 PROCESS = ROOT / "process"
+
+
+def _upgrade_evidence(root: Path) -> Path:
+    document = {
+        "schema_version": "1.0",
+        "change_id": "synthetic-process-upgrade",
+        "review": {"owner_type": "human", "state": "approved", "decision_ref": "decisions/process-upgrade.yaml"},
+        "from": {"package_version": "0.3.0", "openspec_version": "1.4.1"},
+        "to": {"package_version": "0.4.0", "openspec_version": "1.4.1"},
+        "checks": {
+            "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
+            "openspec_strict": {"status": "passed", "evidence_ref": "evidence/openspec-strict.txt"},
+            "validator_templates": {"status": "passed", "evidence_ref": "evidence/validator-templates.txt"},
+        },
+        "rollback_or_hold": {"strategy": "rollback", "instructions": "Restore the retained package snapshot and configuration pin."},
+        "evidence_sha256": {},
+    }
+    root.mkdir(parents=True, exist_ok=True)
+    change = _yaml(PROCESS / "templates" / "change-v2" / "change.yaml")
+    change["id"] = document["change_id"]
+    change["decision"]["state"] = "confirmed"
+    (root / "change.yaml").write_text(yaml.safe_dump(change, sort_keys=False), encoding="utf-8")
+    (root / "proposal.md").write_text("# Reviewed process upgrade\n", encoding="utf-8")
+    (root / "tasks.md").write_text("# Tasks\n\n- [x] Verify upgrade.\n", encoding="utf-8")
+    delta = root / change["spec_change"]["delta_paths"][0]
+    delta.parent.mkdir(parents=True, exist_ok=True)
+    delta.write_text("## MODIFIED Requirements\n", encoding="utf-8")
+    references = ["decisions/process-upgrade.yaml", "evidence/package-compatibility.json", "evidence/openspec-strict.txt", "evidence/validator-templates.txt"]
+    for reference in references:
+        path = root / reference
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if reference == document["review"]["decision_ref"]:
+            kind, status, producer = "human-decision", "approved", "human"
+        elif reference in document["checks"]["compatibility_evidence_refs"]:
+            kind, status, producer = "compatibility", "compatible", "deterministic-validator"
+        elif reference == document["checks"]["openspec_strict"]["evidence_ref"]:
+            kind, status, producer = "openspec-strict", "passed", "deterministic-validator"
+        else:
+            kind, status, producer = "validator-templates", "passed", "deterministic-validator"
+        path.write_text(yaml.safe_dump({
+            "schema_version": "1.0", "evidence_kind": kind,
+            "change_id": document["change_id"], "from": document["from"], "to": document["to"],
+            "status": status, "produced_by": producer,
+        }, sort_keys=False), encoding="utf-8")
+        document["evidence_sha256"][reference] = hashlib.sha256(path.read_bytes()).hexdigest()
+    evidence = root / "upgrade-evidence.yaml"
+    evidence.write_text(yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
+    return evidence
 TEAM_TEMPLATE = ROOT / "templates" / "team-specs"
 
 
@@ -45,9 +94,9 @@ def _update_fixture(tmp_path: Path) -> tuple[Path, Path, Path, Path]:
     shutil.copytree(PROCESS, candidate, ignore=package_ignore)
     shutil.copytree(TEAM_TEMPLATE, central)
     package = _yaml(candidate / "package.yaml")
-    package["package"]["version"] = "0.3.0"
+    package["package"]["version"] = "0.4.0"
     _write_yaml(candidate / "package.yaml", package)
-    (candidate / "VERSION").write_text("0.3.0\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
     config = _yaml(central / "sdd.config.yaml")
     config["process_package"]["location"] = "../process"
     _write_yaml(central / "sdd.config.yaml", config)
@@ -77,7 +126,9 @@ def test_standalone_package_validation_rejects_missing_declared_asset_before_wri
     with pytest.raises(OperationError, match="package-asset-missing"):
         check_package_compatibility(installed, candidate, config)
     with pytest.raises(OperationError, match="package-asset-missing"):
-        update_process_package(installed, candidate, config, backups)
+        update_process_package(
+            installed, candidate, config, backups, upgrade_evidence=_upgrade_evidence(tmp_path / "missing-asset-review")
+        )
 
     assert (installed / "VERSION").read_bytes() == installed_before
     assert config.read_bytes() == config_before
@@ -105,7 +156,7 @@ def test_recursive_link_is_rejected_before_copy_or_destination_mutation(
     with pytest.raises(OperationError, match="filesystem-link-forbidden"):
         update_process_package(installed, candidate, config, backups)
 
-    assert (installed / "VERSION").read_text(encoding="utf-8").strip() == "0.2.0"
+    assert (installed / "VERSION").read_text(encoding="utf-8").strip() == "0.3.0"
     assert not backups.exists()
 
 
@@ -121,7 +172,9 @@ def test_update_failure_restores_package_and_pin_and_removes_partial_backup(
 
     monkeypatch.setattr(operations, "_write_yaml_atomic", fail_write)
     with pytest.raises(OSError, match="synthetic config write failure"):
-        update_process_package(installed, candidate, config, backups)
+        update_process_package(
+            installed, candidate, config, backups, upgrade_evidence=_upgrade_evidence(tmp_path / "failure-review")
+        )
 
     assert (installed / "VERSION").read_bytes() == installed_before
     assert config.read_bytes() == config_before
@@ -141,9 +194,9 @@ def test_update_requires_forward_semver_and_rejects_undeclared_assets(
     with pytest.raises(OperationError, match="package-downgrade-forbidden"):
         check_package_compatibility(installed, candidate, config)
 
-    package["package"]["version"] = "0.3.0"
+    package["package"]["version"] = "0.4.0"
     _write_yaml(candidate / "package.yaml", package)
-    (candidate / "VERSION").write_text("0.3.0\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
     (candidate / "rogue.txt").write_text("not declared", encoding="utf-8")
     with pytest.raises(OperationError, match="package-asset-undeclared"):
         update_process_package(installed, candidate, config, backups)
@@ -165,7 +218,9 @@ def test_backup_destination_cannot_overlap_installed_package(tmp_path: Path) -> 
     inside = installed / "rollbacks"
 
     with pytest.raises(OperationError, match="filesystem-overlap-forbidden"):
-        update_process_package(installed, candidate, config, inside)
+        update_process_package(
+            installed, candidate, config, inside, upgrade_evidence=_upgrade_evidence(tmp_path / "overlap-review")
+        )
 
     assert not inside.exists()
 

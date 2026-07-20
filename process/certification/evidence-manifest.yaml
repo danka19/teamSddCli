@@ -66,36 +66,24 @@ coverage:
   scenario: Hotfix deferral follows restricted policy
   evidence:
   - pytest:tests/test_artifact_gates.py::test_hotfix_deferral_is_restricted_and_reconciliation_blocks_done
-- source_kind: accepted
+- source_kind: delta
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
   scenario: Added delta introduces new behavior
-  gap:
-    owner: product-owner
-    risk: high
-    reason: No deterministic validator distinguishes ADDED behavior from modification of an existing requirement.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:enforce-delta-operation-contract
-- source_kind: accepted
+  evidence:
+  - pytest:tests/test_delta_operations.py::test_added_delta_must_introduce_new_behavior
+- source_kind: delta
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
   scenario: Removed delta includes reason and migration
-  gap:
-    owner: product-owner
-    risk: high
-    reason: No deterministic validator requires removal reason and migration evidence.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:enforce-delta-operation-contract
-- source_kind: accepted
+  evidence:
+  - pytest:tests/test_delta_operations.py::test_removed_delta_requires_reason_and_migration
+- source_kind: delta
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
   scenario: Rename does not hide content change
-  gap:
-    owner: product-owner
-    risk: high
-    reason: No deterministic validator detects behavior changes hidden behind a rename.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:enforce-delta-operation-contract
+  evidence:
+  - pytest:tests/test_delta_operations.py::test_rename_cannot_hide_content_change
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Future journey and screen artifacts
@@ -174,32 +162,24 @@ coverage:
   scenario: Minor avoids major-only burden
   evidence:
   - pytest:tests/test_artifact_gates.py::test_matrix_is_class_aware_and_major_impact_hotfix_retains_major_obligations
-- source_kind: accepted
+- source_kind: delta
   capability: change-lifecycle
   requirement: Archive history convention
   scenario: Archive uses dated history path
-  gap:
-    owner: product-owner
-    risk: high
-    reason: The packaged flow prepares archive evidence but does not execute or validate a dated archive move.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:implement-archive-history-convention
-- source_kind: accepted
+  evidence:
+  - pytest:tests/test_archive_history.py::test_archive_operation_uses_dated_history_path
+- source_kind: delta
   capability: change-lifecycle
   requirement: Archive history convention
   scenario: Archive commit is greppable
-  gap:
-    owner: product-owner
-    risk: medium
-    reason: No archive operation or validator guarantees a stable greppable archive commit convention.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:implement-archive-history-convention
-- source_kind: accepted
+  evidence:
+  - pytest:tests/test_archive_history.py::test_archive_commit_subject_is_greppable
+- source_kind: delta
   capability: change-lifecycle
   requirement: Archive history convention
   scenario: Archive convention does not replace approval
   evidence:
-  - pytest:tests/test_lifecycle_gates.py::test_dor_start_and_archive_require_transition_specific_human_approval
+  - pytest:tests/test_archive_history.py::test_archive_convention_does_not_replace_approval_or_external_authority
 - source_kind: delta
   capability: change-lifecycle
   requirement: Delivered state is external to archive state
@@ -1157,28 +1137,24 @@ coverage:
   scenario: Validator enforcement follows approved implementation scope
   evidence:
   - manual:docs/DECISIONS.md
-- source_kind: accepted
+- source_kind: delta
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: OpenSpec version is pinned centrally
   evidence:
   - pytest:tests/test_process_package.py::test_synthetic_central_topology_is_coherent
-- source_kind: accepted
+- source_kind: delta
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: Version mismatch is reported before gated validation
   evidence:
   - pytest:tests/test_validate_process_config.py::test_static_version_mismatches_prevent_runtime_probe
-- source_kind: accepted
+- source_kind: delta
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: Upgrade requires reviewed evidence
-  gap:
-    owner: product-owner
-    risk: high
-    reason: Transactional update exists, but reviewed change-package evidence is not an input or gate.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
-    follow_up: openspec-change:govern-process-package-upgrades
+  evidence:
+  - pytest:tests/test_upgrade_evidence.py::test_process_package_upgrade_requires_reviewed_evidence
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment

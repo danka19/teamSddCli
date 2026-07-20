@@ -52,7 +52,7 @@ def build_central_layout(root: Path) -> Path:
             "topology": "central-team-specs",
             "process_package": {
                 "id": "sdd-process",
-                "version": "0.2.0",
+                "version": "0.3.0",
                 "location": "process",
             },
             "openspec": {"cli_version": "1.4.1"},
@@ -151,7 +151,7 @@ def build_adapter_layout(base: Path, reference_kind: str) -> tuple[Path, list[st
             "config_schema_version": "1.1",
             "project_id": "sample-app",
             "team_specs": {"reference": reference, "config_path": "sdd.config.yaml"},
-            "process_package": {"id": "sdd-process", "version": "0.2.0"},
+            "process_package": {"id": "sdd-process", "version": "0.3.0"},
             "policy_set": {"id": "sdd-core", "version": "1.0.0", "overrides": []},
             "local_paths": {"code": "src", "tests": "tests"},
         },
@@ -197,7 +197,7 @@ def test_valid_central_mode_reports_exact_compatibility_json(tmp_path: Path) -> 
     assert payload["compatibility"] == {
         "config_schema_version": "1.1",
         "topology": "central-team-specs",
-        "process_package": {"id": "sdd-process", "version": "0.2.0"},
+        "process_package": {"id": "sdd-process", "version": "0.3.0"},
         "policy_set": {"id": "sdd-core", "version": "1.0.0"},
         "openspec": {"required": "1.4.1", "runtime": "1.4.1"},
     }
@@ -848,7 +848,7 @@ def test_malformed_registry_has_human_json_usage_parity(tmp_path: Path) -> None:
     assert "[usage.registry]" in human_stderr
 
 
-SCENARIO_COVERAGE = {"test_unsupported_topology_is_not_silently_accepted":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Specs-next-to-code remains a future topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Unsupported topology is not silently accepted"}],"test_static_version_mismatches_prevent_runtime_probe":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"Version mismatch is reported before gated validation"}],"test_valid_adapter_modes_use_only_explicit_reference_resolution":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Agent can work with sibling repositories"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Project adapter config points to central process config"}],"test_runtime_requires_exact_stable_openspec_version":[{"source_kind":"delta","capability":"transfer-readiness","requirement":"Reproducible bootstrap and maintenance","scenario":"Incompatible runtime is reported before gated work"}],
+SCENARIO_COVERAGE = {"test_unsupported_topology_is_not_silently_accepted":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Specs-next-to-code remains a future topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Unsupported topology is not silently accepted"}],"test_static_version_mismatches_prevent_runtime_probe":[{"source_kind":"delta","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"Version mismatch is reported before gated validation"}],"test_valid_adapter_modes_use_only_explicit_reference_resolution":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Agent can work with sibling repositories"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Project adapter config points to central process config"}],"test_runtime_requires_exact_stable_openspec_version":[{"source_kind":"delta","capability":"transfer-readiness","requirement":"Reproducible bootstrap and maintenance","scenario":"Incompatible runtime is reported before gated work"}],
  'test_missing_corporate_policy_value_is_not_guessed': [{'capability': 'repo-topology-config',
                                                          'requirement': 'Corporate governance policy configuration',
                                                          'scenario': 'Missing corporate value is not guessed',

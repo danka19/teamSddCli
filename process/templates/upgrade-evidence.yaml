@@ -1,0 +1,29 @@
+schema_version: "1.0"
+change_id: sample-process-upgrade
+review:
+  owner_type: human
+  state: approved
+  decision_ref: decisions/process-upgrade.yaml
+from:
+  package_version: 0.3.0
+  openspec_version: 1.4.1
+to:
+  package_version: 0.4.0
+  openspec_version: 1.4.1
+checks:
+  compatibility_evidence_refs:
+    - evidence/package-compatibility.json
+  openspec_strict:
+    status: passed
+    evidence_ref: evidence/openspec-strict.txt
+  validator_templates:
+    status: passed
+    evidence_ref: evidence/validator-templates.txt
+rollback_or_hold:
+  strategy: rollback
+  instructions: Restore the retained package snapshot and configuration pin.
+evidence_sha256:
+  decisions/process-upgrade.yaml: "0000000000000000000000000000000000000000000000000000000000000000"
+  evidence/package-compatibility.json: "0000000000000000000000000000000000000000000000000000000000000000"
+  evidence/openspec-strict.txt: "0000000000000000000000000000000000000000000000000000000000000000"
+  evidence/validator-templates.txt: "0000000000000000000000000000000000000000000000000000000000000000"

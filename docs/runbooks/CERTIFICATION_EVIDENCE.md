@@ -13,7 +13,7 @@ From any working directory:
 ```powershell
 python <repository>/scripts/certify_process_release.py `
   --root <repository> `
-  --raw-output <external-artifact-root>/raw-artifact-v0.2.0 `
+  --raw-output <external-artifact-root>/raw-artifact-v0.3.0 `
   --check
 ```
 

@@ -173,3 +173,13 @@ Four exact pytest nodes close the test-only debt without production-code changes
 Working successor-source coverage after this follow-up is `334 effective = 289 covered + 13 gaps + 32 future_work`. All 13 remaining gaps are genuine product gaps listed above.
 
 The completed intake is recorded in `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md`. It resolves the earlier six-group/seven-change-ID ambiguity, routes the six prioritized release-integrity scenarios into apply-ready change `close-release-integrity-gaps`, and keeps the other seven selectors as explicit P3/P4 gaps.
+
+## Implemented follow-up: release integrity
+
+Working package `0.3.0` implements the three candidate-blocking groups through exact tests:
+
+- Delta operation semantics: `test_added_delta_must_introduce_new_behavior`, `test_removed_delta_requires_reason_and_migration`, and `test_rename_cannot_hide_content_change`;
+- archive history: `test_archive_operation_uses_dated_history_path` and `test_archive_commit_subject_is_greppable`;
+- reviewed upgrades: `test_process_package_upgrade_requires_reviewed_evidence`.
+
+The current working-source inventory is `334 effective = 295 covered + 7 gaps + 32 future_work`. The remaining seven gaps are the explicitly deferred P3/P4 selectors from the intake. This implementation does not alter rc4 and is not release evidence until verification, independent review, successor freeze, and candidate-bound certification complete.

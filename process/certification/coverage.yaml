@@ -63,6 +63,15 @@ sources:
 - kind: delta
   capability: waiver-policy
   path: openspec/changes/adopt-nis-corporate-process-governance/specs/waiver-policy/spec.md
+- kind: delta
+  capability: change-artifact-contracts
+  path: openspec/changes/close-release-integrity-gaps/specs/change-artifact-contracts/spec.md
+- kind: delta
+  capability: change-lifecycle
+  path: openspec/changes/close-release-integrity-gaps/specs/change-lifecycle/spec.md
+- kind: delta
+  capability: repo-topology-config
+  path: openspec/changes/close-release-integrity-gaps/specs/repo-topology-config/spec.md
 evidence_manifest: process/certification/evidence-manifest.yaml
 future_work:
 - capability: transfer-readiness
@@ -119,6 +128,18 @@ future_work:
   work_item: Phase 3
   reason: installed-state evidence can exist only after a real corporate installation and monitored pilot
 delta_targets:
+- change: close-release-integrity-gaps
+  kind: MODIFIED
+  capability: change-artifact-contracts
+  requirement: Delta Spec operation vocabulary
+- change: close-release-integrity-gaps
+  kind: MODIFIED
+  capability: change-lifecycle
+  requirement: Archive history convention
+- change: close-release-integrity-gaps
+  kind: MODIFIED
+  capability: repo-topology-config
+  requirement: OpenSpec version pin and upgrade policy
 - change: adopt-nis-corporate-process-governance
   kind: MODIFIED
   capability: traceability-contract
@@ -171,9 +192,11 @@ marker_sources:
 - tests/test_certification.py
 - tests/test_release_candidate.py
 - tests/test_artifact_gates.py
+- tests/test_archive_history.py
 - tests/test_classification.py
 - tests/test_classification_migration.py
 - tests/test_corporate_flow.py
+- tests/test_delta_operations.py
 - tests/test_feedback_policy.py
 - tests/test_lifecycle_gates.py
 - tests/test_owner_governance.py
@@ -185,6 +208,7 @@ marker_sources:
 - tests/test_tech_lead_certification.py
 - tests/test_tech_lead_hardening.py
 - tests/test_tech_lead_review.py
+- tests/test_upgrade_evidence.py
 - tests/test_validate_change.py
 - tests/test_validate_process_config.py
 - tests/test_weak_model_kit.py

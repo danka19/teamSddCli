@@ -35,9 +35,18 @@ The historical `templates/change/` surface remains readable through `scripts/val
 ```text
 python scripts/prepare_spec_pr.py C:/work/sample-workspace/team-specs/openspec/changes/sample-change-001 --package-root C:/work/sample-workspace/process --json
 python scripts/prepare_archive.py C:/work/sample-workspace/team-specs/openspec/changes/sample-change-001 --package-root C:/work/sample-workspace/process --json
+python scripts/prepare_archive.py C:/work/sample-workspace/team-specs/openspec/changes/sample-change-001 --package-root C:/work/sample-workspace/process --archive-root C:/work/sample-workspace/team-specs/openspec/changes/archive --archive-date 2026-07-20 --approval C:/work/sample-workspace/team-specs/openspec/changes/sample-change-001/decisions/archive-approval.yaml --apply --json
 ```
 
-Both commands hash the local package and expose canonical policy identity for a human review. They do not create a remote PR, approve, merge, archive, or mutate lifecycle/external state. The archive preparation output is not archive approval and must be combined with the existing gate/lifecycle reports and the configured human archive decision.
+The preparation commands hash the local package and expose canonical policy identity for human review without mutation. The explicit `--apply` archive form additionally requires `change.yaml`, `gate-input.yaml`, and `traceability.yaml` to agree on `ready_to_archive`; the deterministic `archive-readiness` gate to have no blocking gaps; complete class-applicable traceability; a matching human-approved decision record; a real ISO date; and a canonical non-link sibling archive root. Symlink, junction, reparse, collision, already-archived, and out-of-root paths fail before movement. The operation emits `spec: archive <change-id>` as the required Git subject but does not create a commit, approve, merge, release, deploy, or update any remote system.
+
+## Delta Operation Validation
+
+The legacy-compatible deterministic change entry point binds requirement-level Delta semantics to the accepted baseline and fails closed if that baseline cannot be resolved. `ADDED` names must be new, `REMOVED` blocks require non-empty `Reason` and `Migration`, and `RENAMED` contains only unique paired `FROM`/`TO` names; empty operation sections and embedded content changes are rejected, while behavior changes use `MODIFIED` or explicit remove/add.
+
+```text
+python scripts/validate_change.py C:/work/sample-workspace/team-specs/openspec/changes/sample-change-001 --accepted-specs-root C:/work/sample-workspace/team-specs/openspec/specs
+```
 
 ## Traceability And External Mapping
 
@@ -53,21 +62,21 @@ python scripts/validate_external_mapping.py C:/work/sample-workspace/team-specs/
 ## Compatibility, Update, And Rollback
 
 ```text
-python scripts/update_process_package.py check C:/work/sample-workspace/process C:/downloads/sdd-process-0.3.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --json
-python scripts/update_process_package.py update C:/work/sample-workspace/process C:/downloads/sdd-process-0.3.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --backup-root C:/work/sample-workspace/rollbacks --json
-python scripts/update_process_package.py rollback C:/work/sample-workspace/process C:/work/sample-workspace/rollbacks/0.2.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --json
+python scripts/update_process_package.py check C:/work/sample-workspace/process C:/downloads/sdd-process-0.4.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --evidence C:/work/sample-workspace/team-specs/openspec/changes/process-upgrade/upgrade-evidence.yaml --json
+python scripts/update_process_package.py update C:/work/sample-workspace/process C:/downloads/sdd-process-0.4.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --evidence C:/work/sample-workspace/team-specs/openspec/changes/process-upgrade/upgrade-evidence.yaml --backup-root C:/work/sample-workspace/rollbacks --json
+python scripts/update_process_package.py rollback C:/work/sample-workspace/process C:/work/sample-workspace/rollbacks/0.3.0 C:/work/sample-workspace/team-specs/sdd.config.yaml --json
 ```
 
-Compatibility checks require matching package identity, internally matching `package.yaml`/`VERSION`, and a configuration pin/location that identifies the installed package. Update retains a complete prior package snapshot, replaces package and config pin transactionally, and restores both on failure. Rollback restores the retained package and prior pin transactionally. Neither operation enters `team-specs/openspec/`, so accepted specs and archived change history remain untouched.
+Compatibility checks require matching package identity, internally matching `package.yaml`/`VERSION`, a configuration pin/location that identifies the installed package, and schema-valid reviewed upgrade evidence stored inside its bounded change-package root. The record binds the schema-v2 `change.yaml`, confirmed/corrected human decision, proposal/tasks/delta topology, from/to package and OpenSpec versions, compatibility references, passing strict validation, applicable validator/template evidence or explicit non-applicability, rollback/hold instructions, and an exact SHA-256 inventory for every referenced regular non-link file. Each referenced result must also satisfy `upgrade-check-result.schema.json` and prove the expected content-derived kind, status, producer, change, and identities. Missing, mismatched, altered, incomplete, unsafe, or AI-owned review evidence fails before staging. Update retains a complete prior package snapshot, replaces package and config pin transactionally, and restores both on failure. Rollback restores the retained package and prior pin transactionally. Neither operation enters `team-specs/openspec/`, so accepted specs and archived change history remain untouched.
 
 Normal update accepts only a strictly forward semantic version. The prior package is first copied to a temporary manifest-bounded snapshot, validated, atomically promoted, and bound to a rollback proof containing its deterministic digest and the exact from/to versions. Rollback is the only downgrade path and refuses a missing, stale, altered, or mismatched proof. Partial package, backup, proof, and config writes are removed or restored after failure.
 
 Linux/WSL2 uses the same arguments with portable paths:
 
 ```bash
-python3 scripts/update_process_package.py check /work/sample-workspace/process /downloads/sdd-process-0.3.0 /work/sample-workspace/team-specs/sdd.config.yaml --json
-python3 scripts/update_process_package.py update /work/sample-workspace/process /downloads/sdd-process-0.3.0 /work/sample-workspace/team-specs/sdd.config.yaml --backup-root /work/sample-workspace/rollbacks --json
-python3 scripts/update_process_package.py rollback /work/sample-workspace/process /work/sample-workspace/rollbacks/0.2.0 /work/sample-workspace/team-specs/sdd.config.yaml --json
+python3 scripts/update_process_package.py check /work/sample-workspace/process /downloads/sdd-process-0.4.0 /work/sample-workspace/team-specs/sdd.config.yaml --evidence /work/sample-workspace/team-specs/openspec/changes/process-upgrade/upgrade-evidence.yaml --json
+python3 scripts/update_process_package.py update /work/sample-workspace/process /downloads/sdd-process-0.4.0 /work/sample-workspace/team-specs/sdd.config.yaml --evidence /work/sample-workspace/team-specs/openspec/changes/process-upgrade/upgrade-evidence.yaml --backup-root /work/sample-workspace/rollbacks --json
+python3 scripts/update_process_package.py rollback /work/sample-workspace/process /work/sample-workspace/rollbacks/0.3.0 /work/sample-workspace/team-specs/sdd.config.yaml --json
 ```
 
 If update verification fails, keep the transition on hold, retain the failed
@@ -88,7 +97,7 @@ This fallback does not implement Jira automation, Confluence publication, model/
 ## Focused Verification
 
 ```text
-python -m pytest tests/test_packaged_flow.py tests/test_packaged_flow_cli.py tests/test_process_package.py tests/test_validate_change.py -q
+python -m pytest tests/test_delta_operations.py tests/test_archive_history.py tests/test_upgrade_evidence.py tests/test_packaged_flow.py tests/test_packaged_flow_cli.py tests/test_process_package.py tests/test_validate_change.py -q
 python scripts/validate_change.py --allow-placeholders templates/change
 ```
 

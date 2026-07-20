@@ -145,7 +145,7 @@ Affected specs: No behavior or acceptance-criterion change. The audit uses the e
 Affected architecture: None. Deterministic exact-evidence validation and candidate immutability remain unchanged.
 Data contract impact: None for rc4. Any future row-level manifest correction changes candidate evidence identity and requires a successor candidate plus recertification.
 Verification impact: Reproduce counts and Git provenance, account for all 110 rows by capability/requirement, separate exact-evidence debt from governance and future Phase 3/4 work, reconcile the acceptance packet/current audit/evidence index, and rerun documentation/OpenSpec/governance checks.
-Status: focused-test remediation complete in the working successor source on 2026-07-20. The selector review found 58 existing exact proofs, and four additional focused tests now close the test-only debt. `D-019` resolves the first-MVP scope-boundary selector; 22 governance rows reference primary decisions/audits, 12 later-phase rows are exact `future_work`, and 13 genuine product gaps remain for OpenSpec intake. Rc4 remains immutable, no successor candidate is certified, and the human accept/reject decision remains required.
+Status: selector remediation is implemented in the working successor source on 2026-07-20. Four focused tests close the test-only debt; six release-integrity tests close Delta, archive, and upgrade gaps; `D-019` resolves the scope boundary; 22 governance rows reference primary decisions/audits; and 12 later-phase rows remain `future_work`. Seven explicitly deferred P3/P4 product gaps remain. Rc4 is immutable and no successor candidate is certified.
 
 ### Change Intake: first-MVP boundary and selector remediation (2026-07-20)
 
@@ -166,7 +166,7 @@ Affected architecture: no architecture change; Git/OpenSpec remains canonical an
 Data contract impact: none for the boundary decision or focused tests. Product-gap intake will assess contracts separately.
 
 Verification impact: bind the boundary selector to `D-019`; add four exact pytest nodes and source-owned coverage markers; run focused, coverage, full regression, OpenSpec, roadmap, and release-snapshot immutability checks.
-Status: boundary and focused-test substeps are `closed`; product-gap intake is complete in `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md`. `close-release-integrity-gaps` is apply-ready and is the next Phase 2 implementation item. Candidate freeze remains blocked until its six scenarios pass RED/GREEN implementation and independent review.
+Status: boundary, focused-test, intake, six-scenario RED/GREEN implementation, final verification, and independent implementation review are `closed` in working source. The final suite passed `736 passed, 4 skipped`; successor freeze is the next ordered gate.
 ```
 
 ```text

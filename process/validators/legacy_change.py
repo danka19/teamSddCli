@@ -98,6 +98,7 @@ def validate_change_package(
     package_dir: str | Path,
     *,
     allow_placeholders: bool = False,
+    accepted_specs_root: str | Path | None = None,
 ) -> list[str]:
     """Return validation errors for one SDD change package directory."""
 
@@ -188,6 +189,24 @@ def validate_change_package(
         errors.extend(f"{package_path}: {error}" for error in spec_errors)
         if not requirement_scenarios:
             errors.append(f"{package_path}: specs must contain at least one requirement scenario")
+        baseline_root = (
+            Path(accepted_specs_root)
+            if accepted_specs_root is not None
+            else discover_accepted_specs_root(package_path)
+        )
+        has_delta_operations = any(
+            re.search(r"^## (?:ADDED|MODIFIED|REMOVED|RENAMED) Requirements$", path.read_text(encoding="utf-8"), re.MULTILINE)
+            for path in spec_files
+        )
+        if baseline_root is not None:
+            errors.extend(
+                f"{package_path}: {error}"
+                for error in validate_delta_operations(spec_files, baseline_root)
+            )
+        elif has_delta_operations:
+            errors.append(
+                f"{package_path}: delta.accepted-baseline-missing: accepted specs root is required"
+            )
 
     traceability_path = package_path / "traceability.yaml"
     traceability_records = (
@@ -440,15 +459,31 @@ def extract_requirement_scenarios(spec_files: Iterable[Path]) -> tuple[set[tuple
     for spec_file in spec_files:
         current_requirement: str | None = None
         requirement_has_scenario = False
+        section_needs_scenario = True
+        current_requirement_needs_scenario = True
 
         for line_number, line in enumerate(spec_file.read_text(encoding="utf-8").splitlines(), start=1):
+            operation_match = re.match(
+                r"^## (ADDED|MODIFIED|REMOVED|RENAMED) Requirements$", line
+            )
+            if operation_match:
+                section_needs_scenario = operation_match.group(1) in {
+                    "ADDED",
+                    "MODIFIED",
+                }
+                continue
             if line.startswith("### Requirement:"):
-                if current_requirement and not requirement_has_scenario:
+                if (
+                    current_requirement
+                    and current_requirement_needs_scenario
+                    and not requirement_has_scenario
+                ):
                     errors.append(
                         f"{spec_file}:{line_number}: requirement '{current_requirement}' has no scenario"
                     )
                 current_requirement = line.split(":", 1)[1].strip()
                 requirement_has_scenario = False
+                current_requirement_needs_scenario = section_needs_scenario
                 continue
 
             if line.startswith("#### Scenario:"):
@@ -459,10 +494,190 @@ def extract_requirement_scenarios(spec_files: Iterable[Path]) -> tuple[set[tuple
                 pairs.add((current_requirement, scenario))
                 requirement_has_scenario = True
 
-        if current_requirement and not requirement_has_scenario:
+        if (
+            current_requirement
+            and current_requirement_needs_scenario
+            and not requirement_has_scenario
+        ):
             errors.append(f"{spec_file}: requirement '{current_requirement}' has no scenario")
 
     return pairs, errors
+
+
+def discover_accepted_specs_root(package_path: Path) -> Path | None:
+    """Find the accepted OpenSpec sibling for a canonical changes directory."""
+    for parent in (package_path, *package_path.parents):
+        if parent.name == "changes" and parent.parent.name == "openspec":
+            candidate = parent.parent / "specs"
+            return candidate if candidate.is_dir() else None
+    cwd_candidate = Path.cwd() / "openspec" / "specs"
+    return cwd_candidate if cwd_candidate.is_dir() else None
+
+
+def _requirement_names(path: Path) -> set[str]:
+    if not path.is_file():
+        return set()
+    return {
+        line.split(":", 1)[1].strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.startswith("### Requirement:")
+    }
+
+
+def validate_delta_operations(
+    spec_files: Iterable[Path], accepted_specs_root: str | Path
+) -> list[str]:
+    """Validate project-specific Delta operation semantics against accepted specs."""
+    accepted_root = Path(accepted_specs_root)
+    errors: list[str] = []
+    if not accepted_root.is_dir():
+        return ["delta.accepted-baseline-missing: accepted specs root is required"]
+    operation_header = re.compile(r"^## (ADDED|MODIFIED|REMOVED|RENAMED) Requirements$")
+    requirement_header = re.compile(r"^### Requirement: (.+)$")
+    rename_from = re.compile(r"^- FROM: `([^`]+)`$")
+    rename_to = re.compile(r"^- TO: `([^`]+)`$")
+
+    for spec_file in spec_files:
+        capability = spec_file.parent.name
+        accepted = _requirement_names(accepted_root / capability / "spec.md")
+        lines = spec_file.read_text(encoding="utf-8").splitlines()
+        sections: list[tuple[str, list[str]]] = []
+        operation: str | None = None
+        body: list[str] = []
+        for line in lines:
+            match = operation_header.match(line)
+            if match:
+                if operation is not None:
+                    sections.append((operation, body))
+                operation = match.group(1)
+                body = []
+            elif operation is not None:
+                body.append(line)
+        if operation is not None:
+            sections.append((operation, body))
+
+        for operation, section in sections:
+            requirements = [
+                match.group(1).strip()
+                for line in section
+                if (match := requirement_header.match(line))
+            ]
+            if operation != "RENAMED" and not requirements:
+                errors.append(
+                    f"delta.operation-empty: {spec_file}: {operation} requires at least one Requirement block"
+                )
+            if operation == "ADDED":
+                blocks: list[tuple[str, list[str]]] = []
+                current_name: str | None = None
+                current_lines: list[str] = []
+                for line in section:
+                    match = requirement_header.match(line)
+                    if match:
+                        if current_name is not None:
+                            blocks.append((current_name, current_lines))
+                        current_name = match.group(1).strip()
+                        current_lines = []
+                    elif current_name is not None:
+                        current_lines.append(line)
+                if current_name is not None:
+                    blocks.append((current_name, current_lines))
+                for name, block in blocks:
+                    if name in accepted:
+                        errors.append(
+                            f"delta.added-existing: {spec_file}: ADDED requirement '{name}' already exists"
+                        )
+                    scenario_indexes = [
+                        index for index, line in enumerate(block)
+                        if line.startswith("#### Scenario:") and line.split(":", 1)[1].strip()
+                    ]
+                    requirement_text = block[:scenario_indexes[0]] if scenario_indexes else block
+                    if not any(line.strip() and not line.startswith("#") for line in requirement_text):
+                        errors.append(
+                            f"delta.added-content-missing: {spec_file}: ADDED requirement '{name}' needs substantive requirement text"
+                        )
+                    for index, start in enumerate(scenario_indexes):
+                        end = scenario_indexes[index + 1] if index + 1 < len(scenario_indexes) else len(block)
+                        scenario = block[start + 1:end]
+                        if not any(line.startswith("- **WHEN**") and line.removeprefix("- **WHEN**").strip() for line in scenario) or not any(
+                            line.startswith("- **THEN**") and line.removeprefix("- **THEN**").strip() for line in scenario
+                        ):
+                            errors.append(
+                                f"delta.added-scenario-incomplete: {spec_file}: ADDED requirement '{name}' scenarios need WHEN and THEN text"
+                            )
+            elif operation == "MODIFIED":
+                for name in requirements:
+                    if name not in accepted:
+                        errors.append(
+                            f"delta.modified-missing: {spec_file}: MODIFIED requirement '{name}' is not accepted"
+                        )
+            elif operation == "REMOVED":
+                blocks: list[tuple[str, list[str]]] = []
+                current_name: str | None = None
+                current_lines: list[str] = []
+                for line in section:
+                    match = requirement_header.match(line)
+                    if match:
+                        if current_name is not None:
+                            blocks.append((current_name, current_lines))
+                        current_name = match.group(1).strip()
+                        current_lines = []
+                    elif current_name is not None:
+                        current_lines.append(line)
+                if current_name is not None:
+                    blocks.append((current_name, current_lines))
+                for name, block in blocks:
+                    if name not in accepted:
+                        errors.append(
+                            f"delta.removed-missing: {spec_file}: REMOVED requirement '{name}' is not accepted"
+                        )
+                    if not any(line.startswith("**Reason**:") and line.split(":", 1)[1].strip() for line in block):
+                        errors.append(
+                            f"delta.removed-reason-missing: {spec_file}: REMOVED requirement '{name}' needs Reason"
+                        )
+                    if not any(line.startswith("**Migration**:") and line.split(":", 1)[1].strip() for line in block):
+                        errors.append(
+                            f"delta.removed-migration-missing: {spec_file}: REMOVED requirement '{name}' needs Migration"
+                        )
+            elif operation == "RENAMED":
+                meaningful = [line for line in section if line.strip()]
+                from_names = [match.group(1) for line in meaningful if (match := rename_from.match(line))]
+                to_names = [match.group(1) for line in meaningful if (match := rename_to.match(line))]
+                recognized = sum(
+                    1
+                    for line in meaningful
+                    if rename_from.match(line) or rename_to.match(line)
+                )
+                if recognized != len(meaningful):
+                    errors.append(
+                        f"delta.renamed-content: {spec_file}: RENAMED may contain only FROM/TO mappings"
+                    )
+                if not from_names or len(from_names) != len(to_names) or len(meaningful) % 2:
+                    errors.append(
+                        f"delta.renamed-shape: {spec_file}: RENAMED requires paired FROM/TO mappings"
+                    )
+                elif any(
+                    not rename_from.match(meaningful[index])
+                    or not rename_to.match(meaningful[index + 1])
+                    for index in range(0, len(meaningful), 2)
+                ):
+                    errors.append(
+                        f"delta.renamed-shape: {spec_file}: RENAMED requires adjacent FROM/TO mappings"
+                    )
+                if len(from_names) != len(set(from_names)) or len(to_names) != len(set(to_names)):
+                    errors.append(
+                        f"delta.renamed-duplicate: {spec_file}: RENAMED mappings must have unique sources and targets"
+                    )
+                for old, new in zip(from_names, to_names):
+                    if old not in accepted:
+                        errors.append(
+                            f"delta.renamed-source-missing: {spec_file}: RENAMED source '{old}' is not accepted"
+                        )
+                    if new in accepted:
+                        errors.append(
+                            f"delta.renamed-target-existing: {spec_file}: RENAMED target '{new}' already exists"
+                        )
+
+    return errors
 
 
 def validate_traceability(
@@ -934,6 +1149,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Discover SDD change packages from staged git paths.",
     )
+    parser.add_argument(
+        "--accepted-specs-root",
+        type=Path,
+        help="Accepted OpenSpec specs root used for Delta semantic validation.",
+    )
     return parser.parse_args(argv)
 
 
@@ -953,7 +1173,11 @@ def main(argv: list[str] | None = None) -> int:
     all_errors: list[str] = []
     for package in packages:
         all_errors.extend(
-            validate_change_package(package, allow_placeholders=args.allow_placeholders)
+            validate_change_package(
+                package,
+                allow_placeholders=args.allow_placeholders,
+                accepted_specs_root=args.accepted_specs_root,
+            )
         )
 
     if all_errors:

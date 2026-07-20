@@ -2,7 +2,9 @@
 
 Date: 2026-07-20
 
-Status: complete; prioritized release-integrity proposal is apply-ready
+Status: intake and prioritized release-integrity implementation complete; successor freeze and candidate-bound certification remain
+
+The first independent implementation review returned `NOT READY` and correctly blocked candidate freeze. Two critical findings covered archive-readiness bypass and symlink/junction escape; important findings covered unresolvable upgrade evidence, fail-open or over-broad Delta enforcement, and coverage composition that omitted this active delta. Three correction/review cycles closed every Critical and Important finding: archive now requires canonical gate plus traceability and rejects linked roots before mutation; upgrade evidence binds a schema-v2 reviewed change package and content-derived structured results by SHA-256; Delta validation fails closed and enforces substantive requirement-level shape; effective coverage composes this active delta. Final independent verdict is `READY`; focused review-fix suites and the final complete suite passed, ending at `736 passed, 4 skipped`. This authorizes successor freeze, not release acceptance.
 
 Source: human-accepted residual-gap remediation sequence
 
@@ -33,7 +35,7 @@ Affected specs: change-artifact-contracts / Delta Spec operation vocabulary.
 Affected architecture: Deterministic change validation compares a bounded delta with its accepted capability baseline; Git/OpenSpec remains canonical and AI has no gate authority.
 Data contract impact: Operation-section shape and validation diagnostics become enforceable; REMOVED reason/migration and pure RENAMED mappings are required.
 Verification impact: RED/GREEN positive and negative fixtures for all three scenarios, stable diagnostics, selector-level bindings, full regression, strict OpenSpec validation, and later candidate-bound certification.
-Status: routed to apply-ready Phase 2 change close-release-integrity-gaps; blocks successor candidate freeze until implemented and reviewed.
+Status: implemented, verified, and independently reviewed with exact working-source evidence in Phase 2 change close-release-integrity-gaps; successor freeze is next.
 ```
 
 ## Intake 2 — Archive history convention
@@ -48,7 +50,7 @@ Affected specs: change-lifecycle / Archive history convention.
 Affected architecture: A bounded local archive operation separates human approval, filesystem movement, convention validation, and the user-authorized Git commit.
 Data contract impact: Archive preparation/result evidence gains explicit date, target, approval reference, and required commit subject.
 Verification impact: RED/GREEN tests cover authorization, target containment, collision/already-archived rejection, dated movement, commit grammar, and pre-mutation failure safety.
-Status: routed to apply-ready Phase 2 change close-release-integrity-gaps; blocks successor candidate freeze until implemented and reviewed.
+Status: implemented, verified, and independently reviewed with exact working-source evidence in Phase 2 change close-release-integrity-gaps; successor freeze is next.
 ```
 
 ## Intake 3 — Reviewed upgrade evidence
@@ -63,7 +65,7 @@ Affected specs: repo-topology-config / OpenSpec version pin and upgrade policy.
 Affected architecture: Local schema-bound evidence is checked before staging; update remains transactional and AI-disabled, and the human review decision remains authoritative.
 Data contract impact: A versioned upgrade record binds change/review evidence, from/to identities, strict validation, applicable checks, and rollback or hold instructions.
 Verification impact: RED/GREEN valid, missing, stale, mismatched, incomplete, and AI-only evidence tests plus unchanged-installation failure assertions and update/rollback regression.
-Status: routed to apply-ready Phase 2 change close-release-integrity-gaps; blocks successor candidate freeze until implemented and reviewed.
+Status: implemented, verified, and independently reviewed with exact working-source evidence in Phase 2 change close-release-integrity-gaps; successor freeze is next.
 ```
 
 ## Intake 4 — Feedback disposition records
@@ -113,12 +115,12 @@ Status: deferred to primary phase P4 under future changes add-advisory-traceabil
 
 ## Execution Gate
 
-`close-release-integrity-gaps` is apply-ready but not implemented. The next permitted work item is its ordered RED/GREEN implementation. Candidate freeze is prohibited until all six release-integrity selectors have exact passing evidence, the working inventory reaches the expected `295/7/32`, complete verification and independent review pass, and documentation agrees. Only then may a new immutable candidate be frozen and receive fresh candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, rollback/privacy, source-coverage, and independent-review certification.
+`close-release-integrity-gaps` has completed its ordered RED/GREEN implementation, final verification, and independent review in working package `0.3.0`: all effective release-integrity selectors have exact passing evidence and the working inventory is `295/7/32`. Candidate freeze is now the next ordered action. The successor must still receive fresh candidate-bound deterministic, AI-disabled, Qwen, DeepSeek, Windows, WSL2, rollback/privacy, source-coverage, and independent-review certification.
 
 ## Status Reconciliation
 
 - Roadmap phases: P0 `closed`, P1 `closed`, P2 `in_progress`, P3 `planned`, P4 `planned`.
 - Phase 2: work items 2.1-2.13 and historical rc4 gates 2.14.1-2.14.3 remain closed; 2.14.4 is `blocked` by the named successor remediation and certification evidence.
-- OpenSpec change: `close-release-integrity-gaps` is `in_progress`, owned by P2, related to P3, and apply-ready with 4/4 planning artifacts; no implementation task is marked complete.
+- OpenSpec change: `close-release-integrity-gaps` is `in_progress`, owned by P2, related to P3, with 4/4 planning artifacts and implementation tasks completed through working-evidence reconciliation; verification/review/candidate tasks remain open.
 - Machine governance: roadmap/OpenSpec validator reports zero errors. Its two warnings are pre-existing lifecycle warnings for completed adapter changes that remain unaccepted or blocked; they do not authorize acceptance and are not blockers introduced by this intake.
 - No phase or gate is implicitly accepted, and no parallel successor freeze is safe while the release-integrity change is unimplemented.

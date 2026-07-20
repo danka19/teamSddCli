@@ -13,6 +13,7 @@ import re
 import shutil
 import stat
 import tempfile
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,8 @@ from .validators.config_validation import (
     package_compatibility,
     schema_diagnostics,
 )
+from .validators.artifact_gates import evaluate_gate
+from .validators.gate_input import validate_gate_input
 from .validators.policy_validation import validate_policy_bundle
 
 
@@ -197,9 +200,181 @@ def prepare_spec_pr(package_root: Path, change_root: Path) -> dict[str, Any]:
     return _prepare_review(package_root, change_root, "prepare-spec-pr")
 
 
-def prepare_archive(package_root: Path, change_root: Path) -> dict[str, Any]:
-    """Collect archive-review evidence without changing canonical lifecycle state."""
-    return _prepare_review(package_root, change_root, "prepare-archive")
+def prepare_archive(
+    package_root: Path,
+    change_root: Path,
+    *,
+    archive_root: Path | None = None,
+    archive_date: str | None = None,
+    approval: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Collect archive evidence and, when requested, resolve the guarded history contract."""
+    evidence = _prepare_review(package_root, change_root, "prepare-archive")
+    if archive_root is None and archive_date is None and approval is None:
+        return evidence
+    target, commit_subject, approval_ref = _archive_contract(
+        package_root, change_root, archive_root, archive_date, approval
+    )
+    evidence.update({
+        "archive_path": target.as_posix(),
+        "archive_date": archive_date,
+        "required_commit_subject": commit_subject,
+        "approval_ref": approval_ref,
+        "approved": True,
+        "approval_verified": True,
+    })
+    return evidence
+
+
+def archive_change(
+    package_root: Path,
+    change_root: Path,
+    *,
+    archive_root: Path,
+    archive_date: str,
+    approval: dict[str, Any],
+) -> dict[str, Any]:
+    """Move one explicitly approved local change to its dated archive path."""
+    evidence = prepare_archive(
+        package_root,
+        change_root,
+        archive_root=archive_root,
+        archive_date=archive_date,
+        approval=approval,
+    )
+    source = _safe_root(change_root, "archive-source")
+    target = _absolute(Path(evidence["archive_path"]))
+    if target.exists():
+        raise OperationError("archive-target-exists", "dated archive target already exists")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _assert_path_identity_safe(target.parent)
+    shutil.move(str(source), str(target))
+    result = validate_archive_history(
+        target,
+        str(evidence["required_commit_subject"]),
+        str(evidence["change_id"]),
+    )
+    evidence.update(result)
+    evidence.update({
+        "operation": "archive-change",
+        "status": "archived-locally",
+        "archived": True,
+        "lifecycle_mutated": True,
+        "git_commit_created": False,
+        "merge_performed": False,
+        "release_performed": False,
+        "deployment_performed": False,
+    })
+    return evidence
+
+
+def validate_archive_history(
+    archive_path: Path, commit_subject: str, change_id: str
+) -> dict[str, Any]:
+    """Validate the deterministic dated path and greppable commit convention."""
+    expected_name = re.compile(rf"^\d{{4}}-\d{{2}}-\d{{2}}-{re.escape(change_id)}$")
+    if not expected_name.fullmatch(Path(archive_path).name):
+        raise OperationError("archive-path-invalid", "archive path must use YYYY-MM-DD-change-id")
+    try:
+        date.fromisoformat(Path(archive_path).name[:10])
+    except ValueError as error:
+        raise OperationError("archive-date-invalid", "archive date must be a real ISO date") from error
+    expected_subject = f"spec: archive {change_id}"
+    if commit_subject != expected_subject:
+        raise OperationError("archive-commit-invalid", "archive commit subject does not match the stable grammar")
+    return {
+        "status": "valid",
+        "archive_path": _absolute(archive_path).as_posix(),
+        "required_commit_subject": expected_subject,
+        "human_authority_substituted": False,
+    }
+
+
+def _archive_contract(
+    package_root: Path,
+    change_root: Path,
+    archive_root: Path | None,
+    archive_date: str | None,
+    approval: dict[str, Any] | None,
+) -> tuple[Path, str, str]:
+    source = _safe_root(change_root, "archive-source")
+    if archive_root is None:
+        raise OperationError("archive-root-required", "archive root is required")
+    archive = _absolute(archive_root)
+    if source.parent == archive or source.parent.name == "archive":
+        raise OperationError("archive-source-already-archived", "change source is already archived")
+    if archive.name != "archive" or source.parent != archive.parent:
+        raise OperationError("archive-path-unsafe", "archive source and root must share one canonical changes root")
+    _assert_path_identity_safe(source)
+    _assert_path_identity_safe(source.parent)
+    if archive.exists():
+        if not archive.is_dir():
+            raise OperationError("archive-path-unsafe", "archive root must be a directory")
+        _assert_path_identity_safe(archive)
+        _assert_safe_tree(archive)
+    if not isinstance(archive_date, str):
+        raise OperationError("archive-date-invalid", "archive date must be YYYY-MM-DD")
+    try:
+        parsed_date = date.fromisoformat(archive_date)
+    except ValueError as error:
+        raise OperationError("archive-date-invalid", "archive date must be a real ISO date") from error
+    if parsed_date.isoformat() != archive_date:
+        raise OperationError("archive-date-invalid", "archive date must be canonical YYYY-MM-DD")
+    change = _load_yaml(source / "change.yaml")
+    change_id = change.get("id")
+    if not isinstance(change_id, str) or not CHANGE_ID.fullmatch(change_id):
+        raise OperationError("change-id-invalid", "archive change id must be portable lower kebab-case")
+    _assert_archive_readiness(_safe_root(package_root, "package-source"), source, change)
+    if (
+        not isinstance(approval, dict)
+        or approval.get("change_id") != change_id
+        or approval.get("owner_type") != "human"
+        or approval.get("state") != "approved"
+        or not _local_reference(approval.get("decision_ref"))
+    ):
+        raise OperationError("archive-approval-required", "explicit matching human archive approval is required")
+    target = _absolute(archive / f"{archive_date}-{change_id}")
+    try:
+        target.relative_to(archive)
+    except ValueError as error:
+        raise OperationError("archive-path-unsafe", "archive target escapes archive root") from error
+    if target.exists():
+        raise OperationError("archive-target-exists", "dated archive target already exists")
+    return target, f"spec: archive {change_id}", str(approval["decision_ref"])
+
+
+def _assert_archive_readiness(
+    package_root: Path, source: Path, change: dict[str, Any]
+) -> None:
+    """Require the canonical local gate and traceability records before movement."""
+    if change.get("status") != "ready_to_archive":
+        raise OperationError("archive-readiness-required", "change must be ready_to_archive")
+    gate = _load_yaml(source / "gate-input.yaml")
+    diagnostics = validate_gate_input(gate, package_root)
+    if diagnostics:
+        raise OperationError("archive-readiness-invalid", "archive gate input is invalid")
+    if (
+        gate.get("id") != change.get("id")
+        or gate.get("classification") != change.get("classification")
+        or gate.get("status") != "ready_to_archive"
+    ):
+        raise OperationError("archive-readiness-mismatch", "archive gate input does not match the change")
+    config_path = source.parent.parent.parent / "sdd.config.yaml"
+    config = _load_yaml(config_path)
+    manifest = _load_yaml(package_root / "policies" / "manifest.yaml")
+    policy = validate_policy_bundle(package_root, manifest, config, None)
+    if policy.snapshot is None or policy.diagnostics:
+        raise OperationError("archive-readiness-invalid", "archive policy cannot be resolved")
+    report = evaluate_gate(gate, policy.snapshot, "archive-readiness")
+    if report.as_dict()["blocking_gaps"]:
+        raise OperationError("archive-readiness-blocked", "deterministic archive-readiness gate is blocked")
+    traceability = _load_yaml(source / "traceability.yaml")
+    if (
+        traceability.get("classification") != change.get("classification")
+        or traceability.get("lifecycle_state") != "ready_to_archive"
+    ):
+        raise OperationError("archive-readiness-mismatch", "traceability does not match archive readiness")
+    validate_traceability(traceability)
 
 
 def validate_traceability(document: dict[str, Any]) -> dict[str, Any]:
@@ -321,6 +496,9 @@ def update_process_package(
     candidate_root: Path,
     config_path: Path,
     backup_root: Path,
+    *,
+    upgrade_evidence: dict[str, Any] | Path | None = None,
+    upgrade_evidence_root: Path | None = None,
 ) -> dict[str, Any]:
     """Install a compatible package transactionally while retaining rollback state."""
     installed_root = _safe_root(installed_root, "installed-package")
@@ -339,6 +517,18 @@ def update_process_package(
         raise OperationError("package-version-unchanged", "candidate version is already installed")
     if _semver(candidate["version"]) <= _semver(installed["version"]):
         raise OperationError("package-downgrade-forbidden", "normal update requires a forward semantic version")
+    reviewed_upgrade = validate_reviewed_upgrade_evidence(
+        upgrade_evidence,
+        from_identity={
+            "package_version": installed["version"],
+            "openspec_version": str(installed_snapshot["package"]["openspec"]["cli_version"]),
+        },
+        to_identity={
+            "package_version": candidate["version"],
+            "openspec_version": str(candidate_snapshot["package"]["openspec"]["cli_version"]),
+        },
+        evidence_root=upgrade_evidence_root,
+    )
     _assert_non_overlapping(installed_root, backup_root)
     _assert_non_overlapping(candidate_root, backup_root)
     backup = backup_root / installed["version"]
@@ -393,24 +583,44 @@ def update_process_package(
         "rollback_ref": backup.as_posix(),
         "accepted_history_mutated": False,
         "ai_disabled": True,
+        "upgrade_evidence": reviewed_upgrade,
     }
 
 
 def check_package_compatibility(
-    installed_root: Path, candidate_root: Path, config_path: Path
+    installed_root: Path,
+    candidate_root: Path,
+    config_path: Path,
+    *,
+    upgrade_evidence: dict[str, Any] | Path | None = None,
+    upgrade_evidence_root: Path | None = None,
 ) -> dict[str, Any]:
     """Check update inputs without writing package, config, or history."""
     installed_root = _safe_root(installed_root, "installed-package")
     candidate_root = _safe_root(candidate_root, "candidate-package")
     config_path = _absolute(config_path)
     config = _load_yaml(config_path)
-    installed = _validate_standalone_package(installed_root, config)["identity"]
-    candidate = _validate_standalone_package(candidate_root, config, require_config_version=False)["identity"]
+    installed_snapshot = _validate_standalone_package(installed_root, config)
+    candidate_snapshot = _validate_standalone_package(candidate_root, config, require_config_version=False)
+    installed = installed_snapshot["identity"]
+    candidate = candidate_snapshot["identity"]
     _assert_config_pin(config, installed, installed_root, config_path.parent)
     if installed["id"] != candidate["id"]:
         raise OperationError("package-id-mismatch", "candidate package id differs")
     if _semver(candidate["version"]) <= _semver(installed["version"]):
         raise OperationError("package-downgrade-forbidden", "normal update requires a forward semantic version")
+    reviewed_upgrade = validate_reviewed_upgrade_evidence(
+        upgrade_evidence,
+        from_identity={
+            "package_version": installed["version"],
+            "openspec_version": str(installed_snapshot["package"]["openspec"]["cli_version"]),
+        },
+        to_identity={
+            "package_version": candidate["version"],
+            "openspec_version": str(candidate_snapshot["package"]["openspec"]["cli_version"]),
+        },
+        evidence_root=upgrade_evidence_root,
+    )
     return {
         "schema_version": "1.0",
         "operation": "check-package-compatibility",
@@ -421,6 +631,121 @@ def check_package_compatibility(
         "accepted_history_mutated": False,
         "ai_disabled": True,
         "human_authority_substituted": False,
+        "upgrade_evidence": reviewed_upgrade,
+    }
+
+
+def validate_reviewed_upgrade_evidence(
+    evidence: dict[str, Any] | Path | None,
+    *,
+    from_identity: dict[str, str],
+    to_identity: dict[str, str],
+    evidence_root: Path | None = None,
+) -> dict[str, str]:
+    """Validate human-reviewed, identity-bound evidence before package mutation."""
+    if evidence is None:
+        raise OperationError("upgrade-evidence-required", "reviewed upgrade evidence is required")
+    if isinstance(evidence, Path):
+        evidence_path = _absolute(evidence)
+        root = _safe_root(evidence_path.parent, "upgrade-evidence-root")
+        if _is_link_or_reparse(evidence_path) or not evidence_path.is_file():
+            raise OperationError("upgrade-evidence-invalid", "upgrade evidence must be one regular non-link file")
+        document = load_yaml_input(evidence_path)
+    else:
+        if evidence_root is None:
+            raise OperationError("upgrade-evidence-invalid", "in-memory upgrade evidence requires a bounded evidence root")
+        root = _safe_root(evidence_root, "upgrade-evidence-root")
+        document = evidence
+    if not isinstance(document, dict):
+        raise OperationError("upgrade-evidence-invalid", "upgrade evidence must be a mapping")
+    schema_path = BUNDLED_SCHEMA_ROOT / "upgrade-evidence.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    if list(Draft202012Validator(schema).iter_errors(document)):
+        raise OperationError("upgrade-evidence-invalid", "upgrade evidence does not satisfy the trusted schema")
+    review = document["review"]
+    if review["owner_type"] != "human" or review["state"] != "approved":
+        raise OperationError("upgrade-review-required", "an explicit human-reviewed upgrade decision is required")
+    if document["from"] != from_identity or document["to"] != to_identity:
+        raise OperationError("upgrade-evidence-mismatch", "upgrade evidence does not match package/OpenSpec identities")
+    change = _load_yaml(root / "change.yaml")
+    if change.get("id") != document["change_id"]:
+        raise OperationError("upgrade-evidence-mismatch", "upgrade evidence does not match its reviewed change package")
+    change_schema = json.loads((BUNDLED_SCHEMA_ROOT / "change-v2.schema.json").read_text(encoding="utf-8"))
+    if list(Draft202012Validator(change_schema).iter_errors(change)):
+        raise OperationError("upgrade-change-package-invalid", "reviewed upgrade change metadata is invalid")
+    if change.get("decision", {}).get("state") not in {"confirmed", "corrected"}:
+        raise OperationError("upgrade-review-required", "reviewed upgrade change decision is not confirmed")
+    if not (root / "proposal.md").is_file() or not (root / "tasks.md").is_file():
+        raise OperationError("upgrade-change-package-invalid", "reviewed upgrade change package is incomplete")
+    delta_paths = change.get("spec_change", {}).get("delta_paths", [])
+    if change.get("spec_change", {}).get("required") and (
+        not delta_paths
+        or any(
+            not _local_reference(relative)
+            or not _is_relative_to(_absolute(root / Path(relative)), root)
+            or not _absolute(root / Path(relative)).is_file()
+            for relative in delta_paths
+        )
+    ):
+        raise OperationError("upgrade-change-package-invalid", "reviewed upgrade delta package is incomplete")
+    references = [
+        review["decision_ref"],
+        *document["checks"]["compatibility_evidence_refs"],
+        document["checks"]["openspec_strict"]["evidence_ref"],
+    ]
+    validator_check = document["checks"]["validator_templates"]
+    if validator_check["status"] == "passed":
+        references.append(validator_check["evidence_ref"])
+    if any(not _local_reference(reference) for reference in references):
+        raise OperationError("upgrade-evidence-invalid", "upgrade evidence references must be bounded local paths or IDs")
+    digests = document["evidence_sha256"]
+    if set(digests) != set(references):
+        raise OperationError("upgrade-evidence-invalid", "upgrade evidence digest inventory must match its references")
+    expected_results = {
+        review["decision_ref"]: ("human-decision", "approved", "human"),
+        **{
+            reference: ("compatibility", "compatible", "deterministic-validator")
+            for reference in document["checks"]["compatibility_evidence_refs"]
+        },
+        document["checks"]["openspec_strict"]["evidence_ref"]: (
+            "openspec-strict", "passed", "deterministic-validator"
+        ),
+    }
+    if validator_check["status"] == "passed":
+        expected_results[validator_check["evidence_ref"]] = (
+            "validator-templates", "passed", "deterministic-validator"
+        )
+    result_schema = json.loads(
+        (BUNDLED_SCHEMA_ROOT / "upgrade-check-result.schema.json").read_text(encoding="utf-8")
+    )
+    for reference in references:
+        referenced = _absolute(root / Path(reference.replace("\\", "/")))
+        try:
+            referenced.relative_to(root)
+        except ValueError as error:
+            raise OperationError("upgrade-evidence-invalid", "upgrade evidence reference escapes its package") from error
+        if _is_link_or_reparse(referenced) or not referenced.is_file():
+            raise OperationError("upgrade-evidence-reference-missing", "upgrade evidence reference is missing or unsafe")
+        if hashlib.sha256(referenced.read_bytes()).hexdigest() != digests[reference]:
+            raise OperationError("upgrade-evidence-digest-mismatch", "upgrade evidence reference digest does not match")
+        result = _load_yaml(referenced)
+        if list(Draft202012Validator(result_schema).iter_errors(result)):
+            raise OperationError("upgrade-evidence-result-invalid", "upgrade evidence result is not schema-valid")
+        expected_kind, expected_status, expected_producer = expected_results[reference]
+        if (
+            result.get("evidence_kind") != expected_kind
+            or result.get("status") != expected_status
+            or result.get("produced_by") != expected_producer
+            or result.get("change_id") != document["change_id"]
+            or result.get("from") != from_identity
+            or result.get("to") != to_identity
+        ):
+            raise OperationError("upgrade-evidence-result-invalid", "upgrade evidence result does not prove the declared check")
+    return {
+        "change_id": str(document["change_id"]),
+        "review_state": str(review["state"]),
+        "decision_ref": str(review["decision_ref"]),
+        "rollback_or_hold": str(document["rollback_or_hold"]["strategy"]),
     }
 
 
@@ -710,8 +1035,37 @@ def _safe_root(path: Path, label: str) -> Path:
     root = _absolute(path)
     if not root.is_dir():
         raise OperationError("input-invalid", f"{label} is not a directory", exit_code=3)
+    _assert_path_identity_safe(root)
     _assert_safe_tree(root)
     return root
+
+
+def _assert_path_identity_safe(path: Path) -> None:
+    """Reject a root or existing ancestry redirected through a link/reparse point."""
+    absolute = _absolute(path)
+    try:
+        resolved = absolute.resolve(strict=True)
+        info = absolute.lstat()
+    except (OSError, RuntimeError) as error:
+        raise OperationError("filesystem-link-forbidden", "path identity cannot be verified") from error
+    attributes = getattr(info, "st_file_attributes", 0)
+    if (
+        resolved != absolute
+        or stat.S_ISLNK(info.st_mode)
+        or attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    ):
+        raise OperationError("filesystem-link-forbidden", "links and reparse points are forbidden")
+
+
+def _is_link_or_reparse(path: Path) -> bool:
+    try:
+        info = path.lstat()
+    except OSError:
+        return False
+    attributes = getattr(info, "st_file_attributes", 0)
+    return stat.S_ISLNK(info.st_mode) or bool(
+        attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    )
 
 
 def _assert_safe_tree(root: Path) -> None:

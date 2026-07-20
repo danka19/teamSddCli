@@ -1,7 +1,7 @@
 schema_version: "1.1"
 package:
   id: sdd-process
-  version: 0.2.0
+  version: 0.3.0
 openspec:
   cli_version: 1.4.1
 workflow: workflow.yaml
@@ -28,6 +28,8 @@ schemas:
   traceability_v2: schemas/traceability-v2.schema.json
   external_mapping: schemas/external-mapping.schema.json
   operation_evidence: schemas/operation-evidence.schema.json
+  upgrade_evidence: schemas/upgrade-evidence.schema.json
+  upgrade_check_result: schemas/upgrade-check-result.schema.json
   read_pack_request: schemas/read-pack-request.schema.json
   task_launch: schemas/task-launch.schema.json
   weak_model_operation_plan: schemas/weak-model-operation-plan.schema.json
@@ -47,6 +49,7 @@ schemas:
 templates:
   change_v2: templates/change-v2/change.yaml
   change_package: templates/change/change.yaml
+  upgrade_evidence: templates/upgrade-evidence.yaml
   corporate_environment_inventory: templates/corporate-adaptation/environment-inventory.yaml
   corporate_configuration_checklist: templates/corporate-adaptation/configuration-checklist.yaml
   corporate_pilot_entry_checklist: templates/corporate-adaptation/pilot-entry-checklist.yaml

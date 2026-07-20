@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/sdd/upgrade-check-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_kind", "change_id", "from", "to", "status", "produced_by"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evidence_kind": {"enum": ["human-decision", "compatibility", "openspec-strict", "validator-templates"]},
+    "change_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "from": {"$ref": "#/$defs/identity"},
+    "to": {"$ref": "#/$defs/identity"},
+    "status": {"enum": ["approved", "compatible", "passed"]},
+    "produced_by": {"enum": ["human", "deterministic-validator"]}
+  },
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_version", "openspec_version"],
+      "properties": {
+        "package_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "openspec_version": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

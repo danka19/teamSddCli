@@ -2,14 +2,16 @@
 
 Status: in_progress.
 
-Last status reconciliation: 2026-07-19.
+Last status reconciliation: 2026-07-20.
 
 ## Residual-Gap Reconciliation (2026-07-19)
 
 - The 110 rc4 residual-gap rows were traced to the Phase 2.10 transition from aggregate/default coverage to exact source-local `SCENARIO_COVERAGE` bindings. They are verified missing exact evidence bindings, not 110 independently discovered product defects.
 - All 110 rows have mechanically identical owner/risk/reason/compensation/follow-up metadata. The repeated `risk: medium` is therefore a fallback classification, not an individual risk assessment.
-- The 2026-07-20 selector review resolves the 75 Phase 2 rows into 58 existing exact proofs, 4 missing focused tests, and 13 genuine product gaps. It binds the 22 governance rows to primary decisions/audits and routes the 12 Phase 3/4 rows to exact `future_work` declarations in the working source.
-- Immutable candidate `phase-2-14-rc4` was not changed. The human selected successor remediation, so gate 2.14.4 is now `blocked` until `close-release-integrity-gaps` is implemented and reviewed, a new candidate is frozen, and candidate-bound certification is repeated.
+- The 2026-07-20 selector review initially resolved the 75 Phase 2 rows into 58 existing proofs, 4 focused tests, and 13 product gaps. Focused and release-integrity remediation now bind 68 Phase 2 selectors to exact tests; 22 governance rows remain linked to primary decisions/audits and 12 Phase 3/4 rows remain exact `future_work`.
+- Immutable candidate `phase-2-14-rc4` was not changed. `close-release-integrity-gaps` implementation and independent review are complete with final verdict `READY` and `736 passed, 4 skipped`; gate 2.14.4 remains blocked until a new candidate is frozen and candidate-bound certification is repeated.
+- Working package `0.3.0` implements the six prioritized release-integrity selectors and reaches `295 covered / 7 gaps / 32 future_work`. The seven remaining product gaps are explicit Phase 3/4 deferrals under `D-019`; this working-source result is not candidate certification.
+- Current OpenSpec progress is `34/36` for `define-transfer-ready-process-package`, `41/43` for `adopt-nis-corporate-process-governance`, and implementation tasks 1.1-5.3 complete for `close-release-integrity-gaps`; final verification, independent review, successor freeze, and candidate-bound certification remain open.
 - Durable evidence: `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md`.
 
 ## Phase And OpenSpec Status Reconciliation (2026-07-18)
@@ -52,7 +54,7 @@ Last updated: 2026-07-20.
 |---|---|
 | Repository root | `<repository-root>` |
 | Git repository | Initialized locally on 2026-07-03 |
-| Current branch | `codex/phase-2-transfer-readiness-plan` |
+| Current branch | `codex/close-release-integrity-gaps` |
 | Remote | `origin` is configured; inspect locally with `git remote -v` |
 | Transfer-readiness audit commit | `96b3614 docs: audit transfer readiness` |
 | Repository rename | The remote repository capitalization was corrected; the local folder path retains its historical capitalization |
@@ -129,8 +131,8 @@ Last updated: 2026-07-20.
 | AUDIT-021 | `D-013` accepts the NIS-aligned target process. Work items 2.7 and 2.8 completed check-only flow enforcement, QA authority, scoped exceptions, release handoff, role/WIP/pilot-safety checks, append-only failed-run retention, packaged workflow operations, and broader traceability without replacing human decisions or mutating external state. Real corporate wiring and pilot execution remain Phase 3 work. | Phase 2/3 | mitigated |
 | AUDIT-022 | `D-014` makes AI-disabled deterministic operation the first required delivery state and permanent fallback, not the final AI-minimal product direction. Later accepted changes are expected to progressively automate bounded orchestration, drafting, evidence assembly, routing, monitoring, tool coordination, and permitted transition preparation while deterministic checks remain the control plane and accountable human authority remains explicit. Presentation-facing and project-direction documentation now carry this two-horizon message; implementation of the later horizon remains future scope. | Phase 2/4 | open |
 | AUDIT-023 | `D-016` makes broader risk-oriented positive/negative testing and end-to-end requirement/scenario evidence traceability explicit reliability mechanisms, and safe parallel AI execution an explicit throughput mechanism. The transfer change now requires independent ownership/write scopes, separate evidence, serialization of conflicts, and a deterministic combined integration gate. This is not the excluded process-effectiveness measurement program. | Phase 2/4 | open |
-| AUDIT-027 | Rc4 contains the immutable historical `204 covered / 110 gaps / 20 future_work` report; its uniform residual metadata is a mechanical fallback, not an individual risk assessment. The 2026-07-20 selector review and bounded follow-up changed only the working successor source: 62 Phase 2 rows now bind exact test evidence, 22 governance rows bind primary decisions/audits, 12 rows are Phase 3/4 `future_work`, and `D-019` resolves the scope-boundary selector. Working coverage is `289/13/32`; all 13 remaining gaps are genuine product gaps routed to OpenSpec intake. Rc4 remains immutable and no successor candidate is certified. | Phase 2/3/4 | mitigated |
-| AUDIT-028 | The 13 product gaps were normalized into six intake groups. Delta semantics, archive history, and reviewed upgrade evidence are candidate-blocking Phase 2 release-integrity work in apply-ready change `close-release-integrity-gaps`. Feedback disposition is deferred to P4, CODEOWNERS derivation/validation to P3, and AI traceability suggestions plus legacy baseline onboarding to P4; all seven deferred selectors remain visible gaps. A successor may be frozen only after the six prioritized scenarios reach exact passing evidence and independent review. | Phase 2/3/4 | open |
+| AUDIT-027 | Rc4 contains the immutable historical `204 covered / 110 gaps / 20 future_work` report; its uniform residual metadata is a mechanical fallback, not an individual risk assessment. Working package `0.3.0` now binds 68 Phase 2 selectors to exact test evidence, 22 governance rows to primary decisions/audits, 12 Phase 3/4 rows to `future_work`, and the first-MVP boundary to `D-019`. Working coverage is `295/7/32`; rc4 remains immutable and no successor candidate is certified. | Phase 2/3/4 | mitigated |
+| AUDIT-028 | The 13 product gaps were normalized into six intake groups. Delta semantics, archive history, and reviewed upgrade evidence are implemented in working package `0.3.0` with six exact tests. Feedback disposition is deferred to P4, CODEOWNERS derivation/validation to P3, and AI traceability suggestions plus legacy baseline onboarding to P4; all seven deferred selectors remain visible gaps. Successor freeze remains blocked until full verification and independent review close. | Phase 2/3/4 | mitigated |
 
 ## Accepted Human Decisions
 

@@ -89,7 +89,7 @@ def test_catalog_declares_role_class_dimensions_and_expected_outputs_without_exe
 
 
 def test_valid_golden_check_is_repeatable_private_and_hash_bound(external_tmp: Path) -> None:
-    raw = external_tmp / "raw-artifact-v0.2.0"
+    raw = external_tmp / "raw-artifact-v0.3.0"
     first = certify_release(ROOT, CATALOG, raw, check=True)
     second = certify_release(ROOT, CATALOG, raw, check=True)
     assert first == second
@@ -100,12 +100,12 @@ def test_valid_golden_check_is_repeatable_private_and_hash_bound(external_tmp: P
     assert first["actual_model_run"] is False
     assert first["model"] == {"family": "not-executed", "id": "not-executed", "runtime": "not-executed"}
     assert first["adapter"] == {"family": "not-executed", "version": "not-executed"}
-    assert first["process_package_version"] == "0.2.0"
+    assert first["process_package_version"] == "0.3.0"
     assert first["normalized_sha256"]
     normalized_copy = {key: value for key, value in first.items() if key != "normalized_sha256"}
     assert hashlib.sha256(json.dumps(normalized_copy, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == first["normalized_sha256"]
     assert first["canonical_mutated"] is False
-    assert first["raw_artifact"]["logical_version"] == "raw-artifact-v0.2.0"
+    assert first["raw_artifact"]["logical_version"] == "raw-artifact-v0.3.0"
     bundle = raw / "bundle.json"
     assert hashlib.sha256(bundle.read_bytes()).hexdigest() == written["raw_artifact"]["sha256"]
     assert "stdout" not in json.dumps(first).lower()
@@ -285,8 +285,8 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
     assert report["summary"]["future_work"] == 32
     assert report["summary"] == {
         "effective_scenarios": 334,
-        "covered": 289,
-        "gaps": 13,
+        "covered": 295,
+        "gaps": 7,
         "future_work": 32,
     }
     assert {
@@ -338,7 +338,7 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
         if "gap" in row
     )
     assert gap_routes == {
-        "product-gap": 13,
+        "product-gap": 7,
     }
 
 

@@ -150,7 +150,7 @@ def test_every_file_based_entry_point_uses_exit3_for_missing_or_malformed_root(
         (create_main, ["sample-change-001", "--title", "Sample", "--classification", "minor", "--type", "behavior_change", "--changes-root", str(tmp_path / "changes"), "--package-root", str(missing), "--json"]),
         (spec_pr_main, [str(missing), "--package-root", str(PROCESS), "--json"]),
         (archive_main, [str(missing), "--package-root", str(PROCESS), "--json"]),
-        (update_main, ["check", str(missing), str(missing), str(malformed), "--json"]),
+            (update_main, ["check", str(missing), str(missing), str(malformed), "--evidence", str(malformed), "--json"]),
         (traceability_main, [str(malformed), "--json"]),
         (external_mapping_main, [str(malformed), "--json"]),
     ]

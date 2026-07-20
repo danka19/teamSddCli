@@ -365,12 +365,6 @@ SCENARIO_COVERAGE = {
         },
         {
             "source_kind": "accepted",
-            "capability": "change-lifecycle",
-            "requirement": "Archive history convention",
-            "scenario": "Archive convention does not replace approval"
-        },
-        {
-            "source_kind": "accepted",
             "capability": "waiver-policy",
             "requirement": "Waiver negative cases",
             "scenario": "Waiver cannot replace human approval"

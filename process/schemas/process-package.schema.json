@@ -26,7 +26,7 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result", "corporate_environment_inventory", "corporate_adaptation_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
+      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "upgrade_evidence", "upgrade_check_result", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result", "corporate_environment_inventory", "corporate_adaptation_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
@@ -49,6 +49,8 @@
         "traceability_v2": {"const": "schemas/traceability-v2.schema.json"},
         "external_mapping": {"const": "schemas/external-mapping.schema.json"},
         "operation_evidence": {"const": "schemas/operation-evidence.schema.json"},
+        "upgrade_evidence": {"const": "schemas/upgrade-evidence.schema.json"},
+        "upgrade_check_result": {"const": "schemas/upgrade-check-result.schema.json"},
         "read_pack_request": {"const": "schemas/read-pack-request.schema.json"},
         "task_launch": {"const": "schemas/task-launch.schema.json"},
         "weak_model_operation_plan": {"const": "schemas/weak-model-operation-plan.schema.json"},
@@ -70,10 +72,11 @@
     "templates": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["change_v2", "change_package", "corporate_environment_inventory", "corporate_configuration_checklist", "corporate_pilot_entry_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
+      "required": ["change_v2", "change_package", "upgrade_evidence", "corporate_environment_inventory", "corporate_configuration_checklist", "corporate_pilot_entry_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
         "change_v2": {"const": "templates/change-v2/change.yaml"},
         "change_package": {"const": "templates/change/change.yaml"},
+        "upgrade_evidence": {"const": "templates/upgrade-evidence.yaml"},
         "corporate_environment_inventory": {"const": "templates/corporate-adaptation/environment-inventory.yaml"},
         "corporate_configuration_checklist": {"const": "templates/corporate-adaptation/configuration-checklist.yaml"},
         "corporate_pilot_entry_checklist": {"const": "templates/corporate-adaptation/pilot-entry-checklist.yaml"},
