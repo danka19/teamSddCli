@@ -203,6 +203,7 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
+| `allow-certified-baseline-reuse` | P3 | P4 | in_progress |
 | `add-guided-owner-workflow` | P3 | P4, P5 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
