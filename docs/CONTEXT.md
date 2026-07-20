@@ -68,7 +68,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 | Approval gate | Human-owned decision point that may be displayed in generated views but is not approved by Confluence or AI. | Bitbucket/PR review and recorded human decisions are approval truth. |
 | Verification evidence | Link or recorded result proving a requirement/scenario was checked. | May be CI, test output, manual QA, PR, committed note, or approved waiver depending on contract. |
 | Feedback disposition | Recorded outcome for stakeholder feedback, such as accepted, rejected, deferred, or duplicate. | Required before Confluence feedback becomes implementation input. |
-| Canonical spec language | Language convention for canonical OpenSpec sources. | Decided 2026-07-06: team product analytics specs use Russian requirement/scenario prose with English structural keywords (`SHALL`, `WHEN`, `THEN`); stable IDs are always English; this project's own process specs stay English. |
+| Canonical spec language | Language convention for canonical OpenSpec sources. | Decided 2026-07-20: new project documentation and OpenSpec requirement/scenario prose use Russian; stable IDs, file paths, CLI/API tokens, and structural OpenSpec keywords remain English where required. Historical immutable evidence is preserved without bulk translation. |
 | Localized generated view | Generated page translated or adapted for readers while linking back to canonical source. | Russian Confluence pages are localized views, not requirement source. |
 
 ## Boundary Rules
@@ -94,7 +94,7 @@ This is the active glossary and domain-boundary file for teamSddCli.
 - Confluence comment handling must be modeled as an explicit feedback loop with owner, service expectation, unresolved-feedback handling, and accepted/rejected comment outcomes before publication automation is implemented.
 - Avoid bidirectional synchronization between Confluence and Git unless a later accepted decision explicitly changes the architecture.
 - Do not infer real corporate repository URLs, owners, credentials, Confluence spaces, Jira projects, or Jenkins jobs from examples in docs, OpenSpec proposals, or historical drafts.
-- Team product analytics specs are written in Russian prose with English structural keywords and English stable IDs; this project's own process specs are written in English; generated Confluence pages remain localized views and must link back to Git/OpenSpec.
+- New project documentation and OpenSpec prose are written in Russian; stable IDs, file paths, CLI/API tokens, and structural OpenSpec keywords remain English where required. Generated Confluence pages link back to the canonical Russian Git/OpenSpec source, while historical immutable evidence remains unchanged.
 - Stable identifiers such as requirement, scenario, journey, and screen IDs are not translated.
 - Manual edits to generated Confluence content are not accepted as requirement changes; accepted feedback must become a Git/OpenSpec change or PR update.
 - If content describes product behavior, it belongs in OpenSpec; if it describes project organization, operations, contribution workflow, architecture rationale, or temporary phase planning, it belongs in `docs/`.

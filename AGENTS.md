@@ -27,7 +27,7 @@ Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc correc
 ## Project Rules
 
 1. Quality, thoughtful design, safety, and architecture are more important than rushing.
-2. Project documentation must be written in English unless the human explicitly changes the project language.
+2. Project documentation and new OpenSpec prose must be written in Russian. Keep stable IDs, file paths, CLI/API tokens, and OpenSpec structural keywords in English where tooling or cross-references require them. Historical accepted and immutable evidence is not translated in bulk.
 3. User-facing replies must be written in Russian unless the user explicitly asks for another language.
 4. The historical source architecture draft was removed on 2026-07-06 because it became stale; current architecture truth lives in `docs/`, `openspec/`, and accepted human decisions. Do not recreate a parallel architecture source without explicit human approval.
 5. At the end of every work session, before replying to the user, create a git commit when the project repository has intentional changes and `.git/` exists.

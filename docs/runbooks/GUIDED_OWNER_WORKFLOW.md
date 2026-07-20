@@ -2,21 +2,33 @@
 
 <!-- guided-catalog-sha256: 2d3b10a3b364b95dba33ecdfb74692fe5722c1654fa9fec398288022cdd30a48 -->
 
-This guide is the human and AI entry point for the external process package. It is read-only: follow the returned command explicitly, retain the named evidence, and stop at every named human decision. The canonical route source is `process/catalogs/guided-owner-workflow.yaml`.
+Это отправная точка для человека и AI-ассистента при работе с внешним
+процессным пакетом. Guide работает только на чтение: запускайте только
+возвращённую команду, сохраняйте указанное evidence и останавливайтесь на
+каждом решении, которое должен принять человек. Канонический источник
+маршрутов — `process/catalogs/guided-owner-workflow.yaml`.
 
-## Start with your situation
+## Начните со своей ситуации
 
-| Situation | Provide | Next commands | Human decision |
+| Ситуация | Что указать | Следующие команды | Решение человека |
 | --- | --- | --- | --- |
-| New business requirement | Proposed classification | `create_change`, then `classify_change` | Tech Lead confirms classification. |
-| Existing change | Change ID and known lifecycle state | `prepare_spec_pr`, `evaluate_change_gates`, or `prepare_archive` as applicable | Change Owner records the applicable gate decision. |
-| Urgent incident | Retained incident reference | `classify_change`, `create_change`, then `evaluate_change_gates` | Tech Lead confirms hotfix eligibility; urgency does not bypass safety. |
-| Blocked or failed operation | Retained failed-run reference | `manual_fallback` | Tech Lead records hold or resume. |
+| Новое бизнес-требование | Предлагаемый класс изменения | `create_change`, затем `classify_change` | Tech Lead подтверждает классификацию. |
+| Уже созданное изменение | ID изменения и известное состояние жизненного цикла | По ситуации: `prepare_spec_pr`, `evaluate_change_gates` или `prepare_archive` | Change Owner фиксирует решение по применимому gate. |
+| Срочный инцидент | Сохранённая ссылка на инцидент | `classify_change`, `create_change`, затем `evaluate_change_gates` | Tech Lead подтверждает допустимость hotfix; срочность не отменяет требования безопасности. |
+| Заблокированная или неуспешная операция | Сохранённая ссылка на failed run | `manual_fallback` | Tech Lead фиксирует hold или resume. |
 
-## AI and unavailable surfaces
+## AI и недоступные системы
 
-An AI assistant may explain a catalog route, draft artifacts, and identify missing context. It must not select an undocumented route, confirm classification, approve a gate or waiver, resume work, approve release/archive, merge, deploy, or mutate an external system. If AI, MCP, or an integration is unavailable, pass `--unavailable <surface>` to `scripts/guided_owner_workflow.py`; use the returned `manual_fallback` command and retain the unavailable-surface evidence.
+AI-ассистент может объяснить маршрут из catalog, подготовить черновик артефакта
+и указать недостающий контекст. Он не вправе выбирать недокументированный
+маршрут, подтверждать классификацию, одобрять gate или waiver, возобновлять
+работу, одобрять release/archive, выполнять merge/deploy или изменять внешнюю
+систему. Если AI, MCP или интеграция недоступны, передайте
+`--unavailable <surface>` в `scripts/guided_owner_workflow.py`, выполните
+возвращённую команду `manual_fallback` и сохраните evidence недоступности.
 
-## Verification
+## Проверка
 
-Run `python scripts/validate_guided_owner_workflow.py --json` after changing this guide or its catalog. A mismatch is a release blocker because it means people and assistants could receive different operating instructions.
+Запускайте `python scripts/validate_guided_owner_workflow.py --json` после
+изменения этого guide или его catalog. Несовпадение блокирует выпуск, потому
+что человек и ассистент в таком случае получили бы разные рабочие инструкции.
