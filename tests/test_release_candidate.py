@@ -636,6 +636,27 @@ def test_candidate_contains_only_allowlisted_self_contained_assets(candidate_tmp
     assert validate_release_manifest(candidate, manifest)["status"] == "valid"
 
 
+def test_candidate_management_validate_does_not_write_bytecode_into_payload(candidate_tmp: Path) -> None:
+    candidate, manifest = _build(candidate_tmp)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(candidate / "payload/scripts/manage_release_candidate.py"),
+            "validate",
+            "--candidate", str(candidate),
+            "--manifest", str(candidate / "release-manifest.yaml"),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["status"] == "valid"
+    assert payload_inventory(candidate / "payload")["payload_sha256"] == manifest["payload_sha256"]
+
+
 @pytest.mark.parametrize("field", [
     "process_package", "config_schema_version", "openspec", "host_evidence",
     "compatibility", "verification_commands", "verification_requirements",

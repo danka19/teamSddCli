@@ -12,8 +12,16 @@ Current checkpoint:
 
 Текущий пакет `0.3.1` содержит проверяемый `baseline-reuse`: свежие Qwen и
 DeepSeek preflight прошли, а полная matrix `0.3.0` связана с ними точными
-hashes. Successor candidate пока не готов: в доступном архиве отсутствуют два
-исторических raw-artifact root; без них acceptance намеренно fail-closed.
+hashes. Исторические raw-artifact roots найдены в локальном архиве
+`C:\Users\danoc\Documents\certifications`: 48 заявленных файлов сверены по
+SHA-256 и собран чистый exact bundle без лишних runtime probe. Диагностический
+`rc3` был отклонён, потому что его управляющий CLI записывал Python bytecode в
+payload; причина устранена отдельным регрессионным тестом. Новый immutable
+candidate `guided-owner-v0.3.1-rc4` собран, его manifest валиден до и после
+Windows full-clean rehearsal, которая passed. Его acceptance пока намеренно
+fail-closed: на данной машине нет
+установленного WSL-дистрибутива, а для честного завершения требуется отдельный
+Linux/WSL2 portability smoke. Новая полная matrix для этого не требуется.
 
 ## Scope
 

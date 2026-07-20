@@ -53,32 +53,56 @@ preflight исчезнет или завершится ошибкой, либо 
 | Qwen actual preflight | 5/5, `qwen3.5:9b`, local family proxy |
 | DeepSeek actual preflight | 5/5, `deepseek-r1:8b`, local family proxy |
 | `validate_phase_gate` обоих fresh result | `[]` |
+| Исторические raw-артефакты | найдены в `C:\Users\danoc\Documents\certifications`; все 48 файлов, объявленных rc6 manifest, совпали по SHA-256 |
+| Новый чистый raw bundle | создан вне Git как `guided-owner-v0.3.1-candidate-raw-2026-07-20`; два лишних top-level runtime probe из исходных каталогов не включены |
+| rc3 bytecode regression | обнаружена при валидации: CLI записывал `.pyc` в собственный payload; rc3 оставлен как rejected diagnostic history |
+| Windows full-clean rehearsal rc4 | passed; manifest валиден до и после репетиции, payload SHA-256 `055451d125eec3055c45aee27725fd1cfc69fd542aa1159ad112936514e9e7e4` |
 
 ## Findings
 
-### BR-001: Historical raw bundle недоступен
+### BR-001: Historical raw bundle найден и корректно закрыт
 
-- Классификация: verified limitation, medium severity.
-- Влияние: successor candidate `0.3.1` не может получить
-  `evidence-complete`; Phase 3 и `add-guided-owner-workflow` не готовы к
-  archive или human acceptance.
-- Воспроизводимое evidence: рекурсивный поиск во внешнем
-  `teamSsdCli-release-artifacts` не нашёл
-  `raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20` и
-  `raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20`.
-- Подтверждённая причина: в доступном внешнем хранилище нет именно двух roots,
-  на которые ссылается неизменяемый selection baseline.
-- Остаточная неопределённость: неизвестно, существуют ли roots в другом
-  release archive, недоступном в этой сессии.
-- Рекомендованное действие: восстановить exact roots либо явно разрешить новую
-  полную Qwen/DeepSeek matrix. Пустая временная папка
-  `guided-owner-v0.3.1-candidate-raw-2026-07-20` не является evidence и не
-  используется как результат.
+- Классификация: закрыто.
+- Исправление поиска: первоначальная проверка ограничилась каталогом
+  `teamSsdCli-release-artifacts`, хотя исторические исходные артефакты находились
+  в `C:\Users\danoc\Documents\certifications`. Это была ошибка рабочего поиска,
+  а не отсутствие evidence.
+- Подтверждение: для Qwen и DeepSeek сверены все 48 файлов, перечисленных в
+  immutable rc6 manifest. Не обнаружено ни пропусков, ни расхождений SHA-256.
+- Защита от повторения rc5: два лишних top-level `*-runtime-probe.json` не
+  перенесены в новый bundle, так как manifest их не объявляет. Новый bundle
+  содержит только exact closure плюс отдельно зарегистрированные fresh preflight
+  current package.
+
+### BR-002: Linux/WSL2 host evidence ещё не получен
+
+- Классификация: verified environment blocker, medium severity.
+- Влияние: `rc3` не может получить `evidence-complete`, потому что acceptance
+  требует ровно два host-файла: Windows full-clean rehearsal и Linux/WSL2
+  portability smoke. Windows уже passed; macOS остаётся явно `not-certified`.
+- Подтверждение: `wsl --list --quiet` сообщает, что на машине нет установленного
+  Linux-дистрибутива. Поэтому нельзя честно создавать `linux-wsl2.yaml` из
+  Windows-сеанса.
+- Рекомендованное действие: выполнить Linux/WSL2 rehearsal на доступном Linux
+  или после установки дистрибутива WSL, затем запустить `accept` для rc3. Полная
+  Qwen/DeepSeek matrix при этом не требуется: условия baseline-reuse уже
+  проверены и текущие preflight прошли.
+
+### BR-003: Управляющий CLI изменял payload кандидата bytecode-файлами
+
+- Классификация: закрыто до выпуска rc4.
+- Причина: `manage_release_candidate.py` импортировал Python-модули из payload,
+  а интерпретатор по умолчанию создавал рядом с ними `__pycache__/*.pyc`.
+  Последующая проверка справедливо отклоняла уже изменённый кандидат с кодом
+  `release.bytecode-forbidden`.
+- Исправление: управляющий CLI отключает запись bytecode до импортов. Добавлен
+  регрессионный тест, который запускает `validate` как отдельный процесс и
+  проверяет, что SHA-256 payload остаётся неизменным.
+- Подтверждение: rc4 прошёл manifest validation до и после Windows rehearsal.
 
 ## Следующий шаг
 
-Владелец должен выбрать одно из двух действий: восстановить оба exact
-historical raw-artifact roots из release archive (рекомендуется — сохранит
-прошлую matrix) либо явно разрешить новую полную Qwen/DeepSeek matrix. После
-этого можно собрать versioned candidate, выполнить host rehearsal и оставить
-human acceptance отдельным решением.
+Владелец должен предоставить среду Linux/WSL2 для portability smoke или
+разрешить установку WSL-дистрибутива на этой машине. После этого агент выполнит
+строго предусмотренную репетицию и `accept` для уже созданного rc3. Human
+acceptance остаётся отдельным решением после `evidence-complete`.
