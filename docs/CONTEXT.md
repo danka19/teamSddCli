@@ -4,6 +4,8 @@ This is the active glossary and domain-boundary file for teamSddCli.
 
 ## Canonical Terms
 
+- **Guided companion agent**: a CLI/AI assistant that explains the applicable project criteria and process context, proposes a proportionate next action, collects and summarizes evidence, identifies gaps and risks, and remains advisory at human decision boundaries.
+
 | Term | Meaning | Notes |
 |---|---|---|
 | SDD | Spec-driven development workflow where requirements, design, tasks, tests, and traceability are driven from structured spec artifacts. | In this project the SDD workflow is OpenSpec/Markdown-first. |

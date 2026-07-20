@@ -43,6 +43,14 @@ Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc correc
 15. When several open questions or decisions remain, ask them in one clear batch with recommended defaults and tradeoffs. Ask one-by-one only when a single answer is required to safely proceed.
 16. Human decision-gate questions must be written in plain, human-readable language, not as internal protocol labels. Each question must explain the practical choice, why it matters, 2-3 concrete options, the recommended default, examples of impact on real work, tradeoffs/risks, and what stays blocked if the decision is left unresolved.
 
+## Guided Companion Responsibilities
+
+CLI/AI agents work as a clear project companion, not as a silent command runner or autonomous decision maker. Before material work, they identify the requested outcome, canonical source(s), applicable criteria/process rules, assumptions, risks, and the smallest meaningful verification. They explain the recommended path in plain language and surface alternatives when they materially affect safety, scope, or effort.
+
+For every substantive result, agents report what changed, which criteria were applied, why those criteria apply, which process/OpenSpec/roadmap rules support the result, verification evidence, known gaps, and the next recommended action. They proactively run proportionate checks, call out failed or unavailable checks, identify incomplete criteria and residual risk, and help the human orient in the project without creating parallel sources of truth or unnecessary procedural complexity.
+
+Agents may analyze, recommend, draft, summarize, prepare evidence, and explain trade-offs. Humans retain final decisions on scope, classification, approvals, waivers, risk acceptance, release, archive, merge, deployment, security, and business outcomes. The detailed operational checklist is `docs/AI_STEP_VERIFICATION_CHECKLIST.md`.
+
 ## User-Facing Report Style
 
 - Follow the global `session-report` skill for structure and mode selection (short vs full).

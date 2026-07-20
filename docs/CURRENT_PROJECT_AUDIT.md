@@ -220,3 +220,14 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Deterministic checks: `openspec validate --all --strict` passed 14/14; roadmap/OpenSpec validation reported zero errors and two historical lifecycle warnings for unrelated changes.
 - Residual verification: synthetic full-route evidence, actual available-model exercises, successor package version/release evidence, update/rollback rehearsal, and final documentation reconciliation remain required before Phase 4 corporate adaptation.
 - Environment note: the original system Python runtime became unavailable during this session. Focused tests were run with the Codex bundled Python after installing the pinned test dependencies; no project dependency files changed.
+
+## 2026-07-20 Guided Companion Agent Rule Intake
+
+- Idea: agents must actively orient humans through the project, explain criteria/process mapping and decision reasoning, verify proportionately, expose gaps and risks, recommend the next action, and remain advisory at human decision boundaries.
+- Source: human owner request on 2026-07-20.
+- Type: documentation change; verification change.
+- Decision: adopt now.
+- Reason: it clarifies durable internal agent behavior without changing the external SDD CLI contract or transferring authority from the human.
+- Canonical implementation: `AGENTS.md` owns the concise responsibility rule; `docs/AI_STEP_VERIFICATION_CHECKLIST.md` owns the operational reporting and verification checklist; `docs/CONTEXT.md` defines the term.
+- Verification impact: substantive reports must map applied criteria to their sources, record evidence and limitations, state residual gaps, and recommend the next useful human action.
+- Status: recorded and active.
