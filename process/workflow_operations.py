@@ -21,6 +21,7 @@ import yaml
 from jsonschema import Draft202012Validator
 
 from .errors import OperationError
+from .guided_workflow import load_catalog
 
 from .validators.config_discovery import (
     BUNDLED_SCHEMA_ROOT,
@@ -923,6 +924,13 @@ def _validate_standalone_package(
         raise OperationError("package-contract-invalid", "template declarations are missing")
     for relative in templates.values():
         _declared_file(root, relative)
+
+    catalogs = package.get("catalogs")
+    if not isinstance(catalogs, dict):
+        raise OperationError("package-contract-invalid", "catalog declarations are missing")
+    for relative in catalogs.values():
+        catalog_path = _declared_file(root, relative)
+        load_catalog(catalog_path)
 
     distribution = package.get("distribution")
     if not isinstance(distribution, dict):

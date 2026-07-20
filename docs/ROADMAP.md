@@ -106,7 +106,7 @@ Phase gate:
 
 ## Phase 3. Self-Service Onboarding And Guided Operation
 
-Status: planned.
+Status: in_progress.
 
 A detailed phase plan has not been accepted yet.
 
@@ -202,7 +202,7 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
-| `add-guided-owner-workflow` | P3 | P4, P5 | planned |
+| `add-guided-owner-workflow` | P3 | P4, P5 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

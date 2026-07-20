@@ -1,0 +1,126 @@
+"""Acceptance tests for the read-only guided owner workflow."""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+from process.errors import OperationError
+from process.guided_workflow import load_catalog
+from scripts.guided_owner_workflow import main as guided_main
+from scripts.validate_guided_owner_workflow import main as validate_main
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PROCESS = ROOT / "process"
+GUIDE = ROOT / "docs" / "runbooks" / "GUIDED_OWNER_WORKFLOW.md"
+
+
+def _payload(capsys) -> dict:
+    return json.loads(capsys.readouterr().out)
+
+
+@pytest.mark.parametrize("classification", ["minor", "major"])
+def test_new_requirement_route_is_read_only_and_names_classification_decision(
+    classification: str, capsys,
+) -> None:
+    assert guided_main([
+        "new-requirement", "--fact", f"classification={classification}", "--json",
+    ]) == 0
+
+    payload = _payload(capsys)
+
+    assert payload["status"] == "guided"
+    assert payload["route_id"] == "new-requirement"
+    assert payload["lifecycle_mutated"] is False
+    assert payload["known_facts"] == {"classification": classification}
+    assert payload["commands"] == [
+        "scripts/create_change.py",
+        "scripts/classify_change.py",
+    ]
+    assert payload["human_decision"]["id"] == "classification-confirmation"
+    assert payload["human_decision"]["owner"] == "Tech Lead"
+
+
+def test_existing_change_requires_known_lifecycle_state_and_never_guesses(capsys) -> None:
+    assert guided_main([
+        "existing-change", "--fact", "change_id=sample-minor-001", "--json",
+    ]) == 1
+    payload = _payload(capsys)
+    assert payload["status"] == "blocked"
+    assert payload["blockers"] == [{
+        "code": "missing-context",
+        "required_facts": ["lifecycle_state"],
+    }]
+
+
+def test_unavailable_surface_returns_catalog_fallback_without_weakening_gate(capsys) -> None:
+    assert guided_main([
+        "urgent-incident", "--fact", "incident_ref=evidence/INC-001.md",
+        "--unavailable", "model-runtime", "--json",
+    ]) == 0
+    payload = _payload(capsys)
+
+    assert payload["status"] == "guided"
+    assert payload["unavailable"] == ["model-runtime"]
+    assert payload["fallbacks"] == [{
+        "surface": "model-runtime",
+        "command": "scripts/manual_fallback.py --unavailable model-runtime",
+    }]
+    assert payload["human_decision"]["id"] == "hotfix-eligibility-confirmation"
+    assert payload["route_id"] == "urgent-incident"
+
+
+def test_unknown_situation_is_a_structured_safe_block(capsys) -> None:
+    assert guided_main(["invent-a-route", "--json"]) == 1
+    payload = _payload(capsys)
+    assert payload["status"] == "blocked"
+    assert payload["blockers"][0]["code"] == "situation-unknown"
+
+
+def test_catalog_rejects_undocumented_commands_and_ai_owned_decisions(tmp_path: Path) -> None:
+    catalog = tmp_path / "catalog.yaml"
+    catalog.write_text(
+        "schema_version: '1.0'\n"
+        "routes:\n"
+        "  - id: unsafe\n"
+        "    situation: unsafe\n"
+        "    required_facts: []\n"
+        "    commands: [scripts/not-published.py]\n"
+        "    evidence: []\n"
+        "    human_decision: {id: release, owner: AI}\n"
+        "    fallbacks: []\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(OperationError, match="catalog-invalid"):
+        load_catalog(catalog)
+
+
+def test_onboarding_guide_is_synchronized_with_catalog(capsys) -> None:
+    assert validate_main(["--json"]) == 0
+    payload = _payload(capsys)
+    assert payload == {
+        "operation": "validate-guided-owner-workflow",
+        "status": "valid",
+        "guide": "docs/runbooks/GUIDED_OWNER_WORKFLOW.md",
+        "catalog": "process/catalogs/guided-owner-workflow.yaml",
+    }
+    assert GUIDE.is_file()
+
+
+def test_guide_validator_is_cwd_independent(tmp_path: Path) -> None:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "validate_guided_owner_workflow.py"), "--json"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0
+    assert json.loads(completed.stdout)["status"] == "valid"
+    assert completed.stderr == ""

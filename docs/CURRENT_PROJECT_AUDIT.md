@@ -212,3 +212,11 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 
 - Update this file when a finding is fixed, invalidated by evidence, or moved.
 - Do not mark a finding closed without verification evidence.
+
+## 2026-07-20 Guided Owner Workflow Implementation Checkpoint
+
+- Status: implementation in progress; OpenSpec tasks 1.1-3.3 are complete, while verification/release tasks 4.1-4.4 remain open.
+- Evidence: focused RED/GREEN tests cover declared new-requirement (minor and major), existing-change missing context, urgent-hotfix fallback, blocked/unknown situations, undocumented command rejection, AI-owner rejection, guide/catalog drift checking, CWD-independent validation, and package/bootstrap integration.
+- Deterministic checks: `openspec validate --all --strict` passed 14/14; roadmap/OpenSpec validation reported zero errors and two historical lifecycle warnings for unrelated changes.
+- Residual verification: synthetic full-route evidence, actual available-model exercises, successor package version/release evidence, update/rollback rehearsal, and final documentation reconciliation remain required before Phase 4 corporate adaptation.
+- Environment note: the original system Python runtime became unavailable during this session. Focused tests were run with the Codex bundled Python after installing the pinned test dependencies; no project dependency files changed.

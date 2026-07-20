@@ -1,0 +1,21 @@
+schema_version: "1.0"
+routes:
+  - id: new-minor
+    situation: new-requirement
+    facts: {classification: minor}
+  - id: new-major
+    situation: new-requirement
+    facts: {classification: major}
+  - id: urgent-hotfix
+    situation: urgent-incident
+    facts: {incident_ref: evidence/INC-001.md}
+  - id: existing-change
+    situation: existing-change
+    facts: {change_id: sample-minor-001, lifecycle_state: draft}
+  - id: blocked-operation
+    situation: blocked-operation
+    facts: {failed_run_ref: evidence/failed-run-001.json}
+  - id: unavailable-model-runtime
+    situation: urgent-incident
+    facts: {incident_ref: evidence/INC-001.md}
+    unavailable: [model-runtime]

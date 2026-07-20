@@ -14,7 +14,8 @@
         "CLASSIFICATION_AND_MIGRATION.md", "CORPORATE_FLOW_CONTROLS.md",
         "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
         "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
-        "WEAK_MODEL_OPERATING_KIT.md", "CORPORATE_ADAPTATION_AND_PILOT.md"
+        "WEAK_MODEL_OPERATING_KIT.md", "CORPORATE_ADAPTATION_AND_PILOT.md",
+        "GUIDED_OWNER_WORKFLOW.md"
       ]
     },
     "entry_points": {
@@ -28,6 +29,8 @@
         {"name": "evaluate_change_gates.py", "smoke": ["scripts/evaluate_change_gates.py", "--help"], "expected_exit_codes": [0]},
         {"name": "manage_release_candidate.py", "smoke": ["scripts/manage_release_candidate.py", "validate", "--help"], "additional_smokes": [["scripts/manage_release_candidate.py", "accept", "--help"], ["scripts/manage_release_candidate.py", "rehearse", "--help"]], "expected_exit_codes": [0]},
         {"name": "manual_fallback.py", "smoke": ["scripts/manual_fallback.py", "--help"], "expected_exit_codes": [0]},
+        {"name": "guided_owner_workflow.py", "smoke": ["scripts/guided_owner_workflow.py", "--help"], "expected_exit_codes": [0]},
+        {"name": "validate_guided_owner_workflow.py", "smoke": ["scripts/validate_guided_owner_workflow.py", "--help"], "expected_exit_codes": [0]},
         {"name": "migrate_change_classification.py", "smoke": ["scripts/migrate_change_classification.py", "--help"], "expected_exit_codes": [0]},
         {"name": "prepare_archive.py", "smoke": ["scripts/prepare_archive.py", "--help"], "expected_exit_codes": [0]},
         {"name": "prepare_spec_pr.py", "smoke": ["scripts/prepare_spec_pr.py", "--help"], "expected_exit_codes": [0]},

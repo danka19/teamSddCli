@@ -42,6 +42,7 @@ schemas:
   feedback_policy: schemas/feedback-policy.schema.json
   role_output_fixture: schemas/role-output-fixture.schema.json
   actual_certification_operational_result: schemas/actual-certification-operational-result.schema.json
+  guided_owner_workflow: schemas/guided-owner-workflow.schema.json
   corporate_environment_inventory: schemas/corporate-environment-inventory.schema.json
   corporate_adaptation_checklist: schemas/corporate-adaptation-checklist.schema.json
   corporate_pilot_evidence: schemas/corporate-pilot-evidence.schema.json
@@ -55,6 +56,8 @@ templates:
   corporate_pilot_entry_checklist: templates/corporate-adaptation/pilot-entry-checklist.yaml
   corporate_pilot_evidence: templates/corporate-adaptation/pilot-evidence.yaml
   corporate_no_fork_assessment: templates/corporate-adaptation/no-fork-assessment.yaml
+catalogs:
+  guided_owner_workflow: catalogs/guided-owner-workflow.yaml
 examples:
   classification:
     - examples/classification/minor.yaml
@@ -64,6 +67,7 @@ examples:
   corporate_no_fork_assessment: examples/corporate-adaptation/no-fork-routed-synthetic.yaml
 read_packs:
   classification: read-packs/classification.yaml
+  guided_owner_workflow: read-packs/guided-owner-workflow.yaml
 role_instructions:
   analyst: roles/analyst.md
   developer: roles/developer.md
@@ -88,6 +92,7 @@ distribution:
     - corporate_adaptation.py
     - errors.py
     - feedback_policy.py
+    - guided_workflow.py
     - model_adapter.py
     - operation_cli.py
     - operation_plan.py
@@ -100,6 +105,7 @@ distribution:
     - workflow_operations.py
   roots:
     - adapters
+    - catalogs
     - certification
     - examples
     - policies

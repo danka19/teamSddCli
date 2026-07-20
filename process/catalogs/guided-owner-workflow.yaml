@@ -1,0 +1,73 @@
+schema_version: "1.0"
+catalog_id: guided-owner-workflow
+routes:
+  - id: new-requirement
+    situation: new-requirement
+    required_facts:
+      - classification
+    commands:
+      - scripts/create_change.py
+      - scripts/classify_change.py
+    evidence:
+      - proposed change package
+      - classification evidence
+    human_decision:
+      id: classification-confirmation
+      owner: Tech Lead
+      consequence: Classification remains pending and no gate is approved.
+    fallbacks:
+      - surface: model-runtime
+        command: scripts/manual_fallback.py --unavailable model-runtime
+  - id: existing-change
+    situation: existing-change
+    required_facts:
+      - change_id
+      - lifecycle_state
+    commands:
+      - scripts/prepare_spec_pr.py
+      - scripts/evaluate_change_gates.py
+      - scripts/prepare_archive.py
+    evidence:
+      - change identity
+      - lifecycle and gate evidence
+    human_decision:
+      id: applicable-gate-decision
+      owner: Change Owner
+      consequence: The change remains at its recorded state.
+    fallbacks:
+      - surface: mcp
+        command: scripts/manual_fallback.py --unavailable mcp
+  - id: urgent-incident
+    situation: urgent-incident
+    required_facts:
+      - incident_ref
+    commands:
+      - scripts/classify_change.py
+      - scripts/create_change.py
+      - scripts/evaluate_change_gates.py
+    evidence:
+      - incident reference
+      - minimum regression and reconciliation evidence
+    human_decision:
+      id: hotfix-eligibility-confirmation
+      owner: Tech Lead
+      consequence: The work stays held; urgency does not bypass safety gates.
+    fallbacks:
+      - surface: model-runtime
+        command: scripts/manual_fallback.py --unavailable model-runtime
+  - id: blocked-operation
+    situation: blocked-operation
+    required_facts:
+      - failed_run_ref
+    commands:
+      - scripts/manual_fallback.py
+    evidence:
+      - retained failed-run evidence
+      - hold or escalation record
+    human_decision:
+      id: hold-or-resume-decision
+      owner: Tech Lead
+      consequence: Work remains held until an accountable human records a decision.
+    fallbacks:
+      - surface: model-runtime
+        command: scripts/manual_fallback.py --unavailable model-runtime

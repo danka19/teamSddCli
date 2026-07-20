@@ -3,7 +3,7 @@
   "$id": "process-package.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "examples", "read_packs", "role_instructions", "adapters", "certification", "distribution", "canonical_sources"],
+  "required": ["schema_version", "package", "openspec", "workflow", "policies", "schemas", "templates", "catalogs", "examples", "read_packs", "role_instructions", "adapters", "certification", "distribution", "canonical_sources"],
   "properties": {
     "schema_version": {"const": "1.1"},
     "package": {
@@ -63,11 +63,18 @@
         "feedback_policy": {"const": "schemas/feedback-policy.schema.json"},
         "role_output_fixture": {"const": "schemas/role-output-fixture.schema.json"},
         "actual_certification_operational_result": {"const": "schemas/actual-certification-operational-result.schema.json"},
+        "guided_owner_workflow": {"const": "schemas/guided-owner-workflow.schema.json"},
         "corporate_environment_inventory": {"const": "schemas/corporate-environment-inventory.schema.json"},
         "corporate_adaptation_checklist": {"const": "schemas/corporate-adaptation-checklist.schema.json"},
         "corporate_pilot_evidence": {"const": "schemas/corporate-pilot-evidence.schema.json"},
         "corporate_no_fork_assessment": {"const": "schemas/corporate-no-fork-assessment.schema.json"}
       }
+    },
+    "catalogs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guided_owner_workflow"],
+      "properties": {"guided_owner_workflow": {"const": "catalogs/guided-owner-workflow.yaml"}}
     },
     "templates": {
       "type": "object",
@@ -102,8 +109,11 @@
     "read_packs": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["classification"],
-      "properties": {"classification": {"const": "read-packs/classification.yaml"}}
+      "required": ["classification", "guided_owner_workflow"],
+      "properties": {
+        "classification": {"const": "read-packs/classification.yaml"},
+        "guided_owner_workflow": {"const": "read-packs/guided-owner-workflow.yaml"}
+      }
     },
     "role_instructions": {
       "type": "object",
@@ -144,10 +154,10 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "guided_workflow.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
         },
         "roots": {
-          "const": ["adapters", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
+          "const": ["adapters", "catalogs", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
         }
       }
     },
