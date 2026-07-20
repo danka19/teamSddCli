@@ -146,6 +146,27 @@ Affected architecture: None. Deterministic exact-evidence validation and candida
 Data contract impact: None for rc4. Any future row-level manifest correction changes candidate evidence identity and requires a successor candidate plus recertification.
 Verification impact: Reproduce counts and Git provenance, account for all 110 rows by capability/requirement, separate exact-evidence debt from governance and future Phase 3/4 work, reconcile the acceptance packet/current audit/evidence index, and rerun documentation/OpenSpec/governance checks.
 Status: implemented in the working successor source on 2026-07-20. The selector review found 58 existing exact proofs, 4 focused-test gaps, and 13 product gaps among the 75 Phase 2 rows; 22 governance rows now reference primary decisions/audits and 12 later-phase rows are exact `future_work`. Rc4 remains immutable, no successor candidate is certified, and the human accept/reject decision remains required.
+
+### Change Intake: first-MVP boundary and selector remediation (2026-07-20)
+
+Idea: Confirm whether explicitly deferred integrations block first-MVP transfer readiness, close four focused-test evidence gaps, and route six genuine product-gap groups before a successor candidate is frozen.
+
+Source: Human direction on 2026-07-20 following the residual-gap selector review.
+
+Type: `scope_refinement`, `verification_change`, `documentation_change`.
+
+Decision: `adopt_now` for the boundary decision and four focused tests; `create_openspec_change` intake is required for the six product-gap groups before implementation.
+
+Reason: `D-019` confirms that named Phase 3/4 integrations do not block the first MVP under deterministic fallback, visible deferral, and unchanged mandatory gates. The four focused tests prove existing contracts and are independent of rc4 acceptance. The 13 genuine gaps change behavior or acceptance and therefore cannot enter Phase 2.14 as incidental cleanup.
+
+Affected specs: accepted `change-artifact-contracts` and `repo-topology-config`; active `transfer-readiness` delta. No requirement text changes for the boundary or focused tests.
+
+Affected architecture: no architecture change; Git/OpenSpec remains canonical and the process package remains reusable without integrations.
+
+Data contract impact: none for the boundary decision or focused tests. Product-gap intake will assess contracts separately.
+
+Verification impact: bind the boundary selector to `D-019`; add four exact pytest nodes and source-owned coverage markers; run focused, coverage, full regression, OpenSpec, roadmap, and release-snapshot immutability checks.
+Status: `in_progress`; the bounded focused-test plan is `docs/planning/PHASE_2_FOCUSED_COVERAGE_TESTS_IMPLEMENTATION_PLAN_2026-07-20.md`.
 ```
 
 ```text
