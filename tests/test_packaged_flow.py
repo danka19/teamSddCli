@@ -27,6 +27,7 @@ from process.workflow_operations import (
 ROOT = Path(__file__).resolve().parents[1]
 PROCESS = ROOT / "process"
 TEAM_TEMPLATE = ROOT / "templates" / "team-specs"
+PROCESS_VERSION = (PROCESS / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def _yaml(path: Path) -> dict:
@@ -40,7 +41,7 @@ def _upgrade_evidence(root: Path, to_version: str = "0.4.0") -> Path:
         "schema_version": "1.0",
         "change_id": "synthetic-process-upgrade",
         "review": {"owner_type": "human", "state": "approved", "decision_ref": "decisions/process-upgrade.yaml"},
-        "from": {"package_version": "0.3.0", "openspec_version": "1.4.1"},
+        "from": {"package_version": PROCESS_VERSION, "openspec_version": "1.4.1"},
         "to": {"package_version": to_version, "openspec_version": "1.4.1"},
         "checks": {
             "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
@@ -362,17 +363,17 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     )
 
     assert update["status"] == "updated"
-    assert update["from_version"] == "0.3.0"
+    assert update["from_version"] == PROCESS_VERSION
     assert update["to_version"] == "0.4.0"
     assert _yaml(config_path)["process_package"]["version"] == "0.4.0"
     assert history.read_bytes() == history_before
-    backup = backups / "0.3.0"
+    backup = backups / PROCESS_VERSION
     assert backup.is_dir()
 
     rollback = rollback_process_package(installed, backup, config_path)
 
     assert rollback["status"] == "rolled-back"
-    assert _yaml(config_path)["process_package"]["version"] == "0.3.0"
+    assert _yaml(config_path)["process_package"]["version"] == PROCESS_VERSION
     assert history.read_bytes() == history_before
 
     bad = tmp_path / "bad-candidate"

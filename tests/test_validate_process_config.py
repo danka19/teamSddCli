@@ -15,6 +15,7 @@ import pytest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+PROCESS_VERSION = (REPO_ROOT / "process" / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def write_yaml(path: Path, value: object) -> None:
@@ -52,7 +53,7 @@ def build_central_layout(root: Path) -> Path:
             "topology": "central-team-specs",
             "process_package": {
                 "id": "sdd-process",
-                "version": "0.3.0",
+                "version": PROCESS_VERSION,
                 "location": "process",
             },
             "openspec": {"cli_version": "1.4.1"},
@@ -151,7 +152,7 @@ def build_adapter_layout(base: Path, reference_kind: str) -> tuple[Path, list[st
             "config_schema_version": "1.1",
             "project_id": "sample-app",
             "team_specs": {"reference": reference, "config_path": "sdd.config.yaml"},
-            "process_package": {"id": "sdd-process", "version": "0.3.0"},
+            "process_package": {"id": "sdd-process", "version": PROCESS_VERSION},
             "policy_set": {"id": "sdd-core", "version": "1.0.0", "overrides": []},
             "local_paths": {"code": "src", "tests": "tests"},
         },
@@ -197,7 +198,7 @@ def test_valid_central_mode_reports_exact_compatibility_json(tmp_path: Path) -> 
     assert payload["compatibility"] == {
         "config_schema_version": "1.1",
         "topology": "central-team-specs",
-        "process_package": {"id": "sdd-process", "version": "0.3.0"},
+        "process_package": {"id": "sdd-process", "version": PROCESS_VERSION},
         "policy_set": {"id": "sdd-core", "version": "1.0.0"},
         "openspec": {"required": "1.4.1", "runtime": "1.4.1"},
     }
