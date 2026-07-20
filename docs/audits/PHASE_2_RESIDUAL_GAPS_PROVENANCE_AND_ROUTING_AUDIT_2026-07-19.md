@@ -221,4 +221,6 @@ Recommended default: do not mutate rc4. Use this routing audit for the human dec
 5. assigns row-specific owner, risk, reason, compensation, and follow-up for every gap that remains;
 6. rebuilds and fully recertifies the successor candidate because coverage/evidence is part of candidate identity.
 
-Residual uncertainty: individual product severity and the number of genuine missing behaviors remain unverified until that selector-level review is executed.
+## Follow-up completed on 2026-07-20
+
+The selector-level review is recorded in `docs/audits/PHASE_2_RESIDUAL_GAP_SELECTOR_REVIEW_2026-07-20.md`. It found 58 existing exact proofs, 4 missing focused tests, and 13 genuine product gaps among the 75 Phase 2 rows; linked 22 governance rows to primary evidence; and routed 12 Phase 3/4 rows to exact `future_work`. The working source is now `284 covered / 18 gaps / 32 future_work`. Rc4 remains unchanged at `204/110/20`, so this follow-up prepares but does not certify a successor candidate.

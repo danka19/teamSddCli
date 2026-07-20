@@ -74,44 +74,75 @@ def test_generated_views_are_selected_in_corporate_environment() -> None:
     assert evaluate_feedback_policy(base())["generated_view_status"] == "deferred-to-corporate-environment"
 
 
-SCENARIO_COVERAGE = {'test_applicable_publication_becomes_class_aware_later': [{'capability': 'confluence-feedback-loop',
-                                                            'requirement': 'Unresolved feedback and publication '
-                                                                           'blockers',
-                                                            'scenario': 'Applicable publication becomes class-aware '
-                                                                        'later',
-                                                            'source_kind': 'delta'}],
- 'test_blocker_comment_prevents_final_publication': [{'capability': 'confluence-feedback-loop',
-                                                      'requirement': 'Unresolved feedback and publication blockers',
-                                                      'scenario': 'Blocker comment prevents final publication',
-                                                      'source_kind': 'delta'}],
- 'test_core_class_routes_do_not_require_fabricated_confluence_evidence': [{'capability': 'confluence-feedback-loop',
-                                                                           'requirement': 'Unresolved feedback and '
-                                                                                          'publication blockers',
-                                                                           'scenario': 'Core class routes do not '
-                                                                                       'require fabricated Confluence '
-                                                                                       'evidence',
-                                                                           'source_kind': 'delta'}],
- 'test_default_triage_sla_is_used_when_enabled': [{'capability': 'confluence-feedback-loop',
-                                                   'requirement': 'Unresolved feedback and publication blockers',
-                                                   'scenario': 'Default triage SLA is used when enabled',
-                                                   'source_kind': 'delta'}],
- 'test_existing_confluence_corpus_is_read_only_archive': [{'capability': 'confluence-feedback-loop',
-                                                           'requirement': 'Unresolved feedback and publication '
-                                                                          'blockers',
-                                                           'scenario': 'Existing Confluence corpus is read-only '
-                                                                       'archive',
-                                                           'source_kind': 'delta'}],
- 'test_feedback_sla_is_configurable': [{'capability': 'confluence-feedback-loop',
-                                        'requirement': 'Unresolved feedback and publication blockers',
-                                        'scenario': 'Feedback SLA is configurable',
-                                        'source_kind': 'delta'}],
- 'test_generated_views_are_selected_in_corporate_environment': [{'capability': 'confluence-feedback-loop',
-                                                                 'requirement': 'Unresolved feedback and publication '
-                                                                                'blockers',
-                                                                 'scenario': 'Generated views are selected in '
-                                                                             'corporate environment',
-                                                                 'source_kind': 'delta'}],
- 'test_non_blocking_comment_still_needs_disposition': [{'capability': 'confluence-feedback-loop',
-                                                        'requirement': 'Unresolved feedback and publication blockers',
-                                                        'scenario': 'Non-blocking comment still needs disposition',
-                                                        'source_kind': 'delta'}]}
+SCENARIO_COVERAGE = {
+    "test_non_blocking_comment_still_needs_disposition": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Non-blocking comment still needs disposition",
+            "source_kind": "delta"
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "confluence-feedback-loop",
+            "requirement": "Feedback loop disposition",
+            "scenario": "Deferred comment records follow-up"
+        }
+    ],
+    "test_applicable_publication_becomes_class_aware_later": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Applicable publication becomes class-aware later",
+            "source_kind": "delta"
+        }
+    ],
+    "test_blocker_comment_prevents_final_publication": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Blocker comment prevents final publication",
+            "source_kind": "delta"
+        }
+    ],
+    "test_core_class_routes_do_not_require_fabricated_confluence_evidence": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Core class routes do not require fabricated Confluence evidence",
+            "source_kind": "delta"
+        }
+    ],
+    "test_default_triage_sla_is_used_when_enabled": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Default triage SLA is used when enabled",
+            "source_kind": "delta"
+        }
+    ],
+    "test_existing_confluence_corpus_is_read_only_archive": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Existing Confluence corpus is read-only archive",
+            "source_kind": "delta"
+        }
+    ],
+    "test_feedback_sla_is_configurable": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Feedback SLA is configurable",
+            "source_kind": "delta"
+        }
+    ],
+    "test_generated_views_are_selected_in_corporate_environment": [
+        {
+            "capability": "confluence-feedback-loop",
+            "requirement": "Unresolved feedback and publication blockers",
+            "scenario": "Generated views are selected in corporate environment",
+            "source_kind": "delta"
+        }
+    ]
+}

@@ -343,89 +343,121 @@ def test_transition_blocks_when_gate_evidence_is_valid_but_approval_is_pending()
     )
 
 
-SCENARIO_COVERAGE = {'test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up': [{'capability': 'change-lifecycle',
-                                                                                  'requirement': 'Named corporate '
-                                                                                                 'business gates',
-                                                                                  'scenario': 'Definition of Done '
-                                                                                              'precedes archive '
-                                                                                              'readiness',
-                                                                                  'source_kind': 'delta'}],
- 'test_class_routes_share_accountable_states_but_expand_applicable_gate_evidence': [{'capability': 'change-lifecycle',
-                                                                                     'requirement': 'Lifecycle states',
-                                                                                     'scenario': 'Minor route remains '
-                                                                                                 'compact',
-                                                                                     'source_kind': 'delta'},
-                                                                                    {'capability': 'change-lifecycle',
-                                                                                     'requirement': 'Lifecycle states',
-                                                                                     'scenario': 'Major route uses '
-                                                                                                 'expanded gates',
-                                                                                     'source_kind': 'delta'},
-                                                                                    {'capability': 'change-lifecycle',
-                                                                                     'requirement': 'Lifecycle states',
-                                                                                     'scenario': 'Hotfix accelerates '
-                                                                                                 'sequence but not '
-                                                                                                 'accountability',
-                                                                                     'source_kind': 'delta'}],
- 'test_dor_start_and_archive_require_transition_specific_human_approval': [{'capability': 'change-lifecycle',
-                                                                            'requirement': 'Deterministic transition '
-                                                                                           'gates',
-                                                                            'scenario': 'Approval transition checks '
-                                                                                        'Definition of Ready',
-                                                                            'source_kind': 'delta'},
-                                                                           {'capability': 'change-lifecycle',
-                                                                            'requirement': 'Deterministic transition '
-                                                                                           'gates',
-                                                                            'scenario': 'Archive requires explicit '
-                                                                                        'human approval',
-                                                                            'source_kind': 'delta'},
-                                                                           {'capability': 'change-lifecycle',
-                                                                            'requirement': 'Named corporate business '
-                                                                                           'gates',
-                                                                            'scenario': 'Definition of Ready precedes '
-                                                                                        'approval',
-                                                                            'source_kind': 'delta'}],
- 'test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship': [{'capability': 'change-lifecycle',
-                                                                                 'requirement': 'Deterministic '
-                                                                                                'transition gates',
-                                                                                 'scenario': 'Allowed transitions are '
-                                                                                             'explicit',
-                                                                                 'source_kind': 'delta'},
-                                                                                {'capability': 'change-lifecycle',
-                                                                                 'requirement': 'Deterministic '
-                                                                                                'transition gates',
-                                                                                 'scenario': 'Spec PR transition '
-                                                                                             'checks structure',
-                                                                                 'source_kind': 'delta'},
-                                                                                {'capability': 'change-lifecycle',
-                                                                                 'requirement': 'Named corporate '
-                                                                                                'business gates',
-                                                                                 'scenario': 'Review-ready gate '
-                                                                                             'precedes Spec Review',
-                                                                                 'source_kind': 'delta'}],
- 'test_other_skipped_backward_same_and_unknown_transitions_are_rejected': [{'capability': 'change-lifecycle',
-                                                                            'requirement': 'Deterministic transition '
-                                                                                           'gates',
-                                                                            'scenario': 'Draft cannot skip to '
-                                                                                        'approved',
-                                                                            'source_kind': 'delta'},
-                                                                           {'capability': 'change-lifecycle',
-                                                                            'requirement': 'Deterministic transition '
-                                                                                           'gates',
-                                                                            'scenario': 'Draft cannot skip to archive '
-                                                                                        'readiness',
-                                                                            'source_kind': 'delta'}],
- 'test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive': [{'capability': 'change-lifecycle',
-                                                                                    'requirement': 'Deterministic '
-                                                                                                   'transition gates',
-                                                                                    'scenario': 'Archive-readiness '
-                                                                                                'transition checks '
-                                                                                                'Definition of Done',
-                                                                                    'source_kind': 'delta'},
-                                                                                   {'capability': 'change-lifecycle',
-                                                                                    'requirement': 'Delivered state '
-                                                                                                   'is external to '
-                                                                                                   'archive state',
-                                                                                    'scenario': 'Archived spec may '
-                                                                                                'precede or follow '
-                                                                                                'delivery',
-                                                                                    'source_kind': 'delta'}]}
+SCENARIO_COVERAGE = {
+    "test_dor_start_and_archive_require_transition_specific_human_approval": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Approval transition checks Definition of Ready",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Archive requires explicit human approval",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Named corporate business gates",
+            "scenario": "Definition of Ready precedes approval",
+            "source_kind": "delta"
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "change-lifecycle",
+            "requirement": "Archive history convention",
+            "scenario": "Archive convention does not replace approval"
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "waiver-policy",
+            "requirement": "Waiver negative cases",
+            "scenario": "Waiver cannot replace human approval"
+        }
+    ],
+    "test_transition_blocks_when_gate_evidence_is_valid_but_approval_is_pending": [
+        {
+            "source_kind": "accepted",
+            "capability": "change-lifecycle",
+            "requirement": "Human approval ownership",
+            "scenario": "CI blocks but does not approve"
+        }
+    ],
+    "test_archive_readiness_rejects_bad_evidence_and_unresolved_hotfix_follow_up": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Named corporate business gates",
+            "scenario": "Definition of Done precedes archive readiness",
+            "source_kind": "delta"
+        }
+    ],
+    "test_class_routes_share_accountable_states_but_expand_applicable_gate_evidence": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Lifecycle states",
+            "scenario": "Minor route remains compact",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Lifecycle states",
+            "scenario": "Major route uses expanded gates",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Lifecycle states",
+            "scenario": "Hotfix accelerates sequence but not accountability",
+            "source_kind": "delta"
+        }
+    ],
+    "test_each_forward_adjacent_transition_uses_the_canonical_gate_relationship": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Allowed transitions are explicit",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Spec PR transition checks structure",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Named corporate business gates",
+            "scenario": "Review-ready gate precedes Spec Review",
+            "source_kind": "delta"
+        }
+    ],
+    "test_other_skipped_backward_same_and_unknown_transitions_are_rejected": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Draft cannot skip to approved",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Draft cannot skip to archive readiness",
+            "source_kind": "delta"
+        }
+    ],
+    "test_transition_never_infers_delivery_deployment_or_tracker_done_from_archive": [
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Deterministic transition gates",
+            "scenario": "Archive-readiness transition checks Definition of Done",
+            "source_kind": "delta"
+        },
+        {
+            "capability": "change-lifecycle",
+            "requirement": "Delivered state is external to archive state",
+            "scenario": "Archived spec may precede or follow delivery",
+            "source_kind": "delta"
+        }
+    ]
+}

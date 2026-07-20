@@ -848,7 +848,8 @@ def test_malformed_registry_has_human_json_usage_parity(tmp_path: Path) -> None:
     assert "[usage.registry]" in human_stderr
 
 
-SCENARIO_COVERAGE = {'test_missing_corporate_policy_value_is_not_guessed': [{'capability': 'repo-topology-config',
+SCENARIO_COVERAGE = {"test_unsupported_topology_is_not_silently_accepted":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Specs-next-to-code remains a future topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Unsupported topology is not silently accepted"}],"test_static_version_mismatches_prevent_runtime_probe":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"Version mismatch is reported before gated validation"}],"test_valid_adapter_modes_use_only_explicit_reference_resolution":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Agent can work with sibling repositories"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Project adapter config points to central process config"}],"test_runtime_requires_exact_stable_openspec_version":[{"source_kind":"delta","capability":"transfer-readiness","requirement":"Reproducible bootstrap and maintenance","scenario":"Incompatible runtime is reported before gated work"}],
+ 'test_missing_corporate_policy_value_is_not_guessed': [{'capability': 'repo-topology-config',
                                                          'requirement': 'Corporate governance policy configuration',
                                                          'scenario': 'Missing corporate value is not guessed',
                                                          'source_kind': 'delta'}],

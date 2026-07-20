@@ -5,21 +5,21 @@ coverage:
   requirement: Artifact height rules
   scenario: Proposal stays business and scope focused
   gap:
-    owner: transfer-readiness-owner
+    owner: phase-2-verification-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: Add a focused negative test for implementation-detail leakage in proposal.md against the existing artifact gate.
+    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
+    follow_up: successor-candidate-focused-tests
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Artifact height rules
   scenario: Tasks stay executable and parseable
   gap:
-    owner: transfer-readiness-owner
+    owner: phase-2-verification-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: Add a focused parser test for stable task identifiers and executable checkbox structure in tasks.md.
+    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
+    follow_up: successor-candidate-focused-tests
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Artifact matrix baseline status
@@ -79,31 +79,31 @@ coverage:
   requirement: Delta Spec operation vocabulary
   scenario: Added delta introduces new behavior
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: No deterministic validator distinguishes ADDED behavior from modification of an existing requirement.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:enforce-delta-operation-contract
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
   scenario: Removed delta includes reason and migration
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: No deterministic validator requires removal reason and migration evidence.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:enforce-delta-operation-contract
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Delta Spec operation vocabulary
   scenario: Rename does not hide content change
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: No deterministic validator detects behavior changes hidden behind a rename.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:enforce-delta-operation-contract
 - source_kind: delta
   capability: change-artifact-contracts
   requirement: Future journey and screen artifacts
@@ -187,31 +187,27 @@ coverage:
   requirement: Archive history convention
   scenario: Archive uses dated history path
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: The packaged flow prepares archive evidence but does not execute or validate a dated archive move.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:implement-archive-history-convention
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Archive history convention
   scenario: Archive commit is greppable
   gap:
-    owner: transfer-readiness-owner
+    owner: product-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: No archive operation or validator guarantees a stable greppable archive commit convention.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:implement-archive-history-convention
 - source_kind: accepted
   capability: change-lifecycle
   requirement: Archive history convention
   scenario: Archive convention does not replace approval
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_lifecycle_gates.py::test_dor_start_and_archive_require_transition_specific_human_approval
 - source_kind: delta
   capability: change-lifecycle
   requirement: Delivered state is external to archive state
@@ -224,36 +220,6 @@ coverage:
   scenario: Tracker transition uses mapping
   evidence:
   - pytest:tests/test_packaged_flow.py::test_traceability_and_external_mapping_fail_closed_and_keep_canonical_ids
-- source_kind: accepted
-  capability: change-lifecycle
-  requirement: Derived approval and verification display
-  scenario: Confluence displays but does not own approval state
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: change-lifecycle
-  requirement: Derived approval and verification display
-  scenario: Generated view cannot approve transition
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: change-lifecycle
-  requirement: Derived approval and verification display
-  scenario: Public lifecycle can be simpler than internal readiness
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: change-lifecycle
   requirement: Deterministic transition gates
@@ -312,12 +278,8 @@ coverage:
   capability: change-lifecycle
   requirement: Human approval ownership
   scenario: CI blocks but does not approve
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_lifecycle_gates.py::test_transition_blocks_when_gate_evidence_is_valid_but_approval_is_pending
 - source_kind: delta
   capability: change-lifecycle
   requirement: Lifecycle states
@@ -388,12 +350,8 @@ coverage:
   capability: change-package-foundation
   requirement: Change package template
   scenario: Template contains required artifacts
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_template_skeleton_validates_in_placeholder_mode
 - source_kind: delta
   capability: change-package-foundation
   requirement: Classification-aware placeholder validation
@@ -428,72 +386,44 @@ coverage:
   capability: change-package-foundation
   requirement: Local change package validation
   scenario: Valid package passes validation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_valid_thin_change_package_passes_validation
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Local change package validation
   scenario: Missing artifact fails validation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_missing_full_package_artifacts_are_reported_without_waiver
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Local change package validation
   scenario: Missing traceability fails validation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_missing_traceability_row_is_reported
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Pre-commit validation entrypoint
   scenario: Plain OpenSpec project change is ignored
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_staged_discovery_ignores_plain_project_openspec_changes
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Pre-commit validation entrypoint
   scenario: SDD package is validated
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_staged_discovery_ignores_plain_project_openspec_changes
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Template placeholder validation mode
   scenario: Template validates in placeholder mode
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_template_skeleton_validates_in_placeholder_mode
 - source_kind: accepted
   capability: change-package-foundation
   requirement: Template placeholder validation mode
   scenario: Real package rejects placeholders
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_placeholder_values_are_rejected_in_production_mode
 - source_kind: delta
   capability: change-package-foundation
   requirement: Versioned corporate classification metadata
@@ -508,114 +438,40 @@ coverage:
   - pytest:tests/test_policy_schema_v2.py::test_change_v2_accepts_all_classes_and_preserves_decision_facts
 - source_kind: accepted
   capability: confluence-feedback-loop
-  requirement: Confluence is generated publication
-  scenario: Generated page links back to source
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Confluence is generated publication
-  scenario: Generated content is not edited as source
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Confluence is generated publication
-  scenario: Raw OpenSpec is not published as the main business view
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Evidence-backed status display
-  scenario: Status display has evidence link or waiver
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Evidence-backed status display
-  scenario: Confluence does not own status
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
   requirement: Feedback loop disposition
   scenario: Accepted comment becomes source change
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: The feedback policy accepts the label but does not require a canonical source-change reference.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
   scenario: Rejected comment records reason
   gap:
-    owner: transfer-readiness-owner
+    owner: product-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: The feedback schema permits rejection without a recorded reason.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
   scenario: Deferred comment records follow-up
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_feedback_policy.py::test_non_blocking_comment_still_needs_disposition
 - source_kind: accepted
   capability: confluence-feedback-loop
   requirement: Feedback loop disposition
   scenario: Duplicate comment links to source disposition
   gap:
-    owner: transfer-readiness-owner
+    owner: product-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Generated publication assets
-  scenario: Accepted diagram has versioned source
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: accepted
-  capability: confluence-feedback-loop
-  requirement: Generated publication assets
-  scenario: Confluence drawing is draft-only
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: The feedback schema permits duplicate disposition without a link to the original disposition.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: delta
   capability: confluence-feedback-loop
   requirement: Unresolved feedback and publication blockers
@@ -992,202 +848,135 @@ coverage:
   capability: documentation-governance
   requirement: AI verification checklist evidence
   scenario: Completion report includes verification evidence
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: AI verification checklist evidence
   scenario: Checklist does not replace deterministic validation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
   scenario: Process specs use English and product analytics specs use Russian prose
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
   scenario: Generated Confluence view may be localized
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Canonical language and localized generated views
   scenario: Feedback on generated views returns to canonical source
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Docs versus OpenSpec responsibility
   scenario: Product behavior belongs in OpenSpec
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Docs versus OpenSpec responsibility
   scenario: Project organization belongs in docs
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
   scenario: Behavior change updates durable docs
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
   scenario: Proposed behavior stays in proposed changes
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Documentation update discipline
   scenario: Accepted specs require human archive approval
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Human feedback memory
   scenario: Feedback affects proposed behavior
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Human feedback memory
   scenario: Feedback affects accepted behavior
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
   scenario: Behavior text is referenced rather than duplicated
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
   scenario: Derived view includes source metadata
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
   scenario: Conflict is resolved from the canonical owner
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
   scenario: Weak-model read pack identifies authority
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: Source ownership and deduplication
   scenario: Documentation drift checks are planned
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
   scenario: Scenarios identified before implementation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
   scenario: Negative cases are covered
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
   requirement: TDD-style verification discipline
   scenario: Manual verification is explicit when automation is absent
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/AI_STEP_VERIFICATION_CHECKLIST.md
+  - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: delta
   capability: readiness-completion-gates
   requirement: Archive readiness and archive approval
@@ -1342,252 +1131,170 @@ coverage:
   capability: repo-topology-config
   requirement: First supported topology
   scenario: Central team-specs is the recommended first topology
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_process_package.py::test_synthetic_central_topology_is_coherent
 - source_kind: accepted
   capability: repo-topology-config
   requirement: First supported topology
   scenario: Specs-next-to-code remains a future topology
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_unsupported_topology_is_not_silently_accepted
 - source_kind: accepted
   capability: repo-topology-config
   requirement: First supported topology
   scenario: Unsupported topology is not silently accepted
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_unsupported_topology_is_not_silently_accepted
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
   scenario: Gate 1.5 presents practical options
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
   scenario: Gate 1.5 approved recommended defaults
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
+  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Human decision gate for topology and config
   scenario: Validator enforcement follows approved implementation scope
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: OpenSpec version is pinned centrally
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_process_package.py::test_synthetic_central_topology_is_coherent
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: Version mismatch is reported before gated validation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_static_version_mismatches_prevent_runtime_probe
 - source_kind: accepted
   capability: repo-topology-config
   requirement: OpenSpec version pin and upgrade policy
   scenario: Upgrade requires reviewed evidence
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: Transactional update exists, but reviewed change-package evidence is not an input or gate.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:govern-process-package-upgrades
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
   scenario: owners.yaml is the owner source
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_owner_governance.py::test_valid_owner_governance_resolves_bounded_immutable_coverage
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
   scenario: CODEOWNERS is generated or validated from owners registry
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: No CODEOWNERS generator or consistency validator exists.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:derive-codeowners-from-owner-registry
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
   scenario: Multi-zone changes require all affected owners
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_owner_governance.py::test_valid_owner_governance_resolves_bounded_immutable_coverage
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Owner registry and reviewer assignment
   scenario: Unowned paths are visible
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_owner_governance.py::test_uncovered_affected_repository_or_path_fails_closed
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
   scenario: Developer receives a bounded read pack
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_build_read_pack_is_authority_labelled_bounded_and_stable
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
   scenario: Agent can work with sibling repositories
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_valid_adapter_modes_use_only_explicit_reference_resolution
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Practical developer and agent workflow
   scenario: Archive readiness links implementation evidence
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
   scenario: Central config declares supported process assumptions
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_process_package.py::test_synthetic_central_topology_is_coherent
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
   scenario: Project adapter config points to central process config
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_valid_adapter_modes_use_only_explicit_reference_resolution
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process configuration files
   scenario: Config names are approved defaults
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
   scenario: One versioned folder carries process assets
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_packaged_flow.py::test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
   scenario: Artifact dependencies are shared by skills and validators
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_process_package.py::test_workflow_contract_declares_packaged_flow_dependencies_without_owning_policy
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Process package distribution
   scenario: Manual forks are not the default reuse model
   gap:
-    owner: transfer-readiness-owner
+    owner: phase-2-verification-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: Add a focused distribution test proving bootstrap/update reuse the versioned package instead of creating mutable forks.
+    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
+    follow_up: successor-candidate-focused-tests
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
   scenario: team-specs owns process and requirement truth
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_process_package.py::test_synthetic_central_topology_is_coherent
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
   scenario: Project repos own implementation truth
   gap:
-    owner: transfer-readiness-owner
+    owner: phase-2-verification-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: Add a focused topology test proving central team-specs references project evidence without absorbing implementation artifacts.
+    compensation: Keep the selector visible as uncovered; do not substitute a nearby test or manual assertion.
+    follow_up: successor-candidate-focused-tests
 - source_kind: accepted
   capability: repo-topology-config
   requirement: Repository content split
   scenario: Code PR references canonical specs
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_packaged_flow.py::test_spec_pr_and_archive_preparation_collect_evidence_without_authority
 - source_kind: delta
   capability: repo-topology-config
   requirement: Tech lead ownership registry
@@ -1737,11 +1444,11 @@ coverage:
   requirement: AI traceability suggestions are advisory
   scenario: AI proposes missing links
   gap:
-    owner: transfer-readiness-owner
+    owner: product-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: Weak-model guardrails exist, but no bounded advisory traceability suggestion operation is implemented.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:add-advisory-traceability-suggestions
 - source_kind: delta
   capability: traceability-contract
   requirement: Archive-readiness traceability
@@ -1837,61 +1544,45 @@ coverage:
   requirement: Legacy baseline traceability
   scenario: Legacy baseline records known gaps
   gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    owner: product-owner
+    risk: high
+    reason: Legacy baseline is planned only; no accepted baseline artifact workflow records known gaps.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:implement-existing-code-baseline
 - source_kind: accepted
   capability: traceability-contract
   requirement: Legacy baseline traceability
   scenario: Legacy gaps are not hidden in generated views
   gap:
-    owner: transfer-readiness-owner
+    owner: product-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+    reason: No legacy baseline or generated-view implementation exists to preserve visible gap status.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    follow_up: openspec-change:implement-existing-code-baseline
 - source_kind: accepted
   capability: traceability-contract
   requirement: Review-minimum traceability
   scenario: Requirement links to scenario
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_valid_thin_change_package_passes_validation
 - source_kind: accepted
   capability: traceability-contract
   requirement: Review-minimum traceability
   scenario: Missing scenario blocks review readiness
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_requirement_without_scenario_is_reported
 - source_kind: accepted
   capability: traceability-contract
   requirement: Waived traceability links
   scenario: Missing automation link requires waiver
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_full_archive_rejects_non_automation_waiver_for_missing_automation_evidence
 - source_kind: accepted
   capability: traceability-contract
   requirement: Waived traceability links
   scenario: Waiver does not hide requirement coverage
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_full_archive_requires_waiver_to_match_same_requirement_and_scenario
 - source_kind: delta
   capability: transfer-readiness
   requirement: First transfer boundary preserves later-layer exclusions
@@ -1899,18 +1590,8 @@ coverage:
   gap:
     owner: transfer-readiness-owner
     risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
-- source_kind: delta
-  capability: transfer-readiness
-  requirement: First transfer boundary preserves later-layer exclusions
-  scenario: Standard integration wiring may be configured
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
+    reason: This is an explicit Phase 2 acceptance-boundary judgment, not missing executable product behavior.
+    compensation: Keep the first-MVP exclusion list and rc4 technical evidence visible during human acceptance.
     follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
@@ -1920,16 +1601,6 @@ coverage:
   - manual:process/release/phase-2-14-release-manifest.yaml
   - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
   - pytest:tests/test_release_candidate.py::test_build_is_byte_stable_and_manifest_binds_payload_only
-- source_kind: delta
-  capability: transfer-readiness
-  requirement: Release evidence and auditability
-  scenario: Pilot evidence identifies installed state
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
 - source_kind: delta
   capability: transfer-readiness
   requirement: Release evidence and auditability
@@ -1960,12 +1631,8 @@ coverage:
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
   scenario: Incompatible runtime is reported before gated work
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_process_config.py::test_runtime_requires_exact_stable_openspec_version
 - source_kind: delta
   capability: transfer-readiness
   requirement: Reproducible bootstrap and maintenance
@@ -2049,122 +1716,74 @@ coverage:
   capability: waiver-policy
   requirement: Waiver approval ownership
   scenario: AI cannot approve a waiver
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_waiver_approver_rejects_bot_or_unknown_labels
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
   scenario: Approver matches waived obligation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_waiver_approver_accepts_owner_group_reference_from_metadata
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
   scenario: Role-appropriate approver is required
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_waiver_approver_rejects_bot_or_unknown_labels
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver approval ownership
   scenario: Residual risk requires follow-up
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_invalid_waiver_shape_is_reported
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
   scenario: Waiver cannot replace human approval
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_lifecycle_gates.py::test_dor_start_and_archive_require_transition_specific_human_approval
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
   scenario: Waiver cannot hide behavior scenario coverage
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_requirement_without_scenario_is_reported
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
   scenario: Non-behavior work is reclassified instead of waived
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_refactor_can_use_no_spec_change_rationale
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver negative cases
   scenario: Waiver cannot bypass mandatory risk review
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_thin_package_rejects_risky_quality_triggers
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver policy baseline status
   scenario: Validator implementation evidence is recorded
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/CURRENT_PROJECT_AUDIT.md
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver policy baseline status
   scenario: Future corrections use accepted-spec workflow
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - manual:docs/DECISIONS.md
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver record
   scenario: Waiver has required audit fields
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_invalid_waiver_shape_is_reported
 - source_kind: accepted
   capability: waiver-policy
   requirement: Waiver record
   scenario: Free-text exception is rejected
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_validate_change.py::test_behavior_change_rejects_no_spec_change_rationale
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: AI remains advisory and non-authoritative
@@ -2175,32 +1794,20 @@ coverage:
   capability: weak-model-guardrails
   requirement: AI remains advisory and non-authoritative
   scenario: Model draft becomes evidence only after review
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_accepts_supported_advisory_completion
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
   scenario: Read pack identifies source authority
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_build_read_pack_is_authority_labelled_bounded_and_stable
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
   scenario: Read pack stays task specific
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_build_read_pack_is_authority_labelled_bounded_and_stable
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Bounded authority-labelled read packs
@@ -2223,32 +1830,20 @@ coverage:
   capability: weak-model-guardrails
   requirement: Deterministic workflow launch
   scenario: User starts a bounded role operation
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_launcher_selects_instruction_and_stop_point_outside_model
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Deterministic workflow launch
   scenario: Model does not select its own authority
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_launcher_selects_instruction_and_stop_point_outside_model
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Evidence-backed weak-model output
   scenario: Completion output includes evidence boundaries
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_accepts_supported_advisory_completion
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Evidence-backed weak-model output
@@ -2265,52 +1860,32 @@ coverage:
   capability: weak-model-guardrails
   requirement: Role instructions and explicit stop points
   scenario: Negative examples prevent common overreach
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_role_instructions_are_bounded_and_reference_canonical_contract
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
   scenario: Independent tasks run concurrently
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_parallel_plan_allows_only_independent_scopes_with_complete_gates
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
   scenario: Shared mutation prevents unsafe parallelism
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_parallel_plan_serializes_or_blocks_unsafe_work
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Safe parallel AI execution
   scenario: Parallel outputs pass an integration gate
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_parallel_promotion_requires_each_focused_and_combined_pass_evidence
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Weak-model artifacts preserve source ownership
   scenario: Derived instruction references canonical contracts
-  gap:
-    owner: transfer-readiness-owner
-    risk: medium
-    reason: no exact executable evidence is asserted for this scenario
-    compensation: human owner must accept the explicit residual risk or require exact evidence before Phase 3
-    follow_up: phase-2.14-human-acceptance
+  evidence:
+  - pytest:tests/test_weak_model_kit.py::test_operation_evidence_rejects_derived_canonical_artifact_without_source_reference
 - source_kind: delta
   capability: weak-model-guardrails
   requirement: Weak-model artifacts preserve source ownership

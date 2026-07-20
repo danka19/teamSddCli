@@ -508,3 +508,6 @@ def test_sensitive_negative_fixtures_fail_with_stable_category(
 ) -> None:
     fixture = FIXTURES / "invalid" / relative_path
     assert expected_category in scan_categories(fixture)
+
+
+SCENARIO_COVERAGE = {"test_synthetic_central_topology_is_coherent":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"First supported topology","scenario":"Central team-specs is the recommended first topology"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"OpenSpec version pin and upgrade policy","scenario":"OpenSpec version is pinned centrally"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process configuration files","scenario":"Central config declares supported process assumptions"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"team-specs owns process and requirement truth"}],"test_workflow_contract_declares_packaged_flow_dependencies_without_owning_policy":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"Artifact dependencies are shared by skills and validators"}]}

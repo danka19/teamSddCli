@@ -312,7 +312,8 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert history.read_bytes() == history_before
 
 
-SCENARIO_COVERAGE = {'test_manual_fallback_covers_unavailable_integrations_without_ai': [{'capability': 'change-artifact-contracts',
+SCENARIO_COVERAGE = {"test_bootstrap_and_create_copy_only_versioned_assets_with_json_evidence":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Process package distribution","scenario":"One versioned folder carries process assets"}],"test_spec_pr_and_archive_preparation_collect_evidence_without_authority":[{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Practical developer and agent workflow","scenario":"Archive readiness links implementation evidence"},{"source_kind":"accepted","capability":"repo-topology-config","requirement":"Repository content split","scenario":"Code PR references canonical specs"}],
+ 'test_manual_fallback_covers_unavailable_integrations_without_ai': [{'capability': 'change-artifact-contracts',
                                                                       'requirement': 'Artifact matrix baseline status',
                                                                       'scenario': 'Deferred integrations are explicit',
                                                                       'source_kind': 'delta'},

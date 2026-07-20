@@ -92,6 +92,32 @@ future_work:
   work_item: Phase 3
   reason: real corporate adaptation values and upstream corrections require Phase 3
     evidence rather than synthetic fixture claims
+- capability: change-lifecycle
+  requirement: Derived approval and verification display
+  work_item: Phase 4
+  reason: generated Confluence lifecycle views are a later publication layer and are not part of the Phase 2 transfer candidate
+- capability: confluence-feedback-loop
+  requirement: Confluence is generated publication
+  work_item: Phase 4
+  reason: Confluence publication and source-linked generated business views remain explicitly outside the first MVP
+- capability: confluence-feedback-loop
+  requirement: Evidence-backed status display
+  work_item: Phase 4
+  reason: evidence-backed Confluence status rendering depends on the later generated-publication layer
+- capability: confluence-feedback-loop
+  requirement: Generated publication assets
+  work_item: Phase 4
+  reason: versioned diagram publication and draft-only Confluence drawings remain later analytics/publication work
+- capability: transfer-readiness
+  requirement: First transfer boundary preserves later-layer exclusions
+  scenario: Standard integration wiring may be configured
+  work_item: Phase 3
+  reason: actual approved integration wiring is corporate-environment adaptation work, not reusable Phase 2 evidence
+- capability: transfer-readiness
+  requirement: Release evidence and auditability
+  scenario: Pilot evidence identifies installed state
+  work_item: Phase 3
+  reason: installed-state evidence can exist only after a real corporate installation and monitored pilot
 delta_targets:
 - change: adopt-nis-corporate-process-governance
   kind: MODIFIED
@@ -154,8 +180,11 @@ marker_sources:
 - tests/test_packaged_flow.py
 - tests/test_packaged_flow_hardening.py
 - tests/test_policy_schema_v2.py
+- tests/test_process_package.py
 - tests/test_tech_lead_architecture.py
 - tests/test_tech_lead_certification.py
 - tests/test_tech_lead_hardening.py
 - tests/test_tech_lead_review.py
+- tests/test_validate_change.py
 - tests/test_validate_process_config.py
+- tests/test_weak_model_kit.py

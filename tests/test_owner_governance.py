@@ -308,15 +308,49 @@ def test_config_discovery_uses_v2_owner_validation_and_policy_snapshot(
     assert diagnostic["pointer"].endswith("/authority")
 
 
-SCENARIO_COVERAGE = {'test_missing_and_conflicting_primary_fail_closed': [{'capability': 'repo-topology-config',
-                                                       'requirement': 'Tech lead ownership registry',
-                                                       'scenario': 'Conflicting authority is visible',
-                                                       'source_kind': 'delta'}],
- 'test_tech_lead_cannot_claim_independent_role_authority': [{'capability': 'repo-topology-config',
-                                                             'requirement': 'Tech lead ownership registry',
-                                                             'scenario': 'Other role authority is preserved',
-                                                             'source_kind': 'delta'}],
- 'test_valid_owner_governance_resolves_bounded_immutable_coverage': [{'capability': 'repo-topology-config',
-                                                                      'requirement': 'Tech lead ownership registry',
-                                                                      'scenario': 'Tech lead mapping is resolvable',
-                                                                      'source_kind': 'delta'}]}
+SCENARIO_COVERAGE = {
+    "test_valid_owner_governance_resolves_bounded_immutable_coverage": [
+        {
+            "capability": "repo-topology-config",
+            "requirement": "Tech lead ownership registry",
+            "scenario": "Tech lead mapping is resolvable",
+            "source_kind": "delta"
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "repo-topology-config",
+            "requirement": "Owner registry and reviewer assignment",
+            "scenario": "owners.yaml is the owner source"
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "repo-topology-config",
+            "requirement": "Owner registry and reviewer assignment",
+            "scenario": "Multi-zone changes require all affected owners"
+        }
+    ],
+    "test_uncovered_affected_repository_or_path_fails_closed": [
+        {
+            "source_kind": "accepted",
+            "capability": "repo-topology-config",
+            "requirement": "Owner registry and reviewer assignment",
+            "scenario": "Unowned paths are visible"
+        }
+    ],
+    "test_missing_and_conflicting_primary_fail_closed": [
+        {
+            "capability": "repo-topology-config",
+            "requirement": "Tech lead ownership registry",
+            "scenario": "Conflicting authority is visible",
+            "source_kind": "delta"
+        }
+    ],
+    "test_tech_lead_cannot_claim_independent_role_authority": [
+        {
+            "capability": "repo-topology-config",
+            "requirement": "Tech lead ownership registry",
+            "scenario": "Other role authority is preserved",
+            "source_kind": "delta"
+        }
+    ]
+}

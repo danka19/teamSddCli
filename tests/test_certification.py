@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -265,6 +266,82 @@ def test_coverage_composes_accepted_and_active_delta_scenarios() -> None:
         and row["requirement"] == "Actual weak-model certification"
     )
     assert not any(row["capability"] == "change-artifact-contracts" and row["requirement"] in {"Thin change artifact contract", "Full package artifact contract"} and row["source_kind"] == "accepted" for row in report["coverage"])
+
+
+def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> None:
+    report = build_coverage_report(ROOT, PROCESS / "certification" / "coverage.yaml")
+
+    later_phase_requirements = {
+        ("change-lifecycle", "Derived approval and verification display"),
+        ("confluence-feedback-loop", "Confluence is generated publication"),
+        ("confluence-feedback-loop", "Evidence-backed status display"),
+        ("confluence-feedback-loop", "Generated publication assets"),
+    }
+    later_phase_scenarios = {
+        (row["capability"], row["requirement"], row["scenario"])
+        for row in report["future_work"]
+        if row.get("scenario")
+    }
+    assert report["summary"]["future_work"] == 32
+    assert report["summary"] == {
+        "effective_scenarios": 334,
+        "covered": 284,
+        "gaps": 18,
+        "future_work": 32,
+    }
+    assert {
+        (row["capability"], row["requirement"])
+        for row in report["future_work"]
+        if (row["capability"], row["requirement"]) in later_phase_requirements
+    } == later_phase_requirements
+    assert later_phase_scenarios == {
+        (
+            "transfer-readiness",
+            "First transfer boundary preserves later-layer exclusions",
+            "Standard integration wiring may be configured",
+        ),
+        (
+            "transfer-readiness",
+            "Release evidence and auditability",
+            "Pilot evidence identifies installed state",
+        ),
+    }
+
+    governance_rows = [
+        row
+        for row in report["coverage"]
+        if row["capability"] == "documentation-governance"
+        or (
+            row["capability"] == "repo-topology-config"
+            and row["requirement"] == "Human decision gate for topology and config"
+            and row["scenario"] in {
+                "Gate 1.5 presents practical options",
+                "Gate 1.5 approved recommended defaults",
+            }
+        )
+    ]
+    assert len(governance_rows) == 22
+    assert all(
+        row.get("evidence")
+        and all(reference.startswith("manual:") for reference in row["evidence"])
+        and "gap" not in row
+        for row in governance_rows
+    )
+
+    gap_routes = Counter(
+        "focused-test"
+        if row["gap"]["follow_up"] == "successor-candidate-focused-tests"
+        else "product-gap"
+        if row["gap"]["follow_up"].startswith("openspec-change:")
+        else "human-boundary"
+        for row in report["coverage"]
+        if "gap" in row
+    )
+    assert gap_routes == {
+        "focused-test": 4,
+        "product-gap": 13,
+        "human-boundary": 1,
+    }
 
 
 def test_explicit_residual_gap_wins_and_requires_all_fields(tmp_path: Path) -> None:
