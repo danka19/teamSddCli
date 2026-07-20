@@ -1,6 +1,6 @@
 # Guided Owner Workflow
 
-<!-- guided-catalog-sha256: 53cfd65fb0a77b7d5655431fb23cd546f3d0f2d020d2482bf5d5b50346767296 -->
+<!-- guided-catalog-sha256: 2d3b10a3b364b95dba33ecdfb74692fe5722c1654fa9fec398288022cdd30a48 -->
 
 This guide is the human and AI entry point for the external process package. It is read-only: follow the returned command explicitly, retain the named evidence, and stop at every named human decision. The canonical route source is `process/catalogs/guided-owner-workflow.yaml`.
 

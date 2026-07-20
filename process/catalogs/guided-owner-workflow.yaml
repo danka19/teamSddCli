@@ -5,6 +5,8 @@ routes:
     situation: new-requirement
     required_facts:
       - classification
+    allowed_values:
+      classification: [minor, major, hotfix]
     commands:
       - scripts/create_change.py
       - scripts/classify_change.py
@@ -23,6 +25,8 @@ routes:
     required_facts:
       - change_id
       - lifecycle_state
+    allowed_values:
+      lifecycle_state: [draft, spec_review, approved, in_implementation, ready_to_archive, archived]
     commands:
       - scripts/prepare_spec_pr.py
       - scripts/evaluate_change_gates.py

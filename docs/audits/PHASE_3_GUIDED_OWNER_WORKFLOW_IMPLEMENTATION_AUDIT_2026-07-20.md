@@ -20,6 +20,11 @@ Scope: catalog-backed read-only guidance, its package registration, human/AI onb
 | Check | Command | Observation | Classification |
 | --- | --- | --- | --- |
 | Focused route/package suite | `python -m pytest tests/test_guided_owner_workflow.py tests/test_process_package.py tests/test_packaged_flow_cli.py -q --basetemp tmp/... -p no:cacheprovider` | 30 passed | pass |
+| Guided, read-pack, package, bootstrap suite | `python -m pytest tests/test_weak_model_kit.py tests/test_guided_owner_workflow.py tests/test_process_package.py tests/test_packaged_flow_cli.py -q --basetemp tmp/... -p no:cacheprovider` | 86 passed | pass |
+| Synthetic owner walkthrough | bootstrap + create `minor`, `major`, `hotfix`; then `prepare_spec_pr`, `evaluate_change_gates`, `prepare_archive`, and `manual_fallback` against a disposable workspace | Delta Spec and preparation routes were reached; absent implementation/QA evidence stopped gates instead of fabricating a pass; archive remained unmutated | pass |
+| AI-disabled route | `scripts/run_actual_certification.py --phase ai-disabled ...` | 11/11 deterministic cases passed; `actual_model_run: false`; each result retained an accountable human fallback | pass |
+| Available-model routes | Qwen and DeepSeek runtime probes plus fresh `--phase preflight` artifacts | Both local family proxies passed 5/5 preflight cases with deterministic validation; raw results are outside Git under `teamSsdCli-release-artifacts/guided-owner-v0.3.0-2026-07-20/` | pass with proxy limitation |
+| Protection regression | focused privacy, rollback, weak-model forbidden-authority tests; release-candidate allowlist/build tests | 1 + 1 + 2 + 2 passed; a CRLF read-pack inconsistency was reproduced, fixed, and covered by a regression test | pass |
 | Guide/catalog synchronization | `python scripts/validate_guided_owner_workflow.py --json` | `status: valid` | pass |
 | Native OpenSpec validation | `openspec validate --all --strict` | 14 passed, 0 failed | pass |
 | Roadmap/OpenSpec ownership | `validate-roadmap-openspec.mjs --root <repo>` | 0 errors; 2 unrelated historical lifecycle warnings | pass with unrelated warnings |
@@ -37,13 +42,20 @@ The focused tests include RED evidence for a missing entry point, a package-mani
 - Root cause: not applicable.
 - Residual uncertainty: human-readable output is intentionally terse; operators should use `--json` for automation.
 
-### P3-GOW-002: Successor release verification remains open
+### P3-GOW-002: Usability and safety verification is complete; successor release remains open
 
 - Classification: verified limitation, medium severity.
-- Evidence: OpenSpec tasks 4.1-4.4 remain unchecked.
-- Impact: this implementation must not be treated as a new corporate-adaptation baseline or as a replacement for accepted immutable rc6.
-- Root cause: complete synthetic walkthrough evidence, actual available-model exercises, package version/release evidence, and update/rollback rehearsal have not been run for this successor package.
-- Recommended next action: execute the remaining task-4 verification plan, record actual model unavailability as fallback when applicable, then create a separate successor-release evidence package for human acceptance.
+- Evidence: OpenSpec tasks 4.1-4.3 are checked with the evidence above; task 4.4 remains unchecked.
+- Impact: this implementation must not yet be treated as a new corporate-adaptation baseline or as a replacement for accepted immutable rc6.
+- Root cause: the successor version, complete-suite evidence, candidate-bound release manifest, host rehearsal, and transfer acceptance packet have not yet been created.
+- Recommended next action: run the complete suite, then create a separately versioned successor candidate and its candidate-bound evidence. Do not relabel rc6 or reuse its immutable evidence.
+
+### P3-GOW-004: CRLF read-pack verification defect was corrected
+
+- Classification: pass.
+- Root cause: read-pack construction decoded raw bytes while launch verification read normalized text; CRLF source files therefore produced a self-inconsistent pack on Windows.
+- Correction: both paths now use Python text reading semantics, and `test_launcher_accepts_a_read_pack_built_from_crlf_sources` reproduces the prior failure.
+- Decision: normalize source text consistently rather than weakening the source-content integrity check.
 
 ### P3-GOW-003: Test-runtime substitution is recorded
 
@@ -58,7 +70,8 @@ The focused tests include RED evidence for a missing entry point, a package-mani
 - Phase 3: `in_progress`.
 - Active change `add-guided-owner-workflow`: `in_progress`, primary phase P3, related phases P4/P5.
 - Tasks 1.1-3.3: complete.
-- Tasks 4.1-4.4: open; no acceptance or release status is inferred.
+- Tasks 4.1-4.3: complete with recorded synthetic, AI-disabled, available-model, and negative-path evidence.
+- Task 4.4: open; no successor release or human acceptance is inferred.
 - Validator relationship: zero ownership errors. The two warnings concern `determinize-weak-model-operational-decisions` and `simplify-weak-model-decision-contract`, not this change.
 
 ## Remediation Decision

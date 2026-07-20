@@ -58,6 +58,27 @@ def test_existing_change_requires_known_lifecycle_state_and_never_guesses(capsys
     }]
 
 
+@pytest.mark.parametrize(
+    ("situation", "facts", "expected_code"),
+    [
+        ("new-requirement", ["classification=unclassified"], "invalid-context"),
+        (
+            "existing-change",
+            ["change_id=sample-minor-001", "lifecycle_state=delivered"],
+            "invalid-context",
+        ),
+    ],
+)
+def test_declared_context_values_are_validated_before_routing(
+    situation: str, facts: list[str], expected_code: str, capsys,
+) -> None:
+    args = [situation, *[item for fact in facts for item in ("--fact", fact)], "--json"]
+    assert guided_main(args) == 1
+    payload = _payload(capsys)
+    assert payload["status"] == "blocked"
+    assert payload["blockers"][0]["code"] == expected_code
+
+
 def test_unavailable_surface_returns_catalog_fallback_without_weakening_gate(capsys) -> None:
     assert guided_main([
         "urgent-incident", "--fact", "incident_ref=evidence/INC-001.md",

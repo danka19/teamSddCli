@@ -37,6 +37,9 @@ entry_points:
   - name: evaluate_change_gates.py
     smoke: [scripts/evaluate_change_gates.py, --help]
     expected_exit_codes: [0]
+  - name: guided_owner_workflow.py
+    smoke: [scripts/guided_owner_workflow.py, --help]
+    expected_exit_codes: [0]
   - name: manage_release_candidate.py
     smoke: [scripts/manage_release_candidate.py, validate, --help]
     additional_smokes:
@@ -45,12 +48,6 @@ entry_points:
     expected_exit_codes: [0]
   - name: manual_fallback.py
     smoke: [scripts/manual_fallback.py, --help]
-    expected_exit_codes: [0]
-  - name: guided_owner_workflow.py
-    smoke: [scripts/guided_owner_workflow.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_guided_owner_workflow.py
-    smoke: [scripts/validate_guided_owner_workflow.py, --help]
     expected_exit_codes: [0]
   - name: migrate_change_classification.py
     smoke: [scripts/migrate_change_classification.py, --help]
@@ -75,6 +72,9 @@ entry_points:
     expected_exit_codes: [0]
   - name: validate_external_mapping.py
     smoke: [scripts/validate_external_mapping.py, --help]
+    expected_exit_codes: [0]
+  - name: validate_guided_owner_workflow.py
+    smoke: [scripts/validate_guided_owner_workflow.py, --help]
     expected_exit_codes: [0]
   - name: validate_process_config.py
     smoke: [scripts/validate_process_config.py, --help]

@@ -40,6 +40,7 @@ EXPECTED_ENTRY_POINTS = {
     "evaluate_change_gates.py",
     "manage_release_candidate.py",
     "manual_fallback.py",
+    "guided_owner_workflow.py",
     "migrate_change_classification.py",
     "prepare_archive.py",
     "prepare_spec_pr.py",
@@ -50,6 +51,7 @@ EXPECTED_ENTRY_POINTS = {
     "validate_external_mapping.py",
     "validate_process_config.py",
     "validate_traceability.py",
+    "validate_guided_owner_workflow.py",
 }
 
 EXPECTED_CERTIFICATIONS = {
@@ -186,6 +188,7 @@ def test_allowlist_is_schema_valid_and_exact() -> None:
         "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
         "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
         "WEAK_MODEL_OPERATING_KIT.md", "CORPORATE_ADAPTATION_AND_PILOT.md",
+        "GUIDED_OWNER_WORKFLOW.md",
     }
     assert {item["name"] for item in allowlist["entry_points"]} == EXPECTED_ENTRY_POINTS
     assert all(item["smoke"] for item in allowlist["entry_points"])

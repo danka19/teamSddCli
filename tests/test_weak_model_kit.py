@@ -59,6 +59,20 @@ def test_build_read_pack_is_authority_labelled_bounded_and_stable() -> None:
     assert pack["resolver"] == "repository-relative-verified-content"
 
 
+def test_launcher_accepts_a_read_pack_built_from_crlf_sources(tmp_path: Path) -> None:
+    source = "openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md"
+    supporting = "process/templates/change/change.yaml"
+    for relative in (source, supporting):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((ROOT / relative).read_text(encoding="utf-8").replace("\n", "\r\n").encode("utf-8"))
+
+    pack = build_read_pack(tmp_path, PROCESS, request())
+
+    assert pack["status"] == "ready"
+    assert build_role_launch(tmp_path, PROCESS, pack, "scratch/read-pack.json", "evidence/TASK.yaml")["role"] == "analyst"
+
+
 @pytest.mark.parametrize("mutation", ["missing", "escape", "duplicate", "unknown-canonical"])
 def test_build_read_pack_blocks_missing_unsafe_or_ambiguous_context(mutation: str) -> None:
     data = request()

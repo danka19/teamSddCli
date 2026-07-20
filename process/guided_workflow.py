@@ -40,6 +40,7 @@ def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
             raise OperationError("catalog-invalid", "guided workflow route is malformed")
         identifier = route.get("id")
         required = route.get("required_facts")
+        allowed_values = route.get("allowed_values", {})
         commands = route.get("commands")
         decision = route.get("human_decision")
         fallbacks = route.get("fallbacks")
@@ -47,6 +48,12 @@ def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
             not isinstance(identifier, str) or not identifier or identifier in ids
             or route.get("situation") != identifier
             or not isinstance(required, list) or not all(isinstance(item, str) and item for item in required)
+            or not isinstance(allowed_values, dict)
+            or any(
+                key not in required or not isinstance(values, list) or not values
+                or not all(isinstance(value, str) and value for value in values)
+                for key, values in allowed_values.items()
+            )
             or not isinstance(commands, list) or not commands or not set(commands) <= ALLOWED_COMMANDS
             or not isinstance(decision, dict) or not isinstance(decision.get("id"), str)
             or decision.get("owner") not in ALLOWED_OWNERS
@@ -70,6 +77,12 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
     missing = [key for key in route["required_facts"] if not facts.get(key)]
     if missing:
         return _blocked("missing-context", missing)
+    invalid = sorted(
+        key for key, values in route.get("allowed_values", {}).items()
+        if facts[key] not in values
+    )
+    if invalid:
+        return _blocked("invalid-context", invalid)
     fallbacks = [
         {"surface": item["surface"], "command": item["command"]}
         for item in route["fallbacks"] if item["surface"] in unavailable

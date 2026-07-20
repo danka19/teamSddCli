@@ -49,6 +49,7 @@ _RUNBOOKS = (
     "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
     "WEAK_MODEL_OPERATING_KIT.md",
     "CORPORATE_ADAPTATION_AND_PILOT.md",
+    "GUIDED_OWNER_WORKFLOW.md",
 )
 _ENTRY_POINTS = (
     ("bootstrap_team_specs.py", ("scripts/bootstrap_team_specs.py", "--help"), (0,)),
@@ -58,6 +59,7 @@ _ENTRY_POINTS = (
     ("classify_change.py", ("scripts/classify_change.py", "--help"), (0,)),
     ("create_change.py", ("scripts/create_change.py", "--help"), (0,)),
     ("evaluate_change_gates.py", ("scripts/evaluate_change_gates.py", "--help"), (0,)),
+    ("guided_owner_workflow.py", ("scripts/guided_owner_workflow.py", "--help"), (0,)),
     ("manage_release_candidate.py", ("scripts/manage_release_candidate.py", "validate", "--help"), (0,)),
     ("manual_fallback.py", ("scripts/manual_fallback.py", "--help"), (0,)),
     ("migrate_change_classification.py", ("scripts/migrate_change_classification.py", "--help"), (0,)),
@@ -68,6 +70,7 @@ _ENTRY_POINTS = (
     ("validate_change.py", ("scripts/validate_change.py", "--help"), (0,)),
     ("validate_corporate_adaptation.py", ("scripts/validate_corporate_adaptation.py", "--help"), (0,)),
     ("validate_external_mapping.py", ("scripts/validate_external_mapping.py", "--help"), (0,)),
+    ("validate_guided_owner_workflow.py", ("scripts/validate_guided_owner_workflow.py", "--help"), (0,)),
     ("validate_process_config.py", ("scripts/validate_process_config.py", "--help"), (0,)),
     ("validate_traceability.py", ("scripts/validate_traceability.py", "--help"), (0,)),
 )
