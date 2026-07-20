@@ -1,9 +1,9 @@
 schema_version: "1.0"
-selection_id: phase-2-14-certification-selection
+selection_id: phase-2-14-rc5-certification-selection
 selected:
   - model_family: qwen-class
-    normalized_evidence_path: certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml
-    raw_logical_root: raw-artifact-v0.2.0-qwen-phase-2-14-2026-07-18
+    normalized_evidence_path: certification/evidence/phase-2-14-rc5-qwen-adapter-2-2-2026-07-20.yaml
+    raw_logical_root: raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20
   - model_family: deepseek-class
-    normalized_evidence_path: certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml
-    raw_logical_root: raw-artifact-v0.2.0-deepseek-phase-2-14-2026-07-18
+    normalized_evidence_path: certification/evidence/phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml
+    raw_logical_root: raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20

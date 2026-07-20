@@ -53,8 +53,8 @@ EXPECTED_ENTRY_POINTS = {
 }
 
 EXPECTED_CERTIFICATIONS = {
-    "qwen-class": "phase-2-14-qwen-adapter-2-2-2026-07-18.yaml",
-    "deepseek-class": "phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml",
+    "qwen-class": "phase-2-14-rc5-qwen-adapter-2-2-2026-07-20.yaml",
+    "deepseek-class": "phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml",
 }
 
 

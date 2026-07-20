@@ -6,7 +6,7 @@
   "required": ["schema_version", "selection_id", "selected"],
   "properties": {
     "schema_version": {"const": "1.0"},
-    "selection_id": {"const": "phase-2-14-certification-selection"},
+    "selection_id": {"const": "phase-2-14-rc5-certification-selection"},
     "selected": {
       "type": "array",
       "minItems": 2,
@@ -19,8 +19,8 @@
             "required": ["model_family", "normalized_evidence_path", "raw_logical_root"],
             "properties": {
               "model_family": {"const": "qwen-class"},
-              "normalized_evidence_path": {"const": "certification/evidence/phase-2-14-qwen-adapter-2-2-2026-07-18.yaml"},
-              "raw_logical_root": {"const": "raw-artifact-v0.2.0-qwen-phase-2-14-2026-07-18"}
+              "normalized_evidence_path": {"const": "certification/evidence/phase-2-14-rc5-qwen-adapter-2-2-2026-07-20.yaml"},
+              "raw_logical_root": {"const": "raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20"}
             }
           },
           {
@@ -29,8 +29,8 @@
             "required": ["model_family", "normalized_evidence_path", "raw_logical_root"],
             "properties": {
               "model_family": {"const": "deepseek-class"},
-              "normalized_evidence_path": {"const": "certification/evidence/phase-2-14-deepseek-adapter-2-2-2026-07-18.yaml"},
-              "raw_logical_root": {"const": "raw-artifact-v0.2.0-deepseek-phase-2-14-2026-07-18"}
+              "normalized_evidence_path": {"const": "certification/evidence/phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml"},
+              "raw_logical_root": {"const": "raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20"}
             }
           }
         ]
