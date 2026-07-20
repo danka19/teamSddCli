@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: Phase 2 is `pending_acceptance`. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed; immutable successor `phase-2-14-rc6` has complete candidate-bound model, AI-disabled, Windows/WSL2, rollback, privacy, exact-raw-closure, coverage, and independent-review evidence. Working/candidate coverage is `295/7/32`, and the seven remaining product gaps are explicitly deferred to P3/P4 under `D-019`. Transfer progress remains 34/36 and NIS progress 41/43 because mandatory human gate 2.14.4/7.4/8.7 is still open. Historical rc4 remains unchanged; rc5 is retained as diagnostic rejected history after an undeclared raw probe caused exact-inventory rejection.
+- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Transfer progress is 35/36 and NIS progress is 42/43; only Phase 3 pilot tasks 7.5 and 8.8 remain. Before corporate configuration, wiring, or pilot work begins, the human owner will complete the local synthetic framework walkthrough defined in `docs/planning/LOCAL_OWNER_FRAMEWORK_WALKTHROUGH_2026-07-20.md`. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -73,9 +73,9 @@ Current work:
 
 ## Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: pending_acceptance.
+Status: closed.
 
-Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Work item 2.14 is waiting at human gate 2.14.4 for immutable candidate `phase-2-14-rc6`, whose fresh candidate-bound evidence is complete and independently reviewed `READY`. Transfer progress remains 34/36 and NIS progress 41/43 until the human owner accepts or rejects the exact candidate; Phase 3 cannot start meanwhile.
+Work items 2.1-2.13 and all work item 2.14 gates are closed. Human decision `D-020` accepts immutable candidate `phase-2-14-rc6` with the exact hashes recorded in its acceptance packet. Transfer progress is 35/36 and NIS progress is 42/43; tasks 7.5 and 8.8 remain Phase 3 pilot work. Corporate adaptation remains gated by the local owner walkthrough rather than by additional Phase 2 candidate work.
 
 Goal: build and externally certify a reusable release candidate for the deterministic class-aware corporate process so the corporate environment performs only real configuration, approved integration wiring, thin model-adapter configuration, environment checks, and a monitored pilot.
 
@@ -114,7 +114,8 @@ Goal: install the accepted Phase 2 release candidate in the corporate environmen
 
 Dependency gate:
 
-- Phase 3 cannot start until the Phase 2 external release candidate is explicitly accepted.
+- The Phase 2 external release candidate is accepted under `D-020`.
+- Before corporate configuration, wiring, or pilot execution starts, the human owner must complete and review the local synthetic walkthrough record.
 - Phase 3 must not redesign reusable process behavior or maintain an internal package fork. Reusable gaps return to the external OpenSpec/change workflow.
 
 Likely scope:
@@ -180,7 +181,7 @@ Likely scope:
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
 | `adopt-nis-corporate-process-governance` | P2 | P3 | in_progress |
-| `close-release-integrity-gaps` | P2 | P3 | pending_acceptance |
+| `close-release-integrity-gaps` | P2 | P3 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P3 | in_progress |
 | `define-transfer-ready-process-package` | P2 | P3 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P3 | blocked |

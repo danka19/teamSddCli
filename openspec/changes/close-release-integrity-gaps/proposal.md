@@ -2,7 +2,7 @@
 
 - Execution phase: P2
 - Related phases: P3
-- Lifecycle status: pending_acceptance
+- Lifecycle status: accepted
 
 ## Why
 

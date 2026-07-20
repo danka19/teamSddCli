@@ -1,6 +1,6 @@
 # Phase 2 Evidence Index
 
-Status: pending_acceptance. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Immutable candidate `phase-2-14-rc6` has complete fresh candidate-bound certification and independent review; human gate 2.14.4 remains open. Historical rc4 and `phase-2-12-rc7` remain unchanged, while rc2, rc3, and rc5 remain diagnostic rejected history.
+Status: closed. Work items 2.1-2.13 and all work item 2.14 gates are closed. `D-020` accepts immutable candidate `phase-2-14-rc6` as the exact external transfer baseline. Historical rc4 and `phase-2-12-rc7` remain unchanged, while rc2, rc3, and rc5 remain diagnostic rejected history.
 
 ## Work Item 2.1: Process Package And Synthetic Central Topology
 
@@ -768,7 +768,7 @@ Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026
 
 ## Work Item 2.14.3: Review Gates
 
-Status: `closed`. Transfer task 7.3 and NIS task 8.6 are complete; transfer progress is 34/36 and NIS progress is 41/43.
+Status: `closed`. Transfer tasks through 7.4 and NIS tasks through 8.7 are complete under `D-020`; transfer progress is 35/36 and NIS progress is 42/43.
 
 - Initial reviewer and architecture findings correctly rejected rc2/rc3 provenance: final coverage files were not frozen at the right boundary, free-form manual evidence was not resolvable, and final-candidate scenarios still cited rc7.
 - The correction batch made manual evidence fail closed, replaced stale/free-form references with exact final paths, rebuilt rc4, and repeated Windows/WSL2 rehearsal plus machine acceptance without changing or rerunning model-bound contracts.
@@ -779,7 +779,7 @@ Durable evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md
 
 ## Work Item 2.14 Successor Certification (2026-07-20)
 
-Status: `pending_acceptance`. Technical successor work is complete; transfer task 7.4 and NIS task 8.7 remain the same explicit human-owner gate.
+Status: `closed`. Technical successor work is complete and `D-020` closes transfer task 7.4 and NIS task 8.7 for exact rc6.
 
 - Source implementation commit `5f92fc6` closed the Delta, archive-history, and reviewed-upgrade product gaps. Evidence-selection commit `4ffc44a` bound fresh package `0.3.0` Qwen and DeepSeek evidence without changing historical rc4.
 - AI-disabled execution passed 11/11. Qwen `qwen3.5:9b` and DeepSeek `deepseek-r1:8b`, Ollama `0.30.11`, adapter `2.2`, each passed runtime identity, 5/5 preflight, and 15/15 matrix gates with empty diagnostics.
@@ -787,6 +787,6 @@ Status: `pending_acceptance`. Technical successor work is complete; transfer tas
 - Exact-inventory rc6 contains the same reviewed payload bytes and only the 48 normalized raw references. Payload SHA-256 is `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`; manifest SHA-256 is `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`; payload inventory is 199 files.
 - Windows full-clean rehearsal and Linux/WSL2 portability smoke both passed against rc6 with AI disabled, unchanged archive digest, successful rollback, privacy pass, no human-authority substitution, and complete negative-acceptance matrices. The WSL2 host required exact Linux wheels in an ephemeral `/tmp` dependency path and a temporary `python -> python3` PATH shim; neither changed the candidate or system package installation.
 - Aggregate evaluation returned `evidence-complete`, `diagnostics: []`, and `human_acceptance_required: true`. Independent candidate-bound review returned `READY` with no Critical, Important, or Minor findings.
-- Final repository verification passed `736 passed, 4 skipped in 266.67s`; strict OpenSpec validation passed 13/13. Technical readiness does not accept the release or authorize Phase 3.
+- Final repository verification passed `736 passed, 4 skipped in 266.67s`; strict OpenSpec validation passed 13/13. `D-020` accepts the release; corporate work remains gated by the local owner walkthrough.
 
 Durable evidence: `process/release/phase-2-14-rc6-release-manifest.yaml`, `process/release/evidence/phase-2-14-rc6-windows-2026-07-20.yaml`, `process/release/evidence/phase-2-14-rc6-linux-wsl2-2026-07-20.yaml`, `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md`, and `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md`.

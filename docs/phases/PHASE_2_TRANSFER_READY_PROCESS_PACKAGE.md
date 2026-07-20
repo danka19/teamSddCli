@@ -1,8 +1,8 @@
 # Phase 2. Transfer-Ready Process Package And Weak-Model Readiness
 
-Status: pending_acceptance.
+Status: closed.
 
-Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Immutable successor `phase-2-14-rc6` has complete fresh model, AI-disabled, Windows/WSL2, rollback, privacy, exact-raw-closure, coverage, and independent-review evidence. Work item 2.14 is waiting only at mandatory human gate 2.14.4; no corporate configuration or pilot starts before that accept/reject decision.
+Work items 2.1-2.13 and all work item 2.14 gates are closed. Human decision `D-020` accepts immutable successor `phase-2-14-rc6` as the exact external transfer baseline. Corporate configuration or pilot work remains paused until the owner completes the local synthetic walkthrough entry gate.
 
 > **For implementation workers:** REQUIRED SKILL: use `phase-step-runner` for exactly one work item, or `phase-full-runner` only when the human explicitly requests the whole phase. Within one active work item, independent subtasks may use parallel workers only when dependencies, owners, non-overlapping write scopes, evidence, and integration responsibility are explicit. Every completed work item follows scenario-first TDD, passes review/architecture/verification gates, updates evidence and documentation, and ends with an intentional commit.
 
@@ -34,7 +34,7 @@ Status: accepted.
 - Active change `define-transfer-ready-process-package` owns the reusable package, weak-model, parallel-execution, coverage, portability, release, and transfer contracts.
 - Active change `adopt-nis-corporate-process-governance` owns the NIS-aligned classification, gates, Tech Lead, flow-control, traceability, safety, migration, and acceptance contracts.
 - Active change `determinize-weak-model-operational-decisions` contains the completed post-`2.1` operational-ambiguity remediation without rewriting the blocked adapter `2.1` history. Its tasks are complete, but its lifecycle remains `in_progress` pending an explicit human lifecycle decision.
-- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed; work item 2.14 is waiting at human gate 2.14.4 for exact candidate rc6.
+- Technical prerequisites and planning acceptance are complete. Work items 2.1-2.13 and all work item 2.14 gates are closed; `D-020` accepts exact candidate rc6.
 
 ## Planning Acceptance Gate
 
@@ -166,7 +166,7 @@ Affected architecture: no architecture change; Git/OpenSpec remains canonical an
 Data contract impact: none for the boundary decision or focused tests. Product-gap intake will assess contracts separately.
 
 Verification impact: bind the boundary selector to `D-019`; add four exact pytest nodes and source-owned coverage markers; run focused, coverage, full regression, OpenSpec, roadmap, and release-snapshot immutability checks.
-Status: boundary, focused-test, intake, six-scenario RED/GREEN implementation, final verification, successor freeze, candidate certification, and independent review are `closed`. The final suite passed `736 passed, 4 skipped`; human acceptance of rc6 is the next ordered gate.
+Status: boundary, focused-test, intake, six-scenario RED/GREEN implementation, final verification, successor freeze, candidate certification, independent review, and human acceptance under `D-020` are `closed`. The local owner walkthrough is the next ordered gate before corporate adaptation.
 ```
 
 ```text
@@ -659,7 +659,7 @@ Observed outcome: four closed schemas, five unresolved templates, two synthetic 
 
 ### 2.14 Documentation, Final Verification, And Human Acceptance
 
-Status: pending_acceptance.
+Status: closed under `D-020`.
 
 Dependency status: sequential-final after 2.1-2.13.
 
@@ -684,7 +684,7 @@ Exit criteria: the human owner accepts or rejects the exact external candidate u
 | 2.14.1 Documentation reconciliation | closed | Reconcile roadmap, current audit, phase plan, repository map, manifest/evidence links, doc-sync findings, OpenSpec validation, and privacy scan. Documentation-only corrections do not require model execution or a complete pytest run. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-18.md`. |
 | 2.14.2 Final technical verification | closed | Candidate `phase-2-14-rc4` is frozen with its own manifest, checksums, host evidence, normalized evidence, 48 raw-artifact references, launch provenance, and fail-closed manual-evidence resolution. AI-disabled passed 11/11; Qwen and DeepSeek each passed 5/5 preflight and 15/15 matrix; Windows full rehearsal and WSL2 portability smoke passed. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md`. |
 | 2.14.3 Review gates | closed | Worker, independent reviewer, independent architecture, and verification-fallback gates passed after one provenance correction batch. Reviewers consumed existing evidence and did not rerun the complete pytest suite or models. Evidence: `docs/audits/PHASE_2_WORK_ITEM_2_14_REVIEW_GATES_2026-07-18.md`. |
-| 2.14.4 Human acceptance | pending_acceptance | Rc6 is immutable and technically `READY`: payload `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, aggregate `evidence-complete`, and independent review with no findings. The human owner must still accept or reject this exact candidate. `D-019` accepts only the first-MVP exclusion boundary and does not start Phase 3. |
+| 2.14.4 Human acceptance | closed | `D-020` accepts exact immutable rc6: payload `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`. The separate local owner walkthrough gates corporate adaptation; it does not reopen or mutate rc6. |
 
 The single actual-model sequence for 2.14.2 is fixed: Qwen 5/5 preflight, then Qwen 15/15 only after a passing preflight, then one complete Qwen raw export; DeepSeek with `num_ctx=8192` 5/5 preflight, then DeepSeek 15/15 only after a passing preflight, then one complete DeepSeek raw export; finally one normalization pass and one gate-validation pass. No intermediate model run is allowed after 2.12 and before this sequence unless the adapter, prompt, response schema, operation plan, authority/source validation, or model/runtime profile changes. Reviewers consume this evidence rather than reproducing it.
 
@@ -780,11 +780,11 @@ Resolved:
 - `D-016`: reliability through broader tests and traceability; speed through safe parallel AI work on independent tasks.
 - `D-017`: the human owner accepts this corrected Phase 2 plan and authorizes sequential implementation beginning with work item 2.1.
 
-The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Fresh package-0.3.0 adapter `2.2` evidence passed both family gates and AI-disabled 11/11; immutable candidate rc6 then passed exact raw closure, Windows/WSL2, rollback, privacy, coverage, aggregate acceptance evaluation, and independent review. Candidate rc4 remains historical after the selected successor-remediation path. Rc2, rc3, and rc5 remain immutable diagnostic rejected history. Work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed; mandatory human gate 2.14.4 is `pending_acceptance` for rc6.
+The AI-disabled, Qwen-family, and actual DeepSeek-family runtime/matrix execution from 2026-07-15 remains the immutable first baseline. Adapter `2.0` and `2.1` failures remain append-only evidence. Fresh package-0.3.0 adapter `2.2` evidence passed both family gates and AI-disabled 11/11; immutable candidate rc6 then passed exact raw closure, Windows/WSL2, rollback, privacy, coverage, aggregate acceptance evaluation, and independent review. Candidate rc4 remains historical after the selected successor-remediation path. Rc2, rc3, and rc5 remain immutable diagnostic rejected history. Work items 2.1-2.13 and all work item 2.14 gates are closed; `D-020` accepts exact rc6.
 
 Mandatory later evidence, not design decisions:
 
 - Any later append-only Qwen-class and DeepSeek-class remediation evidence: 5/5 frozen preflight before each 15/15 matrix, with a new human-approved remediation scope required before another run.
 - Exact Windows and Linux/WSL2 versions/architectures and dependency versions used for certification, plus the explicit macOS not-certified limitation.
 - Actual corporate configuration, network/artifact distribution, MCP and integration capabilities, owners/delegates/security approvers, retention/privacy values, and pilot candidate.
-- Human acceptance of the external release candidate before Phase 3.
+- Local owner walkthrough completion and review before corporate configuration or pilot execution.

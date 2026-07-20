@@ -2,7 +2,7 @@
 
 Date: 2026-07-20
 
-Decision state: awaiting explicit human accept or reject
+Decision state: accepted by the human owner under `D-020`
 
 ## Candidate
 
@@ -33,7 +33,7 @@ Decision state: awaiting explicit human accept or reject
 
 ## What Acceptance Means
 
-Accepting rc6 authorizes use of this exact external transfer candidate as the reusable input to Phase 3 corporate configuration and monitored pilot preparation. It confirms that the explicitly deferred integrations do not block the first-MVP boundary under `D-019`.
+Acceptance makes this exact rc6 the reusable transfer baseline and confirms that the explicitly deferred integrations do not block the first-MVP boundary under `D-019`. Under `D-020`, corporate configuration and pilot preparation remain paused until the human owner completes and reviews the local synthetic framework walkthrough.
 
 Acceptance does not:
 
@@ -56,10 +56,10 @@ Acceptance does not:
 
 The recommended technical decision is **accept rc6 for transfer into Phase 3 configuration**, because all requested remediation and candidate-bound evidence is complete and independent review found no unresolved finding.
 
-The human owner must choose one of these outcomes:
+The human owner chose outcome 1 on 2026-07-20. The available outcomes were:
 
 1. **Accept rc6** — check transfer task 7.4 and NIS task 8.7, record the decision, move Phase 2 to accepted/closed as defined by governance, and begin only bounded Phase 3 configuration intake.
 2. **Reject rc6 with reasons** — keep Phase 2 pending, preserve rc6 unchanged, route each reason through phase-change-intake, and build a new candidate only after accepted remediation.
 3. **Request additional evidence** — keep the gate open and name the exact missing evidence; do not rerun models or rebuild the candidate without a bounded reason.
 
-No acceptance is inferred by this packet.
+Acceptance is explicitly recorded by `D-020`. Transfer task 7.4 and NIS task 8.7 are complete, and Phase 2 is closed. This does not accept the later corporate pilot or authorize a package fork. The next human gate is completion and review of the local synthetic walkthrough before any work-contour activity.

@@ -40,6 +40,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md` | Abstracted structure analysis of the corporate analytics approval template and the plan for mapping it to SDD artifacts (typed YAML records instead of nested tables) |
 | `docs/planning/REPO_TOPOLOGY_EVALUATION_CRITERIA_2026-07-09.md` | Evaluation criteria and topology comparison frame for the internal OpenSpec customization screenshots and work item 1.4 |
 | `docs/planning/PHASE_2_FOCUSED_COVERAGE_TESTS_IMPLEMENTATION_PLAN_2026-07-20.md` | Approved bounded RED/GREEN plan for the first-MVP boundary evidence and four exact residual-gap tests before product-gap intake |
+| `docs/planning/LOCAL_OWNER_FRAMEWORK_WALKTHROUGH_2026-07-20.md` | Local synthetic owner walkthrough and completion gate required before Phase 3 corporate adaptation begins |
 | `docs/planning/OPENSPEC_DE_INTERNAL_SOLUTION_ANALYSIS_2026-07-09.md` | Abstracted analysis of the internal developer-oriented OpenSpec customization (workflow schema, skills, staged repo topology) with borrow/differ recommendations for work item 1.4 |
 | `arch-screenshots/analytic-template/` | Local-only photos of the corporate analytics template (git-ignored; contains corporate content; never commit) |
 | `arch-screenshots/openspec-de/` | Local-only screenshots of an internal OpenSpec customization approach for Phase 1 topology analysis (git-ignored; contains corporate content; never commit) |
@@ -66,11 +67,11 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md` | Provenance, exact counts, 46-requirement inventory, five-way routing, and acceptance consequences for rc4's 110 mechanically uniform residual-gap rows |
 | `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md` | Six-group intake for the 13 genuine product gaps, with Phase 2 release-integrity routing, Phase 3/4 deferrals, and the successor-candidate execution gate |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md` | Successor certification audit covering rc5 fail-closed history, immutable rc6 identity, fresh model/AI-disabled/platform evidence, exact raw closure, verification, and independent review |
-| `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Human accept/reject packet for exact immutable candidate rc6, including checksums, evidence, limits, consequences, and recommended decision |
+| `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Accepted human-decision record for exact immutable candidate rc6, including checksums, evidence, limits, and consequences |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
-| `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | In-progress Phase 2 plan for the external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
+| `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | Closed Phase 2 plan for the accepted external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
 | `docs/phases/PHASE_2_EVIDENCE_INDEX.md` | Phase 2 work-item source, implementation, verification, and independent-review evidence index |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
