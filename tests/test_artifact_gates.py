@@ -10,7 +10,7 @@ from typing import Any
 
 import yaml
 
-from process.validators.artifact_gates import evaluate_gate
+from process.validators.artifact_gates import TOOL_VERSION, evaluate_gate
 from process.validators.policy_validation import PolicySnapshot, validate_policy_bundle
 
 
@@ -404,7 +404,7 @@ def test_all_named_reports_are_stable_and_keep_required_human_approval_explicit(
         second = _gate(gate, "minor", copy.deepcopy(evidence)).as_dict()
         assert first == second
         assert first["gate"] == gate
-        assert first["versions"]["tool"] == "0.3.0"
+        assert first["versions"]["tool"] == TOOL_VERSION
         assert first["versions"]["policy_set"] == {"id": "sdd-core", "version": "1.0.0"}
         assert {source["policy_id"] for source in first["policy_sources"]} >= {
             "artifact-matrix", "classification", "gates", "release"

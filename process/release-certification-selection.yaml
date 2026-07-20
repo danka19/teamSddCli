@@ -1,9 +1,67 @@
-schema_version: "1.0"
-selection_id: phase-2-14-rc5-certification-selection
+schema_version: "1.1"
+selection_id: guided-owner-v0.3.1-certification-selection
 selected:
   - model_family: qwen-class
-    normalized_evidence_path: certification/evidence/phase-2-14-rc5-qwen-adapter-2-2-2026-07-20.yaml
-    raw_logical_root: raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20
+    mode: baseline-reuse
+    reuse_reason: Guided owner workflow changes orientation and read-only assistance, not model decision behavior.
+    ai_contract_hashes:
+      - path: process/adapters/qwen-class.yaml
+        sha256: d783dc267a2017648bb660657a2fe19eb9127bc4daa053523869d0b958e2707b
+      - path: process/certification/qwen-matrix.yaml
+        sha256: 07853e412ebd022cd76a5b94336bd82eb4b488ba14bc27c03f77a461ed079d99
+      - path: process/model_adapter.py
+        sha256: 17ad3015445a5644688a0070b442da877bbc67a870ac2ea3930d9c8a2a434f63
+      - path: process/operation_plan.py
+        sha256: fefc81ea6aadacea4dc8326629df7532c43f5a671ebd7da0d260237c8389ea5a
+      - path: process/roles/analyst.md
+        sha256: a2bc957ce33c2c365c9e2b850819b94120faf1c09979cf38a3b213f5e7f86fa2
+      - path: process/roles/developer.md
+        sha256: b3a6fa70ca08b92c879035dc162499e3aa50e4bf43364de737443928624e2fdd
+      - path: process/roles/qa.md
+        sha256: dedc62bba55cd82dd866844a2418f5414cb8d3ca967a2186e799207c17ae2e70
+      - path: process/roles/tech-lead.md
+        sha256: 9babe5ed8e932fb849b1b2fd8fda6502cbafdb65579771f4facd16b8e1e73389
+      - path: process/schemas/weak-model-operation-evidence.schema.json
+        sha256: 1c0d569347019133d59598d7aa61efafc9b4d89f4c05ad5a320dffca3dbf9367
+    baseline:
+      normalized_evidence_path: certification/evidence/phase-2-14-rc5-qwen-adapter-2-2-2026-07-20.yaml
+      normalized_evidence_sha256: 90a534ef5af711fbf09cf8d1c4d3e647acac8afd97791321fbd3b9f4c2d8e892
+      raw_logical_root: raw-artifact-v0.3.0-qwen-phase-2-14-rc5-2026-07-20
+      process_package_version: 0.3.0
+    fresh_preflight:
+      raw_logical_root: baseline-reuse-v0.3.1-2026-07-20
+      result_path: qwen-preflight-result.json
+      result_sha256: 3aafaea53f78e24b29766cec4b584c831e27e535a57ad92d690e713f06e10fd3
+      adapter_version: '2.2'
   - model_family: deepseek-class
-    normalized_evidence_path: certification/evidence/phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml
-    raw_logical_root: raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20
+    mode: baseline-reuse
+    reuse_reason: Guided owner workflow changes orientation and read-only assistance, not model decision behavior.
+    ai_contract_hashes:
+      - path: process/adapters/deepseek-class.yaml
+        sha256: d7f363b04f6cc5fc02dfe4e06688822a4f280c61550643662ba19c179043e09e
+      - path: process/certification/qwen-matrix.yaml
+        sha256: 07853e412ebd022cd76a5b94336bd82eb4b488ba14bc27c03f77a461ed079d99
+      - path: process/model_adapter.py
+        sha256: 17ad3015445a5644688a0070b442da877bbc67a870ac2ea3930d9c8a2a434f63
+      - path: process/operation_plan.py
+        sha256: fefc81ea6aadacea4dc8326629df7532c43f5a671ebd7da0d260237c8389ea5a
+      - path: process/roles/analyst.md
+        sha256: a2bc957ce33c2c365c9e2b850819b94120faf1c09979cf38a3b213f5e7f86fa2
+      - path: process/roles/developer.md
+        sha256: b3a6fa70ca08b92c879035dc162499e3aa50e4bf43364de737443928624e2fdd
+      - path: process/roles/qa.md
+        sha256: dedc62bba55cd82dd866844a2418f5414cb8d3ca967a2186e799207c17ae2e70
+      - path: process/roles/tech-lead.md
+        sha256: 9babe5ed8e932fb849b1b2fd8fda6502cbafdb65579771f4facd16b8e1e73389
+      - path: process/schemas/weak-model-operation-evidence.schema.json
+        sha256: 1c0d569347019133d59598d7aa61efafc9b4d89f4c05ad5a320dffca3dbf9367
+    baseline:
+      normalized_evidence_path: certification/evidence/phase-2-14-rc5-deepseek-adapter-2-2-2026-07-20.yaml
+      normalized_evidence_sha256: 3bdc3fe3d6cb183eb3c9cf40c16971947b47e5a2d6027032d4287b2c8a137c15
+      raw_logical_root: raw-artifact-v0.3.0-deepseek-phase-2-14-rc5-2026-07-20
+      process_package_version: 0.3.0
+    fresh_preflight:
+      raw_logical_root: baseline-reuse-v0.3.1-2026-07-20
+      result_path: deepseek-preflight-result.json
+      result_sha256: 0c2b94c2fb2034b98e98f63d2a5048361bad49cb62aaaa29c5db358b759493b0
+      adapter_version: '2.2'

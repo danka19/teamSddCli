@@ -68,6 +68,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md` | Six-group intake for the 13 genuine product gaps, with Phase 2 release-integrity routing, Phase 3/4 deferrals, and the successor-candidate execution gate |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md` | Successor certification audit covering rc5 fail-closed history, immutable rc6 identity, fresh model/AI-disabled/platform evidence, exact raw closure, verification, and independent review |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Accepted human-decision record for exact immutable candidate rc6, including checksums, evidence, limits, and consequences |
+| `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_IMPLEMENTATION_AUDIT_2026-07-20.md` | Evidence-backed checkpoint for the implemented guided-operation slice, its verification, status reconciliation, and remaining successor-release gates |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
@@ -138,6 +139,10 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification/evidence/phase-2-14-rc5-*-adapter-2-2-2026-07-20.yaml` | Fresh package-0.3.0 Qwen and DeepSeek evidence selected by rc6: runtime identity, 5/5 preflight, 15/15 matrix, exact raw references, and advisory-only authority |
 | `process/certification/runtime-identities.yaml` | Immutable full-digest extension to the semantic matrix catalog, used by fresh preflight and per-matrix-call runtime probes without duplicating tag/runtime ownership or rewriting historical evidence |
 | `process/operation_plan.py` | Minimal deterministic case evaluator that binds weak-model action, artifact kind, reason codes, verified source inventory, unresolved inputs, and accountable human route before generation |
+| `process/catalogs/guided-owner-workflow.yaml`, `process/guided_workflow.py` | Versioned situation-to-command catalog and read-only deterministic guidance boundary; it never makes a human decision or invokes a mutation |
+| `process/read-packs/guided-owner-workflow.yaml` | Bounded AI route instruction: it permits explanation and missing-context checks only, with explicit stop points and no mutation/approval authority |
+| `scripts/guided_owner_workflow.py`, `scripts/validate_guided_owner_workflow.py` | Human/JSON guidance entry point and guide/catalog drift check |
+| `docs/runbooks/GUIDED_OWNER_WORKFLOW.md` | Situation-first onboarding for humans and AI assistants, pinned to the catalog checksum |
 | `process/schemas/weak-model-operation-plan.schema.json` | Closed identity-bound adapter `2.2` operation-plan contract |
 | `process/feedback_policy.py` | Pure check-only NIS feedback/SLA/disposition/publication-boundary evaluator with no Confluence integration |
 | `process/corporate_adaptation.py` | Pure closed-schema, secret/privacy, green-checklist, pilot-evidence decision-reference, package-completeness, and no-fork validation |

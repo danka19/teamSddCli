@@ -40,6 +40,7 @@ EXPECTED_ENTRY_POINTS = {
     "evaluate_change_gates.py",
     "manage_release_candidate.py",
     "manual_fallback.py",
+    "guided_owner_workflow.py",
     "migrate_change_classification.py",
     "prepare_archive.py",
     "prepare_spec_pr.py",
@@ -50,6 +51,7 @@ EXPECTED_ENTRY_POINTS = {
     "validate_external_mapping.py",
     "validate_process_config.py",
     "validate_traceability.py",
+    "validate_guided_owner_workflow.py",
 }
 
 EXPECTED_CERTIFICATIONS = {
@@ -107,9 +109,15 @@ def _acceptance_build(tmp_path: Path) -> tuple[Path, dict, Path]:
         (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
     )
     for row in selection["selected"]:
-        target = raw / row["raw_logical_root"]
-        target.mkdir(parents=True)
-        (target / "result.json").write_text('{"result":"passed"}\n', encoding="utf-8")
+        roots = (
+            (row["raw_logical_root"],)
+            if row["mode"] == "full-matrix"
+            else (row["baseline"]["raw_logical_root"], row["fresh_preflight"]["raw_logical_root"])
+        )
+        for logical_root in roots:
+            target = raw / logical_root
+            target.mkdir(parents=True, exist_ok=True)
+            (target / "result.json").write_text('{"result":"passed"}\n', encoding="utf-8")
     candidate = tmp_path / "acceptance-candidate"
     inputs = ReleaseInputs("phase-2-12-rc1", ("macOS is not certified",), raw)
     manifest = build_release_candidate(ROOT, candidate, inputs)
@@ -186,6 +194,7 @@ def test_allowlist_is_schema_valid_and_exact() -> None:
         "PACKAGED_GOVERNED_FLOW.md", "PROCESS_PACKAGE_SETUP.md",
         "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
         "WEAK_MODEL_OPERATING_KIT.md", "CORPORATE_ADAPTATION_AND_PILOT.md",
+        "GUIDED_OWNER_WORKFLOW.md",
     }
     assert {item["name"] for item in allowlist["entry_points"]} == EXPECTED_ENTRY_POINTS
     assert all(item["smoke"] for item in allowlist["entry_points"])
@@ -206,20 +215,91 @@ def test_release_certification_selection_is_schema_valid_and_exact() -> None:
         )
     )
     assert list(Draft202012Validator(schema).iter_errors(selection)) == []
-    assert {
-        row["model_family"]: Path(row["normalized_evidence_path"]).name
-        for row in selection["selected"]
-    } == EXPECTED_CERTIFICATIONS
+    assert {row["model_family"]: row["mode"] for row in selection["selected"]} == {
+        "qwen-class": "baseline-reuse", "deepseek-class": "baseline-reuse"
+    }
     normalized = {
         row["model_family"]: yaml.safe_load(
-            (ROOT / "process" / row["normalized_evidence_path"]).read_text(encoding="utf-8")
+            (ROOT / "process" / row["baseline"]["normalized_evidence_path"]).read_text(encoding="utf-8")
         )
         for row in selection["selected"]
     }
     assert all(
-        row["raw_logical_root"] == normalized[row["model_family"]]["raw_artifact"]["logical_id"]
+        row["baseline"]["raw_logical_root"] == normalized[row["model_family"]]["raw_artifact"]["logical_id"]
         for row in selection["selected"]
     )
+    assert all(
+        {item["path"] for item in row["ai_contract_hashes"]}
+        == set(release_candidate_module._AI_CONTRACT_PATHS[row["model_family"]])
+        for row in selection["selected"]
+    )
+    implicit = copy.deepcopy(selection)
+    implicit["selected"][0].pop("mode")
+    assert list(Draft202012Validator(schema).iter_errors(implicit))
+
+
+def test_baseline_reuse_requires_matching_contract_and_fresh_preflight(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    payload = tmp_path / "payload"
+    raw = tmp_path / "raw"
+    payload.mkdir()
+    raw.mkdir()
+    contract_paths = release_candidate_module._AI_CONTRACT_PATHS["qwen-class"]
+    hashes: list[dict[str, str]] = []
+    for index, relative in enumerate(contract_paths):
+        path = payload / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"contract-{index}\n", encoding="utf-8")
+        hashes.append({"path": relative, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+
+    baseline_path = payload / "process/certification/evidence/baseline.yaml"
+    baseline_path.parent.mkdir(parents=True, exist_ok=True)
+    baseline = {"status": "passed", "raw_artifact": {"logical_id": "baseline-matrix"}}
+    baseline_path.write_text(yaml.safe_dump(baseline), encoding="utf-8")
+    (raw / "baseline-matrix").mkdir()
+    fresh = raw / "fresh-preflight"
+    fresh.mkdir()
+    result_path = fresh / "preflight-result.json"
+    result_path.write_text('{"status":"passed"}\n', encoding="utf-8")
+    selection = {
+        "model_family": "qwen-class",
+        "mode": "baseline-reuse",
+        "reuse_reason": "guided workflow changes no AI decision contract",
+        "ai_contract_hashes": hashes,
+        "baseline": {
+            "normalized_evidence_path": "certification/evidence/baseline.yaml",
+            "normalized_evidence_sha256": hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
+            "raw_logical_root": "baseline-matrix",
+            "process_package_version": "0.3.0",
+        },
+        "fresh_preflight": {
+            "raw_logical_root": "fresh-preflight",
+            "result_path": "preflight-result.json",
+            "result_sha256": hashlib.sha256(result_path.read_bytes()).hexdigest(),
+            "adapter_version": "2.2",
+        },
+    }
+    monkeypatch.setattr(release_candidate_module, "validate_phase_gate", lambda *args, **kwargs: [])
+
+    assert release_candidate_module._validate_baseline_reuse(selection, payload, raw) == []
+
+    (payload / contract_paths[0]).write_text("changed\n", encoding="utf-8")
+    assert release_candidate_module._validate_baseline_reuse(selection, payload, raw) == [
+        "release.ai-contract-hash-mismatch"
+    ]
+
+    (payload / contract_paths[0]).write_text("contract-0\n", encoding="utf-8")
+    result_path.unlink()
+    assert release_candidate_module._validate_baseline_reuse(selection, payload, raw) == [
+        "release.fresh-preflight-missing"
+    ]
+
+    result_path.write_text('{"status":"passed"}\n', encoding="utf-8")
+    monkeypatch.setattr(release_candidate_module, "validate_phase_gate", lambda *args, **kwargs: ["failed"])
+    assert release_candidate_module._validate_baseline_reuse(selection, payload, raw) == [
+        "release.fresh-preflight-failed"
+    ]
 
 
 def test_acceptance_closes_exact_hosts_and_selected_certification_roots(
@@ -235,6 +315,7 @@ def test_acceptance_closes_exact_hosts_and_selected_certification_roots(
         return []
 
     monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", valid_selected)
+    monkeypatch.setattr(release_candidate_module, "_validate_baseline_reuse", lambda *args, **kwargs: [])
     result = evaluate_release_acceptance(
         candidate, manifest, hosts, raw,
         now=datetime(2026, 7, 17, 12, tzinfo=timezone.utc),
@@ -248,12 +329,7 @@ def test_acceptance_closes_exact_hosts_and_selected_certification_roots(
         "human_acceptance_required": True,
         "diagnostics": [],
     }
-    assert {path.name for path in observed} == {
-        row["raw_logical_root"]
-        for row in yaml.safe_load(
-            (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
-        )["selected"]
-    }
+    assert observed == []
 
 
 @pytest.mark.parametrize(
@@ -278,6 +354,7 @@ def test_acceptance_rejects_negative_cases(
     candidate, manifest, raw = _acceptance_build(candidate_tmp)
     hosts = _host_evidence(candidate_tmp, candidate, manifest)
     monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    monkeypatch.setattr(release_candidate_module, "_validate_baseline_reuse", lambda *args, **kwargs: [])
     windows_path = hosts / "windows.yaml"
     windows = yaml.safe_load(windows_path.read_text(encoding="utf-8"))
     if case == "evidence-missing":
@@ -296,7 +373,7 @@ def test_acceptance_rejects_negative_cases(
         selected = yaml.safe_load(
             (ROOT / "process/release-certification-selection.yaml").read_text(encoding="utf-8")
         )["selected"][0]
-        (raw / selected["raw_logical_root"] / "result.json").write_text("changed\n", encoding="utf-8")
+        (raw / selected["baseline"]["raw_logical_root"] / "result.json").write_text("changed\n", encoding="utf-8")
     elif case == "candidate-digest-mismatch":
         windows["payload_sha256"] = "b" * 64
     elif case == "incompatible-dependency":
@@ -330,6 +407,7 @@ def test_acceptance_rejects_inconsistent_mcp_observation(
     candidate, manifest, raw = _acceptance_build(candidate_tmp)
     hosts = _host_evidence(candidate_tmp, candidate, manifest)
     monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    monkeypatch.setattr(release_candidate_module, "_validate_baseline_reuse", lambda *args, **kwargs: [])
     path = hosts / "windows.yaml"
     row = yaml.safe_load(path.read_text(encoding="utf-8"))
     row["mcp"] = {"status": status, "evidence_ref": reference}
@@ -360,6 +438,7 @@ def test_acceptance_rejects_schema_invalid_host_rows_without_type_errors(
     candidate, manifest, raw = _acceptance_build(candidate_tmp)
     hosts = _host_evidence(candidate_tmp, candidate, manifest)
     monkeypatch.setattr(release_candidate_module, "validate_normalized_evidence", lambda *args, **kwargs: [])
+    monkeypatch.setattr(release_candidate_module, "_validate_baseline_reuse", lambda *args, **kwargs: [])
     path = hosts / "windows.yaml"
     row = yaml.safe_load(path.read_text(encoding="utf-8"))
     row[field] = value
@@ -555,6 +634,27 @@ def test_candidate_contains_only_allowlisted_self_contained_assets(candidate_tmp
     )["runbooks"])
     assert {path.name for path in (payload / "scripts").iterdir()} == EXPECTED_ENTRY_POINTS
     assert validate_release_manifest(candidate, manifest)["status"] == "valid"
+
+
+def test_candidate_management_validate_does_not_write_bytecode_into_payload(candidate_tmp: Path) -> None:
+    candidate, manifest = _build(candidate_tmp)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(candidate / "payload/scripts/manage_release_candidate.py"),
+            "validate",
+            "--candidate", str(candidate),
+            "--manifest", str(candidate / "release-manifest.yaml"),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["status"] == "valid"
+    assert payload_inventory(candidate / "payload")["payload_sha256"] == manifest["payload_sha256"]
 
 
 @pytest.mark.parametrize("field", [

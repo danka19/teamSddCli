@@ -8,7 +8,21 @@ The project goal is to automate the end-to-end transition from analysis to devel
 
 Current checkpoint:
 
-> Phase 1 produced the accepted OpenSpec baseline and Phase 2 is closed under `D-020`: immutable candidate `phase-2-14-rc6` is the external transfer baseline with process package `0.3.0`, payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, and `295 covered / 7 gaps / 32 future_work`. `D-021` adds a new pre-corporate Phase 3: the reusable package must become self-service through a situation-based guided-operation contract for humans and AI assistants before any corporate configuration or pilot. RC6 remains immutable; Phase 4 performs corporate adaptation and a monitored pilot. Historical rc4 remains unchanged, rc5 is retained as diagnostic rejected history, and macOS is not certified.
+> Phase 1 produced the accepted OpenSpec baseline and Phase 2 is closed under `D-020`: immutable candidate `phase-2-14-rc6` is the external transfer baseline with process package `0.3.0`, payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, and `295 covered / 7 gaps / 32 future_work`. `D-021` adds a new pre-corporate Phase 3: the reusable package must become self-service through a situation-based guided-operation contract for humans and AI assistants before any corporate configuration or pilot. The guided workflow has passed its focused synthetic, AI-disabled, local Qwen/DeepSeek preflight, and negative-path checks; its separately versioned successor candidate is still pending. RC6 remains immutable; Phase 4 performs corporate adaptation and a monitored pilot. Historical rc4 remains unchanged, rc5 is retained as diagnostic rejected history, and macOS is not certified.
+
+Текущий пакет `0.3.1` содержит проверяемый `baseline-reuse`: свежие Qwen и
+DeepSeek preflight прошли, а полная matrix `0.3.0` связана с ними точными
+hashes. Исторические raw-artifact roots найдены в локальном архиве
+`C:\Users\danoc\Documents\certifications`: 48 заявленных файлов сверены по
+SHA-256 и собран чистый exact bundle без лишних runtime probe. Диагностический
+`rc3` был отклонён, потому что его управляющий CLI записывал Python bytecode в
+payload; причина устранена отдельным регрессионным тестом. Новый immutable
+candidate `guided-owner-v0.3.1-rc4` собран, его manifest валиден до и после
+Windows full-clean rehearsal, которая passed. Владелец принял этот кандидат по
+`D-023` и разрешил его слияние в `main`. Автоматический `accept` не может
+вернуть `evidence-complete`, потому что на машине нет WSL-дистрибутива для
+Linux/WSL2 portability smoke; это явно принятое остаточное ограничение, а не
+сфабрикованный passed result. Linux/WSL2 проверка обязательна до Phase 4.
 
 ## Scope
 
@@ -73,6 +87,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-06: Adopt team-facing terminology `Master Spec` (accepted living specs) and `Delta Spec` (proposed change spec deltas) so the company understands the concept; canonical folder names and OpenSpec CLI terms stay unchanged, and the generated-view term is renamed to `Master Spec views` to avoid collision.
 - 2026-07-06: Treat reusability by other teams - easy bootstrap of the deterministic base, templates, and skills in another team - as an explicit design constraint for the `define-repo-topology-config` proposal, without expanding the first MVP.
 - 2026-07-06: Revise the canonical-language decision: team product analytics specs (requirements/scenarios prose) are written in Russian with English structural keywords (`SHALL`, `WHEN`, `THEN`) and English stable IDs; this project's own process specs stay English; a strict-mode probe confirmed OpenSpec validates Russian prose. Generated business views remain Russian and a bilingual glossary is still required for IDs and terms.
+- 2026-07-20, `D-022`: supersede the remaining English-process-spec rule for new work. New project documentation and OpenSpec prose are written in Russian; stable IDs, file paths, CLI/API tokens, and structural OpenSpec keywords remain English where tooling or cross-references require them. Historical accepted and immutable evidence is preserved without bulk translation.
 - 2026-07-09: Accept the full Phase 1 readiness-complete OpenSpec package and archive/promote all eight changes into accepted specs in one batch execution step; future corrections now use new OpenSpec changes against `openspec/specs/`.
 - 2026-07-13, refined 2026-07-20 by `D-021`: Require an externally completed transfer-ready release candidate before corporate adaptation. Reusable core, deterministic gates, process package, bootstrap/update/rollback, role instructions, bounded read packs, actual Qwen/DeepSeek certification, and self-service guided operation are external work; the corporate environment is limited to real configuration, approved wiring, thin adapters, and a monitored pilot. Planning is gate-based and does not record delivery dates or calendar deadlines.
 - 2026-07-13: Adopt NIS v1.6 as primary corporate-process input and the flat target classification `minor | major | hotfix`. Migrate legacy `thin -> minor` and `full -> major`, never infer hotfix, and add class-aware DoR/DoD, separate release/archive/delivered states, Tech Lead decision support, regression/scope/stop/escalation/release controls, role verification, pilot safety, and failed-run retention. Exclude process-effectiveness evaluation and correct unsafe AI-only/zero-risk assumptions; do not inherit PPRB organization or NIS project structure. See `D-013` and active change `adopt-nis-corporate-process-governance`.

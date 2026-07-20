@@ -9,7 +9,7 @@ Last status reconciliation: 2026-07-20.
 ## Guided Owner Workflow Intake (2026-07-20)
 
 - Human decision `D-021` adopts a new pre-corporate Phase 3 for self-service guided operation. The current package exposes valid bounded commands but lacks a single situation-based entry point for a colleague who starts with a business requirement, an existing change, a hotfix, or a blocked operation.
-- Active proposed change `add-guided-owner-workflow` owns the reusable catalog, guided CLI entry point, shared human/AI onboarding guide, authority boundary, synthetic route evidence, and successor-package verification. It is not a corporate configuration task and it must not modify immutable RC6, archived specs, historical raw evidence, or external systems.
+- Change `add-guided-owner-workflow` owns the reusable catalog, guided CLI entry point, shared human/AI onboarding guide, authority boundary, synthetic route evidence, and successor-package verification. It is accepted for merge by `D-023`; it is not a corporate configuration task and does not modify immutable RC6, archived specs, historical raw evidence, or external systems.
 - Corporate adaptation and the real governed-change pilot move to Phase 4. Post-pilot hardening moves to Phase 5. No corporate configuration, wiring, credentials, integration, or pilot may begin until the new Phase 3 completion gate is met.
 
 ## Rc6 Documentation-Sync Audit (2026-07-20)
@@ -31,7 +31,7 @@ Last status reconciliation: 2026-07-20.
 - The 2026-07-20 selector review initially resolved the 75 Phase 2 rows into 58 existing proofs, 4 focused tests, and 13 product gaps. Focused and release-integrity remediation now bind 68 Phase 2 selectors to exact tests; 22 governance rows remain linked to primary decisions/audits and 12 Phase 3/4 rows remain exact `future_work`.
 - Immutable candidate `phase-2-14-rc6` is frozen with payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, 199 payload files, and 48 exact raw references. Aggregate evaluation is `evidence-complete` with no diagnostics, and independent candidate review is `READY` with no findings.
 - Package `0.3.0` implements the six prioritized release-integrity selectors and candidate coverage is `295 covered / 7 gaps / 32 future_work`. The seven remaining product gaps are explicit Phase 3/4 deferrals under `D-019` and do not block the accepted first-MVP boundary.
-- Current OpenSpec progress is `35/36` for `define-transfer-ready-process-package`, `42/43` for `adopt-nis-corporate-process-governance`, and `21/21` for accepted `close-release-integrity-gaps`. The local owner walkthrough is the new Phase 3 entry gate before corporate work.
+- Current OpenSpec progress is `35/36` for `define-transfer-ready-process-package`, `42/43` for `adopt-nis-corporate-process-governance`, and `21/21` for accepted `close-release-integrity-gaps`. The local owner walkthrough is the Phase 3 entry gate before corporate work; its guided contract has passed synthetic, AI-disabled, Qwen/DeepSeek preflight, and negative-path verification. Successor `guided-owner-v0.3.1-rc4` is accepted for merge by `D-023`; Linux/WSL2 portability evidence remains a mandatory Phase 4 entry condition.
 - Historical rc4 was not changed. Rc5 is retained as diagnostic rejected history: its bundle copied one undeclared top-level runtime probe, so normalized Qwen and DeepSeek validation returned `actual-model.result-inventory-mismatch`; the exact-inventory rc6 successor corrected only that derived bundle boundary.
 - Durable evidence: `docs/audits/PHASE_2_RESIDUAL_GAPS_PROVENANCE_AND_ROUTING_AUDIT_2026-07-19.md`.
 
@@ -138,7 +138,7 @@ Last updated: 2026-07-20.
 | AUDIT-010 | The generated Confluence publication model is planned, and the 2026-07-09 decisions accept analyst/change-owner triage, blocker/non-blocker comment handling, explicit dispositions, editable/disableable triage SLA defaults (1 working day for blockers, 3 working days for non-blockers), generated source warnings, and evidence-backed status display. Publication automation still remains outside the first MVP; the first generated view set is intentionally decided later inside the corporate environment using real templates, approval practices, and tooling constraints. | Phase 1/4 | open |
 | AUDIT-011 | Journey and screen artifacts are now planned future contracts, but `journey.yaml`, `screens.yaml`, screen asset storage, and generated gallery views are not implemented or validated. | Phase 1/4 | open |
 | AUDIT-012 | Legacy baseline mode is planned for already-written code, but no accepted workflow or template exists yet for baseline changes, observed behavior, known gaps, or legacy coverage risk reporting. | Phase 1/4 | open |
-| AUDIT-013 | Canonical OpenSpec language is now English by default and generated Confluence may be localized to Russian, but no bilingual glossary or translation review process exists yet. | Phase 1/4 | open |
+| AUDIT-013 | `D-022` makes Russian the language for new project documentation and OpenSpec prose while preserving stable English technical tokens; historical immutable evidence is not bulk-translated. A future glossary or translation-review process is optional usability work, not a blocker for the canonical language rule. | Phase 3/5 | mitigated |
 | AUDIT-014 | The minimum weak-model operating kit and adapter `2.0` boundary are implemented: deterministic launcher, authority-labelled bounded read packs, generated closed role schemas, reasoning/final separation, mechanical normalization, one structural retry rule, analyst/developer/QA/Tech Lead instructions, evidence boundaries, negative cases, and AI-disabled fallback. The adapter `2.0` Qwen and DeepSeek remediation evidence is retained honestly at 0/5 per family with no retries and no matrices; fallback-only acceptance remains superseded. Broader project-map, graph/navigation, repeated-error-memory, and spec-questioning automation remains deferred to Phase 4. | Phase 2/4 | open |
 | AUDIT-015 | Source ownership and write-once/reference-many documentation rules are captured in the accepted documentation-governance baseline, but deterministic linting for duplicate normative text, source links, generated blocks, stale memory, and orphan docs is not implemented yet. | Phase 1/4 | open |
 | AUDIT-016 | Work item 1.8 and its review-finding follow-up reconcile the deterministic layer with the approved Phase 1 contracts: `scripts/validate_change.py` rejects the historical status vocabulary in favor of the canonical six states, keeps thin packages lightweight by default, enforces the approved full-package trigger matrix for risky thin changes, validates placeholder-mode enum structure, requires traceability waivers to match the affected requirement/scenario and evidence kind, validates canonical human approver keys or owner-group references, preserves staged discovery behavior, and `templates/change/change.yaml` no longer defaults to the contradictory `mode: thin` + `type: new_feature` combination. Work item 1.9 then hardened the evidence with explicit tests for missing requirement scenarios, missing traceability rows, pending downstream link lifecycle handling, and thin archive-ready practical verification evidence. See `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md` finding F1. | Phase 1 (work items 1.8/1.9) | closed |
@@ -212,3 +212,22 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 
 - Update this file when a finding is fixed, invalidated by evidence, or moved.
 - Do not mark a finding closed without verification evidence.
+
+## 2026-07-20 Guided Owner Workflow Implementation Checkpoint
+
+- Status: implementation in progress; OpenSpec tasks 1.1-3.3 are complete, while verification/release tasks 4.1-4.4 remain open.
+- Evidence: focused RED/GREEN tests cover declared new-requirement (minor and major), existing-change missing context, urgent-hotfix fallback, blocked/unknown situations, undocumented command rejection, AI-owner rejection, guide/catalog drift checking, CWD-independent validation, and package/bootstrap integration.
+- Deterministic checks: `openspec validate --all --strict` passed 14/14; roadmap/OpenSpec validation reported zero errors and two historical lifecycle warnings for unrelated changes.
+- Residual verification: synthetic full-route evidence, actual available-model exercises, successor package version/release evidence, update/rollback rehearsal, and final documentation reconciliation remain required before Phase 4 corporate adaptation.
+- Environment note: the original system Python runtime became unavailable during this session. Focused tests were run with the Codex bundled Python after installing the pinned test dependencies; no project dependency files changed.
+
+## 2026-07-20 Guided Companion Agent Rule Intake
+
+- Idea: agents must actively orient humans through the project, explain criteria/process mapping and decision reasoning, verify proportionately, expose gaps and risks, recommend the next action, and remain advisory at human decision boundaries.
+- Source: human owner request on 2026-07-20.
+- Type: documentation change; verification change.
+- Decision: adopt now.
+- Reason: it clarifies durable internal agent behavior without changing the external SDD CLI contract or transferring authority from the human.
+- Canonical implementation: `AGENTS.md` owns the concise responsibility rule; `docs/AI_STEP_VERIFICATION_CHECKLIST.md` owns the operational reporting and verification checklist; `docs/CONTEXT.md` defines the term.
+- Verification impact: substantive reports must map applied criteria to their sources, record evidence and limitations, state residual gaps, and recommend the next useful human action.
+- Status: recorded and active.

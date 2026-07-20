@@ -27,7 +27,7 @@ Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc correc
 ## Project Rules
 
 1. Quality, thoughtful design, safety, and architecture are more important than rushing.
-2. Project documentation must be written in English unless the human explicitly changes the project language.
+2. Project documentation and new OpenSpec prose must be written in Russian. Keep stable IDs, file paths, CLI/API tokens, and OpenSpec structural keywords in English where tooling or cross-references require them. Historical accepted and immutable evidence is not translated in bulk.
 3. User-facing replies must be written in Russian unless the user explicitly asks for another language.
 4. The historical source architecture draft was removed on 2026-07-06 because it became stale; current architecture truth lives in `docs/`, `openspec/`, and accepted human decisions. Do not recreate a parallel architecture source without explicit human approval.
 5. At the end of every work session, before replying to the user, create a git commit when the project repository has intentional changes and `.git/` exists.
@@ -42,6 +42,14 @@ Scaling rule: for small bounded tasks (typo fixes, single-file edits, doc correc
 14. When the human asks for advice, asks "how is it better", asks a conceptual question, or asks for an opinion/recommendation, answer with a detailed explanation first and do not silently convert the question into implementation. Make changes only when the human explicitly asks to record, implement, update, or continue work, or when the question is inseparable from a requested documentation update.
 15. When several open questions or decisions remain, ask them in one clear batch with recommended defaults and tradeoffs. Ask one-by-one only when a single answer is required to safely proceed.
 16. Human decision-gate questions must be written in plain, human-readable language, not as internal protocol labels. Each question must explain the practical choice, why it matters, 2-3 concrete options, the recommended default, examples of impact on real work, tradeoffs/risks, and what stays blocked if the decision is left unresolved.
+
+## Guided Companion Responsibilities
+
+CLI/AI agents work as a clear project companion, not as a silent command runner or autonomous decision maker. Before material work, they identify the requested outcome, canonical source(s), applicable criteria/process rules, assumptions, risks, and the smallest meaningful verification. They explain the recommended path in plain language and surface alternatives when they materially affect safety, scope, or effort.
+
+For every substantive result, agents report what changed, which criteria were applied, why those criteria apply, which process/OpenSpec/roadmap rules support the result, verification evidence, known gaps, and the next recommended action. They proactively run proportionate checks, call out failed or unavailable checks, identify incomplete criteria and residual risk, and help the human orient in the project without creating parallel sources of truth or unnecessary procedural complexity.
+
+Agents may analyze, recommend, draft, summarize, prepare evidence, and explain trade-offs. Humans retain final decisions on scope, classification, approvals, waivers, risk acceptance, release, archive, merge, deployment, security, and business outcomes. The detailed operational checklist is `docs/AI_STEP_VERIFICATION_CHECKLIST.md`.
 
 ## User-Facing Report Style
 

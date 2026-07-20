@@ -4,7 +4,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 
 ## Current Roadmap Validation
 
-- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Decision `D-021` adds a new external Phase 3 for self-service guided operation before any corporate work. Transfer progress remains 35/36 and NIS progress remains 42/43; former pilot tasks 7.5 and 8.8 now belong to Phase 4. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
+- Current roadmap focus: Phase 2 is `closed` after human decision `D-020` accepted immutable `phase-2-14-rc6` as the exact external transfer baseline. Decision `D-021` adds a new external Phase 3 for self-service guided operation before any corporate work. Decision `D-023` accepts successor `guided-owner-v0.3.1-rc4` for merge after the guided contract, exact baseline-reuse closure, fresh model preflight, and Windows rehearsal; Linux/WSL2 portability evidence is an explicit deferred prerequisite before Phase 4. Transfer progress remains 35/36 and NIS progress remains 42/43; former pilot tasks 7.5 and 8.8 now belong to Phase 4. Historical rc4 remains unchanged; rc5 remains diagnostic rejected history.
 - Planning from this roadmap alone is forbidden. Detailed phase plans must reconcile roadmap intent, current docs, current implementation, environment evidence, audit findings, and human decisions.
 - `sdd CLI` behavior, SDD workflow requirements, proposed process changes, artifact contracts, and acceptance criteria belong in OpenSpec artifacts under `openspec/` when SDD applies.
 - New ideas during active phase work must go through change intake before they alter scope or plans.
@@ -13,6 +13,7 @@ This roadmap is the working development plan for teamSddCli. It is phase-level; 
 - Human decisions from 2026-07-06 also accept the project memory triad, existing-code onboarding flow, deterministic `sync`/`upgrade` maintenance direction, PDLC explanation narrative, and explicit exclusion of deploy/Zephyr/Jira/Confluence from the first MVP.
 - Human decisions from 2026-07-06 (audit decision batch) adopt the six-state canonical lifecycle naming, error-level enforcement for work item 1.8, the canonical decision log now consolidated in `docs/DECISIONS.md` (`D-006`), and merging the OpenSpec version policy into the `define-repo-topology-config` proposal.
 - Human feedback from 2026-07-06 (adoption-readiness batch) adopts `Master Spec` / `Delta Spec` team-facing terminology and the other-team reusability constraint for the topology proposal, and opens the analytics language, existing-Confluence migration, and diagram/asset storage decisions (see the Phase 1 plan and AUDIT-018).
+- Human decision `D-022` on 2026-07-20 makes Russian the language of new project documentation and OpenSpec prose; stable IDs, technical paths/tokens, and required structural keywords remain English, while historical immutable evidence is preserved without bulk translation.
 - Human decisions from 2026-07-09 close gate 1.5 with the recommended defaults: central `team-specs`, central config plus optional project adapter, OpenSpec `1.4.1` central pin with reviewed upgrades, one versioned process package, and `owners.yaml` as owner source; they also close the existing-Confluence read-only archive, diagram/source-asset, Confluence feedback, editable/disableable SLA, weak-model guardrail, and role-guide planning defaults. The first generated Confluence view set is deferred to the corporate environment.
 - Human decision Option A from 2026-07-09 accepted the whole Phase 1 readiness-complete OpenSpec package. The batch archive promoted eight changes into accepted specs and left Confluence publication automation outside the first MVP.
 - Human confirmation on 2026-07-13 accepts an external transfer-ready release candidate as the boundary before corporate adaptation: reusable core, deterministic gates, package/bootstrap/update/rollback, role instructions, bounded read packs, and actual Qwen/DeepSeek certification are completed externally; corporate work is limited to real configuration, approved wiring, thin adapters, and a monitored pilot.
@@ -106,7 +107,7 @@ Phase gate:
 
 ## Phase 3. Self-Service Onboarding And Guided Operation
 
-Status: planned.
+Status: in_progress.
 
 A detailed phase plan has not been accepted yet.
 
@@ -202,7 +203,8 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
-| `add-guided-owner-workflow` | P3 | P4, P5 | planned |
+| `allow-certified-baseline-reuse` | P3 | P4 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
+| `add-guided-owner-workflow` | P3 | P4, P5 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

@@ -23,7 +23,7 @@ from typing import Any
 import yaml
 from jsonschema import Draft202012Validator
 
-from .actual_certification import validate_normalized_evidence
+from .actual_certification import validate_normalized_evidence, validate_phase_gate
 from .errors import OperationError
 from .validators.config_validation import secret_diagnostics
 from .validators.classification_migration import apply_migration, plan_migration
@@ -49,6 +49,7 @@ _RUNBOOKS = (
     "TECH_LEAD_GOVERNANCE.md", "TRANSFER_RELEASE_CANDIDATE.md",
     "WEAK_MODEL_OPERATING_KIT.md",
     "CORPORATE_ADAPTATION_AND_PILOT.md",
+    "GUIDED_OWNER_WORKFLOW.md",
 )
 _ENTRY_POINTS = (
     ("bootstrap_team_specs.py", ("scripts/bootstrap_team_specs.py", "--help"), (0,)),
@@ -58,6 +59,7 @@ _ENTRY_POINTS = (
     ("classify_change.py", ("scripts/classify_change.py", "--help"), (0,)),
     ("create_change.py", ("scripts/create_change.py", "--help"), (0,)),
     ("evaluate_change_gates.py", ("scripts/evaluate_change_gates.py", "--help"), (0,)),
+    ("guided_owner_workflow.py", ("scripts/guided_owner_workflow.py", "--help"), (0,)),
     ("manage_release_candidate.py", ("scripts/manage_release_candidate.py", "validate", "--help"), (0,)),
     ("manual_fallback.py", ("scripts/manual_fallback.py", "--help"), (0,)),
     ("migrate_change_classification.py", ("scripts/migrate_change_classification.py", "--help"), (0,)),
@@ -68,6 +70,7 @@ _ENTRY_POINTS = (
     ("validate_change.py", ("scripts/validate_change.py", "--help"), (0,)),
     ("validate_corporate_adaptation.py", ("scripts/validate_corporate_adaptation.py", "--help"), (0,)),
     ("validate_external_mapping.py", ("scripts/validate_external_mapping.py", "--help"), (0,)),
+    ("validate_guided_owner_workflow.py", ("scripts/validate_guided_owner_workflow.py", "--help"), (0,)),
     ("validate_process_config.py", ("scripts/validate_process_config.py", "--help"), (0,)),
     ("validate_traceability.py", ("scripts/validate_traceability.py", "--help"), (0,)),
 )
@@ -85,6 +88,30 @@ _EVIDENCE_REQUIREMENTS = [
 ]
 _ROLLBACK_REFERENCE = "docs/runbooks/PROCESS_PACKAGE_SETUP.md"
 _SELECTION_FILE = "release-certification-selection.yaml"
+_AI_CONTRACT_PATHS = {
+    "qwen-class": (
+        "process/adapters/qwen-class.yaml",
+        "process/certification/qwen-matrix.yaml",
+        "process/model_adapter.py",
+        "process/operation_plan.py",
+        "process/roles/analyst.md",
+        "process/roles/developer.md",
+        "process/roles/qa.md",
+        "process/roles/tech-lead.md",
+        "process/schemas/weak-model-operation-evidence.schema.json",
+    ),
+    "deepseek-class": (
+        "process/adapters/deepseek-class.yaml",
+        "process/certification/qwen-matrix.yaml",
+        "process/model_adapter.py",
+        "process/operation_plan.py",
+        "process/roles/analyst.md",
+        "process/roles/developer.md",
+        "process/roles/qa.md",
+        "process/roles/tech-lead.md",
+        "process/schemas/weak-model-operation-evidence.schema.json",
+    ),
+}
 _HOST_FILES = {"windows.yaml": ("windows", "full-clean-rehearsal"), "linux-wsl2.yaml": ("linux-wsl2", "portability-smoke")}
 _WINDOWS_SCENARIOS = {
     "clean-bootstrap", "config-compatibility", "minor-flow", "major-flow", "hotfix-flow",
@@ -97,6 +124,81 @@ _LINUX_SCENARIOS = {
     "update-rollback-smoke", "negative-acceptance-cases", "ai-disabled",
 }
 _SCENARIO_CODES = {"migration-ok", "update-ok", "failed-update-held", "rollback-ok", "archive-unchanged"}
+
+
+def _validate_baseline_reuse(
+    selected: Mapping[str, Any], payload: Path, raw_root: Path
+) -> list[str]:
+    """Validate a successor's immutable matrix reference and current preflight."""
+    family = selected.get("model_family")
+    expected_paths = _AI_CONTRACT_PATHS.get(family)
+    if expected_paths is None:
+        return ["release.baseline-reuse-invalid"]
+    hashes = selected.get("ai_contract_hashes")
+    if not isinstance(hashes, list):
+        return ["release.baseline-reuse-invalid"]
+    declared = {
+        item.get("path"): item.get("sha256")
+        for item in hashes
+        if isinstance(item, Mapping)
+        and isinstance(item.get("path"), str)
+        and isinstance(item.get("sha256"), str)
+    }
+    if set(declared) != set(expected_paths) or not all(_SHA256.fullmatch(value) for value in declared.values()):
+        return ["release.baseline-reuse-invalid"]
+    for relative in expected_paths:
+        source = payload / relative
+        if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != declared[relative]:
+            return ["release.ai-contract-hash-mismatch"]
+
+    baseline = selected.get("baseline")
+    fresh = selected.get("fresh_preflight")
+    if not isinstance(baseline, Mapping) or not isinstance(fresh, Mapping):
+        return ["release.baseline-reuse-invalid"]
+    baseline_path = baseline.get("normalized_evidence_path")
+    baseline_hash = baseline.get("normalized_evidence_sha256")
+    baseline_root = baseline.get("raw_logical_root")
+    if not isinstance(baseline_path, str) or not isinstance(baseline_hash, str) or not isinstance(baseline_root, str):
+        return ["release.baseline-reuse-invalid"]
+    try:
+        validate_portable_path(baseline_path)
+        evidence_file = payload / "process" / baseline_path
+        baseline_bytes = evidence_file.read_bytes()
+        baseline_evidence = _load_mapping(evidence_file, "release.certification-evidence-invalid")
+    except (OperationError, OSError):
+        return ["release.baseline-evidence-missing"]
+    if hashlib.sha256(baseline_bytes).hexdigest() != baseline_hash:
+        return ["release.baseline-evidence-hash-mismatch"]
+    if (
+        baseline_evidence.get("status") != "passed"
+        or baseline_evidence.get("raw_artifact", {}).get("logical_id") != baseline_root
+        or not (raw_root / baseline_root).is_dir()
+    ):
+        return ["release.baseline-evidence-invalid"]
+    if _contains_private(baseline_evidence):
+        return ["release.evidence-private"]
+
+    fresh_root = fresh.get("raw_logical_root")
+    result_path = fresh.get("result_path")
+    result_hash = fresh.get("result_sha256")
+    adapter_version = fresh.get("adapter_version")
+    if not all(isinstance(value, str) for value in (fresh_root, result_path, result_hash, adapter_version)):
+        return ["release.baseline-reuse-invalid"]
+    try:
+        validate_portable_path(result_path)
+        result_file = raw_root / fresh_root / result_path
+        result_bytes = result_file.read_bytes()
+        summary = json.loads(result_bytes)
+    except (OSError, json.JSONDecodeError):
+        return ["release.fresh-preflight-missing"]
+    if hashlib.sha256(result_bytes).hexdigest() != result_hash:
+        return ["release.fresh-preflight-hash-mismatch"]
+    diagnostics = validate_phase_gate(
+        summary, raw_root / fresh_root, "preflight", family, adapter_version, 5
+    )
+    if diagnostics:
+        return ["release.fresh-preflight-failed"]
+    return []
 
 
 def _synthetic_upgrade_evidence(from_version: str, to_version: str) -> dict[str, Any]:
@@ -296,6 +398,15 @@ def evaluate_release_acceptance(
             "release.certification-selection-invalid",
         )
         for selected in selection["selected"]:
+            if selected["mode"] == "baseline-reuse":
+                baseline_version = selected["baseline"]["process_package_version"]
+                current_version = manifest["process_package"]["version"]
+                if baseline_version == current_version:
+                    reject("evidence-failed")
+                    continue
+                for code in _validate_baseline_reuse(selected, payload, raw_root):
+                    reject("evidence-private" if code == "release.evidence-private" else "evidence-failed")
+                continue
             logical_root = selected["raw_logical_root"]
             evidence_path = selected["normalized_evidence_path"]
             validate_portable_path(evidence_path)

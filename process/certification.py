@@ -113,6 +113,11 @@ def _canonical_snapshot(root: Path) -> str:
     return digest.hexdigest()
 
 
+def _sha256_canonical_text(path: Path) -> str:
+    """Hash UTF-8 policy text after universal-newline normalization."""
+    return hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+
+
 def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[dict[str, Any]]:
     root = root.resolve()
     schema = json.loads((root / "process/schemas/role-output-fixture.schema.json").read_text(encoding="utf-8"))
@@ -122,7 +127,7 @@ def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[d
         path = root / Path(*relative.parts)
         if not path.is_file() or _is_link_or_reparse(path):
             raise CertificationError("certification.role-output-missing")
-        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        actual_hash = _sha256_canonical_text(path)
         if actual_hash != declaration.get("sha256"):
             raise CertificationError("certification.role-output-hash")
         payload = _load_yaml(path)
@@ -139,7 +144,7 @@ def validate_role_output_fixtures(root: Path, catalog: dict[str, Any]) -> list[d
                     or any(_is_link_or_reparse(root / Path(*source_relative.parts[:index]))
                            for index in range(1, len(source_relative.parts)))):
                 raise CertificationError("certification.role-output-source-missing")
-            source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+            source_hash = _sha256_canonical_text(source_path)
             if source_hash != source.get("sha256"):
                 raise CertificationError("certification.role-output-source-hash")
         validated.append({"role": payload["role"], "change_class": payload["change_class"],

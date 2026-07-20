@@ -100,7 +100,7 @@ def test_valid_golden_check_is_repeatable_private_and_hash_bound(external_tmp: P
     assert first["actual_model_run"] is False
     assert first["model"] == {"family": "not-executed", "id": "not-executed", "runtime": "not-executed"}
     assert first["adapter"] == {"family": "not-executed", "version": "not-executed"}
-    assert first["process_package_version"] == "0.3.0"
+    assert first["process_package_version"] == (ROOT / "process/VERSION").read_text(encoding="utf-8").strip()
     assert first["normalized_sha256"]
     normalized_copy = {key: value for key, value in first.items() if key != "normalized_sha256"}
     assert hashlib.sha256(json.dumps(normalized_copy, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == first["normalized_sha256"]

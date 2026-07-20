@@ -293,7 +293,7 @@ def build_read_pack(repository_root: Path, process_root: Path, request: dict[str
             problems.append({"code": "read-pack.source-too-large", "detail": relative})
             continue
         try:
-            text = raw.decode("utf-8")
+            text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             problems.append({"code": "read-pack.source-not-utf8", "detail": relative})
             continue
