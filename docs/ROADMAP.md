@@ -203,8 +203,8 @@ Likely scope:
 
 | Active change | Execution phase | Related phases | Lifecycle status |
 |---|---|---|---|
-| `allow-certified-baseline-reuse` | P3 | P4 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
-| `add-guided-owner-workflow` | P3 | P4, P5 | accepted under `D-023`; Linux/WSL2 evidence deferred to the Phase 4 entry gate |
+| `allow-certified-baseline-reuse` | P3 | P4 | accepted |
+| `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

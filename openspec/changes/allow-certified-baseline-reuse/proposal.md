@@ -38,4 +38,4 @@ raw evidence retention, AI-disabled fallback или immutable rc6.
 
 - Execution phase: P3
 - Related phases: P4
-- Lifecycle status: in_progress
+- Lifecycle status: accepted

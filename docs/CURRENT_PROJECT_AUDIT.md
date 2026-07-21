@@ -12,6 +12,20 @@ Last status reconciliation: 2026-07-20.
 - Change `add-guided-owner-workflow` owns the reusable catalog, guided CLI entry point, shared human/AI onboarding guide, authority boundary, synthetic route evidence, and successor-package verification. It is accepted for merge by `D-023`; it is not a corporate configuration task and does not modify immutable RC6, archived specs, historical raw evidence, or external systems.
 - Corporate adaptation and the real governed-change pilot move to Phase 4. Post-pilot hardening moves to Phase 5. No corporate configuration, wiring, credentials, integration, or pilot may begin until the new Phase 3 completion gate is met.
 
+## Phase 3 Documentation Reconciliation (2026-07-21)
+
+- The documentation audit corrected the exact lifecycle metadata for
+  `add-guided-owner-workflow` and `allow-certified-baseline-reuse` to
+  `accepted`, matching human decision `D-023`; the roadmap inverse table now
+  uses the same machine-readable status.
+- `openspec validate --all --strict` passes 15/15 and the roadmap/OpenSpec
+  validator reports zero errors. Two warnings remain for unrelated P2 changes
+  with complete tasks but no recorded lifecycle disposition.
+- Phase 3 itself remains `in_progress`: its final lifecycle disposition is not
+  inferred from acceptance of the two changes. Linux/WSL2 portability evidence
+  remains a mandatory Phase 4 entry condition, as recorded by `D-023`.
+- Evidence: `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-21.md`.
+
 ## Rc6 Documentation-Sync Audit (2026-07-20)
 
 - Human decision `D-020` accepts exact immutable `phase-2-14-rc6` as the external transfer baseline and closes Phase 2. Transfer task 7.4 and NIS task 8.7 are complete; progress is now 35/36 and 42/43. Corporate configuration and pilot work remain paused until the owner completes and reviews the local synthetic walkthrough.

@@ -2,7 +2,7 @@
 
 - Execution phase: P3
 - Related phases: P4, P5
-- Lifecycle status: in_progress
+- Lifecycle status: accepted
 
 ## Why
 
