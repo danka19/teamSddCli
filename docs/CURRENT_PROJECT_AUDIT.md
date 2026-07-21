@@ -275,3 +275,11 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Existing conflict to resolve in the future OpenSpec change: `process/catalogs/guided-owner-workflow.yaml` still declares an `mcp` unavailable-surface fallback and `docs/runbooks/GUIDED_OWNER_WORKFLOW.md` still names MCP. P3 remediation must remove those dependencies from the local route and its verification without deleting the separate P4 corporate-environment inventory contract.
 - Role evidence: neither the current chat nor an allowed `.ai-session.local.md` supplies the human role. `D-024`-`D-026` therefore record confirmed design direction and constraints, not a role-specific Spec Review, DoR, implementation, release, or archive decision.
 - Status: accepted intake and delivery boundary; human role plus detailed design review remain required before role-gated OpenSpec acceptance or implementation planning.
+
+### Распространение package-managed GigaCode-шаблона
+
+- Идея: не допустить расхождения между исправленными в sandbox role-gate инструкциями и reusable process package.
+- Источник: последующее действие после одобренного владельцем sandbox-hotfix 2026-07-21.
+- Тип: `scope_refinement`, `documentation_change`, `verification_change`.
+- Решение: `adopt_now` в `harden-role-aware-guided-workflow` / P3.
+- Результат: `process/gigacode/` — канонический источник; bootstrap устанавливает два declared-файла, а update fail-closed блокирует конфликтующий локальный managed-файл, не затрагивая другое содержимое `.gigacode`.

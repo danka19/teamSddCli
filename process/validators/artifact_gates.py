@@ -12,7 +12,7 @@ from .gate_input import lifecycle_state_was_reached
 from .policy_validation import EffectiveRule, PolicySnapshot
 
 
-TOOL_VERSION = "0.3.2"
+TOOL_VERSION = "0.3.3"
 
 _SUPPORTED_CLASSES = ("minor", "major", "hotfix")
 _SUPPORTED_STATES = (

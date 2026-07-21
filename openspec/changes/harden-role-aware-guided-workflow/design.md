@@ -20,3 +20,11 @@
 
 - Строгая evidence-проверка требует явного trusted reference → это намеренно fail-closed и не создаёт UI adapter.
 - Полный анализ Markdown не заменяется парсером → validator проверяет минимальные наблюдаемые инварианты и оставляет содержательный review человеку.
+
+## Канонический GigaCode package template
+
+Два исполняемых контекстных файла (`AGENTS.md` и `skills/sdd-process-companion.md`) являются versioned
+asset `process/gigacode/`, а не локальной копией sandbox. Bootstrap устанавливает их в `.gigacode/`.
+`check` и `update` сравнивают только эти declared files: совпадающий файл остаётся без изменений,
+файл, совпадающий со старым package, обновляется, а любое локальное отличие блокирует операцию с
+точным путём. Неуправляемые `.gigacode`-файлы не сканируются и не перезаписываются.

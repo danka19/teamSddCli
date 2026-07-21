@@ -153,6 +153,84 @@ def test_bootstrap_reuses_one_versioned_package_without_policy_fork(
     assert list(target.rglob("package.yaml")) == [target / "process" / "package.yaml"]
 
 
+def test_bootstrap_installs_managed_gigacode_role_gate(tmp_path: Path) -> None:
+    target = tmp_path / "workspace"
+
+    bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, target)
+
+    source = PROCESS / "gigacode" / "skills" / "sdd-process-companion.md"
+    installed = target / ".gigacode" / "skills" / "sdd-process-companion.md"
+    assert installed.read_bytes() == source.read_bytes()
+    assert "Какова ваша роль в этом чате" in installed.read_text(encoding="utf-8")
+
+
+def test_update_rejects_modified_managed_gigacode_file_without_mutation(
+    tmp_path: Path,
+) -> None:
+    workspace = tmp_path / "workspace"
+    bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, workspace)
+    installed = workspace / "process"
+    candidate = tmp_path / "candidate"
+    shutil.copytree(installed, candidate)
+    candidate_manifest = _yaml(candidate / "package.yaml")
+    candidate_manifest["package"]["version"] = "0.3.4"
+    (candidate / "package.yaml").write_text(
+        yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
+    )
+    (candidate / "VERSION").write_text("0.3.4\n", encoding="utf-8")
+
+    managed = workspace / ".gigacode" / "AGENTS.md"
+    managed.write_text("local override\n", encoding="utf-8")
+    process_before = (installed / "VERSION").read_bytes()
+    config_path = workspace / "team-specs" / "sdd.config.yaml"
+    config_before = config_path.read_bytes()
+
+    with pytest.raises(OperationError, match="gigacode-managed-file-conflict"):
+        update_process_package(
+            installed,
+            candidate,
+            config_path,
+            tmp_path / "rollbacks",
+            upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.4"),
+        )
+
+    assert (installed / "VERSION").read_bytes() == process_before
+    assert config_path.read_bytes() == config_before
+    assert managed.read_text(encoding="utf-8") == "local override\n"
+
+def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> None:
+    workspace = tmp_path / "workspace"
+    bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, workspace)
+    installed = workspace / "process"
+    candidate = tmp_path / "candidate"
+    shutil.copytree(installed, candidate)
+    candidate_manifest = _yaml(candidate / "package.yaml")
+    candidate_manifest["package"]["version"] = "0.3.4"
+    (candidate / "package.yaml").write_text(
+        yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
+    )
+    (candidate / "VERSION").write_text("0.3.4\n", encoding="utf-8")
+
+    config_path = workspace / "team-specs" / "sdd.config.yaml"
+    config = _yaml(config_path)
+    del config["policy_set"]["overrides"]
+    config["validation"] = {"mode": "strict"}
+    config["process_package"]["location"] = "../../process"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+
+    update_process_package(
+        installed,
+        candidate,
+        config_path,
+        tmp_path / "rollbacks",
+        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.4"),
+    )
+
+    migrated = _yaml(config_path)
+    assert migrated["policy_set"]["overrides"] == []
+    assert migrated["validation"] == {"strict": True, "placeholders_allowed": False}
+    assert migrated["process_package"]["location"] == "../process"
+
 def test_bootstrap_and_create_reject_unsafe_or_existing_destinations(
     tmp_path: Path,
 ) -> None:

@@ -1,7 +1,7 @@
 schema_version: "1.1"
 package:
   id: sdd-process
-  version: 0.3.2
+  version: 0.3.3
 openspec:
   cli_version: 1.4.1
 workflow: workflow.yaml
@@ -74,6 +74,11 @@ role_instructions:
   developer: roles/developer.md
   qa: roles/qa.md
   tech_lead: roles/tech-lead.md
+gigacode:
+  target: .gigacode
+  files:
+    - AGENTS.md
+    - skills/sdd-process-companion.md
 adapters:
   qwen_class: adapters/qwen-class.yaml
   deepseek_class: adapters/deepseek-class.yaml
@@ -111,6 +116,7 @@ distribution:
     - catalogs
     - certification
     - examples
+    - gigacode
     - policies
     - read-packs
     - roles

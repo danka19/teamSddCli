@@ -126,7 +126,15 @@
         "tech_lead": {"const": "roles/tech-lead.md"}
       }
     },
-    "adapters": {
+    "gigacode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "files"],
+      "properties": {
+        "target": {"const": ".gigacode"},
+        "files": {"const": ["AGENTS.md", "skills/sdd-process-companion.md"]}
+      }
+    },    "adapters": {
       "type": "object",
       "additionalProperties": false,
       "required": ["qwen_class", "deepseek_class", "gigacode_class"],
@@ -154,10 +162,10 @@
       "required": ["files", "roots"],
       "properties": {
         "files": {
-          "const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "guided_workflow.py", "analytics_artifacts.py", "guided_process_integrity.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]
+          "oneOf": [{"const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "guided_workflow.py", "guided_process_integrity.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]}, {"const": ["VERSION", "__init__.py", "actual_certification.py", "certification.py", "corporate_adaptation.py", "errors.py", "feedback_policy.py", "guided_workflow.py", "analytics_artifacts.py", "guided_process_integrity.py", "model_adapter.py", "operation_cli.py", "operation_plan.py", "package.yaml", "release-allowlist.yaml", "release-certification-selection.yaml", "release_candidate.py", "weak_model_kit.py", "workflow.yaml", "workflow_operations.py"]}]
         },
         "roots": {
-          "const": ["adapters", "catalogs", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]
+          "oneOf": [{"const": ["adapters", "catalogs", "certification", "examples", "policies", "read-packs", "roles", "schemas", "templates", "validators"]}, {"const": ["adapters", "catalogs", "certification", "examples", "gigacode", "policies", "read-packs", "roles", "schemas", "templates", "validators"]}]
         }
       }
     },

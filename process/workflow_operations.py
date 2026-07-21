@@ -73,6 +73,25 @@ def load_yaml_input(path: Path) -> dict[str, Any]:
     return value
 
 
+def _normalize_known_legacy_config(
+    config: dict[str, Any], installed_root: Path, central_root: Path
+) -> dict[str, Any]:
+    """Migrate only documented legacy defaults when their target is provably local."""
+    normalized = json.loads(json.dumps(config))
+    policy = normalized.get("policy_set")
+    if isinstance(policy, dict) and "overrides" not in policy:
+        policy["overrides"] = []
+    if normalized.get("validation") == {"mode": "strict"}:
+        normalized["validation"] = {"strict": True, "placeholders_allowed": False}
+    pin = normalized.get("process_package")
+    if (
+        isinstance(pin, dict)
+        and pin.get("location") == "../../process"
+        and (central_root.parent / "process").resolve() == installed_root.resolve()
+    ):
+        pin["location"] = "../process"
+    return normalized
+
 def bootstrap_team_specs(
     package_root: Path, team_template: Path, destination: Path
 ) -> dict[str, Any]:
@@ -94,6 +113,7 @@ def bootstrap_team_specs(
         staging.mkdir(parents=True)
         _copy_versioned_tree(package_root, staging / "process")
         _copy_versioned_tree(team_template, staging / "team-specs")
+        _install_gigacode_templates(package_root, staging)
         config_path = staging / "team-specs" / "sdd.config.yaml"
         config = _load_yaml(config_path)
         config["process_package"]["location"] = "../process"
@@ -506,7 +526,7 @@ def update_process_package(
     candidate_root = _safe_root(candidate_root, "candidate-package")
     config_path = _absolute(config_path)
     backup_root = _absolute(backup_root)
-    config = _load_yaml(config_path)
+    config = _normalize_known_legacy_config(_load_yaml(config_path), installed_root, config_path.parent)
     installed_snapshot = _validate_standalone_package(installed_root, config)
     candidate_snapshot = _validate_standalone_package(candidate_root, config, require_config_version=False)
     installed = installed_snapshot["identity"]
@@ -529,6 +549,9 @@ def update_process_package(
             "openspec_version": str(candidate_snapshot["package"]["openspec"]["cli_version"]),
         },
         evidence_root=upgrade_evidence_root,
+    )
+    gigacode_changes = _prepare_gigacode_update(
+        installed_root, candidate_root, installed_root.parent
     )
     _assert_non_overlapping(installed_root, backup_root)
     _assert_non_overlapping(candidate_root, backup_root)
@@ -559,8 +582,10 @@ def update_process_package(
         shutil.move(str(staged), str(installed_root))
         config["process_package"]["version"] = candidate["version"]
         _write_yaml_atomic(config_path, config)
+        _apply_gigacode_updates(gigacode_changes)
         shutil.rmtree(displaced)
     except Exception:
+        _restore_gigacode_updates(gigacode_changes)
         if staged.exists():
             shutil.rmtree(staged)
         if backup_staging.exists():
@@ -600,7 +625,7 @@ def check_package_compatibility(
     installed_root = _safe_root(installed_root, "installed-package")
     candidate_root = _safe_root(candidate_root, "candidate-package")
     config_path = _absolute(config_path)
-    config = _load_yaml(config_path)
+    config = _normalize_known_legacy_config(_load_yaml(config_path), installed_root, config_path.parent)
     installed_snapshot = _validate_standalone_package(installed_root, config)
     candidate_snapshot = _validate_standalone_package(candidate_root, config, require_config_version=False)
     installed = installed_snapshot["identity"]
@@ -610,6 +635,9 @@ def check_package_compatibility(
         raise OperationError("package-id-mismatch", "candidate package id differs")
     if _semver(candidate["version"]) <= _semver(installed["version"]):
         raise OperationError("package-downgrade-forbidden", "normal update requires a forward semantic version")
+    gigacode_changes = _prepare_gigacode_update(
+        installed_root, candidate_root, installed_root.parent
+    )
     reviewed_upgrade = validate_reviewed_upgrade_evidence(
         upgrade_evidence,
         from_identity={
@@ -633,6 +661,7 @@ def check_package_compatibility(
         "ai_disabled": True,
         "human_authority_substituted": False,
         "upgrade_evidence": reviewed_upgrade,
+        "managed_gigacode_files": [target.relative_to(installed_root.parent).as_posix() for _, target, _ in gigacode_changes],
     }
 
 
@@ -882,6 +911,92 @@ def _copy_versioned_tree(source: Path, destination: Path) -> None:
         return
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"))
 
+
+def _install_gigacode_templates(package_root: Path, workspace_root: Path) -> None:
+    """Install declared GigaCode templates into a new empty workspace."""
+    _apply_gigacode_updates(_prepare_gigacode_update(None, package_root, workspace_root))
+
+
+def _prepare_gigacode_update(
+    installed_root: Path | None, candidate_root: Path, workspace_root: Path
+) -> list[tuple[Path, Path, bytes | None]]:
+    """Return only safe managed-file writes; fail before mutating local overrides."""
+    candidate_files = _gigacode_template_files(candidate_root)
+    if not candidate_files:
+        return []
+    previous_files = _gigacode_template_files(installed_root) if installed_root is not None else {}
+    workspace = _absolute(workspace_root)
+    managed_root = workspace / ".gigacode"
+    if managed_root.exists() and (not managed_root.is_dir() or _is_link_or_reparse(managed_root)):
+        raise OperationError("gigacode-target-unsafe", "managed .gigacode target must be a regular directory")
+    changes: list[tuple[Path, Path, bytes | None]] = []
+    for relative, source in candidate_files.items():
+        target = managed_root / relative
+        try:
+            target.relative_to(managed_root)
+        except ValueError as error:
+            raise OperationError("gigacode-target-unsafe", "managed GigaCode file escapes .gigacode") from error
+        if target.exists():
+            if not target.is_file() or _is_link_or_reparse(target):
+                raise OperationError("gigacode-managed-file-conflict", target.as_posix())
+            current = target.read_bytes()
+            if current == source.read_bytes():
+                continue
+            previous = previous_files.get(relative)
+            if previous is None or current != previous.read_bytes():
+                raise OperationError("gigacode-managed-file-conflict", target.as_posix())
+            changes.append((source, target, current))
+        else:
+            changes.append((source, target, None))
+    return changes
+
+
+def _gigacode_template_files(package_root: Path | None) -> dict[str, Path]:
+    if package_root is None:
+        return {}
+    package = _load_yaml(package_root / "package.yaml")
+    contract = package.get("gigacode")
+    if contract is None:
+        return {}
+    if not isinstance(contract, dict) or contract.get("target") != ".gigacode":
+        raise OperationError("package-contract-invalid", "GigaCode manifest target is invalid")
+    files = contract.get("files")
+    if not isinstance(files, list) or not files:
+        raise OperationError("package-contract-invalid", "GigaCode manifest files are missing")
+    template_root = _declared_directory(package_root, "gigacode")
+    result: dict[str, Path] = {}
+    for relative in files:
+        if not isinstance(relative, str) or relative in result:
+            raise OperationError("package-contract-invalid", "GigaCode manifest file is invalid")
+        result[relative] = _declared_file(template_root, relative)
+    return result
+
+
+def _apply_gigacode_updates(changes: list[tuple[Path, Path, bytes | None]]) -> None:
+    for source, target, _ in changes:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        _write_bytes_atomic(target, source.read_bytes())
+
+
+def _restore_gigacode_updates(changes: list[tuple[Path, Path, bytes | None]]) -> None:
+    for _, target, original in reversed(changes):
+        if original is None:
+            if target.exists():
+                target.unlink()
+        else:
+            _write_bytes_atomic(target, original)
+
+
+def _write_bytes_atomic(path: Path, payload: bytes) -> None:
+    staging = path.with_name(f".{path.name}.candidate")
+    if staging.exists():
+        raise OperationError("staging-exists", "managed GigaCode staging path already exists")
+    try:
+        staging.write_bytes(payload)
+        os.replace(staging, path)
+    finally:
+        if staging.exists():
+            staging.unlink()
 
 def _validate_standalone_package(
     root: Path,

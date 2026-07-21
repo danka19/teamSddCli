@@ -139,3 +139,11 @@ Reusable defects found during setup must be reported against the external
 canonical repository with candidate payload digest, package/config versions,
 diagnostic code, and sanitized reproduction. Do not patch the corporate copy
 or create an internal process fork.
+
+## Управляемые GigaCode-шаблоны
+
+Package версии `0.3.3` содержит канонические шаблоны `.gigacode/AGENTS.md` и
+`.gigacode/skills/sdd-process-companion.md`; bootstrap устанавливает их в новый workspace.
+Перед update детерминированная проверка сравнивает только эти declared files: локальное отличие
+блокирует update с `gigacode-managed-file-conflict` и точным путём, а остальные `.gigacode`-файлы
+не затрагиваются. Это сохраняет единый reusable source без перезаписи локальной работы.
