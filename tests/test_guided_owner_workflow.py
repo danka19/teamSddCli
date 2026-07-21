@@ -29,7 +29,7 @@ def test_new_requirement_route_is_read_only_and_names_classification_decision(
     classification: str, capsys,
 ) -> None:
     assert guided_main([
-        "new-requirement", "--fact", f"classification={classification}", "--json",
+        "new-requirement", "--fact", f"classification={classification}", "--fact", "human_role=Change Owner", "--json",
     ]) == 0
 
     payload = _payload(capsys)
@@ -37,7 +37,7 @@ def test_new_requirement_route_is_read_only_and_names_classification_decision(
     assert payload["status"] == "guided"
     assert payload["route_id"] == "new-requirement"
     assert payload["lifecycle_mutated"] is False
-    assert payload["known_facts"] == {"classification": classification}
+    assert payload["known_facts"] == {"classification": classification, "human_role": "Change Owner"}
     assert payload["commands"] == [
         "scripts/create_change.py",
         "scripts/classify_change.py",
@@ -48,7 +48,7 @@ def test_new_requirement_route_is_read_only_and_names_classification_decision(
 
 def test_existing_change_requires_known_lifecycle_state_and_never_guesses(capsys) -> None:
     assert guided_main([
-        "existing-change", "--fact", "change_id=sample-minor-001", "--json",
+        "existing-change", "--fact", "change_id=sample-minor-001", "--fact", "human_role=Change Owner", "--json",
     ]) == 1
     payload = _payload(capsys)
     assert payload["status"] == "blocked"
@@ -61,10 +61,10 @@ def test_existing_change_requires_known_lifecycle_state_and_never_guesses(capsys
 @pytest.mark.parametrize(
     ("situation", "facts", "expected_code"),
     [
-        ("new-requirement", ["classification=unclassified"], "invalid-context"),
+        ("new-requirement", ["classification=unclassified", "human_role=Change Owner"], "invalid-context"),
         (
             "existing-change",
-            ["change_id=sample-minor-001", "lifecycle_state=delivered"],
+            ["change_id=sample-minor-001", "lifecycle_state=delivered", "human_role=Change Owner"],
             "invalid-context",
         ),
     ],
@@ -81,7 +81,7 @@ def test_declared_context_values_are_validated_before_routing(
 
 def test_unavailable_surface_returns_catalog_fallback_without_weakening_gate(capsys) -> None:
     assert guided_main([
-        "urgent-incident", "--fact", "incident_ref=evidence/INC-001.md",
+        "urgent-incident", "--fact", "incident_ref=evidence/INC-001.md", "--fact", "human_role=Tech Lead",
         "--unavailable", "model-runtime", "--json",
     ]) == 0
     payload = _payload(capsys)

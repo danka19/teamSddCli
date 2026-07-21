@@ -1,0 +1,2 @@
+schema_version: "1.0"
+entities: [{id: APPLICATION, attributes: [{id: amount, classification: internal}]}]

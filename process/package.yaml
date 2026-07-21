@@ -1,7 +1,7 @@
 schema_version: "1.1"
 package:
   id: sdd-process
-  version: 0.3.1
+  version: 0.3.2
 openspec:
   cli_version: 1.4.1
 workflow: workflow.yaml
@@ -93,6 +93,8 @@ distribution:
     - errors.py
     - feedback_policy.py
     - guided_workflow.py
+    - analytics_artifacts.py
+    - guided_process_integrity.py
     - model_adapter.py
     - operation_cli.py
     - operation_plan.py

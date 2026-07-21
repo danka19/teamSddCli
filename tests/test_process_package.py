@@ -71,6 +71,14 @@ SCHEMA_FILES = {
     "corporate_adaptation_checklist": "corporate-adaptation-checklist.schema.json",
     "corporate_pilot_evidence": "corporate-pilot-evidence.schema.json",
     "corporate_no_fork_assessment": "corporate-no-fork-assessment.schema.json",
+    "analytics_manifest": "analytics-manifest.schema.json",
+    "status_model": "status-model.schema.json",
+    "channel_support": "channel-support.schema.json",
+    "data_model": "data-model.schema.json",
+    "platform_services": "platform-services.schema.json",
+    "journey": "journey.schema.json",
+    "screens": "screens.schema.json",
+    "integrations": "integrations.schema.json",
 }
 
 SENSITIVE_PATTERNS = {

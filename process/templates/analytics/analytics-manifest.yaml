@@ -1,0 +1,3 @@
+schema_version: "1.0"
+capability_id: SAMPLE
+artifacts: [status-model.yaml, channel-support.yaml, data-model.yaml, platform-services.yaml, journey.yaml, screens.yaml, integrations.yaml]

@@ -1,0 +1,2 @@
+schema_version: "1.0"
+integrations: [{id: JIRA, system: Jira, mode: passive, stable_reference: JIRA:PROJECT, manual_evidence: evidence/manual.md}]

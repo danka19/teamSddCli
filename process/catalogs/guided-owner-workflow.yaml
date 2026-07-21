@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 catalog_id: guided-owner-workflow
 routes:
   - id: new-requirement
@@ -38,9 +38,7 @@ routes:
       id: applicable-gate-decision
       owner: Change Owner
       consequence: The change remains at its recorded state.
-    fallbacks:
-      - surface: mcp
-        command: scripts/manual_fallback.py --unavailable mcp
+    fallbacks: []
   - id: urgent-incident
     situation: urgent-incident
     required_facts:

@@ -20,7 +20,9 @@ ALLOWED_COMMANDS = {
     "scripts/prepare_archive.py",
     "scripts/manual_fallback.py",
 }
-ALLOWED_OWNERS = {"Tech Lead", "Change Owner"}
+ALLOWED_OWNERS = {"Tech Lead", "Change Owner", "Analyst", "Developer", "QA", "Release Owner"}
+IMPLEMENTATION_ROLES = {"Tech Lead", "Change Owner"}
+KNOWN_ROLES = ALLOWED_OWNERS
 
 
 def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
@@ -29,7 +31,7 @@ def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
         catalog = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, yaml.YAMLError) as error:
         raise OperationError("catalog-invalid", "guided workflow catalog is unavailable") from error
-    if not isinstance(catalog, dict) or catalog.get("schema_version") != "1.0":
+    if not isinstance(catalog, dict) or catalog.get("schema_version") not in {"1.0", "1.1"}:
         raise OperationError("catalog-invalid", "guided workflow catalog has an unsupported shape")
     routes = catalog.get("routes")
     if not isinstance(routes, list) or not routes:
@@ -74,6 +76,11 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
     route = next((item for item in catalog["routes"] if item["id"] == situation), None)
     if route is None:
         return _blocked("situation-unknown", [])
+    role = facts.get("human_role")
+    if not role:
+        return _blocked("unknown-role", ["human_role"])
+    if role not in KNOWN_ROLES:
+        return _blocked("invalid-role", ["human_role"])
     missing = [key for key in route["required_facts"] if not facts.get(key)]
     if missing:
         return _blocked("missing-context", missing)
@@ -92,15 +99,24 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
         "status": "guided",
         "schema_version": "1.0",
         "route_id": route["id"],
-        "known_facts": {key: facts[key] for key in route["required_facts"]},
+        "known_facts": {**{key: facts[key] for key in route["required_facts"]}, "human_role": role},
         "commands": route["commands"],
         "expected_evidence": route["evidence"],
         "human_decision": route["human_decision"],
         "unavailable": sorted(unavailable),
+        "cta": _cta(route, role, facts),
         "fallbacks": fallbacks,
         "lifecycle_mutated": False,
         "external_state_mutated": False,
     }
+
+
+def _cta(route: dict[str, Any], role: str, facts: dict[str, str]) -> str:
+    if facts.get("lifecycle_state") == "approved":
+        return "begin-approved-implementation" if role in IMPLEMENTATION_ROLES else "request-authorized-human"
+    if role == "Analyst":
+        return "prepare-one-draft-and-stop"
+    return "follow-catalog-route"
 
 
 def _blocked(code: str, required_facts: list[str]) -> dict[str, Any]:

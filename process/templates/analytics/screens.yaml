@@ -1,0 +1,2 @@
+schema_version: "1.0"
+screens: [{id: SCR-SAMPLE-001, asset: assets/screens/SCR-SAMPLE-001.png, source: synthetic, requirements: [REQ-SAMPLE-001], scenarios: [SCEN-SAMPLE-001-01]}]
