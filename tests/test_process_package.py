@@ -67,6 +67,7 @@ SCHEMA_FILES = {
     "role_output_fixture": "role-output-fixture.schema.json",
     "actual_certification_operational_result": "actual-certification-operational-result.schema.json",
     "guided_owner_workflow": "guided-owner-workflow.schema.json",
+    "spec_acceptance": "spec-acceptance.schema.json",
     "corporate_environment_inventory": "corporate-environment-inventory.schema.json",
     "corporate_adaptation_checklist": "corporate-adaptation-checklist.schema.json",
     "corporate_pilot_evidence": "corporate-pilot-evidence.schema.json",
