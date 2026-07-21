@@ -41,6 +41,17 @@ Status: in_progress.
 
 ### 3.1 Role-aware acceptance and readiness gate
 
+Status: in_progress.
+
+OpenSpec mapping: `harden-role-aware-guided-workflow`.
+
+Progress evidence:
+
+- [x] Fail-closed interactive role policy and readiness-validation baseline are implemented and transferred in package `0.3.4`.
+- [ ] Implement the human decision-card and confirmation-event contract documented in the active change.
+- [ ] Implement proactive discovery recommendations and their negative transcript checks.
+- [ ] Validate the completed successor flow and transfer it through the controlled package mechanism.
+
 Objective:
 
 - Implement fail-closed role selection, trusted revision-bound acceptance, and DoR-preserving guided integrity validation.
@@ -59,6 +70,17 @@ Exit criteria:
 
 ### 3.2 Typed analytics artifact framework
 
+Status: in_progress.
+
+OpenSpec mapping: `add-typed-analytics-artifact-framework`.
+
+Progress evidence:
+
+- [x] The OpenSpec contract and initial failing validation fixture are defined.
+- [ ] Implement typed schemas, templates, validators, and deterministic previews.
+- [ ] Add the sanitized end-to-end fixture and focused verification.
+- [ ] Transfer the validated successor package through the controlled package mechanism.
+
 Objective:
 
 - Add seven YAML artifact contracts, templates, deterministic validation, and local read-only preview with a sanitized example.
@@ -76,6 +98,15 @@ Exit criteria:
 - Every artifact is schema/semantic validated, traceable, free of placeholders, and previewed without integrations or product payment screens.
 
 ### 3.3 Package and sandbox transfer
+
+Status: planned.
+
+OpenSpec mapping: both active P3 changes; this work item depends on their validated successor implementation.
+
+Baseline evidence:
+
+- [x] Package `0.3.4` was transferred through the controlled mechanism before these successor changes.
+- [ ] Package and transfer the successor after work items 3.1 and 3.2 meet their verification gates.
 
 Objective:
 

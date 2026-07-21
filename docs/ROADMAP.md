@@ -109,7 +109,9 @@ Phase gate:
 
 Status: in_progress.
 
-A detailed phase plan has not been accepted yet.
+Detailed execution plan: `docs/phases/PHASE_3_GUIDED_ROLE_AND_ANALYTICS_VERTICAL_SLICE.md`.
+
+The plan is active and carries the authoritative status of each P3 work item; this roadmap records the lifecycle status of the phase and its OpenSpec changes.
 
 Goal: make the external reusable process package self-service for a human or AI assistant before any corporate installation. A user starts with a business situation and receives only the applicable commands, evidence expectations, deterministic fallbacks, and explicit human decision boundaries.
 
@@ -129,6 +131,14 @@ Likely scope:
 - Define the source contract and a deterministic sample rendering for screen/integration/analytics views in the external package; do not use this item to perform live corporate publication or wiring.
 - Prove the minor, major, hotfix, negative authority, and failed-run routes using synthetic evidence; do not use corporate data, credentials, or services.
 - Version and verify the successor package before it becomes the corporate adaptation baseline.
+
+Current work-item map:
+
+| Work item | Status | OpenSpec change |
+|---|---|---|
+| 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow` |
+| 3.2 Typed analytics artifact framework | in_progress | `add-typed-analytics-artifact-framework` |
+| 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 

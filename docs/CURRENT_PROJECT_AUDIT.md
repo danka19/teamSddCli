@@ -26,6 +26,12 @@ Last status reconciliation: 2026-07-20.
   remains a mandatory Phase 4 entry condition, as recorded by `D-023`.
 - Evidence: `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_DOCUMENTATION_RECONCILIATION_AUDIT_2026-07-21.md`.
 
+## P3 Work-Item Status Reconciliation (2026-07-21)
+
+- The active Phase 3 plan now provides explicit scanner-readable statuses and OpenSpec mappings for work items `3.1` through `3.3`; the roadmap links to that plan rather than incorrectly claiming no detailed P3 plan exists.
+- `3.1` and `3.2` are `in_progress`; `3.3` is `planned` because package `0.3.4` is only the already-transferred baseline and the successor transfer must follow validation of both active P3 changes.
+- The phase remains `in_progress`. A closed OpenSpec change is not sufficient evidence to close a roadmap work item or the phase; the mapped phase-plan exit criteria and verification gate must also be satisfied.
+
 ## Rc6 Documentation-Sync Audit (2026-07-20)
 
 - Human decision `D-020` accepts exact immutable `phase-2-14-rc6` as the external transfer baseline and closes Phase 2. Transfer task 7.4 and NIS task 8.7 are complete; progress is now 35/36 and 42/43. Corporate configuration and pilot work remain paused until the owner completes and reviews the local synthetic walkthrough.
