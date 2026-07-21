@@ -69,6 +69,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md` | Successor certification audit covering rc5 fail-closed history, immutable rc6 identity, fresh model/AI-disabled/platform evidence, exact raw closure, verification, and independent review |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Accepted human-decision record for exact immutable candidate rc6, including checksums, evidence, limits, and consequences |
 | `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_IMPLEMENTATION_AUDIT_2026-07-20.md` | Evidence-backed checkpoint for the implemented guided-operation slice, its verification, status reconciliation, and remaining successor-release gates |
+| `docs/audits/GIGACODE_ROLE_ACCEPTANCE_AND_FRAMEWORK_READINESS_AUDIT_2026-07-21.md` | Read-only sandbox audit of GigaCode role resolution, role-scoped UI, literal human evidence, premature acceptance paths, validator/template drift, retained analytics inputs, and missing framework-ready schemas/integration/screen contracts |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |

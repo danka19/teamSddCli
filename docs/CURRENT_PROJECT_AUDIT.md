@@ -81,7 +81,7 @@ Last status reconciliation: 2026-07-20.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 20/33 tasks complete and 13 remaining; `adopt-nis-corporate-process-governance` has 38/43 tasks complete and 5 remaining. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are execution-complete. Task 7.5 and NIS task 8.8 remain Phase 3 work. Both changes remain `in_progress`.
 - This historical 2026-07-15 snapshot predates adapter `2.2` and `D-018`. Its earlier fallback-only and adapter `2.1` blockers are superseded; the current accepted contour is Windows plus Linux/WSL2 with macOS explicitly not certified, and work item 2.12 is closed.
 
-Last updated: 2026-07-20.
+Last updated: 2026-07-21.
 
 ## Repository Baseline
 
@@ -168,6 +168,9 @@ Last updated: 2026-07-20.
 | AUDIT-023 | `D-016` makes broader risk-oriented positive/negative testing and end-to-end requirement/scenario evidence traceability explicit reliability mechanisms, and safe parallel AI execution an explicit throughput mechanism. The transfer change now requires independent ownership/write scopes, separate evidence, serialization of conflicts, and a deterministic combined integration gate. This is not the excluded process-effectiveness measurement program. | Phase 2/4 | open |
 | AUDIT-027 | Rc4 contains the immutable historical `204 covered / 110 gaps / 20 future_work` report; its uniform residual metadata is a mechanical fallback, not an individual risk assessment. Package `0.3.0` binds 68 Phase 2 selectors to exact test evidence, 22 governance rows to primary decisions/audits, 12 Phase 3/4 rows to `future_work`, and the first-MVP boundary to `D-019`. Candidate rc6 certifies `295/7/32` and is accepted under `D-020`. | Phase 2/3/4 | closed |
 | AUDIT-028 | The 13 product gaps were normalized into six intake groups. Delta semantics, archive history, and reviewed upgrade evidence are implemented and certified in package `0.3.0` with six exact tests. Feedback disposition is deferred to P4, CODEOWNERS derivation/validation to P3, and AI traceability suggestions plus legacy baseline onboarding to P4; all seven deferred selectors remain visible gaps. Immutable rc6 passed full verification and independent review and is accepted under `D-020`. | Phase 2/3/4 | mitigated |
+| AUDIT-029 | The 2026-07-21 read-only GigaCode audit found that the documented guided flow is not enforced end to end: unknown role is not a validator stop, human and AI role vocabularies diverge, the implementation next action is role-neutral, acceptance provenance is reducible to an AI-writable YAML constant, spec readiness checks are incomplete, and the response-summary check does not prove what the human saw. `D-024` accepts remediation through a new P3 OpenSpec change; current successor evidence must not be used to claim this observed path is already safe. | Phase 3 | open |
+| AUDIT-030 | `D-025` makes typed analytics persistence and screen/journey/integration source contracts part of pre-corporate framework readiness. The detailed corporate-template analysis and 38 git-ignored source photos are retained, but `process/schemas/` and `process/templates/` still lack status-model, channel-support, data-model, platform-services, journey, screen, and integration-descriptor contracts; `templates/team-specs/analytics/` contains only `.gitkeep`. New OpenSpec design, deterministic validators, fixtures, and one sanitized end-to-end example are required. | Phase 3/4/5 | open |
+| AUDIT-031 | The exact new-chat transcript, raw GigaCode UI payload, and current change package for the payment-screen requirement were not found in the sandbox root or Git path history. The historical audit proves that an earlier `change-001` package was inspected, but it is not a substitute for the missing source content. Any detailed reconstruction of those payment screens remains `unverified` and must be re-supplied or recovered from an authoritative human/chat export. | Phase 3 | open |
 
 ## Accepted Human Decisions
 
@@ -245,3 +248,27 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Canonical implementation: `AGENTS.md` owns the concise responsibility rule; `docs/AI_STEP_VERIFICATION_CHECKLIST.md` owns the operational reporting and verification checklist; `docs/CONTEXT.md` defines the term.
 - Verification impact: substantive reports must map applied criteria to their sources, record evidence and limitations, state residual gaps, and recommend the next useful human action.
 - Status: recorded and active.
+
+## 2026-07-21 GigaCode And Framework-Readiness Intake
+
+### Role-aware guided workflow remediation
+
+- Idea: make the documented role, stage, summary, literal human evidence, and one-next-step rules mechanically enforceable in GigaCode and AI-disabled operation.
+- Source: owner walkthrough and read-only sandbox audit on 2026-07-21.
+- Type: `workflow_behavior_rule`, `artifact_contract`, `acceptance_criterion`, `verification_step`, `rejected_behavior`.
+- Decision: `create_openspec_change`.
+- Primary roadmap phase: P3; related phases: P4, P5.
+- Reason: the current implementation permits a role-neutral implementation action and self-declared acceptance evidence even though prose forbids both. This changes externally visible workflow behavior and cannot be fixed as docs-only guidance.
+- Human decision: `D-024` accepts the remediation direction. The new change must still present the exact role mapping, evidence schema, revision binding, UI contract, and negative scenarios for review before implementation.
+- Status: accepted intake; OpenSpec change not yet created in this session.
+
+### Typed analytics, integration, journey and screen framework
+
+- Idea: promote the retained analytics-template plan into a working external artifact framework with typed storage, conditional schemas, templates, validators, integration descriptors, journey/screen catalogs, stable assets, and one sanitized business-requirement-to-review example.
+- Source: owner clarification on 2026-07-21 plus `docs/planning/ANALYTIC_TEMPLATE_STRUCTURE_AND_MIGRATION_PLAN_2026-07-06.md`.
+- Type: `scope_refinement`, `architecture_note`, `artifact_contract`, `data_contract_change`, `integration_change`, `verification_request`.
+- Decision: `create_openspec_change`.
+- Candidate primary roadmap phase: P3 for reusable external contracts and deterministic sample rendering; related phases P4 for approved live wiring and P5 for post-pilot generated-view expansion.
+- Reason: `AUDIT-011` and `AUDIT-018` correctly record the concept, but no working schemas/templates/validators exist. Reusable design must be completed outside the corporate environment; real service values and mutations must remain corporate evidence.
+- Human decision: `D-025` accepts that these contracts are part of framework readiness. One design boundary remains to be reviewed explicitly: whether P3 delivers only deterministic sample rendering or a broader operator-facing UI/gallery before the pilot.
+- Status: accepted intake; OpenSpec change not yet created in this session.

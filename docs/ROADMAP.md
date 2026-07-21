@@ -124,8 +124,18 @@ Likely scope:
 - Define a versioned situation-to-operation catalog shared by human guidance, AI instructions, and a guided CLI entry point.
 - Publish and validate one onboarding guide beginning with a business requirement, then progressing through Delta Spec, gates, implementation, QA, evidence, release, and archive preparation.
 - Provide deterministic blocks and manual/AI-disabled fallback for missing context, unavailable models/integrations, failed operations, and human-decision gates.
+- Remediate the observed GigaCode role and acceptance gap under `D-024`: unknown role is fail-closed, role authority limits every UI action, Analyst cannot receive an implementation CTA, and human acceptance is bound to a trusted event plus the exact reviewed spec revision.
+- Under `D-025`, define and verify the reusable analytics package contract before calling the framework ready for an analyst: typed status/channel/data/platform-service records, journey and screen catalogs, integration references, stable asset/source metadata, conditional applicability, templates, validators, and one sanitized worked example.
+- Define the source contract and a deterministic sample rendering for screen/integration/analytics views in the external package; do not use this item to perform live corporate publication or wiring.
 - Prove the minor, major, hotfix, negative authority, and failed-run routes using synthetic evidence; do not use corporate data, credentials, or services.
 - Version and verify the successor package before it becomes the corporate adaptation baseline.
+
+Additional completion conditions from the 2026-07-21 owner walkthrough:
+
+- A real GigaCode walkthrough must preserve the prompt/response/event evidence needed to prove the role gate, revision-bound summary, literal human decision, Analyst stop point, and AI-disabled fallback without private data.
+- Schemas, templates, validators, examples, role instructions, guided catalog, and generated/sample views must be checked for drift from one OpenSpec contract.
+- Missing chat/UI payload and missing payment-screen package content must be reported as unavailable; they cannot be reconstructed as accepted requirements.
+- Live Jira/Confluence/Bitbucket/Jenkins values, credentials, approved wiring, and external mutations remain Phase 4 evidence and are not prerequisites that may be fabricated in Phase 3.
 
 ## Phase 4. Corporate Adaptation And Real Governed-Change Pilot
 
