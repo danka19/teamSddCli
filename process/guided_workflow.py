@@ -21,7 +21,7 @@ ALLOWED_COMMANDS = {
     "scripts/manual_fallback.py",
 }
 INTERACTIVE_ROLES = {"Analyst", "Tech Lead", "Developer", "QA"}
-DECISION_OWNERS = {"Analyst", "Tech Lead"}
+DECISION_OWNERS = {"Analyst", "Tech Lead", "Change Owner"}  # legacy catalog record only
 KNOWN_ROLES = INTERACTIVE_ROLES
 
 

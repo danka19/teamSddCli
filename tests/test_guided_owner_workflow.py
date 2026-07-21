@@ -145,3 +145,17 @@ def test_guide_validator_is_cwd_independent(tmp_path: Path) -> None:
     assert completed.returncode == 0
     assert json.loads(completed.stdout)["status"] == "valid"
     assert completed.stderr == ""
+
+
+def test_legacy_catalog_owner_label_is_migratable_but_not_an_interactive_role(tmp_path: Path) -> None:
+    catalog = tmp_path / "legacy-catalog.yaml"
+    catalog.write_text(
+        (PROCESS / "catalogs" / "guided-owner-workflow.yaml").read_text(encoding="utf-8").replace(
+            "owner: Analyst", "owner: Change Owner"
+        ),
+        encoding="utf-8",
+    )
+
+    loaded = load_catalog(catalog)
+
+    assert loaded["routes"][1]["human_decision"]["owner"] == "Change Owner"
