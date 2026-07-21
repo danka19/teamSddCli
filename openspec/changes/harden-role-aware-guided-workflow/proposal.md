@@ -29,3 +29,9 @@ P3 guided workflow currently allows role-sensitive routes without a known human 
 ## Impact
 
 Changes the local process-package catalog, guided workflow code and schemas, integrity validator, templates, role/read-pack instructions, runbook, package registry, and focused tests. It adds no network, MCP, credentials, or external mutation.
+
+## Принятые уточнения 2026-07-21
+
+- Добавить двухшаговую карточку решения `DEC-…`: первое естественное решение человека создаёт только карточку, а второе сообщение `Подтверждаю DEC-…` либо короткое `Подтверждаю` в следующем сообщении подтверждает именно показанную карточку.
+- Добавить proactive depth recommendation: в режиме `обычно` агент сам выявляет существенные неизвестные и предлагает углубить обсуждение, принять safe defaults либо отложить решение; молчание не является согласием.
+- Локальная форма использует тот же confirmation-event contract позже и не входит в P3 implementation.

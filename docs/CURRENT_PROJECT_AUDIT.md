@@ -283,3 +283,10 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Тип: `scope_refinement`, `documentation_change`, `verification_change`.
 - Решение: `adopt_now` в `harden-role-aware-guided-workflow` / P3.
 - Результат: `process/gigacode/` — канонический источник; bootstrap устанавливает два declared-файла, а update fail-closed блокирует конфликтующий локальный managed-файл, не затрагивая другое содержимое `.gigacode`.
+
+## P3 Chat Decision and Discovery Intake (2026-07-21)
+
+- Human decision adopts `adopt_now` remediation for the confirmed `payments-screen` audit findings: P3 will use a two-step `DEC-…` decision card, accept an active-card short `Подтверждаю`, preserve both verbatim human messages and revision binding, and never derive authority from AI-authored YAML/status text.
+- In `обычно` intake mode, GigaCode must proactively recommend deeper discussion when a material change-specific unknown affects behavior, scope, UX, runtime, risk or verification. Silence does not accept a default or allow a readiness claim.
+- Local form/command is explicitly deferred as a future stronger producer of the same confirmation-event contract; it is not a P3 dependency.
+- Evidence: `sdd-workflow-playground/docs/audits/PAYMENTS_SCREEN_GUIDED_PACKAGE_AUDIT_2026-07-21.md`; execution scope: `harden-role-aware-guided-workflow`.

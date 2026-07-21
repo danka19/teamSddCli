@@ -35,3 +35,29 @@ P3 guided catalog, runbook, and read-pack SHALL contain no MCP invocation, setup
 #### Scenario: Existing-change route has no MCP fallback
 - **WHEN** the local existing-change route is rendered
 - **THEN** its fallback list SHALL not include MCP and it SHALL not request any external integration action
+
+### Requirement: Human-confirmed decision card
+P3 guided workflow SHALL represent a natural-language human decision as a non-authoritative `decision_draft` card bound to one change and revision before it can become a recorded decision.
+
+#### Scenario: Natural-language decision prepares but does not record
+- **WHEN** an Analyst writes a natural-language decision such as “Принимаю спецификацию” for a shown revision
+- **THEN** the workflow SHALL show one `DEC-…` card with the quoted message, revision digest and one stated consequence, and SHALL not create acceptance, DoR or implementation authority
+
+#### Scenario: Card confirmation records only the active decision
+- **WHEN** the next human message is `Подтверждаю DEC-…` or normalized `Подтверждаю` for the active unexpired card
+- **THEN** the workflow SHALL record the decision with both verbatim human messages and the bound revision digest
+
+#### Scenario: Ambiguous chat text cannot record a decision
+- **WHEN** the human writes “что дальше?”, “да”, “продолжай”, an unrelated message, or a confirmation after another message/card
+- **THEN** the workflow SHALL keep the decision unconfirmed and SHALL not mutate acceptance, DoR or lifecycle authority
+
+### Requirement: Proactive discovery completeness
+In `обычно` mode P3 guided workflow SHALL proactively surface material unresolved decision areas before declaring intake sufficient or preparing a spec draft.
+
+#### Scenario: Material unknowns receive an explicit choice
+- **WHEN** a requirement leaves a material area unresolved that changes behavior, scope, UX, runtime, risk or verification
+- **THEN** the workflow SHALL describe the impact and offer `углубиться`, `принять defaults`, or `подготовить draft с открытыми решениями`
+
+#### Scenario: Silence is not default acceptance
+- **WHEN** the human does not explicitly choose a proposed default or deferral
+- **THEN** the workflow SHALL retain the area as unresolved and SHALL not report intake or spec readiness as sufficient

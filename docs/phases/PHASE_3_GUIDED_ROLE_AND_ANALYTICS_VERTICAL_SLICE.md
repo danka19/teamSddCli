@@ -92,3 +92,18 @@ Exit criteria:
 ## Phase Gate
 
 - Local deterministic evidence is complete; no MCP/tool invocation, credential, live integration, product payment UI, or corporate adaptation is introduced. Human acceptance of the P3 changes remains a separate lifecycle decision.
+
+### Change Intake — human-confirmed decisions and proactive discovery (2026-07-21)
+
+```text
+Idea: Let a colleague record a decision in ordinary chat without allowing GigaCode to invent words, acceptance, DoR or a transition; require proactive depth recommendations in ordinary intake.
+Source: Human decision after PAY-AUD-001 through PAY-AUD-005.
+Type: bug_fix, scope_refinement, architecture_change, data_contract_change, verification_change, documentation_change.
+Decision: adopt_now.
+Reason: Current AI-write acceptance evidence and premature sufficiency inference make the role-aware P3 gate unsafe.
+Affected specs: role-aware-guided-workflow; change-lifecycle; traceability-contract.
+Affected architecture: local typed decision-draft/confirmation-event and discovery-map contracts; no network, MCP, credentials or corporate integration.
+Data contract impact: DEC code, active-card state, two verbatim human messages, revision binding, expiry and discovery-resolution rows.
+Verification impact: transcript negatives for invented words/authority and completeness negatives for silent defaults.
+Status: planned within active change harden-role-aware-guided-workflow; code implementation has not started.
+```
