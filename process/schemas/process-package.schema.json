@@ -63,7 +63,7 @@
         "feedback_policy": {"const": "schemas/feedback-policy.schema.json"},
         "role_output_fixture": {"const": "schemas/role-output-fixture.schema.json"},
         "actual_certification_operational_result": {"const": "schemas/actual-certification-operational-result.schema.json"},
-        "guided_owner_workflow": {"const": "schemas/guided-owner-workflow.schema.json"},
+        "guided_owner_workflow": {"const": "schemas/guided-owner-workflow.schema.json"}, "spec_acceptance": {"const": "schemas/spec-acceptance.schema.json"},
         "corporate_environment_inventory": {"const": "schemas/corporate-environment-inventory.schema.json"},
         "corporate_adaptation_checklist": {"const": "schemas/corporate-adaptation-checklist.schema.json"},
         "corporate_pilot_evidence": {"const": "schemas/corporate-pilot-evidence.schema.json"},

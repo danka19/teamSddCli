@@ -43,6 +43,7 @@ schemas:
   role_output_fixture: schemas/role-output-fixture.schema.json
   actual_certification_operational_result: schemas/actual-certification-operational-result.schema.json
   guided_owner_workflow: schemas/guided-owner-workflow.schema.json
+  spec_acceptance: schemas/spec-acceptance.schema.json
   corporate_environment_inventory: schemas/corporate-environment-inventory.schema.json
   corporate_adaptation_checklist: schemas/corporate-adaptation-checklist.schema.json
   corporate_pilot_evidence: schemas/corporate-pilot-evidence.schema.json
