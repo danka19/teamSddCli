@@ -135,6 +135,7 @@ Additional completion conditions from the 2026-07-21 owner walkthrough:
 - A real GigaCode walkthrough must preserve the prompt/response/event evidence needed to prove the role gate, revision-bound summary, literal human decision, Analyst stop point, and AI-disabled fallback without private data.
 - Schemas, templates, validators, examples, role instructions, guided catalog, and generated/sample views must be checked for drift from one OpenSpec contract.
 - Missing chat/UI payload and missing payment-screen package content must be reported as unavailable; they cannot be reconstructed as accepted requirements.
+- Under `D-026`, the complete P3 vertical slice is local and MCP-free: no MCP setup, calls, credentials, dependency, or fallback is permitted. Integration artifacts are passive descriptors and manual evidence references only.
 - Live Jira/Confluence/Bitbucket/Jenkins values, credentials, approved wiring, and external mutations remain Phase 4 evidence and are not prerequisites that may be fabricated in Phase 3.
 
 ## Phase 4. Corporate Adaptation And Real Governed-Change Pilot
