@@ -6,7 +6,7 @@ team_specs:
   config_path: sdd.config.yaml
 process_package:
   id: sdd-process
-  version: 0.3.3
+  version: 0.3.4
 policy_set:
   id: sdd-core
   version: 1.0.0

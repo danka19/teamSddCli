@@ -36,7 +36,7 @@ routes:
       - lifecycle and gate evidence
     human_decision:
       id: applicable-gate-decision
-      owner: Change Owner
+      owner: Analyst
       consequence: The change remains at its recorded state.
     fallbacks: []
   - id: urgent-incident

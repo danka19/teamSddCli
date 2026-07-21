@@ -15,7 +15,7 @@ REQUIRED_DOCUMENTS = ("proposal.md", "design.md", "tasks.md", "traceability.yaml
 PLACEHOLDER = re.compile(r"\b(?:TODO|TBD|placeholder)\b|<[^>]+>", re.IGNORECASE)
 BLOCKER = re.compile(r"\b(?:blocker|unresolved|open question)\b", re.IGNORECASE)
 LITERAL_ACCEPTANCE = "Спека принята, реализуй"
-TRUSTED_ROLES = {"Change Owner", "Tech Lead"}
+TRUSTED_ROLES = {"Analyst", "Tech Lead"}
 
 
 def validate_guided_change_package(package_root: Path) -> dict[str, Any]:
@@ -61,7 +61,7 @@ def build_response_summary(package_root: Path, report: dict[str, Any], *, human_
     """Return one evidence-labelled, role-scoped next action."""
     action = "resolve-blocking-package-discrepancy"
     if report["status"] == "valid":
-        action = "begin-approved-implementation" if human_role in TRUSTED_ROLES else "request-authorized-human"
+        action = "monitor-process-status" if human_role == "Tech Lead" else "prepare-role-pr-approval" if human_role == "Analyst" else "await-role-pr-approval"
     return {
         "operation": "guided-process-summary",
         "schema_version": "2.0",

@@ -11,6 +11,8 @@ from process.analytics_artifacts import preview_analytics, validate_analytics_pa
 from process.guided_process_integrity import build_response_summary, validate_guided_change_package
 from process.guided_workflow import guide
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def _write(root: Path, name: str, content: str) -> None:
     target = root / name
@@ -62,7 +64,7 @@ def test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped(tmp_path: Pa
                 "change_id": "sample",
                 "spec_revision": {"path": "specs/example/spec.md", "sha256": digest},
                 "shown_summary": {"path": "status.md", "spec_sha256": digest},
-                "event": {"actor_type": "human", "human_role": "Change Owner", "timestamp": "2026-07-21T10:00:00Z", "reference": "chat://trusted/1", "literal_message": "Да"},
+                "event": {"actor_type": "human", "human_role": "Analyst", "timestamp": "2026-07-21T10:00:00Z", "reference": "chat://trusted/1", "literal_message": "Да"},
             },
             allow_unicode=True,
             sort_keys=False,
@@ -90,7 +92,7 @@ def test_trusted_revision_bound_acceptance_exposes_single_safe_cta(tmp_path: Pat
                 "change_id": "sample",
                 "spec_revision": {"path": "specs/example/spec.md", "sha256": digest},
                 "shown_summary": {"path": "status.md", "spec_sha256": digest},
-                "event": {"actor_type": "human", "human_role": "Change Owner", "timestamp": "2026-07-21T10:00:00Z", "reference": "chat://trusted/2", "literal_message": "Спека принята, реализуй"},
+                "event": {"actor_type": "human", "human_role": "Analyst", "timestamp": "2026-07-21T10:00:00Z", "reference": "chat://trusted/2", "literal_message": "Спека принята, реализуй"},
             },
             allow_unicode=True,
             sort_keys=False,
@@ -98,11 +100,12 @@ def test_trusted_revision_bound_acceptance_exposes_single_safe_cta(tmp_path: Pat
     )
 
     report = validate_guided_change_package(tmp_path)
-    summary = build_response_summary(tmp_path, report, human_role="Change Owner")
+    summary = build_response_summary(tmp_path, report, human_role="Analyst")
 
     assert report["status"] == "valid"
     assert summary["spec_revision"]["sha256"] == digest
-    assert summary["next_permitted_action"] == "begin-approved-implementation"
+    assert summary["next_permitted_action"] == "prepare-role-pr-approval"
+    assert build_response_summary(tmp_path, report, human_role="Tech Lead")["next_permitted_action"] == "monitor-process-status"
 
 
 def test_typed_analytics_fixture_validates_and_previews_without_external_actions(tmp_path: Path) -> None:
@@ -122,3 +125,20 @@ def test_typed_analytics_fixture_validates_and_previews_without_external_actions
     assert preview["external_state_mutated"] is False
     assert preview["integration_actions"] == []
     assert preview["screens"][0]["id"] == "SCR-SAMPLE-001"
+
+def test_gigacode_start_prompt_uses_only_project_interactive_roles() -> None:
+    prompt = (ROOT / "process" / "gigacode" / "AGENTS.md").read_text(encoding="utf-8")
+
+    assert "Analyst, Tech Lead, Developer, QA" in prompt
+    assert "Change Owner" not in prompt
+    assert "Release Owner" not in prompt
+
+def test_catalog_never_grants_implementation_entry_to_tech_lead() -> None:
+    payload = guide(
+        "existing-change",
+        {"change_id": "sample", "lifecycle_state": "approved", "human_role": "Tech Lead"},
+        set(),
+    )
+
+    assert payload["status"] == "guided"
+    assert payload["cta"] == "monitor-process-status"

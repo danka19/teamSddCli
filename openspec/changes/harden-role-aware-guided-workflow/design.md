@@ -11,7 +11,7 @@
 ## Решения
 
 - Входной `human_role` обязателен для всех каталоговых маршрутов. Неизвестная/неподдерживаемая роль возвращает structured block.
-- `Analyst` получает только draft/review CTA; `begin-approved-implementation` доступен только `Change Owner`/`Tech Lead` после valid summary.
+- `Analyst` может быть доверенным человеком для literal, revision-bound acceptance спецификации, но получает только draft/review CTA; после valid DoR и acceptance summary Analyst готовит PR для ролевого согласования; начало реализации не выдаётся ни одной роли этим validator.
 - Acceptance record версии `2.0` хранит literal message, human actor/role, timestamp, trusted reference, spec path/digest и summary digest. `Да` отвергается.
 - Readiness проверяет пять обязательных документов, Delta Spec/scenario/traceability, отсутствие placeholder/blocker и `DoR: passed`; acceptance не отменяет ни одну ошибку.
 - MCP удаляется только из P3 catalog/runbook/read-pack. P4 inventory/release contracts не являются входом P3.

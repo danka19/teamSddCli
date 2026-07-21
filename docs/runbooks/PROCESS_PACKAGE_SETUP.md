@@ -142,7 +142,7 @@ or create an internal process fork.
 
 ## Управляемые GigaCode-шаблоны
 
-Package версии `0.3.3` содержит канонические шаблоны `.gigacode/AGENTS.md` и
+Package версии `0.3.4` содержит канонические шаблоны `.gigacode/AGENTS.md` и
 `.gigacode/skills/sdd-process-companion.md`; bootstrap устанавливает их в новый workspace.
 Перед update детерминированная проверка сравнивает только эти declared files: локальное отличие
 блокирует update с `gigacode-managed-file-conflict` и точным путём, а остальные `.gigacode`-файлы

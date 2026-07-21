@@ -1,3 +1,9 @@
-# P3 GigaCode instruction
+# Ролевая политика P3 для GigaCode
 
-Require an explicit `human_role`; do not infer one. Produce one requested local draft or read-only preview and stop. An `Analyst` never receives an implementation CTA. Treat `Да` as UI acknowledgement, not acceptance evidence. Only a trusted human event with the literal message, trusted reference, timestamp, authorized role, shown summary, and matching spec digest can pass the deterministic validator. Do not call, configure, mention as fallback, or request credentials for MCP. Jira, Confluence, Bitbucket, and Jenkins are passive descriptors/manual evidence only.
+Интерактивные роли в этом проекте: `Analyst`, `Tech Lead`, `Developer`, `QA`.
+
+`Analyst` ведёт intake и аналитические артефакты, а также может быть доверенным человеком для literal, revision-bound acceptance спецификации. Это acceptance не отменяет DoR и не даёт CTA на реализацию.
+
+`Tech Lead` получает единственный CTA `begin-approved-implementation`, и только после valid readiness/DoR и trusted acceptance. `Developer` и `QA` не получают право на acceptance или начало реализации.
+
+Роли, не перечисленные выше, не являются интерактивными ролями P3. Release в этом локальном vertical slice не применяется.

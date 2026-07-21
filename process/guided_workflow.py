@@ -20,9 +20,9 @@ ALLOWED_COMMANDS = {
     "scripts/prepare_archive.py",
     "scripts/manual_fallback.py",
 }
-ALLOWED_OWNERS = {"Tech Lead", "Change Owner", "Analyst", "Developer", "QA", "Release Owner"}
-IMPLEMENTATION_ROLES = {"Tech Lead", "Change Owner"}
-KNOWN_ROLES = ALLOWED_OWNERS
+INTERACTIVE_ROLES = {"Analyst", "Tech Lead", "Developer", "QA"}
+DECISION_OWNERS = {"Analyst", "Tech Lead"}
+KNOWN_ROLES = INTERACTIVE_ROLES
 
 
 def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
@@ -58,7 +58,7 @@ def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
             )
             or not isinstance(commands, list) or not commands or not set(commands) <= ALLOWED_COMMANDS
             or not isinstance(decision, dict) or not isinstance(decision.get("id"), str)
-            or decision.get("owner") not in ALLOWED_OWNERS
+            or decision.get("owner") not in DECISION_OWNERS
             or not isinstance(decision.get("consequence"), str)
             or not isinstance(fallbacks, list)
         ):
@@ -113,7 +113,7 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
 
 def _cta(route: dict[str, Any], role: str, facts: dict[str, str]) -> str:
     if facts.get("lifecycle_state") == "approved":
-        return "begin-approved-implementation" if role in IMPLEMENTATION_ROLES else "request-authorized-human"
+        return "monitor-process-status" if role == "Tech Lead" else "validate-readiness-and-prepare-role-pr"
     if role == "Analyst":
         return "prepare-one-draft-and-stop"
     return "follow-catalog-route"

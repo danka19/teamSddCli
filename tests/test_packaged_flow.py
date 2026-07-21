@@ -173,11 +173,11 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
     candidate = tmp_path / "candidate"
     shutil.copytree(installed, candidate)
     candidate_manifest = _yaml(candidate / "package.yaml")
-    candidate_manifest["package"]["version"] = "0.3.4"
+    candidate_manifest["package"]["version"] = "0.3.5"
     (candidate / "package.yaml").write_text(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
-    (candidate / "VERSION").write_text("0.3.4\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.3.5\n", encoding="utf-8")
 
     managed = workspace / ".gigacode" / "AGENTS.md"
     managed.write_text("local override\n", encoding="utf-8")
@@ -191,7 +191,7 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
             candidate,
             config_path,
             tmp_path / "rollbacks",
-            upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.4"),
+            upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.5"),
         )
 
     assert (installed / "VERSION").read_bytes() == process_before
@@ -205,11 +205,11 @@ def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> No
     candidate = tmp_path / "candidate"
     shutil.copytree(installed, candidate)
     candidate_manifest = _yaml(candidate / "package.yaml")
-    candidate_manifest["package"]["version"] = "0.3.4"
+    candidate_manifest["package"]["version"] = "0.3.5"
     (candidate / "package.yaml").write_text(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
-    (candidate / "VERSION").write_text("0.3.4\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.3.5\n", encoding="utf-8")
 
     config_path = workspace / "team-specs" / "sdd.config.yaml"
     config = _yaml(config_path)
@@ -223,7 +223,7 @@ def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> No
         candidate,
         config_path,
         tmp_path / "rollbacks",
-        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.4"),
+        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.5"),
     )
 
     migrated = _yaml(config_path)
