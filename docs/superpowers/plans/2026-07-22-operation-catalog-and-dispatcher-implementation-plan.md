@@ -473,7 +473,7 @@ def test_run_mutation_blocks_before_subprocess_until_confirmation_contract_is_ac
     assert sdd_main(["run", "create-change", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
 
-def test_run_external_operation_is_always_blocked_in_p3(capsys) -> None:
+def test_run_high_risk_internal_operation_blocks_in_p3(capsys) -> None:
     assert sdd_main(["run", "run-actual-certification", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
 ```
@@ -534,7 +534,7 @@ python scripts/sdd.py guide blocked-operation --fact human_role=Tech Lead --fact
 python scripts/sdd.py run create-change --json
 ```
 
-Expected: four routes show evidence/human decision; none mutates state. The final command exits 1 with `confirmation-contract-pending`.
+Expected: four routes show evidence/human decision; none mutates state. The final command exits 1 with `confirmation-contract-pending`; unsupported `mutate_external` catalog records are rejected by the Task 3 validator.
 
 - [ ] **Step 3: Run package/documentation gates**
 
