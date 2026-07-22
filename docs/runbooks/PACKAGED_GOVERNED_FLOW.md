@@ -1,6 +1,6 @@
 # Packaged Deterministic Governed Flow
 
-Status: work items 2.8-2.11 are closed. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates, and AI-disabled passed 11/11. Work item 2.12 is in progress.
+Status: the historical Phase 2 sequence through work item 2.14 is closed, and `D-020` accepts immutable rc6 package `0.3.0` as the external baseline. Adapter `2.2` passed Qwen and DeepSeek 5/5 preflight and 15/15 matrix gates; AI-disabled passed 11/11. Current P3 successor work remains separate and in progress.
 
 ## Boundary
 

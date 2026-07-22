@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: work items 2.1-2.13 and technical gates 2.14.1-2.14.3 are closed. Immutable candidate rc6 has complete package-0.3.0 Qwen/DeepSeek, AI-disabled, Windows, WSL2, exact-raw-closure, rollback, privacy, coverage, and independent-review evidence. Human gate 2.14.4 remains open; rc4 is historical and rc5 is diagnostic rejected history.
+Status: Phase 2 work items 2.1-2.13 and gates 2.14.1-2.14.4 are closed; `D-020` accepts immutable rc6 package `0.3.0` as the external transfer baseline. The current source package is `0.3.4` for in-progress P3 work and is not thereby a newly accepted transfer candidate. Rc4 is historical and rc5 is diagnostic rejected history.
 
 ## Contract Sources
 

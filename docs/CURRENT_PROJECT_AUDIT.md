@@ -4,7 +4,14 @@ Status: in_progress.
 
 Phase 2 is closed and Phase 3 entry is gated by the local owner walkthrough.
 
-Last status reconciliation: 2026-07-20.
+Last status reconciliation: 2026-07-22.
+
+## Project-Wide Implementation And NIS Audit (2026-07-22)
+
+- Audit evidence and the full human-facing capability/script inventory are in `docs/audits/PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md`.
+- OpenSpec strict validation passes 17/17 and roadmap/OpenSpec linkage has zero errors (two expected lifecycle warnings for P2 changes with completed tasks but no human lifecycle disposition).
+- The current branch passes focused P3 tests (18/18), but the complete owned suite is red: 742 passed, 18 failed, 4 skipped. Failures are grouped into stale P3 coverage/evidence mappings, version-drifted package-update fixtures, and locally mismatching external historical raw-certification artifacts. The accepted immutable rc6 baseline is not reclassified by this observation.
+- The root `pytest` command is not a valid project entry point because it recurses into ignored historical `tmp/pytest-*` evidence directories. Use `python -m pytest -q tests` for the owned suite until configuration is fixed.
 
 ## Guided Owner Workflow Intake (2026-07-20)
 

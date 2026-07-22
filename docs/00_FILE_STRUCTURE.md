@@ -75,6 +75,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
 | `docs/phases/PHASE_2_TRANSFER_READY_PROCESS_PACKAGE.md` | Closed Phase 2 plan for the accepted external process-package release candidate, Qwen/DeepSeek certification, transfer evidence, and corporate adaptation package |
 | `docs/phases/PHASE_2_EVIDENCE_INDEX.md` | Phase 2 work-item source, implementation, verification, and independent-review evidence index |
+| `docs/phases/PHASE_3_GUIDED_ROLE_AND_ANALYTICS_VERTICAL_SLICE.md` | Active P3 plan for role-aware guided operation, trusted human acceptance, typed analytics artifacts, local previews, and successor-package transfer |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
 | `docs/runbooks/CORPORATE_FLOW_CONTROLS.md` | Check-only corporate-flow, release handoff, role/WIP/pilot safety, and immutable failed-run operating contract |
@@ -107,7 +108,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
-| `process/VERSION` | Reusable process-package semantic version (`0.3.0` for the release-integrity contract line) |
+| `process/VERSION` | Current working source process-package semantic version (`0.3.4`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |

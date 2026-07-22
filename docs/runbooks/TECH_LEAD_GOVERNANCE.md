@@ -1,6 +1,6 @@
 # Tech Lead Governance Decision Support
 
-Status: Phase 2 work items 2.6-2.7 are closed; Tech Lead checks feed the reviewed corporate-flow evaluator. Work item 2.8 is ready.
+Status: Phase 2 implementation and its external rc6 acceptance are closed under `D-020`; Tech Lead checks remain a package capability feeding the reviewed corporate-flow evaluator. Current P3 work does not grant this tooling new authority.
 
 ## Boundary
 
