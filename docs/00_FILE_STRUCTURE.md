@@ -33,8 +33,9 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, mandatory gates, usability checks, and CLI-build triggers |
 | `docs/AI_STEP_VERIFICATION_CHECKLIST.md` | Mandatory self-check for AI agents |
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
-| docs/planning/ | Cross-phase planning notes and decision drafts |
-| docs/superpowers/specs/ | Approved design documents that precede implementation planning; OpenSpec remains the canonical proposed behavior contract |
+| `docs/planning/` | Cross-phase planning notes and decision drafts |
+| `docs/superpowers/specs/` | Approved design documents that precede implementation planning; OpenSpec remains the canonical proposed behavior contract |
+| `docs/superpowers/plans/` | Detailed reviewed implementation plans; they guide execution but do not replace OpenSpec requirements |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
 | `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, failed-run retention, migration, and Phase 2/3 sequencing |
 | `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
