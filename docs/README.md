@@ -154,3 +154,40 @@ Future publication layers should generate audience-oriented views from canonical
 - Detailed phase plans live under `docs/phases/` and must use `docs/phases/PHASE_PLAN_TEMPLATE.md`.
 - New human feedback that affects SDD workflow behavior, automation safety, integration usability, acceptance, or verification must be persisted in the correct durable document.
 - Behavior and acceptance text should not be duplicated across specs, docs, project memory, generated views, or role guides; derived surfaces link to the canonical owner and are fixed or regenerated when they drift.
+
+## Каталог локальных скриптов
+
+Ниже — справочный перечень всех 30 локальных CLI на 2026-07-22. Это помогает человеку понять, что уже существует, но **не является** политикой полномочий: таблица не даёт AI или человеку право запускать операцию без применимых условий, роли и решения человека. Полное фактическое обоснование и результаты аудита находятся в [PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md](audits/PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md). Будущий единый `operation catalog` должен заменить ручное поддержание этой справки и связать её с маршрутом, правами и CLI.
+
+| Скрипт | Что делает | Когда нужен человеку |
+|---|---|---|
+| `bootstrap_team_specs.py` | Копирует версионируемый пакет процесса и центральный каркас рабочего пространства. | При создании чистого рабочего пространства; не поверх непроверенной установки. |
+| `build_read_pack.py` | Собирает ограниченный контекст с маркированными полномочиями для одной роли AI. | Перед одной задачей слабой модели в определённой роли. |
+| `certify_process_release.py` | Запускает allowlisted синтетическую сертификацию пакета и покрытие. | При сертификации кандидата; raw-результаты хранятся вне Git. |
+| `check_actual_certification_gate.py` | Проверяет итог одной фактической model preflight/matrix-проверки. | После завершения каждой фазы сертификации модели. |
+| `check_corporate_flow.py` | Формирует детерминированный отчёт «можно продолжать / блокировка». | Перед переходом в управляемом корпоративном потоке. |
+| `check_lifecycle_transition.py` | Проверяет запрошенный lifecycle-переход без его изменения. | До того, как человек рассматривает этот переход. |
+| `check_parallel_plan.py` | Отклоняет пересекающиеся или зависимые планы параллельной работы AI. | До запуска параллельных задач. |
+| `check_tech_lead_control.py` | Проверяет записи человека о stop/hold/escalate/resume. | При проверке control state или возобновления работы. |
+| `check_weak_model_evidence.py` | Отклоняет неподтверждённые заявления AI о завершении или полномочиях. | После результата ограниченной задачи модели. |
+| `classify_change.py` | Определяет класс изменения по закреплённой политике и фактам. | На intake и при существенном изменении scope/влияния. |
+| `create_change.py` | Создаёт черновой change schema-v2. | После определения change ID, workspace и конфигурации. |
+| `evaluate_change_gates.py` | Показывает class-aware evidence для DoR/DoD/release/archive, но не одобряет её. | Перед человеческим gate-решением. |
+| `guided_owner_workflow.py` | Выдаёт следующий шаг, блокировку или fallback, объявленные в каталоге маршрутов. | В первой рабочей ситуации или при блокировке. |
+| `launch_role_task.py` | Выбирает инструкцию роли, read-pack, ожидаемый результат и stop point вне модели. | Непосредственно перед одной AI-задачей роли. |
+| `manage_release_candidate.py` | Создаёт или проверяет неизменяемый transfer candidate. | Только при контролируемом freeze/rehearsal. |
+| `manual_fallback.py` | Формирует AI-disabled план ручного продолжения. | Если модель или интеграция недоступна либо завершилась ошибкой. |
+| `migrate_change_classification.py` | Предварительно показывает или применяет разрешённую миграцию `thin -> minor`, `full -> major`. | Для подходящей неархивной legacy-миграции; hotfix не выводится автоматически. |
+| `normalize_actual_certification.py` | Создаёт Git-safe нормализованное evidence из полного raw-инвентаря. | После честного фактического результата запуска модели. |
+| `prepare_archive.py` | Собирает evidence готовности к архивированию. | До решения человека об archive. |
+| `prepare_spec_pr.py` | Собирает детерминированное evidence подготовки Spec PR. | До человеческого review Delta Spec. |
+| `preview_analytics.py` | Локально проверяет и показывает переданный typed analytics package; только чтение. | Для просмотра очищенных P3-данных. |
+| `review_tech_lead.py` | Собирает детерминированные представления для Tech Lead review. | При review классификации, readiness, риска или release-рекомендации. |
+| `run_actual_certification.py` | Выполняет append-only сертификационный срез Qwen/DeepSeek. | При запланированной сертификации с безопасной внешней raw-директорией. |
+| `update_process_package.py` | Проверяет, обновляет или откатывает пакет транзакционно. | При согласованном контролируемом upgrade/rollback. |
+| `validate_change.py` | Проверяет только legacy-пакеты thin/full. | Для совместимости и миграции, но не для новой schema-v2 работы. |
+| `validate_corporate_adaptation.py` | Проверяет документы и шаблоны adaptation/pilot/no-fork. | При подготовке Phase 4; не поставляет факты и не подключает системы. |
+| `validate_external_mapping.py` | Проверяет mapping между внутренним и tracker-состоянием. | До будущей автоматизации внешнего состояния. |
+| `validate_guided_owner_workflow.py` | Проверяет синхронизацию checksum guide и каталога маршрутов. | После изменения guide/catalog и до transfer. |
+| `validate_process_config.py` | Находит и проверяет конфигурацию, реестры, pins и OpenSpec runtime. | Перед управляемой работой в конкретном workspace. |
+| `validate_traceability.py` | Проверяет связи traceability и выдаёт представление canonical ID. | До review, archive или аудита. |

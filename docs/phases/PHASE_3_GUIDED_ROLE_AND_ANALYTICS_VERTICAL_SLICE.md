@@ -138,3 +138,18 @@ Data contract impact: DEC code, active-card state, two verbatim human messages, 
 Verification impact: transcript negatives for invented words/authority and completeness negatives for silent defaults.
 Status: planned within active change harden-role-aware-guided-workflow; code implementation has not started.
 ```
+
+### Change Intake — справочный каталог скриптов (2026-07-22)
+
+```text
+Idea: Сохранить в проектной справке человекочитаемый перечень всех существующих локальных скриптов с назначением и ситуацией запуска, пока отдельный архитектор детально прорабатывает единый operation catalog и guided CLI.
+Source: Human request in the active P3 discussion.
+Type: documentation_change.
+Decision: adopt_now.
+Reason: Таблица не меняет поведение процесса, но устраняет потерю уже проверенного инвентаря и даёт человеку одну видимую точку ориентации.
+Affected specs: none; будущая архитектурная проработка определит отдельный OpenSpec change для executable catalog/CLI.
+Affected architecture: none now; README прямо фиксирует, что таблица не является policy/authorization source.
+Data contract impact: none.
+Verification impact: сверка с перечнем `scripts/` и таблицей в проектном аудите от 2026-07-22.
+Status: recorded in `docs/README.md`; the future catalog remains pending architecture review.
+```
