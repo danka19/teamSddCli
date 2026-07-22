@@ -1985,6 +1985,9 @@ def _validate_remediation_evidence(
                 adapter_version,
                 allow_legacy_observed_identity="observed_identity" not in evidence,
             )
+            if classification is None and set(phase_diagnostics) == {"actual-model.gate-catalog-mismatch"}:
+                # Failed preflight artifacts retain the catalog identity observed at execution.
+                classification, phase_diagnostics = "failed", []
             if classification != "failed":
                 _append_once(diagnostics, "actual-model.matrix-not-run-mismatch")
         else:

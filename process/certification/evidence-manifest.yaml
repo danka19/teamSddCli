@@ -1,5 +1,133 @@
 schema_version: '1.0'
 coverage:
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Fail-closed role-aware guidance
+  scenario: Unknown role is blocked
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_unknown_role_blocks_role_sensitive_guidance
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Fail-closed role-aware guidance
+  scenario: Analyst cannot receive implementation CTA
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_analyst_never_receives_implementation_cta
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Trusted revision-bound human acceptance
+  scenario: UI confirmation is rejected
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Trusted revision-bound human acceptance
+  scenario: Accepted revision differs from current spec
+  gap:
+    owner: p3-workflow-owner
+    risk: high
+    reason: No stale revision regression exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-acceptance-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Readiness preserves DoR
+  scenario: Incomplete package remains blocked
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: MCP-free P3 guidance
+  scenario: Existing-change route has no MCP fallback
+  gap:
+    owner: p3-workflow-owner
+    risk: medium
+    reason: No MCP route regression exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-route-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Human-confirmed decision card
+  scenario: Natural-language decision prepares but does not record
+  gap:
+    owner: p3-workflow-owner
+    risk: high
+    reason: No decision draft test exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-decision-card-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Human-confirmed decision card
+  scenario: Card confirmation records only the active decision
+  gap:
+    owner: p3-workflow-owner
+    risk: high
+    reason: No active card test exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-decision-card-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Human-confirmed decision card
+  scenario: Ambiguous chat text cannot record a decision
+  gap:
+    owner: p3-workflow-owner
+    risk: high
+    reason: No ambiguous text test exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-decision-card-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Proactive discovery completeness
+  scenario: Material unknowns receive an explicit choice
+  gap:
+    owner: p3-workflow-owner
+    risk: medium
+    reason: No discovery prompt test exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-discovery-coverage
+- source_kind: delta
+  capability: role-aware-guided-workflow
+  requirement: Proactive discovery completeness
+  scenario: Silence is not default acceptance
+  gap:
+    owner: p3-workflow-owner
+    risk: high
+    reason: No silence regression exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-discovery-coverage
+- source_kind: delta
+  capability: typed-analytics-artifact-framework
+  requirement: Typed analytics package
+  scenario: Complete typed package validates
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_typed_analytics_fixture_validates_and_previews_without_external_actions
+- source_kind: delta
+  capability: typed-analytics-artifact-framework
+  requirement: Typed analytics package
+  scenario: Manifest misses an artifact
+  gap:
+    owner: p3-analytics-owner
+    risk: medium
+    reason: No incomplete manifest test exists.
+    compensation: Keep boundary visible.
+    follow_up: openspec-change:p3-analytics-coverage
+- source_kind: delta
+  capability: typed-analytics-artifact-framework
+  requirement: Stable analytics traceability
+  scenario: Screen remains traceable
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_typed_analytics_fixture_validates_and_previews_without_external_actions
+- source_kind: delta
+  capability: typed-analytics-artifact-framework
+  requirement: Passive integration boundary
+  scenario: Preview never invokes integration
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_typed_analytics_fixture_validates_and_previews_without_external_actions
+- source_kind: delta
+  capability: typed-analytics-artifact-framework
+  requirement: Local P3 preview boundary
+  scenario: Synthetic analytics walkthrough
+  evidence:
+  - pytest:tests/test_p3_vertical_slice.py::test_typed_analytics_fixture_validates_and_previews_without_external_actions
 - source_kind: accepted
   capability: change-artifact-contracts
   requirement: Artifact height rules
@@ -415,8 +543,10 @@ coverage:
   gap:
     owner: product-owner
     risk: high
-    reason: The feedback policy accepts the label but does not require a canonical source-change reference.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    reason: The feedback policy accepts the label but does not require a canonical
+      source-change reference.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: accepted
   capability: confluence-feedback-loop
@@ -426,7 +556,8 @@ coverage:
     owner: product-owner
     risk: medium
     reason: The feedback schema permits rejection without a recorded reason.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: accepted
   capability: confluence-feedback-loop
@@ -441,8 +572,10 @@ coverage:
   gap:
     owner: product-owner
     risk: medium
-    reason: The feedback schema permits duplicate disposition without a link to the original disposition.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    reason: The feedback schema permits duplicate disposition without a link to the
+      original disposition.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:strengthen-feedback-disposition-records
 - source_kind: delta
   capability: confluence-feedback-loop
@@ -831,25 +964,6 @@ coverage:
   - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
 - source_kind: accepted
   capability: documentation-governance
-  requirement: Canonical language and localized generated views
-  scenario: Process specs use English and product analytics specs use Russian prose
-  evidence:
-  - manual:docs/DECISIONS.md
-- source_kind: accepted
-  capability: documentation-governance
-  requirement: Canonical language and localized generated views
-  scenario: Generated Confluence view may be localized
-  evidence:
-  - manual:docs/DECISIONS.md
-- source_kind: accepted
-  capability: documentation-governance
-  requirement: Canonical language and localized generated views
-  scenario: Feedback on generated views returns to canonical source
-  evidence:
-  - manual:docs/DECISIONS.md
-  - manual:docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md
-- source_kind: accepted
-  capability: documentation-governance
   requirement: Docs versus OpenSpec responsibility
   scenario: Product behavior belongs in OpenSpec
   evidence:
@@ -1169,7 +1283,8 @@ coverage:
     owner: product-owner
     risk: high
     reason: No CODEOWNERS generator or consistency validator exists.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:derive-codeowners-from-owner-registry
 - source_kind: accepted
   capability: repo-topology-config
@@ -1406,8 +1521,10 @@ coverage:
   gap:
     owner: product-owner
     risk: medium
-    reason: Weak-model guardrails exist, but no bounded advisory traceability suggestion operation is implemented.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    reason: Weak-model guardrails exist, but no bounded advisory traceability suggestion
+      operation is implemented.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:add-advisory-traceability-suggestions
 - source_kind: delta
   capability: traceability-contract
@@ -1506,8 +1623,10 @@ coverage:
   gap:
     owner: product-owner
     risk: high
-    reason: Legacy baseline is planned only; no accepted baseline artifact workflow records known gaps.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    reason: Legacy baseline is planned only; no accepted baseline artifact workflow
+      records known gaps.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:implement-existing-code-baseline
 - source_kind: accepted
   capability: traceability-contract
@@ -1516,8 +1635,10 @@ coverage:
   gap:
     owner: product-owner
     risk: medium
-    reason: No legacy baseline or generated-view implementation exists to preserve visible gap status.
-    compensation: Keep the selector visible and require an accepted OpenSpec delta plus RED/GREEN implementation evidence before claiming coverage.
+    reason: No legacy baseline or generated-view implementation exists to preserve
+      visible gap status.
+    compensation: Keep the selector visible and require an accepted OpenSpec delta
+      plus RED/GREEN implementation evidence before claiming coverage.
     follow_up: openspec-change:implement-existing-code-baseline
 - source_kind: accepted
   capability: traceability-contract
@@ -1937,3 +2058,43 @@ coverage:
   evidence:
   - manual:process/release/phase-2-14-release-manifest.yaml
   - manual:docs/audits/PHASE_2_WORK_ITEM_2_14_FINAL_TECHNICAL_AUDIT_2026-07-18.md
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: New documentation and specs use Russian prose
+  gap:
+    owner: coverage-owner
+    risk: medium
+    reason: Current OpenSpec scenario has no source-owned deterministic evidence.
+    compensation: Keep the selector visible and add focused evidence before acceptance.
+    follow_up: openspec-change:complete-current-coverage
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Historical evidence is preserved without bulk translation
+  gap:
+    owner: coverage-owner
+    risk: medium
+    reason: Current OpenSpec scenario has no source-owned deterministic evidence.
+    compensation: Keep the selector visible and add focused evidence before acceptance.
+    follow_up: openspec-change:complete-current-coverage
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Generated view follows the canonical Russian source
+  gap:
+    owner: coverage-owner
+    risk: medium
+    reason: Current OpenSpec scenario has no source-owned deterministic evidence.
+    compensation: Keep the selector visible and add focused evidence before acceptance.
+    follow_up: openspec-change:complete-current-coverage
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Canonical language and localized generated views
+  scenario: Feedback changes the Russian canonical source
+  gap:
+    owner: coverage-owner
+    risk: medium
+    reason: Current OpenSpec scenario has no source-owned deterministic evidence.
+    compensation: Keep the selector visible and add focused evidence before acceptance.
+    follow_up: openspec-change:complete-current-coverage

@@ -1,4 +1,4 @@
-schema_version: '1.0'
+﻿schema_version: '1.0'
 sources:
 - kind: accepted
   capability: change-artifact-contracts
@@ -30,6 +30,12 @@ sources:
 - kind: delta
   capability: weak-model-guardrails
   path: openspec/changes/define-transfer-ready-process-package/specs/weak-model-guardrails/spec.md
+- kind: delta
+  capability: role-aware-guided-workflow
+  path: openspec/changes/harden-role-aware-guided-workflow/specs/role-aware-guided-workflow/spec.md
+- kind: delta
+  capability: typed-analytics-artifact-framework
+  path: openspec/changes/add-typed-analytics-artifact-framework/specs/typed-analytics-artifact-framework/spec.md
 - kind: delta
   capability: change-artifact-contracts
   path: openspec/changes/adopt-nis-corporate-process-governance/specs/change-artifact-contracts/spec.md
@@ -212,3 +218,6 @@ marker_sources:
 - tests/test_validate_change.py
 - tests/test_validate_process_config.py
 - tests/test_weak_model_kit.py
+- tests/test_p3_vertical_slice.py
+
+

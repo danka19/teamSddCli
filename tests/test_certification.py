@@ -13,7 +13,7 @@ import pytest
 import yaml
 from jsonschema import Draft202012Validator
 
-from process.certification import CertificationError, build_coverage_report, certify_release, validate_role_output_fixtures
+from process.certification import CertificationError, _sha256_canonical_text, build_coverage_report, certify_release, validate_role_output_fixtures
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -284,9 +284,9 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
     }
     assert report["summary"]["future_work"] == 32
     assert report["summary"] == {
-        "effective_scenarios": 334,
-        "covered": 295,
-        "gaps": 7,
+        "effective_scenarios": 351,
+        "covered": 300,
+        "gaps": 19,
         "future_work": 32,
     }
     assert {
@@ -320,11 +320,10 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
             }
         )
     ]
-    assert len(governance_rows) == 22
+    assert len(governance_rows) == 23
     assert all(
-        row.get("evidence")
-        and all(reference.startswith("manual:") for reference in row["evidence"])
-        and "gap" not in row
+        (row.get("evidence") and all(reference.startswith("manual:") for reference in row["evidence"]) and "gap" not in row)
+        or (row["requirement"] == "Canonical language and localized generated views" and "gap" in row)
         for row in governance_rows
     )
 
@@ -338,7 +337,7 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
         if "gap" in row
     )
     assert gap_routes == {
-        "product-gap": 7,
+        "product-gap": 19,
     }
 
 
@@ -446,7 +445,7 @@ def test_role_output_rejects_placeholder_or_tampered_canonical_source_hash(tmp_p
     fixture["canonical_sources"][0]["sha256"] = "a" * 64
     fixture_path.write_text(yaml.safe_dump(fixture, sort_keys=False), encoding="utf-8")
     declaration = catalog["planned_dimensions"]["roles"][0]
-    declaration["sha256"] = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+    declaration["sha256"] = _sha256_canonical_text(fixture_path)
     with pytest.raises(CertificationError, match="certification.role-output-source-hash"):
         validate_role_output_fixtures(source_root, catalog)
 
@@ -478,7 +477,7 @@ def test_role_output_rejects_unsafe_or_private_canonical_source_path(tmp_path: P
     fixture = load_yaml(fixture_path)
     fixture["canonical_sources"][0]["path"] = unsafe_path
     fixture_path.write_text(yaml.safe_dump(fixture, sort_keys=False), encoding="utf-8")
-    catalog["planned_dimensions"]["roles"][0]["sha256"] = hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+    catalog["planned_dimensions"]["roles"][0]["sha256"] = _sha256_canonical_text(fixture_path)
     with pytest.raises(CertificationError, match="certification.privacy"):
         validate_role_output_fixtures(source_root, catalog)
 

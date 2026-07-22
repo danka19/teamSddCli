@@ -54,7 +54,7 @@ def reviewed_evidence() -> dict:
             "state": "approved",
             "decision_ref": "decisions/process-upgrade.yaml",
         },
-        "from": {"package_version": "0.3.0", "openspec_version": "1.4.1"},
+        "from": {"package_version": "0.3.4", "openspec_version": "1.4.1"},
         "to": {"package_version": "0.4.0", "openspec_version": "1.4.1"},
         "checks": {
             "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
@@ -142,7 +142,7 @@ def test_process_package_upgrade_requires_reviewed_evidence(tmp_path: Path) -> N
     with pytest.raises(OperationError, match="upgrade-evidence-invalid"):
         validate_reviewed_upgrade_evidence(
             materialize_evidence(tmp_path / "incomplete", incomplete),
-            from_identity={"package_version": "0.3.0", "openspec_version": "1.4.1"},
+            from_identity={"package_version": "0.3.4", "openspec_version": "1.4.1"},
             to_identity={"package_version": "0.4.0", "openspec_version": "1.4.1"},
         )
 

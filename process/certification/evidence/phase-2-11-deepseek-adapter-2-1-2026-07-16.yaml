@@ -32,7 +32,7 @@ raw_artifact:
   stored_in_git: false
 baseline_reference:
   path: process/certification/evidence/phase-2-11-deepseek-remediation-2026-07-16.yaml
-  sha256: fda82d3e306459bcefb34fdf83f7363427cf27c6fcb317f46c2b7fe7080d29cf
+  sha256: 51c0db4c4524f9f3e5b8516b2af0bdefacf11e1c007f49a4de5a38d51169af62
   raw_logical_artifact_id: raw-artifact-v0.2.0-deepseek-remediation-2026-07-16
   adapter_version: '2.0'
 preflight:

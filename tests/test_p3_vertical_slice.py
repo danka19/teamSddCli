@@ -142,3 +142,23 @@ def test_catalog_never_grants_implementation_entry_to_tech_lead() -> None:
 
     assert payload["status"] == "guided"
     assert payload["cta"] == "monitor-process-status"
+
+
+SCENARIO_COVERAGE = {
+    "test_unknown_role_blocks_role_sensitive_guidance": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Unknown role is blocked"},
+    ],
+    "test_analyst_never_receives_implementation_cta": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Analyst cannot receive implementation CTA"},
+    ],
+    "test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Trusted revision-bound human acceptance", "scenario": "UI confirmation is rejected"},
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Readiness preserves DoR", "scenario": "Incomplete package remains blocked"},
+    ],
+    "test_typed_analytics_fixture_validates_and_previews_without_external_actions": [
+        {"source_kind": "delta", "capability": "typed-analytics-artifact-framework", "requirement": "Typed analytics package", "scenario": "Complete typed package validates"},
+        {"source_kind": "delta", "capability": "typed-analytics-artifact-framework", "requirement": "Stable analytics traceability", "scenario": "Screen remains traceable"},
+        {"source_kind": "delta", "capability": "typed-analytics-artifact-framework", "requirement": "Passive integration boundary", "scenario": "Preview never invokes integration"},
+        {"source_kind": "delta", "capability": "typed-analytics-artifact-framework", "requirement": "Local P3 preview boundary", "scenario": "Synthetic analytics walkthrough"},
+    ],
+}
