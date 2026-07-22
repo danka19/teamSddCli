@@ -120,6 +120,45 @@ Exit criteria:
 
 - Sandbox package equals the validated source candidate; its existing uncommitted `enforce-guided-process-integrity` deletions remain untouched.
 
+### 3.4 Operation catalog and thin dispatcher
+
+Status: planned.
+
+OpenSpec mapping: `add-operation-catalog-and-dispatcher` (P3 primary; P4/P5 related).
+
+Objective:
+
+- Convert the existing 30 local script entrypoints into one versioned operation catalog and give humans/AI a local situation-first `sdd` entry point without building a separate CLI platform or changing direct script compatibility.
+
+Boundaries and dependencies:
+
+- `operations.yaml` is the only operation registry; README, release allowlist and guided routes become validated derived views under `D-CAT-1`.
+- Direct `python scripts/<name>.py` remains a supported contract under `D-CAT-2`.
+- Read-only, prepare and non-authoritative request paths may be delivered locally; every `mutate_*` run remains fail-closed until `harden-role-aware-guided-workflow` completes and is human accepted under `D-CAT-3`.
+- Weak-model/certification operations are internal, analytics preview is public, and raw certification writers are high risk under `D-CAT-4`.
+- No MCP, credentials, network calls, external mutations or corporate configuration are allowed.
+
+Verification:
+
+- Catalog coverage/drift negatives, generated README equality, direct-script compatibility, four guided situations, AI-disabled fallback, and P3 mutation fail-closed evidence.
+
+Exit criteria:
+
+- A person can discover the next permitted action and its human decision boundary without knowing a script filename; no unregistered script or divergent derived list can pass validation.
+### Change Intake — единый operation catalog и dispatcher (2026-07-22)
+
+```text
+Idea: Превратить разрозненные локальные scripts в catalog-defined operations и дать человеку/AI situation-first local dispatcher.
+Source: Architecture review plus accepted D-CAT-1, D-CAT-2, D-CAT-3 and D-CAT-4.
+Type: scope_refinement, new_feature, architecture_change, data_contract_change, verification_change, documentation_change.
+Decision: create_openspec_change.
+Reason: Изменение вводит новый CLI/artifact contract, производные registry rules, automation authority boundary and acceptance scenarios; docs-only запись была бы недостаточна.
+Affected specs: new operation-catalog and guided-operation-dispatcher; modified documentation-governance and repo-topology-config.
+Affected architecture: versioned `operations.yaml` becomes the single registry; thin dispatcher delegates to preserved scripts; one existing confirmation mechanism remains authoritative.
+Data contract impact: operation records, operation IDs in guided routes, generated README table and future confirmation binding fields.
+Verification impact: complete script coverage, drift negatives, direct compatibility, AI-disabled routes and fail-closed mutation negatives.
+Status: OpenSpec `add-operation-catalog-and-dispatcher` created in P3; implementation is not started.
+```
 ## Phase Gate
 
 - Local deterministic evidence is complete; no MCP/tool invocation, credential, live integration, product payment UI, or corporate adaptation is introduced. Human acceptance of the P3 changes remains a separate lifecycle decision.
@@ -147,9 +186,9 @@ Source: Human request in the active P3 discussion.
 Type: documentation_change.
 Decision: adopt_now.
 Reason: Таблица не меняет поведение процесса, но устраняет потерю уже проверенного инвентаря и даёт человеку одну видимую точку ориентации.
-Affected specs: none; будущая архитектурная проработка определит отдельный OpenSpec change для executable catalog/CLI.
-Affected architecture: none now; README прямо фиксирует, что таблица не является policy/authorization source.
+Affected specs: operation-catalog and guided-operation-dispatcher (new); documentation-governance and repo-topology-config (modified) in `add-operation-catalog-and-dispatcher`.
+Affected architecture: approved single operation catalog and thin local dispatcher; no external integration or autonomous authority.
 Data contract impact: none.
 Verification impact: сверка с перечнем `scripts/` и таблицей в проектном аудите от 2026-07-22.
-Status: recorded in `docs/README.md`; the future catalog remains pending architecture review.
+Status: architecture reviewed; D-CAT-1…4 accepted; OpenSpec change `add-operation-catalog-and-dispatcher` is in_progress and implementation has not started.
 ```

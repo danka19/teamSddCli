@@ -137,8 +137,9 @@ Current work-item map:
 | Work item | Status | OpenSpec change |
 |---|---|---|
 | 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow` |
-| 3.2 Typed analytics artifact framework | in_progress | `add-typed-analytics-artifact-framework` |
+| `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
+| 3.4 Operation catalog and thin dispatcher | planned | `add-operation-catalog-and-dispatcher`; depends on the existing role-aware confirmation event before any mutate enablement |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 
@@ -228,6 +229,7 @@ Likely scope:
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
 | `harden-role-aware-guided-workflow` | P3 | P4 | in_progress |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
+| `add-operation-catalog-and-dispatcher` | P3 | P4, P5 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

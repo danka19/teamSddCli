@@ -33,7 +33,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/IMPLEMENTATION_STRATEGY.md` | Accepted delivery strategy: no custom CLI upfront, mandatory gates, usability checks, and CLI-build triggers |
 | `docs/AI_STEP_VERIFICATION_CHECKLIST.md` | Mandatory self-check for AI agents |
 | `docs/CONTEXT.md` | Active glossary and domain boundaries |
-| `docs/planning/` | Cross-phase planning notes and decision drafts |
+| docs/planning/ | Cross-phase planning notes and decision drafts |
+| docs/superpowers/specs/ | Approved design documents that precede implementation planning; OpenSpec remains the canonical proposed behavior contract |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
 | `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, failed-run retention, migration, and Phase 2/3 sequencing |
 | `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
@@ -97,7 +98,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `openspec/changes/adopt-nis-corporate-process-governance/` | Active apply-ready change proposing NIS-aligned minor/major/hotfix classification, schema migration, DoR/DoD, Tech Lead workflow, corporate flow controls, release handoff, pilot safety, failed-run retention, and affected accepted-capability deltas |
 | `openspec/changes/close-release-integrity-gaps/` | In-progress Phase 2 implementation for deterministic Delta operation semantics, human-authorized dated archive convention, and reviewed process-package/OpenSpec upgrade evidence before successor-candidate freeze |
 | `openspec/changes/determinize-weak-model-operational-decisions/` | In-progress Phase 2.11 remediation change with all 13 implementation tasks complete; it moves operation action, policy reason codes, required source inventory, artifact routing, and human action codes into an identity-bound deterministic plan while limiting the model to source-grounded draft or block explanation content |
-| `openspec/changes/simplify-weak-model-decision-contract/` | Blocked, unarchived historical adapter `2.1` remediation change for decision-discriminated role responses, non-leading guidance, structural-only retry, compatibility, runtime/evidence hardening, and append-only recertification; all 15 technical tasks are complete, but its own failed certification gate prevents accepted-spec promotion/archive. Its former work-item blocker was superseded by passing adapter `2.2`; work item 2.11 is closed |
+| openspec/changes/simplify-weak-model-decision-contract/ | Blocked, unarchived historical adapter 2.1 remediation change for decision-discriminated role responses, non-leading guidance, structural-only retry, compatibility, runtime/evidence hardening, and append-only recertification; all 15 technical tasks are complete, but its own failed certification gate prevents accepted-spec promotion/archive. Its former work-item blocker was superseded by passing adapter 2.2; work item 2.11 is closed |
+| openspec/changes/add-operation-catalog-and-dispatcher/ | Active P3 proposal for the canonical operation catalog, generated script documentation, derived route/allowlist validation, and thin local sdd dispatcher; implementation has not started |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
 
 ## Deterministic Process Artifacts
