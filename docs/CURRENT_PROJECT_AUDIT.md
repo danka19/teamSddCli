@@ -2,9 +2,9 @@
 
 Status: in_progress.
 
-Phase 2 is closed and Phase 3 entry is gated by the local owner walkthrough.
+Phase 2 is closed. Phase 3 is in progress; its remaining lifecycle gate is human acceptance of the active typed-analytics change and its verified transfer evidence.
 
-Last status reconciliation: 2026-07-22.
+Last status reconciliation: 2026-07-23.
 
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
@@ -15,11 +15,10 @@ Last status reconciliation: 2026-07-22.
 
 ## P3 Operation Catalog And Dispatcher Reconciliation (2026-07-23)
 
-- `add-operation-catalog-and-dispatcher` has 15/16 verified tasks: versioned catalog/schema/validator, derived release/guided/read-pack/README views, local `sdd`, direct-script compatibility, four guided walkthroughs, and P3 fail-closed mutation handling.
-- Focused P3/catalog/package verification passed 49 tests; four situation-first manual walkthroughs returned the expected role, human decision, fallback/evidence route, and `sdd run create-change` returned a structured no-side-effect block. `openspec validate --all --strict` passed 18/18; roadmap/OpenSpec validation reported zero errors and two unrelated historical P2 lifecycle warnings.
-- The owned suite `python -m pytest -q tests` passed 776 tests with 4 skips in 298.78 seconds. This supersedes the 2026-07-22 snapshot that reported 742 passed and 18 failed.
-- Task 4.2 remains open by design: it requires completion and human acceptance of the separate `harden-role-aware-guided-workflow` confirmation contract. Until then, every dispatcher mutation remains fail-closed; this change is not ready for archive or successor acceptance.
-- The contract-only operation-confirmation extension has final local evidence: 54 dispatcher/guided tests, 18 package-schema tests, and 83 release-candidate tests passed with one expected skip; a valid event still leaves `sdd run` blocked and catalog validation rejects `mutate_external`. Human acceptance remains the next explicit lifecycle gate.
+- `add-operation-catalog-and-dispatcher` is accepted: all 16 tasks are checked, its requirements are promoted into the `operation-catalog` and `guided-operation-dispatcher` living specs, and the archived package is `openspec/changes/archive/2026-07-23-add-operation-catalog-and-dispatcher/`.
+- Acceptance evidence is the canonical archive commit `d070007` (`docs: archive accepted operation dispatcher`) and the accepted dependency archive commit `2038c93` (`docs: archive accepted role-aware workflow`). The prior 15/16 and active-change statements are stale.
+- Focused P3/catalog/package verification passed 49 tests; four situation-first manual walkthroughs returned the expected role, human decision, fallback/evidence route, and `sdd run create-change` returned a structured no-side-effect block. The catalog/dispatcher/package suite later passed 138 tests with 1 skip; the owned suite passed 776 tests with 4 skips before final catalog-package integration fixes.
+- The accepted operation-confirmation contract validates role, operation, input, revision and expiry but remains deliberately non-authoritative: a valid artifact still returns `confirmation-contract-pending`, and `mutate_external` is rejected. Execution enablement is a future separately accepted change, not an open P3.4 task.
 - Reproducible Task 17 evidence (2026-07-23): `python -m pytest -q -o addopts='' --basetemp <fresh-temp> tests/test_guided_owner_workflow.py tests/test_p3_vertical_slice.py tests/test_operation_catalog_dispatcher.py tests/test_process_package.py` returned `72 passed`; the release-candidate suite was split only for the shell time limit and returned `83 passed, 1 skipped` across exhaustive non-overlapping selections. `openspec validate --all --strict` passed; `node "$env:USERPROFILE\\.codex\\skills\\roadmap-openspec-validator\\scripts\\validate-roadmap-openspec.mjs" --root "<repository-root>"` returned zero errors and three lifecycle-only warnings. In the AI-disabled walkthrough, `python scripts/sdd.py request create-change --role Analyst --json` returned `confirmation-requested`, `authority_granted: false`, and `trusted_event_metadata_required: true`; `python scripts/sdd.py run create-change --role Analyst --json` returned `confirmation-contract-pending` with no state mutation. Independent security review of `031127b..8fe18b8` found no authority escalation: even a valid typed event leaves `run` blocked and synthetic `mutate_external` catalog data is rejected. The review approved the implementation boundary; its initial gate objection was resolved by recording this evidence and requires only a final documentation re-review.
 
 ## Project-Wide Implementation And NIS Audit (2026-07-22)
@@ -289,7 +288,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Primary roadmap phase: P3; related phases: P4, P5.
 - Reason: the current implementation permits a role-neutral implementation action and self-declared acceptance evidence even though prose forbids both. This changes externally visible workflow behavior and cannot be fixed as docs-only guidance.
 - Human decision: `D-024` accepts the remediation direction. The new change must still present the exact role mapping, evidence schema, revision binding, UI contract, and negative scenarios for review before implementation.
-- Status: active P3 OpenSpec `harden-role-aware-guided-workflow`; the local role/readiness and decision-card contract is implemented and independently reviewed, while controlled package transfer and human acceptance remain open.
+- Status: accepted and archived in `openspec/changes/archive/2026-07-23-harden-role-aware-guided-workflow/` by `2038c93`; the local role/readiness, decision-card and non-authoritative operation-confirmation contract are accepted. Controlled package transfer is evidenced by P3.3; only analytics acceptance remains open.
 
 ### Typed analytics, integration, journey and screen framework
 

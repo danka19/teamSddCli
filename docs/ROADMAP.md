@@ -137,9 +137,9 @@ Current work-item map:
 | Work item | Status | OpenSpec change |
 |---|---|---|
 | 3.1 Role-aware acceptance and readiness gate | accepted | `harden-role-aware-guided-workflow`; 17/17 tasks checked, contract-only boundary accepted, and execution remains fail-closed |
-| `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
+| 3.2 Typed analytics artifact framework | in_progress | `add-typed-analytics-artifact-framework`; implementation and controlled transfer are complete, human acceptance remains required |
 | 3.3 Package and sandbox transfer | pending_acceptance | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are verified; human review is still required before lifecycle acceptance |
-| 3.4 Operation catalog and thin dispatcher | pending_acceptance | `add-operation-catalog-and-dispatcher`; 16/16 tasks verified; supplied confirmation artifacts are validated but every mutation remains fail-closed |
+| 3.4 Operation catalog and thin dispatcher | accepted | Archived `add-operation-catalog-and-dispatcher`; 16/16 tasks are complete, accepted specs are promoted, and every P3 mutation remains fail-closed |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 
