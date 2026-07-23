@@ -6,6 +6,8 @@ Phase 2 is closed. Phase 3 is in progress; its remaining lifecycle gate is human
 
 Last status reconciliation: 2026-07-23.
 
+- P3 lifecycle source reconciliation, findings, and remediation evidence are recorded in `docs/audits/P3_STATUS_RECONCILIATION_AUDIT_2026-07-23.md`.
+
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
 - Immutable successor `p3-analytics-v0.3.6-rc2` was built and manifest-validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.

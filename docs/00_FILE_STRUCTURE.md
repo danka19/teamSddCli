@@ -103,6 +103,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | openspec/changes/simplify-weak-model-decision-contract/ | Blocked, unarchived historical adapter 2.1 remediation change for decision-discriminated role responses, non-leading guidance, structural-only retry, compatibility, runtime/evidence hardening, and append-only recertification; all 15 technical tasks are complete, but its own failed certification gate prevents accepted-spec promotion/archive. Its former work-item blocker was superseded by passing adapter 2.2; work item 2.11 is closed |
 | `openspec/changes/archive/2026-07-23-add-operation-catalog-and-dispatcher/` | Archived accepted P3 change for the canonical operation catalog, generated script documentation, derived route/allowlist validation, and thin local `sdd` dispatcher; its requirements live in `openspec/specs/operation-catalog/` and `openspec/specs/guided-operation-dispatcher/` |
 | `openspec/changes/archive/2026-07-09-*/` | Archived Phase 1 OpenSpec change packages promoted into accepted specs by the 2026-07-09 Option A batch archive |
+| `docs/audits/P3_STATUS_RECONCILIATION_AUDIT_2026-07-23.md` | Dated evidence audit reconciling P3.1/P3.4 accepted archive/spec status with the phase plan, Roadmap, current audit, and remaining active analytics gate |
 
 ## Deterministic Process Artifacts
 
