@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Inventory existing user-facing docs, canonical OpenSpec contracts and specialist runbooks; define the FAQ navigation map and source ownership.
 - [ ] 1.2 Define the required-question index, stable page identifiers and deterministic link/reference validation.
-- [ ] 1.3 Add the FAQ hub and concise product, value and OpenSpec/OpenSpec DE comparison pages.
+- [ ] 1.3 Add the FAQ hub and concise product, value, OpenSpec/OpenSpec DE comparison and NIS foundation pages.
 
 ## 2. Setup and daily workflow guides
 

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Navigable product FAQ
-The product SHALL publish one concise Russian-language FAQ hub that links to focused pages for product purpose, comparison with OpenSpec/OpenSpec DE, setup, topology, daily workflow, role guides, AI usage, troubleshooting and plain-language roadmap. The hub SHALL NOT require a first-time user to read source code or OpenSpec artifacts to understand where to begin.
+The product SHALL publish one concise Russian-language FAQ hub that links to focused pages for product purpose, comparison with OpenSpec/OpenSpec DE, NIS foundation, setup, topology, daily workflow, role guides, AI usage, troubleshooting and plain-language roadmap. The hub SHALL NOT require a first-time user to read source code or OpenSpec artifacts to understand where to begin.
 
 #### Scenario: First-time user finds a starting route
 - **WHEN** a person opens the FAQ hub without prior framework knowledge
@@ -17,6 +17,13 @@ The FAQ SHALL explain the framework's value and its difference from OpenSpec and
 #### Scenario: User distinguishes framework layers
 - **WHEN** a user reads the comparison page
 - **THEN** it explains that OpenSpec records specification changes, while this framework adds governed role workflow, deterministic checks, evidence, topology and safe AI assistance without claiming to replace OpenSpec
+
+### Requirement: NIS foundation is explained without importing an organization model
+The FAQ SHALL explain that the target process takes NIS-aligned engineering controls as its foundation: flat `minor`/`major`/`hotfix` classification, class-aware DoR/DoD, explicit Tech Lead governance, regression/scope/stop/escalation/release controls, role-understanding evidence and failed-run retention. It SHALL also state that the framework does not copy PPRB or other NIS organizational structure as a target architecture.
+
+#### Scenario: User understands what was adopted from NIS
+- **WHEN** a user opens the NIS foundation page
+- **THEN** it distinguishes adopted process controls from excluded organizational models and links to the canonical corporate-process decision/source
 
 #### Scenario: User sees an honest status
 - **WHEN** a user reads the roadmap page
@@ -49,7 +56,7 @@ The FAQ SHALL answer whether AI can operate `sdd`, whether AI can guide the proc
 - **THEN** the documentation directs the user to the deterministic manual fallback and prohibits fabricated completion or silent defaults
 
 ### Requirement: FAQ coverage and navigation validation
-The documentation set SHALL maintain a checked index of required questions and links. Required questions include product purpose, benefits, OpenSpec/OpenSpec DE comparison, installation, topology, setup, roles, lifecycle, change classes, AI permissions, AI prohibitions, evidence, CI, privacy, failures, release boundary, corporate pilot, updates and support/escalation.
+The documentation set SHALL maintain a checked index of required questions and links. Required questions include product purpose, benefits, OpenSpec/OpenSpec DE comparison, NIS foundation and exclusions, installation, topology, setup, roles, lifecycle, change classes, AI permissions, AI prohibitions, evidence, CI, privacy, failures, release boundary, corporate pilot, updates and support/escalation.
 
 #### Scenario: A required answer is missing
 - **WHEN** documentation validation finds an absent required question, broken internal link or missing canonical reference
