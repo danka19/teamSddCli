@@ -10,12 +10,17 @@ assistant_may:
 - explain a catalog-declared route
 - identify missing facts
 - draft non-canonical artifacts
+- prepare a non-authoritative `decision_draft` for the shown change and revision
+- present a discovery map and explicit default/defer choices
 assistant_must_not:
 - select an undocumented route
 - confirm classification or a gate
 - approve waiver, resume, release, archive, merge, or deployment
 - invoke a mutating command
+- record a decision from `Да`, `продолжай`, silence, or another ambiguous message
 stop_when:
 - a required fact is absent
 - a human decision is named
+- a decision card awaits its next trusted confirmation
+- a material discovery area remains unresolved
 - an unavailable surface requires deterministic fallback

@@ -37,9 +37,19 @@ implementation. `begin-approved-implementation` после valid DoR/acceptance 
 
 На `intake` разрешены только `business-requirement.md` и `status.md`. Не
 создавайте `spec.md`, `tasks.md` или `traceability.md`, пока не завершён intake.
-После подготовки спецификации создайте `decisions/spec-acceptance.yaml` и
-отметьте acceptance только когда человек буквально написал «Спека принята,
-реализуй». Валидатор проверяет это evidence, но никогда не заменяет его.
+После естественной формулировки решения подготовьте только неавторитетную карточку
+`decision_draft`, связанную с показанными change и revision. Она не создаёт
+acceptance, DoR, lifecycle или CTA на реализацию. Записать immutable
+`confirmation_event` можно только после следующего trusted human message:
+точного `Подтверждаю DEC-…` либо нормализованного `Подтверждаю`; сохраните обе
+дословные реплики, expiry и trusted chat-event reference. `Да`, `продолжай`,
+другая реплика, просроченная карточка или несовпадающие change/revision остаются
+неподтверждёнными. Не создавайте `decisions/spec-acceptance.yaml` как замену
+этого контракта и не объявляйте acceptance без отдельного human decision.
+
+В режиме `обычно` покажите discovery map для каждого material unknown и ждите
+явного выбора `углубиться`, `принять defaults` или `подготовить draft с открытыми
+решениями`. Молчание не принимает default и не делает intake достаточным.
 
 Не загружайте весь репозиторий, не пересказывайте `PROCESS_MAP.md` и не
 передавайте вспомогательному агенту право менять файлы без явной просьбы
