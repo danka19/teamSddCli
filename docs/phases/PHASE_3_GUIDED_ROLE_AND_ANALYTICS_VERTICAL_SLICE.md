@@ -64,6 +64,13 @@ Verification:
 
 - Focused guided and integrity pytest tests, catalog/runbook validator, synthetic negative/positive walkthrough.
 
+Verification evidence (2026-07-23):
+
+- Relevant guided/package/release suite: `137 passed, 1 skipped`; controlled-update evidence suite: `20 passed`.
+- `openspec validate --all --strict`: `18 passed, 0 failed`; roadmap validator: `0 errors` and `2` unrelated historical lifecycle warnings.
+- AI-disabled CLI walkthrough blocked an `existing-change` request without `human_role` and reported no lifecycle or external mutation; route/confirmation/discovery transcript negatives are covered by the focused guided tests.
+- The real source-to-sandbox `update_process_package check` was intentionally fail-closed as `package-contract-invalid` before an accepted successor candidate existed; sandbox status remained limited to its pre-existing untracked paths. P3.3 owns the later successful check/update/rollback and separate sandbox commit.
+
 Exit criteria:
 
 - A route cannot offer an unauthorized CTA or begin implementation without valid role, readiness, trusted human event, and matching revision digest.
@@ -119,6 +126,21 @@ Verification:
 Exit criteria:
 
 - Sandbox package equals the validated source candidate; its existing uncommitted `enforce-guided-process-integrity` deletions remain untouched.
+
+### Change Intake — P3.1 pre-transfer boundary (2026-07-23)
+
+```text
+Idea: separate the P3.1 role-aware verification evidence from the real sandbox update.
+Source: accepted P3.3 dependency gate and the active change task wording.
+Type: verification_change, documentation_change.
+Decision: adopt_now.
+Reason: a real sandbox update before both P3 changes are human accepted would violate the P3.3 transfer gate and create an unaccepted successor baseline.
+Affected specs: no product behavior change; role-aware-guided-workflow verification wording only.
+Affected architecture: none; the controlled update mechanism remains the only transfer path.
+Data contract impact: none.
+Verification impact: P3.1 performs a deterministic pre-transfer check and records the constraint; P3.3 performs check/update/rollback, sandbox parity, and separate commits.
+Status: active.
+```
 
 ### 3.4 Operation catalog and thin dispatcher
 
