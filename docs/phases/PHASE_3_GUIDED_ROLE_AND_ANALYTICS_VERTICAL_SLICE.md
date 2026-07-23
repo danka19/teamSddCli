@@ -100,6 +100,8 @@ Verification:
 
 - Focused analytics pytest tests and CLI preview for the sanitized fixture.
 
+Verification evidence (2026-07-23): `python scripts/preview_analytics.py process/examples/analytics/sanitized --json` returned a valid read-only preview with no integration actions; the relevant P3/package/release/dispatcher suite passed `147` tests with `1` skip, and `openspec validate --all --strict` passed `18` checks.
+
 Exit criteria:
 
 - Every artifact is schema/semantic validated, traceable, free of placeholders, and previewed without integrations or product payment screens.

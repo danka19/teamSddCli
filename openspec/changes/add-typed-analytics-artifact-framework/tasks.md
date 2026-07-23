@@ -7,5 +7,5 @@
 
 ## 2. Verification and transfer
 
-- [ ] Register assets, run focused/final relevant tests and validation gates, and record the synthetic walkthrough.
+- [x] Register assets, run focused/final relevant tests and validation gates, and record the synthetic walkthrough.
 - [ ] Produce a higher-version package candidate and safely transfer it to sandbox through controlled update without touching its dirty OpenSpec path.
