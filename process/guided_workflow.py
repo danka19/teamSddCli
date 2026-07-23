@@ -118,7 +118,13 @@ def guide(
     }
     if interaction is not None:
         try:
-            payload["guided_interaction"] = _guided_interaction(interaction)
+            if route["id"] != "existing-change":
+                raise ValueError("guided interaction is unavailable for this route")
+            payload["guided_interaction"] = _guided_interaction(
+                interaction,
+                shown_change_id=facts.get("change_id"),
+                shown_revision_digest=facts.get("revision_digest"),
+            )
         except (TypeError, ValueError):
             return _blocked("invalid-guided-interaction", [])
     return payload
@@ -143,15 +149,31 @@ def _blocked(code: str, required_facts: list[str]) -> dict[str, Any]:
     }
 
 
-def _guided_interaction(interaction: dict[str, Any]) -> dict[str, Any]:
+def _guided_interaction(
+    interaction: dict[str, Any],
+    *,
+    shown_change_id: str | None,
+    shown_revision_digest: str | None,
+) -> dict[str, Any]:
     """Derive read-only decision and discovery records for an already guided route."""
-    if not isinstance(interaction, dict):
+    if (
+        not isinstance(interaction, dict)
+        or not isinstance(shown_change_id, str)
+        or not shown_change_id
+        or not isinstance(shown_revision_digest, str)
+        or not SHA256.fullmatch(shown_revision_digest)
+    ):
         raise ValueError("guided interaction is invalid")
     result: dict[str, Any] = {}
     decision = interaction.get("decision")
     if decision is not None:
         if not isinstance(decision, dict):
             raise ValueError("decision interaction is invalid")
+        if (
+            decision.get("change_id") != shown_change_id
+            or decision.get("revision_digest") != shown_revision_digest
+        ):
+            raise ValueError("decision interaction is not bound to shown context")
         draft = create_decision_draft(**decision)
         result["decision_draft"] = draft
         confirmation = interaction.get("confirmation_event")

@@ -289,7 +289,7 @@ def _decision_interaction() -> dict[str, object]:
 
 
 def test_existing_change_guided_route_keeps_natural_text_unconfirmed_until_the_next_trusted_confirmation() -> None:
-    facts = {"change_id": "sample", "lifecycle_state": "spec_review", "human_role": "Analyst"}
+    facts = {"change_id": "sample", "revision_digest": "a" * 64, "lifecycle_state": "spec_review", "human_role": "Analyst"}
     interaction = _decision_interaction()
 
     draft_payload = guide("existing-change", facts, set(), interaction=interaction)
@@ -317,6 +317,25 @@ def test_existing_change_guided_route_keeps_natural_text_unconfirmed_until_the_n
     silent = guide("existing-change", facts, set(), interaction=interaction)
     assert "confirmation_event" not in unknown["guided_interaction"]
     assert silent["guided_interaction"]["discovery_map"]["areas"][0]["status"] == "blocking"
+
+
+def test_existing_change_route_rejects_interaction_for_another_change_or_revision() -> None:
+    facts = {"change_id": "sample", "revision_digest": "a" * 64, "lifecycle_state": "spec_review", "human_role": "Analyst"}
+    interaction = _decision_interaction()
+
+    wrong_change = guide(
+        "existing-change", facts, set(),
+        interaction={**interaction, "decision": {**interaction["decision"], "change_id": "other-change"}},
+    )
+    wrong_revision = guide(
+        "existing-change", facts, set(),
+        interaction={**interaction, "decision": {**interaction["decision"], "revision_digest": "b" * 64}},
+    )
+
+    assert wrong_change["status"] == "blocked"
+    assert wrong_change["blockers"][0]["code"] == "invalid-guided-interaction"
+    assert wrong_revision["status"] == "blocked"
+    assert wrong_revision["blockers"][0]["code"] == "invalid-guided-interaction"
 
 
 def test_natural_language_creates_only_revision_bound_decision_draft() -> None:
