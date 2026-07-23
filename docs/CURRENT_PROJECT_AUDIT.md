@@ -280,7 +280,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Primary roadmap phase: P3; related phases: P4, P5.
 - Reason: the current implementation permits a role-neutral implementation action and self-declared acceptance evidence even though prose forbids both. This changes externally visible workflow behavior and cannot be fixed as docs-only guidance.
 - Human decision: `D-024` accepts the remediation direction. The new change must still present the exact role mapping, evidence schema, revision binding, UI contract, and negative scenarios for review before implementation.
-- Status: accepted intake; OpenSpec change not yet created in this session.
+- Status: active P3 OpenSpec `harden-role-aware-guided-workflow`; the local role/readiness and decision-card contract is implemented and independently reviewed, while controlled package transfer and human acceptance remain open.
 
 ### Typed analytics, integration, journey and screen framework
 

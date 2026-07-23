@@ -136,7 +136,7 @@ Current work-item map:
 
 | Work item | Status | OpenSpec change |
 |---|---|---|
-| 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow` |
+| 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow`; 8/12 tasks checked: local role/readiness and confirmation implementation is independently reviewed, while documentation synchronization, package transfer, and human acceptance remain open |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
 | 3.4 Operation catalog and thin dispatcher | in_progress | `add-operation-catalog-and-dispatcher`; 15/16 tasks verified; Task 4.2 remains gated by completion and human acceptance of the role-aware confirmation event before any mutate enablement |
