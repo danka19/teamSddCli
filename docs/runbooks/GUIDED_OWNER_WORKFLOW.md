@@ -37,3 +37,13 @@
 В режиме `обычно` существенная неизвестность должна быть показана в discovery map
 с явным выбором углубить обсуждение, принять default или подготовить draft с
 открытым решением. Молчание не является выбором и не делает intake достаточным.
+
+## Operation confirmation request
+
+`sdd request <operation>` формирует только non-authoritative request с
+`operation_id` и digest точной упорядоченной последовательности аргументов.
+Он не создаёт trusted chat evidence: роль CLI и локальные строки не являются
+доказательством человека. Полный future operation-confirmation event обязан
+независимо связать trusted human role, operation ID, input digest, request-card
+revision digest, event chain и expiry. До отдельного future enablement `sdd run`
+всегда блокируется, а `mutate_external` запрещён независимо от artifact.

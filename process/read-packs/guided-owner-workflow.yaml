@@ -18,9 +18,11 @@ assistant_must_not:
 - approve waiver, resume, release, archive, merge, or deployment
 - invoke a mutating command
 - record a decision from `Да`, `продолжай`, silence, or another ambiguous message
+- treat `sdd request` or an operation-confirmation request as trusted operation authority
 stop_when:
 - a required fact is absent
 - a human decision is named
 - a decision card awaits its next trusted confirmation
+- trusted operation-event metadata is unavailable or does not validate
 - a material discovery area remains unresolved
 - an unavailable surface requires deterministic fallback

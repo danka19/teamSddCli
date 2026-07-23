@@ -50,6 +50,7 @@ Progress evidence:
 - [x] Fail-closed interactive role policy and readiness-validation baseline are implemented and transferred in package `0.3.4`.
 - [x] Implement the human decision-card and confirmation-event contract documented in the active change; the record remains non-authoritative and bound to the shown change and revision.
 - [x] Implement proactive discovery recommendations and their negative transcript checks; silence remains unresolved.
+- [x] Add the non-authoritative operation-confirmation binding contract; it prepares future review only and cannot enable `sdd run`.
 - [ ] Validate the completed successor flow and transfer it through the controlled package mechanism.
 
 Objective:

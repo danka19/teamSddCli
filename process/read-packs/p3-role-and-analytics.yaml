@@ -8,11 +8,13 @@ assistant_must_not:
 - infer a human role
 - create acceptance evidence
 - treat a decision draft or `confirmation_event` as acceptance, DoR, lifecycle, or implementation authority
+- treat an operation-confirmation request/event as execution authority
 - invoke MCP or external integrations
 - create product payment screens
 stop_when:
 - human_role is unknown
 - trusted revision-bound acceptance is absent
 - a decision card is awaiting the next trusted human confirmation
+- operation confirmation lacks independently supplied trusted event metadata
 - a material discovery area remains unresolved
 - analytics validation is invalid

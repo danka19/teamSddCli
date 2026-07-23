@@ -71,6 +71,8 @@ SCHEMA_FILES = {
     "spec_acceptance": "spec-acceptance.schema.json",
     "decision_draft": "decision-draft.schema.json",
     "confirmation_event": "confirmation-event.schema.json",
+    "operation_confirmation_request": "operation-confirmation-request.schema.json",
+    "operation_confirmation_event": "operation-confirmation-event.schema.json",
     "corporate_environment_inventory": "corporate-environment-inventory.schema.json",
     "corporate_adaptation_checklist": "corporate-adaptation-checklist.schema.json",
     "corporate_pilot_evidence": "corporate-pilot-evidence.schema.json",
