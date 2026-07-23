@@ -25,7 +25,7 @@ P3 guided workflow currently allows role-sensitive routes without a known human 
 
 - Execution phase: P3
 - Related phases: P4
-- Lifecycle status: in_progress
+- Lifecycle status: accepted
 
 ## Impact
 

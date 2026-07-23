@@ -136,7 +136,7 @@ Current work-item map:
 
 | Work item | Status | OpenSpec change |
 |---|---|---|
-| 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow`; 12/12 tasks checked with local verification evidence, while controlled transfer and explicit human acceptance remain open lifecycle gates |
+| 3.1 Role-aware acceptance and readiness gate | accepted | `harden-role-aware-guided-workflow`; 17/17 tasks checked, contract-only boundary accepted, and execution remains fail-closed |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
 | 3.4 Operation catalog and thin dispatcher | in_progress | `add-operation-catalog-and-dispatcher`; 15/16 tasks verified; Task 4.2 remains gated by completion and human acceptance of the role-aware confirmation event before any mutate enablement |
@@ -220,6 +220,7 @@ Likely scope:
 | `repo-topology-config` | P1 | P0, P2, P3 |
 | `traceability-contract` | P1 | P2, P3 |
 | `waiver-policy` | P1 | P2, P3 |
+| `role-aware-guided-workflow` | P3 | P4 |
 
 ## Active Change Execution
 
@@ -227,7 +228,7 @@ Likely scope:
 |---|---|---|---|
 | `allow-certified-baseline-reuse` | P3 | P4 | accepted |
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
-| `harden-role-aware-guided-workflow` | P3 | P4 | in_progress |
+| `harden-role-aware-guided-workflow` | P3 | P4 | accepted |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | `add-operation-catalog-and-dispatcher` | P3 | P4, P5 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
