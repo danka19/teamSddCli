@@ -230,12 +230,25 @@ def test_request_digest_binds_operation_and_ordered_forwarded_argv(capsys: pytes
     second = json.loads(capsys.readouterr().out)
     assert first["status"] == "confirmation-requested"
     assert first["authority_granted"] is False
-    assert first["record_type"] == "operation_confirmation_request"
-    assert first["authority_granted"] is False
-    assert first["input_digest"] == second["input_digest"]
+    assert first["trusted_event_metadata_required"] is True
+    assert "record_type" not in first
+    assert "source_chat_event_ref" not in first
+    assert first["input_digest"] != second["input_digest"]
     assert sdd_main(["request", "create-change", "--role", "Analyst", "--", "sample", "sample", "--json"]) == 0
     duplicate = json.loads(capsys.readouterr().out)
     assert duplicate["input_digest"] != first["input_digest"]
+
+
+def test_request_never_fabricates_trusted_ingress_evidence(capsys: pytest.CaptureFixture[str]) -> None:
+    from scripts.sdd import main as sdd_main
+
+    assert sdd_main(["request", "create-change", "--role", "Analyst", "--json"]) == 0
+
+    request = json.loads(capsys.readouterr().out)
+    assert request["status"] == "confirmation-requested"
+    assert request["authority_granted"] is False
+    assert request["trusted_event_metadata_required"] is True
+    assert {"source_chat_event_ref", "card_chat_event_ref", "trusted_chat_event_ref"}.isdisjoint(request)
 
 
 def test_operation_confirmation_contract_binds_catalog_role_input_revision_chain_and_expiry() -> None:
@@ -269,7 +282,7 @@ def test_operation_confirmation_contract_binds_catalog_role_input_revision_chain
     event_schema = json.loads((ROOT / "process" / "schemas" / "operation-confirmation-event.schema.json").read_text(encoding="utf-8"))
     assert list(Draft202012Validator(request_schema, format_checker=FormatChecker()).iter_errors(request)) == []
     assert list(Draft202012Validator(event_schema, format_checker=FormatChecker()).iter_errors(event)) == []
-    assert validate_operation_confirmation_event(event, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event(event, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
     assert validate_operation_confirmation_event(event, forwarded_argv=["sample", "--json"], now="2026-07-23T10:03:00Z")
     assert not validate_operation_confirmation_event({key: value for key, value in event.items() if key != "human_role"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
     assert not validate_operation_confirmation_event({**event, "human_role": "Unknown"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
@@ -278,6 +291,10 @@ def test_operation_confirmation_contract_binds_catalog_role_input_revision_chain
     assert not validate_operation_confirmation_event({**event, "revision_digest": "f" * 64}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
     assert not validate_operation_confirmation_event(event, forwarded_argv=["changed"], now="2026-07-23T10:03:00Z")
     assert not validate_operation_confirmation_event(event, forwarded_argv=["sample"], now="2026-07-23T11:00:00Z")
+    assert not validate_operation_confirmation_event({**event, "source_event_timestamp": "2026-07-23T10:04:00Z"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "issued_at": "2026-07-23T10:04:00Z"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "confirmed_at": "2026-07-23T10:04:00Z"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "unexpected": "field"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
 
 
 def test_valid_operation_event_never_enables_run_or_external_mutation(

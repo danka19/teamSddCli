@@ -4,11 +4,10 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Sequence
 import yaml
-from .guided_workflow import build_operation_confirmation_request, guide
+from .guided_workflow import guide, operation_input_digest
 from .errors import OperationError
 from .operation_cli import execute
 from .operations_catalog import DEFAULT_CATALOG, load_operations_catalog, operation_by_id
@@ -100,16 +99,13 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
     if args.command == "request":
         if not item["mutation_level"].startswith("mutate_") or not item["confirmation_required"]:
             return _blocked("sdd-request", "operation-not-requestable", operation_id=item["id"])
-        issued = datetime.now(timezone.utc).replace(microsecond=0)
-        issued_at = issued.isoformat().replace("+00:00", "Z")
-        expires_at = (issued + timedelta(minutes=15)).isoformat().replace("+00:00", "Z")
-        request = build_operation_confirmation_request(
-            human_role=args.role, operation_id=item["id"], forwarded_argv=args.forwarded,
-            source_event={"event_ref": "local-request://source", "actor_type": "human", "sequence": 0, "timestamp": issued_at, "message": "operation confirmation requested"},
-            card_event={"event_ref": "local-request://card", "actor_type": "assistant", "sequence": 1, "previous_event_ref": "local-request://source", "timestamp": issued_at},
-            expires_at=expires_at,
-        )
-        return {"operation": "sdd-request", "status": "confirmation-requested", "review_required": True, "lifecycle_mutated": False, "external_state_mutated": False, **request}
+        return {
+            "operation": "sdd-request", "schema_version": "1.0", "status": "confirmation-requested",
+            "operation_id": item["id"], "input_digest": operation_input_digest(item["id"], args.forwarded),
+            "authority_granted": False, "review_required": True,
+            "trusted_event_metadata_required": True,
+            "lifecycle_mutated": False, "external_state_mutated": False,
+        }
     if args.command == "run": return _blocked("sdd-run", "confirmation-contract-pending", operation_id=item["id"])
     required = "read_only" if args.command == "check" else "prepare"
     if item["mutation_level"] != required: return _blocked(f"sdd-{args.command}", "operation-class-not-permitted", operation_id=item["id"])

@@ -63,11 +63,15 @@ In `обычно` mode P3 guided workflow SHALL proactively surface material unr
 - **THEN** the workflow SHALL retain the area as unresolved and SHALL not report intake or spec readiness as sufficient
 
 ### Requirement: Non-authoritative operation confirmation binding
-P3 SHALL represent a requested local operation by a typed operation-confirmation request and event that bind the trusted human role, catalog `operation_id`, canonical `input_digest`, card `revision_digest`, trusted event chain, and expiry. The record SHALL not grant lifecycle, DoR, acceptance, release, or execution authority.
+P3 SHALL связывать typed operation-confirmation request и event с trusted human role, catalog `operation_id`, каноническим `input_digest`, card `revision_digest`, trusted event chain и expiry. Локальное намерение `sdd request` без реальных trusted-event metadata SHALL быть отдельным от typed request, SHALL сообщать, что trusted metadata обязательны, и SHALL NOT фабриковать event chain. Ни record, ни intent SHALL NOT предоставлять authority для lifecycle, DoR, acceptance, release или execution.
 
-#### Scenario: Missing, mismatched, or expired operation evidence is blocked
-- **WHEN** an operation-confirmation event lacks a binding field, has a role or operation not allowed by the catalog, has a changed input or card digest, or is expired at validation time
-- **THEN** validation SHALL reject it before any entrypoint can start
+#### Scenario: Missing, mismatched, future, expired, or extra operation evidence is blocked
+- **WHEN** operation-confirmation event не содержит binding field, содержит unknown field, имеет role или operation, не разрешённые catalog, изменённый input/card digest, issued/confirmed timestamp в будущем или истёк к моменту validation
+- **THEN** validation SHALL отклонить его до запуска entrypoint
+
+#### Scenario: Local request does not invent trusted ingress
+- **WHEN** `sdd request` вызван без actual trusted human/assistant/human event metadata
+- **THEN** он SHALL вернуть только non-authoritative intent с `trusted_event_metadata_required: true` и SHALL NOT вернуть operation-confirmation record или fabricated event references
 
 #### Scenario: Operation confirmation never enables P3 execution
 - **WHEN** a valid operation-confirmation event is supplied to `sdd run`

@@ -331,7 +331,7 @@ def operation_input_digest(operation_id: str, forwarded_argv: list[str] | tuple[
     if not isinstance(operation_id, str) or not operation_id or not isinstance(forwarded_argv, (list, tuple)) or not all(isinstance(arg, str) for arg in forwarded_argv):
         raise ValueError("operation input is invalid")
     source = json.dumps(
-        {"operation_id": operation_id, "argv": [arg for arg in forwarded_argv if arg != "--json"]},
+        {"operation_id": operation_id, "argv": list(forwarded_argv)},
         ensure_ascii=False, sort_keys=True, separators=(",", ":"),
     )
     return hashlib.sha256(source.encode("utf-8")).hexdigest()
@@ -385,6 +385,14 @@ _OPERATION_REQUEST_FIELDS = (
     "source_event_actor_type", "source_event_sequence", "source_event_timestamp", "card_chat_event_ref",
     "card_event_actor_type", "card_event_sequence", "card_previous_event_ref", "issued_at", "expires_at",
 )
+_OPERATION_REQUEST_RECORD_FIELDS = frozenset((
+    "schema_version", "record_type", "authority_granted", *_OPERATION_REQUEST_FIELDS,
+))
+_OPERATION_EVENT_RECORD_FIELDS = frozenset((
+    *_OPERATION_REQUEST_RECORD_FIELDS,
+    "confirmation_message", "trusted_chat_event_ref", "confirmation_event_actor_type",
+    "confirmation_event_sequence", "confirmed_at",
+))
 
 
 def validate_operation_confirmation_event(
@@ -394,6 +402,8 @@ def validate_operation_confirmation_event(
     """Fail closed unless an event remains bound to catalog, argv, card and expiry."""
     if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "operation_confirmation_event" or value.get("authority_granted") is not False:
         return False
+    if set(value) != _OPERATION_EVENT_RECORD_FIELDS:
+        return False
     request = {"schema_version": "1.0", "record_type": "operation_confirmation_request", "authority_granted": False, **{key: value.get(key) for key in _OPERATION_REQUEST_FIELDS}}
     if not _valid_operation_confirmation_request(request) or not _valid_operation_confirmation_event_input({
         "event_ref": value.get("trusted_chat_event_ref"), "actor_type": value.get("confirmation_event_actor_type"),
@@ -401,7 +411,13 @@ def validate_operation_confirmation_event(
         "timestamp": value.get("confirmed_at"), "message": value.get("confirmation_message"),
     }, request):
         return False
-    if _parse_aware(now) is None or not _is_after(request["expires_at"], now):
+    if (
+        _parse_aware(now) is None
+        or not _is_after(request["expires_at"], now)
+        or not _is_not_after(request["source_event_timestamp"], now)
+        or not _is_not_after(request["issued_at"], now)
+        or not _is_not_after(value["confirmed_at"], now)
+    ):
         return False
     try:
         operation = next(item for item in load_operations_catalog(operations_path)["operations"] if item["id"] == request["operation_id"])
@@ -421,6 +437,8 @@ def _canonical_operation_request_card_bytes(card_body: dict[str, Any]) -> bytes:
 
 def _valid_operation_confirmation_request(value: Any) -> bool:
     if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "operation_confirmation_request" or value.get("authority_granted") is not False:
+        return False
+    if set(value) != _OPERATION_REQUEST_RECORD_FIELDS:
         return False
     required_strings = ("card_code", "human_role", "operation_id", "input_digest", "revision_digest", "source_chat_event_ref", "source_event_actor_type", "source_event_timestamp", "card_chat_event_ref", "card_event_actor_type", "card_previous_event_ref", "issued_at", "expires_at")
     if not all(isinstance(value.get(key), str) and value[key] for key in required_strings) or not all(_is_sequence(value.get(key)) for key in ("source_event_sequence", "card_event_sequence")):

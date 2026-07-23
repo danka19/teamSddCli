@@ -47,16 +47,22 @@ operation authority. P3 adds a separate `operation_confirmation_request` and
 `operation_id`, `input_digest`, `revision_digest`, `issued_at`, `expires_at`,
 and the existing trusted human/assistant/human event chain.
 
-`input_digest` is SHA-256 of canonical JSON containing the operation ID and the
-ordered forwarded argv after removing only dispatcher `--json`; argument order,
-duplication, and values otherwise remain significant. `revision_digest` is
-SHA-256 of the exact canonical request-card bytes shown to the human. A changed
-request therefore invalidates the event. Validation checks the catalog role,
-all bindings, timestamp awareness, and expiry against injected current time.
+`input_digest` — SHA-256 канонического JSON с operation ID и упорядоченным
+`forwarded argv`: parser уже исключает только собственный флаг вывода
+dispatcher `--json`; литеральный `--json` после `--`, порядок, дубли и
+значения остаются значимыми. `revision_digest` — SHA-256 точных канонических
+байтов request-card, показанной человеку. Изменённая карточка поэтому
+инвалидирует event. Validator проверяет роль из каталога, все binding-поля,
+закрытый набор полей, timezone-aware timestamps, отсутствие будущих событий и
+expiry по инжектированному текущему времени.
 
-The extension is contract-only. `sdd request` may emit a request with
-`authority_granted: false`; every `sdd run` remains
-`confirmation-contract-pending` before entrypoint spawn. `mutate_external`
-remains rejected at catalog load and dispatch. Trusted ingress and replay-safe
-one-time consumption are intentionally deferred to a later human-accepted
-execution-enablement change.
+Расширение остаётся только контрактом. `sdd request` возвращает локальное
+неавторитетное намерение с `authority_granted: false`, `input_digest` и
+`trusted_event_metadata_required: true`; оно не является
+`operation_confirmation_request` и не создаёт event refs, sequence, role или
+timestamps от имени trusted ingress. Typed request/event может построить лишь
+будущий доверенный producer после получения реальных метаданных цепочки.
+Каждый `sdd run` остаётся `confirmation-contract-pending` до запуска
+entrypoint, а `mutate_external` остаётся отклонённым при загрузке каталога и в
+dispatcher. Trusted ingress и replay-safe one-time consumption отложены до
+отдельного human-accepted change, разрешающего выполнение.
