@@ -1,0 +1,50 @@
+schema_version: "1.0"
+defaults: &defaults
+  title: Local deterministic process operation
+  visibility: internal
+  allowed_roles: [Analyst, Tech Lead, Developer, QA]
+  situations: []
+  inputs: [documented-cli-input]
+  outputs: [structured-json-result]
+  mutation_level: read_only
+  risk_level: low
+  human_decision: null
+  confirmation_required: false
+  automation_class: ai_prepare
+  evidence: [local-command-output]
+  fallback: Use the documented deterministic manual fallback.
+  runbook: docs/README.md
+  tests: [tests/test_operation_catalog_dispatcher.py]
+  lifecycle_status: active
+operations:
+  - {<<: *defaults, id: bootstrap-team-specs, entrypoint: scripts/bootstrap_team_specs.py, mutation_level: mutate_local, risk_level: high, human_decision: human-bootstrap-approval, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: build-read-pack, entrypoint: scripts/build_read_pack.py, mutation_level: prepare}
+  - {<<: *defaults, id: certify-process-release, entrypoint: scripts/certify_process_release.py, mutation_level: mutate_release, risk_level: high, human_decision: release-certification-decision, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: check-actual-certification-gate, entrypoint: scripts/check_actual_certification_gate.py}
+  - {<<: *defaults, id: check-corporate-flow, entrypoint: scripts/check_corporate_flow.py}
+  - {<<: *defaults, id: check-lifecycle-transition, entrypoint: scripts/check_lifecycle_transition.py}
+  - {<<: *defaults, id: check-parallel-plan, entrypoint: scripts/check_parallel_plan.py}
+  - {<<: *defaults, id: check-tech-lead-control, entrypoint: scripts/check_tech_lead_control.py}
+  - {<<: *defaults, id: check-weak-model-evidence, entrypoint: scripts/check_weak_model_evidence.py}
+  - {<<: *defaults, id: classify-change, entrypoint: scripts/classify_change.py, visibility: public, situations: [new-requirement, urgent-incident]}
+  - {<<: *defaults, id: create-change, entrypoint: scripts/create_change.py, visibility: public, situations: [new-requirement, urgent-incident], mutation_level: mutate_local, risk_level: medium, human_decision: change-creation-decision, confirmation_required: true, automation_class: ai_request}
+  - {<<: *defaults, id: evaluate-change-gates, entrypoint: scripts/evaluate_change_gates.py, visibility: public, situations: [existing-change, urgent-incident]}
+  - {<<: *defaults, id: guided-owner-workflow, entrypoint: scripts/guided_owner_workflow.py, visibility: public, situations: [new-requirement, existing-change, urgent-incident, blocked-operation]}
+  - {<<: *defaults, id: launch-role-task, entrypoint: scripts/launch_role_task.py, mutation_level: prepare}
+  - {<<: *defaults, id: manage-release-candidate, entrypoint: scripts/manage_release_candidate.py, mutation_level: mutate_release, risk_level: high, human_decision: release-candidate-decision, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: manual-fallback, entrypoint: scripts/manual_fallback.py, visibility: public, situations: [blocked-operation], mutation_level: prepare}
+  - {<<: *defaults, id: migrate-change-classification, entrypoint: scripts/migrate_change_classification.py, mutation_level: mutate_local, risk_level: medium, human_decision: migration-decision, confirmation_required: true, automation_class: ai_request}
+  - {<<: *defaults, id: normalize-actual-certification, entrypoint: scripts/normalize_actual_certification.py, mutation_level: mutate_local, risk_level: high, human_decision: evidence-normalization-decision, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: prepare-archive, entrypoint: scripts/prepare_archive.py, visibility: public, situations: [existing-change], mutation_level: prepare}
+  - {<<: *defaults, id: prepare-spec-pr, entrypoint: scripts/prepare_spec_pr.py, visibility: public, situations: [existing-change], mutation_level: prepare}
+  - {<<: *defaults, id: preview-analytics, entrypoint: scripts/preview_analytics.py, visibility: public, mutation_level: read_only}
+  - {<<: *defaults, id: review-tech-lead, entrypoint: scripts/review_tech_lead.py, mutation_level: prepare}
+  - {<<: *defaults, id: run-actual-certification, entrypoint: scripts/run_actual_certification.py, mutation_level: mutate_local, risk_level: high, human_decision: actual-certification-decision, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: update-process-package, entrypoint: scripts/update_process_package.py, mutation_level: mutate_local, risk_level: high, human_decision: package-update-decision, confirmation_required: true, automation_class: human_only}
+  - {<<: *defaults, id: validate-change, entrypoint: scripts/validate_change.py}
+  - {<<: *defaults, id: validate-corporate-adaptation, entrypoint: scripts/validate_corporate_adaptation.py}
+  - {<<: *defaults, id: validate-external-mapping, entrypoint: scripts/validate_external_mapping.py}
+  - {<<: *defaults, id: validate-guided-owner-workflow, entrypoint: scripts/validate_guided_owner_workflow.py}
+  - {<<: *defaults, id: validate-process-config, entrypoint: scripts/validate_process_config.py}
+  - {<<: *defaults, id: validate-traceability, entrypoint: scripts/validate_traceability.py}
+  - {<<: *defaults, id: sdd-dispatcher, entrypoint: scripts/sdd.py, visibility: public, situations: [new-requirement, existing-change, urgent-incident, blocked-operation]}

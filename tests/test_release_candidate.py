@@ -41,6 +41,7 @@ EXPECTED_ENTRY_POINTS = {
     "manage_release_candidate.py",
     "manual_fallback.py",
     "guided_owner_workflow.py",
+    "sdd.py",
     "migrate_change_classification.py",
     "prepare_archive.py",
     "prepare_spec_pr.py",
@@ -726,7 +727,7 @@ def test_portable_paths_reject_cross_platform_threats(unsafe: str) -> None:
 def test_inventory_rejects_unicode_casefold_collision_and_links(tmp_path: Path) -> None:
     root = tmp_path / "payload"
     root.mkdir()
-    (root / "é.txt").write_text("a", encoding="utf-8")
+    (root / "Г©.txt").write_text("a", encoding="utf-8")
     (root / "e\u0301.txt").write_text("b", encoding="utf-8")
     with pytest.raises(OperationError, match="release.path-collision"):
         payload_inventory(root)

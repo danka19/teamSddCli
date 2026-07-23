@@ -60,6 +60,7 @@ _ENTRY_POINTS = (
     ("create_change.py", ("scripts/create_change.py", "--help"), (0,)),
     ("evaluate_change_gates.py", ("scripts/evaluate_change_gates.py", "--help"), (0,)),
     ("guided_owner_workflow.py", ("scripts/guided_owner_workflow.py", "--help"), (0,)),
+    ("sdd.py", ("scripts/sdd.py", "--help"), (0,)),
     ("manage_release_candidate.py", ("scripts/manage_release_candidate.py", "validate", "--help"), (0,)),
     ("manual_fallback.py", ("scripts/manual_fallback.py", "--help"), (0,)),
     ("migrate_change_classification.py", ("scripts/migrate_change_classification.py", "--help"), (0,)),

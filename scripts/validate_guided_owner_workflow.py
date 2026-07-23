@@ -13,6 +13,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from process.guided_workflow import DEFAULT_CATALOG, load_catalog
+from process.operations_catalog import DEFAULT_CATALOG as DEFAULT_OPERATIONS_CATALOG
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         load_catalog(args.catalog)
-        expected = hashlib.sha256(args.catalog.read_bytes()).hexdigest()
+        expected = hashlib.sha256(args.catalog.read_bytes() + DEFAULT_OPERATIONS_CATALOG.read_bytes()).hexdigest()
         guide = args.guide.read_text(encoding="utf-8")
         marker = f"{MARKER}{expected} -->"
         if marker not in guide:

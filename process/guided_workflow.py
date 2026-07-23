@@ -8,25 +8,19 @@ from typing import Any
 import yaml
 
 from .errors import OperationError
+from .operations_catalog import DEFAULT_CATALOG as DEFAULT_OPERATIONS_CATALOG, load_operations_catalog
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parent
 DEFAULT_CATALOG = PACKAGE_ROOT / "catalogs" / "guided-owner-workflow.yaml"
-ALLOWED_COMMANDS = {
-    "scripts/create_change.py",
-    "scripts/classify_change.py",
-    "scripts/prepare_spec_pr.py",
-    "scripts/evaluate_change_gates.py",
-    "scripts/prepare_archive.py",
-    "scripts/manual_fallback.py",
-}
 INTERACTIVE_ROLES = {"Analyst", "Tech Lead", "Developer", "QA"}
 DECISION_OWNERS = {"Analyst", "Tech Lead", "Change Owner"}  # legacy catalog record only
 KNOWN_ROLES = INTERACTIVE_ROLES
 
 
-def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
+def load_catalog(path: Path = DEFAULT_CATALOG, *, operations_path: Path = DEFAULT_OPERATIONS_CATALOG) -> dict[str, Any]:
     """Load a small, explicit catalog and reject authority or command drift."""
+    operations = {item["id"] for item in load_operations_catalog(operations_path)["operations"]}
     try:
         catalog = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, yaml.YAMLError) as error:
@@ -56,7 +50,7 @@ def load_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
                 or not all(isinstance(value, str) and value for value in values)
                 for key, values in allowed_values.items()
             )
-            or not isinstance(commands, list) or not commands or not set(commands) <= ALLOWED_COMMANDS
+            or not isinstance(commands, list) or not commands or not all(isinstance(command, str) and command in operations for command in commands)
             or not isinstance(decision, dict) or not isinstance(decision.get("id"), str)
             or decision.get("owner") not in DECISION_OWNERS
             or not isinstance(decision.get("consequence"), str)

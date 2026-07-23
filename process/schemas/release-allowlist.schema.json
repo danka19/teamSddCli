@@ -28,6 +28,7 @@
         {"name": "create_change.py", "smoke": ["scripts/create_change.py", "--help"], "expected_exit_codes": [0]},
         {"name": "evaluate_change_gates.py", "smoke": ["scripts/evaluate_change_gates.py", "--help"], "expected_exit_codes": [0]},
         {"name": "guided_owner_workflow.py", "smoke": ["scripts/guided_owner_workflow.py", "--help"], "expected_exit_codes": [0]},
+        {"name": "sdd.py", "smoke": ["scripts/sdd.py", "--help"], "expected_exit_codes": [0]},
         {"name": "manage_release_candidate.py", "smoke": ["scripts/manage_release_candidate.py", "validate", "--help"], "additional_smokes": [["scripts/manage_release_candidate.py", "accept", "--help"], ["scripts/manage_release_candidate.py", "rehearse", "--help"]], "expected_exit_codes": [0]},
         {"name": "manual_fallback.py", "smoke": ["scripts/manual_fallback.py", "--help"], "expected_exit_codes": [0]},
         {"name": "migrate_change_classification.py", "smoke": ["scripts/migrate_change_classification.py", "--help"], "expected_exit_codes": [0]},

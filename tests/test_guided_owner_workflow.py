@@ -39,8 +39,8 @@ def test_new_requirement_route_is_read_only_and_names_classification_decision(
     assert payload["lifecycle_mutated"] is False
     assert payload["known_facts"] == {"classification": classification, "human_role": "Analyst"}
     assert payload["commands"] == [
-        "scripts/create_change.py",
-        "scripts/classify_change.py",
+        "create-change",
+        "classify-change",
     ]
     assert payload["human_decision"]["id"] == "classification-confirmation"
     assert payload["human_decision"]["owner"] == "Tech Lead"
@@ -90,7 +90,7 @@ def test_unavailable_surface_returns_catalog_fallback_without_weakening_gate(cap
     assert payload["unavailable"] == ["model-runtime"]
     assert payload["fallbacks"] == [{
         "surface": "model-runtime",
-        "command": "scripts/manual_fallback.py --unavailable model-runtime",
+        "command": "manual-fallback --unavailable model-runtime",
     }]
     assert payload["human_decision"]["id"] == "hotfix-eligibility-confirmation"
     assert payload["route_id"] == "urgent-incident"
@@ -111,7 +111,7 @@ def test_catalog_rejects_undocumented_commands_and_ai_owned_decisions(tmp_path: 
         "  - id: unsafe\n"
         "    situation: unsafe\n"
         "    required_facts: []\n"
-        "    commands: [scripts/not-published.py]\n"
+        "    commands: [not-published-operation]\n"
         "    evidence: []\n"
         "    human_decision: {id: release, owner: AI}\n"
         "    fallbacks: []\n",

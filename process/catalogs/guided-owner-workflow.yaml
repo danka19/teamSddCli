@@ -8,8 +8,8 @@ routes:
     allowed_values:
       classification: [minor, major, hotfix]
     commands:
-      - scripts/create_change.py
-      - scripts/classify_change.py
+      - create-change
+      - classify-change
     evidence:
       - proposed change package
       - classification evidence
@@ -19,7 +19,7 @@ routes:
       consequence: Classification remains pending and no gate is approved.
     fallbacks:
       - surface: model-runtime
-        command: scripts/manual_fallback.py --unavailable model-runtime
+        command: manual-fallback --unavailable model-runtime
   - id: existing-change
     situation: existing-change
     required_facts:
@@ -28,9 +28,9 @@ routes:
     allowed_values:
       lifecycle_state: [draft, spec_review, approved, in_implementation, ready_to_archive, archived]
     commands:
-      - scripts/prepare_spec_pr.py
-      - scripts/evaluate_change_gates.py
-      - scripts/prepare_archive.py
+      - prepare-spec-pr
+      - evaluate-change-gates
+      - prepare-archive
     evidence:
       - change identity
       - lifecycle and gate evidence
@@ -44,9 +44,9 @@ routes:
     required_facts:
       - incident_ref
     commands:
-      - scripts/classify_change.py
-      - scripts/create_change.py
-      - scripts/evaluate_change_gates.py
+      - classify-change
+      - create-change
+      - evaluate-change-gates
     evidence:
       - incident reference
       - minimum regression and reconciliation evidence
@@ -56,13 +56,13 @@ routes:
       consequence: The work stays held; urgency does not bypass safety gates.
     fallbacks:
       - surface: model-runtime
-        command: scripts/manual_fallback.py --unavailable model-runtime
+        command: manual-fallback --unavailable model-runtime
   - id: blocked-operation
     situation: blocked-operation
     required_facts:
       - failed_run_ref
     commands:
-      - scripts/manual_fallback.py
+      - manual-fallback
     evidence:
       - retained failed-run evidence
       - hold or escalation record
@@ -72,4 +72,4 @@ routes:
       consequence: Work remains held until an accountable human records a decision.
     fallbacks:
       - surface: model-runtime
-        command: scripts/manual_fallback.py --unavailable model-runtime
+        command: manual-fallback --unavailable model-runtime

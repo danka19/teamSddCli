@@ -103,6 +103,8 @@ distribution:
     - guided_process_integrity.py
     - model_adapter.py
     - operation_cli.py
+    - operation_dispatcher.py
+    - operations_catalog.py
     - operation_plan.py
     - package.yaml
     - release-allowlist.yaml

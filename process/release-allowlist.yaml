@@ -40,6 +40,9 @@ entry_points:
   - name: guided_owner_workflow.py
     smoke: [scripts/guided_owner_workflow.py, --help]
     expected_exit_codes: [0]
+  - name: sdd.py
+    smoke: [scripts/sdd.py, --help]
+    expected_exit_codes: [0]
   - name: manage_release_candidate.py
     smoke: [scripts/manage_release_candidate.py, validate, --help]
     additional_smokes:
