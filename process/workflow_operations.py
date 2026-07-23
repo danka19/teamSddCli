@@ -805,6 +805,9 @@ def rollback_process_package(
     ):
         raise OperationError("rollback-proof-invalid", "rollback snapshot proof is missing or invalid")
     _assert_config_pin(config, current, installed_root, config_path.parent)
+    gigacode_changes = _prepare_gigacode_update(
+        installed_root, backup_root, installed_root.parent
+    )
     original_config = config_path.read_bytes()
     displaced = installed_root.with_name(f".{installed_root.name}.rollback-current")
     staged = installed_root.with_name(f".{installed_root.name}.rollback-target")
@@ -816,8 +819,10 @@ def rollback_process_package(
         shutil.move(str(staged), str(installed_root))
         config["process_package"]["version"] = target["version"]
         _write_yaml_atomic(config_path, config)
+        _apply_gigacode_updates(gigacode_changes)
         shutil.rmtree(displaced)
     except Exception:
+        _restore_gigacode_updates(gigacode_changes)
         if staged.exists():
             shutil.rmtree(staged)
         if installed_root.exists() and displaced.exists():
@@ -1009,7 +1014,7 @@ def _validate_standalone_package(
 ) -> dict[str, Any]:
     """Validate one package snapshot without discovery, runtime, or mutation."""
     root = _safe_root(root, "package")
-    resources = load_schema_resources(BUNDLED_SCHEMA_ROOT)
+    resources = load_schema_resources(_declared_directory(root, "schemas"))
     package = _load_yaml(root / "package.yaml")
     diagnostics = schema_diagnostics(
         "process-package.schema.json", package, "process-package", stage=1,
@@ -1046,10 +1051,12 @@ def _validate_standalone_package(
     catalogs = package.get("catalogs")
     if not isinstance(catalogs, dict):
         raise OperationError("package-contract-invalid", "catalog declarations are missing")
-    operations_path = _declared_file(root, catalogs.get("operations"))
-    load_operations_catalog(operations_path)
     guided_workflow_path = _declared_file(root, catalogs.get("guided_owner_workflow"))
-    load_catalog(guided_workflow_path, operations_path=operations_path)
+    operations_reference = catalogs.get("operations")
+    if operations_reference is not None:
+        operations_path = _declared_file(root, operations_reference)
+        load_operations_catalog(operations_path)
+        load_catalog(guided_workflow_path, operations_path=operations_path)
 
     distribution = package.get("distribution")
     if not isinstance(distribution, dict):

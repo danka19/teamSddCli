@@ -70,6 +70,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_PRODUCT_GAP_CHANGE_INTAKE_2026-07-20.md` | Six-group intake for the 13 genuine product gaps, with Phase 2 release-integrity routing, Phase 3/4 deferrals, and the successor-candidate execution gate |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_CERTIFICATION_2026-07-20.md` | Successor certification audit covering rc5 fail-closed history, immutable rc6 identity, fresh model/AI-disabled/platform evidence, exact raw closure, verification, and independent review |
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Accepted human-decision record for exact immutable candidate rc6, including checksums, evidence, limits, and consequences |
+| `docs/audits/P3_TYPED_ANALYTICS_ACCEPTANCE_PACKET_2026-07-23.md` | Human review packet for the active typed analytics framework change and its verified `0.3.6` sandbox transfer; it is not acceptance evidence |
 | `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_IMPLEMENTATION_AUDIT_2026-07-20.md` | Evidence-backed checkpoint for the implemented guided-operation slice, its verification, status reconciliation, and remaining successor-release gates |
 | `docs/audits/GIGACODE_ROLE_ACCEPTANCE_AND_FRAMEWORK_READINESS_AUDIT_2026-07-21.md` | Read-only sandbox audit of GigaCode role resolution, role-scoped UI, literal human evidence, premature acceptance paths, validator/template drift, retained analytics inputs, and missing framework-ready schemas/integration/screen contracts |
 | `docs/phases/` | Detailed phase plans and templates |
@@ -111,7 +112,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
-| `process/VERSION` | Current working source process-package semantic version (`0.3.5`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
+| `process/VERSION` | Current working source process-package semantic version (`0.3.6`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |

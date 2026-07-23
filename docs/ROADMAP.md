@@ -138,7 +138,7 @@ Current work-item map:
 |---|---|---|
 | 3.1 Role-aware acceptance and readiness gate | accepted | `harden-role-aware-guided-workflow`; 17/17 tasks checked, contract-only boundary accepted, and execution remains fail-closed |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
-| 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
+| 3.3 Package and sandbox transfer | pending_acceptance | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are verified; human review is still required before lifecycle acceptance |
 | 3.4 Operation catalog and thin dispatcher | pending_acceptance | `add-operation-catalog-and-dispatcher`; 16/16 tasks verified; supplied confirmation artifacts are validated but every mutation remains fail-closed |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:

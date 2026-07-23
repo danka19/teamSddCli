@@ -15,7 +15,7 @@ from referencing.jsonschema import DRAFT202012
 CONFIG_SCHEMA_VERSION = "1.1"
 TOPOLOGY = "central-team-specs"
 PACKAGE_ID = "sdd-process"
-PACKAGE_VERSION = "0.3.5"
+PACKAGE_VERSION = "0.3.6"
 POLICY_SET_ID = "sdd-core"
 POLICY_SET_VERSION = "1.0.0"
 OPENSPEC_VERSION = "1.4.1"

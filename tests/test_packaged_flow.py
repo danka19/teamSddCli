@@ -173,12 +173,11 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
     candidate = tmp_path / "candidate"
     shutil.copytree(installed, candidate)
     candidate_manifest = _yaml(candidate / "package.yaml")
-    candidate_manifest["package"]["version"] = "0.3.5"
+    candidate_manifest["package"]["version"] = "0.4.0"
     (candidate / "package.yaml").write_text(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
-    (candidate / "VERSION").write_text("0.3.5\n", encoding="utf-8")
-
+    (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
     managed = workspace / ".gigacode" / "AGENTS.md"
     managed.write_text("local override\n", encoding="utf-8")
     process_before = (installed / "VERSION").read_bytes()
@@ -191,7 +190,7 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
             candidate,
             config_path,
             tmp_path / "rollbacks",
-            upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.5"),
+            upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.4.0"),
         )
 
     assert (installed / "VERSION").read_bytes() == process_before
@@ -205,11 +204,11 @@ def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> No
     candidate = tmp_path / "candidate"
     shutil.copytree(installed, candidate)
     candidate_manifest = _yaml(candidate / "package.yaml")
-    candidate_manifest["package"]["version"] = "0.3.5"
+    candidate_manifest["package"]["version"] = "0.4.0"
     (candidate / "package.yaml").write_text(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
-    (candidate / "VERSION").write_text("0.3.5\n", encoding="utf-8")
+    (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
 
     config_path = workspace / "team-specs" / "sdd.config.yaml"
     config = _yaml(config_path)
@@ -223,7 +222,7 @@ def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> No
         candidate,
         config_path,
         tmp_path / "rollbacks",
-        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.3.5"),
+        upgrade_evidence=_upgrade_evidence(tmp_path / "upgrade-review", "0.4.0"),
     )
 
     migrated = _yaml(config_path)
@@ -420,6 +419,13 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
         yaml.safe_dump(candidate_package, sort_keys=False), encoding="utf-8"
     )
     (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
+    managed = installed.parent / ".gigacode" / "skills" / "sdd-process-companion.md"
+    managed.parent.mkdir(parents=True)
+    managed.write_bytes((installed / "gigacode" / "skills" / "sdd-process-companion.md").read_bytes())
+    (candidate / "gigacode" / "skills" / "sdd-process-companion.md").write_text(
+        "candidate managed instruction\n", encoding="utf-8"
+    )
+    managed_before = managed.read_bytes()
     central = tmp_path / "team-specs"
     shutil.copytree(TEAM_TEMPLATE, central)
     config_path = central / "sdd.config.yaml"
@@ -445,6 +451,7 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert update["to_version"] == "0.4.0"
     assert _yaml(config_path)["process_package"]["version"] == "0.4.0"
     assert history.read_bytes() == history_before
+    assert managed.read_text(encoding="utf-8") == "candidate managed instruction\n"
     backup = backups / PROCESS_VERSION
     assert backup.is_dir()
 
@@ -453,6 +460,7 @@ def test_update_and_rollback_are_transactional_and_preserve_openspec_history(
     assert rollback["status"] == "rolled-back"
     assert _yaml(config_path)["process_package"]["version"] == PROCESS_VERSION
     assert history.read_bytes() == history_before
+    assert managed.read_bytes() == managed_before
 
     bad = tmp_path / "bad-candidate"
     shutil.copytree(PROCESS, bad, ignore=shutil.ignore_patterns("release"))

@@ -109,14 +109,14 @@ Exit criteria:
 
 ### 3.3 Package and sandbox transfer
 
-Status: in_progress.
+Status: pending_acceptance.
 
 OpenSpec mapping: both active P3 changes; this work item depends on their validated successor implementation.
 
 Baseline evidence:
 
 - [x] Package `0.3.4` was transferred through the controlled mechanism before these successor changes.
-- [ ] Package and transfer the successor after work items 3.1 and 3.2 meet their verification gates.
+- [x] Package and transfer the successor after work items 3.1 and 3.2 meet their verification gates.
 
 Objective:
 
@@ -129,6 +129,8 @@ Verification:
 Exit criteria:
 
 - Sandbox package equals the validated source candidate; its existing uncommitted `enforce-guided-process-integrity` deletions remain untouched.
+
+Transfer evidence (2026-07-23): immutable `p3-analytics-v0.3.6-rc2` validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`. Source verification returned `89 passed` for the P3/package/update/catalog suite and `83 passed, 1 skipped` for `tests/test_release_candidate.py`. The controlled sandbox sequence `check -> update -> rollback -> final update` moved `0.3.4 -> 0.3.6`, proved the retained rollback snapshot, and left package/config at `0.3.6`. `git diff --check` passed after the final update. The existing dirty OpenSpec paths were neither changed nor staged. This work item is ready for human review; it does not accept or archive either active analytics change.
 
 ### Change Intake — P3.1 pre-transfer boundary (2026-07-23)
 

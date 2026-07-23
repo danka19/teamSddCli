@@ -23,6 +23,7 @@ from process.workflow_operations import (
 
 ROOT = Path(__file__).resolve().parents[1]
 PROCESS = ROOT / "process"
+PROCESS_VERSION = (PROCESS / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def _upgrade_evidence(root: Path) -> Path:
@@ -30,7 +31,7 @@ def _upgrade_evidence(root: Path) -> Path:
         "schema_version": "1.0",
         "change_id": "synthetic-process-upgrade",
         "review": {"owner_type": "human", "state": "approved", "decision_ref": "decisions/process-upgrade.yaml"},
-        "from": {"package_version": "0.3.4", "openspec_version": "1.4.1"},
+        "from": {"package_version": PROCESS_VERSION, "openspec_version": "1.4.1"},
         "to": {"package_version": "0.4.0", "openspec_version": "1.4.1"},
         "checks": {
             "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
@@ -156,7 +157,7 @@ def test_recursive_link_is_rejected_before_copy_or_destination_mutation(
     with pytest.raises(OperationError, match="filesystem-link-forbidden"):
         update_process_package(installed, candidate, config, backups)
 
-    assert (installed / "VERSION").read_text(encoding="utf-8").strip() == "0.3.4"
+    assert (installed / "VERSION").read_text(encoding="utf-8").strip() == PROCESS_VERSION
     assert not backups.exists()
 
 

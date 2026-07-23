@@ -219,5 +219,3 @@ marker_sources:
 - tests/test_validate_process_config.py
 - tests/test_weak_model_kit.py
 - tests/test_p3_vertical_slice.py
-
-
