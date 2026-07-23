@@ -228,7 +228,6 @@ Likely scope:
 |---|---|---|---|
 | `allow-certified-baseline-reuse` | P3 | P4 | accepted |
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
-| `harden-role-aware-guided-workflow` | P3 | P4 | accepted |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | `add-operation-catalog-and-dispatcher` | P3 | P4, P5 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
