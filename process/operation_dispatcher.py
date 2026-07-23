@@ -25,7 +25,7 @@ def build_parser() -> argparse.ArgumentParser:
     op_list = op_sub.add_parser("list"); op_list.add_argument("--include-internal", action="store_true"); op_list.add_argument("--role"); json_flag(op_list)
     op_show = op_sub.add_parser("show"); op_show.add_argument("operation_id"); op_show.add_argument("--role"); json_flag(op_show)
     for command in ("check", "prepare", "request", "run"):
-        child = sub.add_parser(command); child.add_argument("operation_id"); child.add_argument("--role"); child.add_argument("forwarded", nargs=argparse.REMAINDER); json_flag(child)
+        child = sub.add_parser(command); child.add_argument("operation_id"); child.add_argument("--role"); json_flag(child)
     return parser
 
 def _blocked(operation: str, code: str, **details: Any) -> dict[str, Any]:
@@ -94,7 +94,8 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
         return {"operation": "sdd-op-show", "schema_version": "1.0", "status": "ok", "operation_id": item["id"], **_card(item), "lifecycle_mutated": False, "external_state_mutated": False}
     item = operation(args.operation_id)
     if item is None: return _blocked(f"sdd-{args.command}", "unknown-operation")
-    if args.role and args.role not in item["allowed_roles"]: return _blocked(f"sdd-{args.command}", "role-not-permitted", operation_id=item["id"])
+    if not args.role: return _blocked(f"sdd-{args.command}", "role-required", operation_id=item["id"])
+    if args.role not in item["allowed_roles"]: return _blocked(f"sdd-{args.command}", "role-not-permitted", operation_id=item["id"])
     if item["mutation_level"] == "mutate_external": return _blocked(f"sdd-{args.command}", "p3-external-operation-forbidden", operation_id=item["id"])
     if args.command == "request":
         if not item["mutation_level"].startswith("mutate_") or not item["confirmation_required"]:
@@ -107,7 +108,16 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
     return {"operation": f"sdd-{args.command}", "schema_version": "1.0", "operation_id": item["id"], "lifecycle_mutated": False, "external_state_mutated": False, **_run_entrypoint(item, args.forwarded)}
 
 def main(argv: Sequence[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    try:
+        args, forwarded = build_parser().parse_known_args(raw_argv)
+        if hasattr(args, "operation_id"):
+            args.forwarded = forwarded
+    except SystemExit:
+        if "--json" in raw_argv:
+            print(json.dumps({"schema_version": "1.0", "status": "error", "diagnostics": [{"code": "invalid-command", "message": "The command could not be parsed safely."}]}, sort_keys=True))
+            return 1
+        raise
     args.json = args.json or (hasattr(args, "forwarded") and "--json" in args.forwarded)
     try:
         payload = dispatch(args)

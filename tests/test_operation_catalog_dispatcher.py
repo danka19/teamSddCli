@@ -77,7 +77,7 @@ def test_dispatcher_returns_stable_operational_json_for_catalog_and_spawn_failur
         "process.operation_dispatcher.subprocess.run",
         lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("spawn failed")),
     )
-    assert sdd_main(["check", "preview-analytics", "--json"]) == 3
+    assert sdd_main(["check", "preview-analytics", "--role", "Analyst", "--json"]) == 3
     assert json.loads(capsys.readouterr().out)["status"] == "operational-error"
 
 
@@ -94,7 +94,7 @@ def test_dispatcher_renders_operational_json_when_child_output_decode_fails(
         ),
     )
 
-    assert sdd_main(["check", "preview-analytics", "--json"]) == 3
+    assert sdd_main(["check", "preview-analytics", "--role", "Analyst", "--json"]) == 3
     captured = capsys.readouterr()
     assert captured.err == ""
     assert [json.loads(line) for line in captured.out.splitlines()] == [
@@ -142,11 +142,11 @@ def test_dispatcher_discovery_and_safe_execution_boundaries(monkeypatch: pytest.
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "missing-context"
 
     monkeypatch.setattr(operation_dispatcher, "_run_entrypoint", pytest.fail)
-    assert sdd_main(["check", "prepare-spec-pr", "--json"]) == 1
+    assert sdd_main(["check", "prepare-spec-pr", "--role", "Analyst", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "operation-class-not-permitted"
-    assert sdd_main(["prepare", "classify-change", "--json"]) == 1
+    assert sdd_main(["prepare", "classify-change", "--role", "Analyst", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "operation-class-not-permitted"
-    assert sdd_main(["run", "create-change", "--json"]) == 1
+    assert sdd_main(["run", "create-change", "--role", "Analyst", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
 
 
@@ -201,9 +201,9 @@ def test_dispatcher_next_and_operation_show_use_role_and_return_evidence(
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "role-not-permitted"
 
     monkeypatch.setattr(operation_dispatcher, "_run_entrypoint", lambda item, args: {"status": "ok", "evidence": {"operation": item["id"]}, "diagnostics": [], "child_exit_code": 0})
-    assert sdd_main(["check", "preview-analytics", "--json"]) == 0
+    assert sdd_main(["check", "preview-analytics", "--role", "Analyst", "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["evidence"] == {"operation": "preview-analytics"}
-    assert sdd_main(["prepare", "prepare-spec-pr", "--json"]) == 0
+    assert sdd_main(["prepare", "prepare-spec-pr", "--role", "Analyst", "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["evidence"] == {"operation": "prepare-spec-pr"}
 
 
@@ -211,14 +211,14 @@ def test_request_digest_binds_operation_and_ordered_forwarded_argv(capsys: pytes
     import json
     from scripts.sdd import main as sdd_main
 
-    assert sdd_main(["request", "create-change", "--", "sample", "--json"]) == 0
+    assert sdd_main(["request", "create-change", "--role", "Analyst", "--", "sample", "--json"]) == 0
     first = json.loads(capsys.readouterr().out)
-    assert sdd_main(["request", "create-change", "--", "--json", "sample"]) == 0
+    assert sdd_main(["request", "create-change", "--role", "Analyst", "--", "--json", "sample"]) == 0
     second = json.loads(capsys.readouterr().out)
     assert first["status"] == "confirmation-requested"
     assert first["authority_granted"] is False
     assert first["input_digest"] != second["input_digest"]
-    assert sdd_main(["request", "create-change", "--", "sample", "sample", "--json"]) == 0
+    assert sdd_main(["request", "create-change", "--role", "Analyst", "--", "sample", "sample", "--json"]) == 0
     duplicate = json.loads(capsys.readouterr().out)
     assert duplicate["input_digest"] != first["input_digest"]
 
@@ -231,5 +231,30 @@ def test_request_blocks_non_mutating_operations_before_side_effect(
 
     monkeypatch.setattr("process.operation_dispatcher._run_entrypoint", pytest.fail)
     for operation_id in ("preview-analytics", "prepare-spec-pr"):
-        assert sdd_main(["request", operation_id, "--json"]) == 1
+        assert sdd_main(["request", operation_id, "--role", "Analyst", "--json"]) == 1
         assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "operation-not-requestable"
+
+
+def test_catalog_validator_checks_derived_contracts_and_generated_readme(tmp_path: Path) -> None:
+    """The release/readme views are derived from the catalog, never a second policy."""
+    from process.operations_catalog import generate_operation_table, validate_operations_catalog
+
+    errors = validate_operations_catalog(ROOT)
+    assert errors == []
+    assert "| Operation | Role | Situation | Boundary | Runbook |" in generate_operation_table(ROOT)
+
+
+def test_execution_requires_an_explicit_permitted_role(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    from scripts.sdd import main as sdd_main
+
+    assert sdd_main(["check", "preview-analytics", "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "role-required"
+    monkeypatch.setattr("process.operation_dispatcher._run_entrypoint", lambda *_: {"status": "ok", "evidence": {}, "diagnostics": [], "child_exit_code": 0})
+    assert sdd_main(["prepare", "prepare-spec-pr", "--role", "Analyst", "--json"]) == 0
+
+
+def test_dispatcher_parser_errors_are_structured_json(capsys: pytest.CaptureFixture[str]) -> None:
+    from scripts.sdd import main as sdd_main
+
+    assert sdd_main(["check", "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["diagnostics"][0]["code"] == "invalid-command"

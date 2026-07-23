@@ -48,6 +48,7 @@ operations:
   - {<<: *defaults, id: validate-process-config, entrypoint: scripts/validate_process_config.py}
   - {<<: *defaults, id: validate-traceability, entrypoint: scripts/validate_traceability.py}
   - {<<: *defaults, id: sdd-dispatcher, entrypoint: scripts/sdd.py, visibility: public, situations: [new-requirement, existing-change, urgent-incident, blocked-operation]}
+  - {<<: *defaults, id: validate-operations-catalog, entrypoint: scripts/validate_operations_catalog.py}
 release_entrypoints:
   - entrypoint: scripts/bootstrap_team_specs.py
     smoke: [scripts/bootstrap_team_specs.py, --help]
@@ -144,4 +145,7 @@ release_entrypoints:
     expected_exit_codes: [0]
   - entrypoint: scripts/sdd.py
     smoke: [scripts/sdd.py, --help]
+    expected_exit_codes: [0]
+  - entrypoint: scripts/validate_operations_catalog.py
+    smoke: [scripts/validate_operations_catalog.py, --help]
     expected_exit_codes: [0]

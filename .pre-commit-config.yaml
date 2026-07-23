@@ -7,3 +7,9 @@ repos:
         language: system
         pass_filenames: false
         stages: [pre-commit]
+      - id: validate-operations-catalog
+        name: Validate operation catalog derived views
+        entry: python scripts/validate_operations_catalog.py --json
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

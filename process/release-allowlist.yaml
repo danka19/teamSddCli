@@ -209,3 +209,9 @@ entry_points:
   - --help
   expected_exit_codes:
   - 0
+- name: validate_operations_catalog.py
+  smoke:
+  - scripts/validate_operations_catalog.py
+  - --help
+  expected_exit_codes:
+  - 0

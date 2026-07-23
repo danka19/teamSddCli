@@ -77,3 +77,47 @@ def load_operations_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
 
 def operation_by_id(identifier: str, path: Path = DEFAULT_CATALOG) -> dict[str, Any] | None:
     return next((item for item in load_operations_catalog(path)["operations"] if item["id"] == identifier), None)
+
+
+def generate_operation_table(root: Path) -> str:
+    """Render the committed, situation-first README view from the canonical catalog."""
+    catalog = load_operations_catalog(root / "process" / "catalogs" / "operations.yaml")
+    rows = ["| Operation | Role | Situation | Boundary | Runbook |", "| --- | --- | --- | --- | --- |"]
+    for item in catalog["operations"]:
+        if item["visibility"] not in {"public", "deprecated"}:
+            continue
+        rows.append("| {id} | {roles} | {situations} | {mutation}/{risk} | [{runbook}]({runbook}) |".format(
+            id=item["id"], roles=", ".join(item["allowed_roles"]),
+            situations=", ".join(item["situations"]) or "on demand",
+            mutation=item["mutation_level"], risk=item["risk_level"], runbook=item["runbook"],
+        ))
+    return "\n".join(rows) + "\n"
+
+
+def validate_operations_catalog(root: Path) -> list[str]:
+    """Return deterministic catalog/derived-view errors without external effects."""
+    try:
+        catalog = load_operations_catalog(root / "process" / "catalogs" / "operations.yaml")
+    except OperationError as error:
+        return [error.code]
+    errors: list[str] = []
+    scripts = {path.relative_to(root).as_posix() for path in (root / "scripts").glob("*.py")}
+    records = [item["entrypoint"] for item in catalog["operations"]]
+    if len(records) != len(set(records)) or set(records) != scripts:
+        errors.append("catalog-script-coverage-invalid")
+    for item in catalog["operations"]:
+        for reference in (item["entrypoint"], item["runbook"], *item["tests"]):
+            if not (root / reference).is_file(): errors.append(f"catalog-reference-missing:{reference}")
+    allowlist = yaml.safe_load((root / "process" / "release-allowlist.yaml").read_text(encoding="utf-8"))
+    expected = [{"name": Path(item["entrypoint"]).name, **{key: value for key, value in item.items() if key != "entrypoint"}} for item in catalog["release_entrypoints"]]
+    if not isinstance(allowlist, dict) or allowlist.get("entry_points") != expected: errors.append("catalog-release-allowlist-drift")
+    routes = yaml.safe_load((root / "process" / "catalogs" / "guided-owner-workflow.yaml").read_text(encoding="utf-8"))
+    ids = {item["id"] for item in catalog["operations"]}
+    if any(command not in ids for route in routes.get("routes", []) for command in route.get("commands", [])): errors.append("catalog-guided-route-drift")
+    read_pack = yaml.safe_load((root / "process" / "read-packs" / "p3-role-and-analytics.yaml").read_text(encoding="utf-8"))
+    if "../../process/catalogs/operations.yaml" not in read_pack.get("canonical_sources", []): errors.append("catalog-read-pack-drift")
+    readme = root / "docs" / "README.md"; begin, end = "<!-- operation-table:begin -->", "<!-- operation-table:end -->"
+    content = readme.read_text(encoding="utf-8")
+    if begin not in content or end not in content: errors.append("catalog-readme-markers-missing")
+    elif content.split(begin, 1)[1].split(end, 1)[0].strip() + "\n" != generate_operation_table(root): errors.append("catalog-readme-drift")
+    return errors

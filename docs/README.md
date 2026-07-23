@@ -157,7 +157,26 @@ Future publication layers should generate audience-oriented views from canonical
 
 ## Каталог локальных скриптов
 
-Ниже — справочный перечень всех 30 локальных CLI на 2026-07-22. Это помогает человеку понять, что уже существует, но **не является** политикой полномочий: таблица не даёт AI или человеку право запускать операцию без применимых условий, роли и решения человека. Полное фактическое обоснование и результаты аудита находятся в [PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md](audits/PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md). Эта таблица остаётся временным закоммиченным представлением до реализации активного OpenSpec change `add-operation-catalog-and-dispatcher`, который сделает её генерируемой и проверяемой производной единого `operation catalog`.
+### Доступные операции
+
+Это генерируемое и проверяемое представление `process/catalogs/operations.yaml`; оно описывает
+границы операции, но не заменяет разрешённую роль или решение человека.
+
+<!-- operation-table:begin -->
+| Operation | Role | Situation | Boundary | Runbook |
+| --- | --- | --- | --- | --- |
+| classify-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
+| create-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | mutate_local/medium | [docs/README.md](docs/README.md) |
+| evaluate-change-gates | Analyst, Tech Lead, Developer, QA | existing-change, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
+| guided-owner-workflow | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
+| manual-fallback | Analyst, Tech Lead, Developer, QA | blocked-operation | prepare/low | [docs/README.md](docs/README.md) |
+| prepare-archive | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
+| prepare-spec-pr | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
+| preview-analytics | Analyst, Tech Lead, Developer, QA | on demand | read_only/low | [docs/README.md](docs/README.md) |
+| sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
+<!-- operation-table:end -->
+
+Ниже приведена историческая инвентаризация 30 локальных CLI на 2026-07-22. Она не является политикой полномочий. Актуальное генерируемое представление public/deprecated операций находится после инвентаризации и строится только из `process/catalogs/operations.yaml`.
 
 | Скрипт | Что делает | Когда нужен человеку |
 |---|---|---|
