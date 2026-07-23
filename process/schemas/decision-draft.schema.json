@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "decision-draft.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_type", "card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "consequence", "issued_at", "expires_at", "authority_recorded"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "record_type": {"const": "decision_draft"},
+    "card_code": {"type": "string", "pattern": "^DEC-[0-9A-F]{12}$"},
+    "change_id": {"type": "string", "minLength": 1},
+    "decision_type": {"type": "string", "minLength": 1},
+    "revision_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_message": {"type": "string", "minLength": 1},
+    "source_chat_event_ref": {"type": "string", "minLength": 1},
+    "consequence": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "authority_recorded": {"const": false}
+  }
+}

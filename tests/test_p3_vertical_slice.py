@@ -7,6 +7,7 @@ from pathlib import Path
 
 import yaml
 
+import process.guided_workflow as guided_workflow
 from process.analytics_artifacts import preview_analytics, validate_analytics_package
 from process.guided_process_integrity import build_response_summary, validate_guided_change_package
 from process.guided_workflow import guide
@@ -144,12 +145,168 @@ def test_catalog_never_grants_implementation_entry_to_tech_lead() -> None:
     assert payload["cta"] == "monitor-process-status"
 
 
+def _decision_draft() -> dict[str, object]:
+    return guided_workflow.create_decision_draft(
+        change_id="sample",
+        decision_type="spec-acceptance",
+        revision_digest="a" * 64,
+        natural_message="Принимаю спецификацию",
+        consequence="prepare-role-pr-approval",
+        source_chat_event_ref="chat://trusted/100",
+        issued_at="2026-07-23T10:00:00Z",
+        expires_at="2026-07-23T10:05:00Z",
+    )
+
+
+def test_natural_language_creates_only_revision_bound_decision_draft() -> None:
+    draft = _decision_draft()
+
+    assert draft["record_type"] == "decision_draft"
+    assert draft["card_code"].startswith("DEC-")
+    assert draft["source_message"] == "Принимаю спецификацию"
+    assert draft["revision_digest"] == "a" * 64
+    assert draft["authority_recorded"] is False
+    assert "acceptance" not in draft
+    assert "DoR" not in draft
+    assert "lifecycle" not in draft
+
+
+def test_only_immediate_exact_or_normalized_short_confirmation_creates_event() -> None:
+    draft = _decision_draft()
+    exact = guided_workflow.confirm_decision_draft(
+        draft,
+        "Подтверждаю " + str(draft["card_code"]),
+        change_id="sample",
+        revision_digest="a" * 64,
+        confirmation_chat_event_ref="chat://trusted/101",
+        confirmation_at="2026-07-23T10:01:00Z",
+        immediately_following=True,
+    )
+    short = guided_workflow.confirm_decision_draft(
+        draft,
+        "  Подтверждаю\n",
+        change_id="sample",
+        revision_digest="a" * 64,
+        confirmation_chat_event_ref="chat://trusted/102",
+        confirmation_at="2026-07-23T10:01:00Z",
+        immediately_following=True,
+    )
+
+    assert exact["record_type"] == "confirmation_event"
+    assert exact["decision_card_code"] == draft["card_code"]
+    assert exact["source_message"] == "Принимаю спецификацию"
+    assert exact["confirmation_message"] == "Подтверждаю " + str(draft["card_code"])
+    assert exact["trusted_chat_event_ref"] == "chat://trusted/101"
+    assert short["confirmation_message"] == "  Подтверждаю\n"
+
+
+def test_ambiguous_stale_or_interleaved_chat_text_cannot_record_authority() -> None:
+    draft = _decision_draft()
+    attempts = [
+        ("что дальше?", "a" * 64, True, "2026-07-23T10:01:00Z"),
+        ("Да", "a" * 64, True, "2026-07-23T10:01:00Z"),
+        ("продолжай", "a" * 64, True, "2026-07-23T10:01:00Z"),
+        ("Подтверждаю DEC-wrong", "a" * 64, True, "2026-07-23T10:01:00Z"),
+        ("Подтверждаю", "b" * 64, True, "2026-07-23T10:01:00Z"),
+        ("Подтверждаю", "a" * 64, False, "2026-07-23T10:01:00Z"),
+        ("Подтверждаю", "a" * 64, True, "2026-07-23T10:06:00Z"),
+    ]
+
+    for index, (message, digest, immediately_following, timestamp) in enumerate(attempts):
+        result = guided_workflow.confirm_decision_draft(
+            draft,
+            message,
+            change_id="sample",
+            revision_digest=digest,
+            confirmation_chat_event_ref=f"chat://trusted/{index + 200}",
+            confirmation_at=timestamp,
+            immediately_following=immediately_following,
+        )
+        assert result is None
+
+
+def test_normal_mode_surfaces_material_unknowns_and_requires_explicit_choice() -> None:
+    discovery = guided_workflow.build_discovery_map(
+        "обычно",
+        [
+            {"id": "data-retention", "impact": "changes risk and runtime", "material": True},
+            {"id": "copy-tone", "impact": "minor wording", "material": False},
+        ],
+    )
+
+    material = discovery["areas"][0]
+    assert material["status"] == "blocking"
+    assert discovery["depth_recommendation"]["required"] is True
+    assert discovery["depth_recommendation"]["choices"] == [
+        "углубиться",
+        "принять defaults",
+        "подготовить draft с открытыми решениями",
+    ]
+    assert discovery["intake_sufficient"] is False
+
+    silent = guided_workflow.record_discovery_choice(discovery, "data-retention", None)
+    defaulted = guided_workflow.record_discovery_choice(discovery, "data-retention", "принять defaults")
+    deferred = guided_workflow.record_discovery_choice(discovery, "data-retention", "подготовить draft с открытыми решениями")
+
+    assert silent["areas"][0]["status"] == "blocking"
+    assert silent["intake_sufficient"] is False
+    assert defaulted["areas"][0]["status"] == "proposed_default"
+    assert deferred["areas"][0]["status"] == "deferred"
+
+
+def test_response_summary_uses_only_validated_confirmation_records() -> None:
+    draft = _decision_draft()
+    event = guided_workflow.confirm_decision_draft(
+        draft,
+        "Подтверждаю",
+        change_id="sample",
+        revision_digest="a" * 64,
+        confirmation_chat_event_ref="chat://trusted/101",
+        confirmation_at="2026-07-23T10:01:00Z",
+        immediately_following=True,
+    )
+    report = {"status": "valid", "diagnostics": [], "spec_revision": {"sha256": "a" * 64}}
+
+    valid_summary = build_response_summary(None, report, confirmation_event=event)
+    invalid_summary = build_response_summary(
+        None,
+        report,
+        confirmation_event={**event, "trusted_chat_event_ref": ""},
+    )
+    ambiguous_summary = build_response_summary(
+        None,
+        report,
+        confirmation_event={**event, "confirmation_message": "Да"},
+    )
+
+    assert valid_summary["decision_confirmation"]["status"] == "confirmed"
+    assert invalid_summary["decision_confirmation"]["status"] == "unconfirmed"
+    assert ambiguous_summary["decision_confirmation"]["status"] == "unconfirmed"
+    assert valid_summary["lifecycle_mutated"] is False
+
+
 SCENARIO_COVERAGE = {
     "test_unknown_role_blocks_role_sensitive_guidance": [
         {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Unknown role is blocked"},
     ],
     "test_analyst_never_receives_implementation_cta": [
         {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Analyst cannot receive implementation CTA"},
+    ],
+    "test_natural_language_creates_only_revision_bound_decision_draft": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Natural-language decision prepares but does not record"},
+    ],
+    "test_only_immediate_exact_or_normalized_short_confirmation_creates_event": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Card confirmation records only the active decision"},
+    ],
+    "test_ambiguous_stale_or_interleaved_chat_text_cannot_record_authority": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Ambiguous chat text cannot record a decision"},
+    ],
+    "test_normal_mode_surfaces_material_unknowns_and_requires_explicit_choice": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Proactive discovery completeness", "scenario": "Material unknowns receive an explicit choice"},
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Proactive discovery completeness", "scenario": "Silence is not default acceptance"},
+    ],
+    "test_response_summary_uses_only_validated_confirmation_records": [
+        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Card confirmation records only the active decision"},
     ],
     "test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped": [
         {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Trusted revision-bound human acceptance", "scenario": "UI confirmation is rejected"},

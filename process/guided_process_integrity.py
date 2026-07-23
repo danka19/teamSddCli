@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -57,20 +58,60 @@ def validate_guided_change_package(package_root: Path) -> dict[str, Any]:
     }
 
 
-def build_response_summary(package_root: Path, report: dict[str, Any], *, human_role: str | None = None) -> dict[str, Any]:
+def build_response_summary(
+    package_root: Path | None,
+    report: dict[str, Any],
+    *,
+    human_role: str | None = None,
+    confirmation_event: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Return one evidence-labelled, role-scoped next action."""
     action = "resolve-blocking-package-discrepancy"
     if report["status"] == "valid":
         action = "monitor-process-status" if human_role == "Tech Lead" else "prepare-role-pr-approval" if human_role == "Analyst" else "await-role-pr-approval"
+    confirmation = _validated_confirmation_summary(confirmation_event)
     return {
         "operation": "guided-process-summary",
         "schema_version": "2.0",
         "role": human_role or "unknown",
         "spec_revision": report.get("spec_revision"),
         "checks": {"status": report["status"], "diagnostics": report["diagnostics"]},
+        "decision_confirmation": confirmation,
         "next_permitted_action": action,
         "lifecycle_mutated": False,
         "external_state_mutated": False,
+    }
+
+
+def _validated_confirmation_summary(event: dict[str, Any] | None) -> dict[str, Any]:
+    """Expose only a validated, human-originated decision record; never AI authority."""
+    required = (
+        "decision_card_code", "change_id", "decision_type", "revision_digest", "source_message",
+        "confirmation_message", "source_chat_event_ref", "trusted_chat_event_ref", "confirmed_at", "expires_at",
+    )
+    if not isinstance(event, dict) or event.get("schema_version") != "1.0" or event.get("record_type") != "confirmation_event":
+        return {"status": "unconfirmed"}
+    if not all(isinstance(event.get(key), str) and event[key] for key in required):
+        return {"status": "unconfirmed"}
+    if not re.fullmatch(r"DEC-[0-9A-F]{12}", event["decision_card_code"]) or not re.fullmatch(r"[0-9a-f]{64}", event["revision_digest"]):
+        return {"status": "unconfirmed"}
+    exact = f"Подтверждаю {event['decision_card_code']}"
+    normalized = " ".join(event["confirmation_message"].split())
+    if event["confirmation_message"] != exact and normalized != "Подтверждаю":
+        return {"status": "unconfirmed"}
+    try:
+        confirmed_at = datetime.fromisoformat(event["confirmed_at"].replace("Z", "+00:00"))
+        expires_at = datetime.fromisoformat(event["expires_at"].replace("Z", "+00:00"))
+    except ValueError:
+        return {"status": "unconfirmed"}
+    if confirmed_at > expires_at:
+        return {"status": "unconfirmed"}
+    return {
+        "status": "confirmed",
+        "card_code": event["decision_card_code"],
+        "change_id": event["change_id"],
+        "revision_digest": event["revision_digest"],
+        "trusted_chat_event_ref": event["trusted_chat_event_ref"],
     }
 
 

@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import copy
+import hashlib
+import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +20,8 @@ DEFAULT_CATALOG = PACKAGE_ROOT / "catalogs" / "guided-owner-workflow.yaml"
 INTERACTIVE_ROLES = {"Analyst", "Tech Lead", "Developer", "QA"}
 DECISION_OWNERS = {"Analyst", "Tech Lead", "Change Owner"}  # legacy catalog record only
 KNOWN_ROLES = INTERACTIVE_ROLES
+SHA256 = re.compile(r"[0-9a-f]{64}")
+DISCOVERY_CHOICES = ("углубиться", "принять defaults", "подготовить draft с открытыми решениями")
 
 
 def load_catalog(path: Path = DEFAULT_CATALOG, *, operations_path: Path = DEFAULT_OPERATIONS_CATALOG) -> dict[str, Any]:
@@ -122,3 +128,154 @@ def _blocked(code: str, required_facts: list[str]) -> dict[str, Any]:
         "lifecycle_mutated": False,
         "external_state_mutated": False,
     }
+
+
+def create_decision_draft(
+    *,
+    change_id: str,
+    decision_type: str,
+    revision_digest: str,
+    natural_message: str,
+    consequence: str,
+    source_chat_event_ref: str,
+    issued_at: str,
+    expires_at: str,
+) -> dict[str, Any]:
+    """Prepare a non-authoritative card from one verbatim human decision message."""
+    if not all(isinstance(value, str) and value for value in (change_id, decision_type, natural_message, consequence, source_chat_event_ref)):
+        raise ValueError("decision draft identity is incomplete")
+    if not SHA256.fullmatch(revision_digest) or not _is_after(expires_at, issued_at):
+        raise ValueError("decision draft binding is invalid")
+    code_seed = "\x1f".join((change_id, decision_type, revision_digest, natural_message, source_chat_event_ref, issued_at))
+    card_code = f"DEC-{hashlib.sha256(code_seed.encode('utf-8')).hexdigest()[:12].upper()}"
+    return {
+        "schema_version": "1.0",
+        "record_type": "decision_draft",
+        "card_code": card_code,
+        "change_id": change_id,
+        "decision_type": decision_type,
+        "revision_digest": revision_digest,
+        "source_message": natural_message,
+        "source_chat_event_ref": source_chat_event_ref,
+        "consequence": consequence,
+        "issued_at": issued_at,
+        "expires_at": expires_at,
+        "authority_recorded": False,
+    }
+
+
+def confirm_decision_draft(
+    draft: dict[str, Any],
+    confirmation_message: str,
+    *,
+    change_id: str,
+    revision_digest: str,
+    confirmation_chat_event_ref: str,
+    confirmation_at: str,
+    immediately_following: bool,
+) -> dict[str, Any] | None:
+    """Return an immutable-by-contract event only for the active, bound confirmation."""
+    if not _valid_draft(draft) or not immediately_following:
+        return None
+    if change_id != draft["change_id"] or revision_digest != draft["revision_digest"]:
+        return None
+    if not isinstance(confirmation_chat_event_ref, str) or not confirmation_chat_event_ref:
+        return None
+    if not _is_not_after(confirmation_at, draft["expires_at"]):
+        return None
+    exact = f"Подтверждаю {draft['card_code']}"
+    short = " ".join(confirmation_message.split()) if isinstance(confirmation_message, str) else ""
+    if confirmation_message != exact and short != "Подтверждаю":
+        return None
+    return {
+        "schema_version": "1.0",
+        "record_type": "confirmation_event",
+        "decision_card_code": draft["card_code"],
+        "change_id": draft["change_id"],
+        "decision_type": draft["decision_type"],
+        "revision_digest": draft["revision_digest"],
+        "source_message": draft["source_message"],
+        "confirmation_message": confirmation_message,
+        "source_chat_event_ref": draft["source_chat_event_ref"],
+        "trusted_chat_event_ref": confirmation_chat_event_ref,
+        "confirmed_at": confirmation_at,
+        "expires_at": draft["expires_at"],
+    }
+
+
+def build_discovery_map(mode: str, areas: list[dict[str, Any]]) -> dict[str, Any]:
+    """Surface material unknowns without deciding defaults or readiness on behalf of a human."""
+    if mode != "обычно" or not isinstance(areas, list):
+        raise ValueError("discovery mode or areas are invalid")
+    mapped: list[dict[str, Any]] = []
+    for area in areas:
+        if not isinstance(area, dict) or not all(isinstance(area.get(key), str) and area[key] for key in ("id", "impact")):
+            raise ValueError("discovery area is invalid")
+        material = area.get("material") is True
+        mapped.append({
+            "id": area["id"],
+            "impact": area["impact"],
+            "material": material,
+            "status": "blocking" if material else "confirmed",
+            "selection": "unresolved" if material else "not-required",
+        })
+    has_material_unknowns = any(area["material"] for area in mapped)
+    return {
+        "schema_version": "1.0",
+        "record_type": "discovery_map",
+        "mode": mode,
+        "areas": mapped,
+        "depth_recommendation": {
+            "required": has_material_unknowns,
+            "choices": list(DISCOVERY_CHOICES) if has_material_unknowns else [],
+        },
+        "intake_sufficient": not has_material_unknowns,
+    }
+
+
+def record_discovery_choice(discovery_map: dict[str, Any], area_id: str, choice: str | None) -> dict[str, Any]:
+    """Record an explicit human choice; silence deliberately leaves an area unresolved."""
+    if not isinstance(discovery_map, dict) or discovery_map.get("record_type") != "discovery_map":
+        raise ValueError("discovery map is invalid")
+    updated = copy.deepcopy(discovery_map)
+    area = next((item for item in updated.get("areas", []) if item.get("id") == area_id), None)
+    if area is None:
+        raise ValueError("discovery area is unknown")
+    if choice is None:
+        return updated
+    if choice not in DISCOVERY_CHOICES:
+        raise ValueError("discovery choice is invalid")
+    area["selection"] = choice
+    area["status"] = {
+        "углубиться": "blocking",
+        "принять defaults": "proposed_default",
+        "подготовить draft с открытыми решениями": "deferred",
+    }[choice]
+    updated["intake_sufficient"] = not any(item.get("status") == "blocking" for item in updated["areas"])
+    return updated
+
+
+def _valid_draft(value: Any) -> bool:
+    if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "decision_draft":
+        return False
+    required = ("card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "consequence", "issued_at", "expires_at")
+    return (
+        all(isinstance(value.get(key), str) and value[key] for key in required)
+        and isinstance(value.get("authority_recorded"), bool) and value["authority_recorded"] is False
+        and bool(SHA256.fullmatch(value["revision_digest"]))
+        and _is_after(value["expires_at"], value["issued_at"])
+    )
+
+
+def _is_after(later: str, earlier: str) -> bool:
+    try:
+        return datetime.fromisoformat(later.replace("Z", "+00:00")) > datetime.fromisoformat(earlier.replace("Z", "+00:00"))
+    except (AttributeError, ValueError):
+        return False
+
+
+def _is_not_after(value: str, limit: str) -> bool:
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")) <= datetime.fromisoformat(limit.replace("Z", "+00:00"))
+    except (AttributeError, ValueError):
+        return False
