@@ -322,9 +322,16 @@ def test_valid_operation_event_never_enables_run_or_external_mutation(
     event = confirm_operation_confirmation_request(request, {"event_ref": "chat://trusted/confirmation", "actor_type": "human", "sequence": 3, "previous_event_ref": "chat://trusted/card", "timestamp": "2026-07-23T10:02:00Z", "message": f"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044e {request['card_code']}"})
     assert event is not None
     assert validate_operation_confirmation_event(event, forwarded_argv=[], now="2026-07-23T10:03:00Z")
+    event_path = tmp_path / "operation-confirmation-event.json"
+    event_path.write_text(json.dumps(event), encoding="utf-8")
     monkeypatch.setattr("process.operation_dispatcher._run_entrypoint", pytest.fail)
-    assert sdd_main(["run", "create-change", "--role", "Analyst", "--json"]) == 1
+    monkeypatch.setattr("process.operation_dispatcher._utc_now", lambda: "2026-07-23T10:03:00Z")
+    assert sdd_main(["run", "create-change", "--role", "Analyst", "--confirmation-event", str(event_path), "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
+    event["human_role"] = "Developer"
+    event_path.write_text(json.dumps(event), encoding="utf-8")
+    assert sdd_main(["run", "create-change", "--role", "Analyst", "--confirmation-event", str(event_path), "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "operation-confirmation-invalid"
 
     catalog_path = ROOT / "process" / "catalogs" / "operations.yaml"
     external_catalog = yaml.safe_load(catalog_path.read_text(encoding="utf-8"))

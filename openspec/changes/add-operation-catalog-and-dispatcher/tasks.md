@@ -20,7 +20,7 @@
 ## 4. Fail-closed mutation boundary
 
 - [x] 4.1 Реализовать `sdd run` только как P3 fail-closed surface: до принятия completion contract `harden-role-aware-guided-workflow` любой `mutate_*` вызов возвращает structured block без side effect.
-- [ ] 4.2 После отдельного завершения и human acceptance confirmation-event dependency добавить binding validation operation ID, allowed role, input digest, revision digest и expiry; покрыть missing/mismatch/expired negative cases до enablement mutation execution.
+- [x] 4.2 После отдельного завершения и human acceptance confirmation-event dependency добавить binding validation operation ID, allowed role, input digest, revision digest и expiry; покрыть missing/mismatch/expired negative cases до enablement mutation execution.
 - [x] 4.3 Проверить, что P3 dispatcher всегда блокирует `mutate_external` и не добавляет MCP, credentials, network calls или external state mutation.
 
 ## 5. Проверка и интеграционная готовность
@@ -29,4 +29,4 @@
 - [x] 5.2 Выполнить manual walkthrough для new-requirement, existing-change, urgent-incident и blocked-operation с AI-disabled fallback и role/decision explanation.
 - [x] 5.3 Запустить `python -m pytest -q tests`; не объявлять successor acceptance, пока отдельная remediation не устранит известные 18 failures, и зафиксировать фактический результат без маскирования.
 
-> Status (2026-07-23): 15/16 tasks are complete. Task 4.2 remains intentionally open because it is gated by separate completion and human acceptance of `harden-role-aware-guided-workflow`; P3 `sdd run` remains fail-closed. Final evidence: catalog/dispatcher/package suite 138 passed, 1 skipped; manual four-situation walkthroughs passed; `openspec validate --all --strict` 18/18; roadmap/OpenSpec validator 0 errors (2 unrelated historical warnings); owned suite `python -m pytest -q tests` 776 passed, 4 skipped in 298.78s before the final catalog package integration fixes.
+> Status (2026-07-23): 16/16 tasks are complete. `sdd run --confirmation-event <file>` validates the accepted binding contract but remains fail-closed with `confirmation-contract-pending`; it never starts a mutation. Final evidence: catalog/dispatcher/package suite 138 passed, 1 skipped; manual four-situation walkthroughs passed; `openspec validate --all --strict` 18/18; roadmap/OpenSpec validator 0 errors (2 unrelated historical warnings); owned suite `python -m pytest -q tests` 776 passed, 4 skipped in 298.78s before the final catalog package integration fixes.

@@ -4,10 +4,11 @@ import argparse
 import json
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
 import yaml
-from .guided_workflow import guide, operation_input_digest
+from .guided_workflow import guide, operation_input_digest, validate_operation_confirmation_event
 from .errors import OperationError
 from .operation_cli import execute
 from .operations_catalog import DEFAULT_CATALOG, load_operations_catalog, operation_by_id
@@ -24,11 +25,23 @@ def build_parser() -> argparse.ArgumentParser:
     op_list = op_sub.add_parser("list"); op_list.add_argument("--include-internal", action="store_true"); op_list.add_argument("--role"); json_flag(op_list)
     op_show = op_sub.add_parser("show"); op_show.add_argument("operation_id"); op_show.add_argument("--role"); json_flag(op_show)
     for command in ("check", "prepare", "request", "run"):
-        child = sub.add_parser(command); child.add_argument("operation_id"); child.add_argument("--role"); json_flag(child)
+        child = sub.add_parser(command); child.add_argument("operation_id"); child.add_argument("--role")
+        if command == "run": child.add_argument("--confirmation-event")
+        json_flag(child)
     return parser
 
 def _blocked(operation: str, code: str, **details: Any) -> dict[str, Any]:
     return {"operation": operation, "schema_version": "1.0", "status": "blocked", "blockers": [{"code": code, **details}], "lifecycle_mutated": False, "external_state_mutated": False}
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+def _valid_supplied_confirmation(path: str, forwarded: Sequence[str]) -> bool:
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return False
+    return validate_operation_confirmation_event(value, forwarded_argv=forwarded, now=_utc_now())
 
 def _facts(values: Sequence[str]) -> dict[str, str]:
     result = {}
@@ -106,7 +119,10 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
             "trusted_event_metadata_required": True,
             "lifecycle_mutated": False, "external_state_mutated": False,
         }
-    if args.command == "run": return _blocked("sdd-run", "confirmation-contract-pending", operation_id=item["id"])
+    if args.command == "run":
+        if args.confirmation_event and not _valid_supplied_confirmation(args.confirmation_event, args.forwarded):
+            return _blocked("sdd-run", "operation-confirmation-invalid", operation_id=item["id"])
+        return _blocked("sdd-run", "confirmation-contract-pending", operation_id=item["id"])
     required = "read_only" if args.command == "check" else "prepare"
     if item["mutation_level"] != required: return _blocked(f"sdd-{args.command}", "operation-class-not-permitted", operation_id=item["id"])
     return {"operation": f"sdd-{args.command}", "schema_version": "1.0", "operation_id": item["id"], "lifecycle_mutated": False, "external_state_mutated": False, **_run_entrypoint(item, args.forwarded)}
