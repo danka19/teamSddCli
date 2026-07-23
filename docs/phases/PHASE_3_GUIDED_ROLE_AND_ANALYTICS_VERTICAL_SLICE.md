@@ -84,8 +84,8 @@ OpenSpec mapping: `add-typed-analytics-artifact-framework`.
 Progress evidence:
 
 - [x] The OpenSpec contract and initial failing validation fixture are defined.
-- [ ] Implement typed schemas, templates, validators, and deterministic previews.
-- [ ] Add the sanitized end-to-end fixture and focused verification.
+- [x] Implement typed schemas, templates, validators, and deterministic previews.
+- [x] Add the sanitized end-to-end fixture and focused verification.
 - [ ] Transfer the validated successor package through the controlled package mechanism.
 
 Objective:

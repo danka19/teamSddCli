@@ -226,6 +226,18 @@ def test_typed_analytics_fixture_validates_and_previews_without_external_actions
     assert preview["integration_actions"] == []
     assert preview["screens"][0]["id"] == "SCR-SAMPLE-001"
 
+
+def test_packaged_sanitized_analytics_example_validates_and_previews_without_actions() -> None:
+    example = ROOT / "process" / "examples" / "analytics" / "sanitized"
+
+    report = validate_analytics_package(example)
+    preview = preview_analytics(example, report)
+
+    assert report["status"] == "valid"
+    assert preview["status"] == "valid"
+    assert preview["integration_actions"] == []
+    assert preview["external_state_mutated"] is False
+
 def test_gigacode_start_prompt_uses_only_project_interactive_roles() -> None:
     prompt = (ROOT / "process" / "gigacode" / "AGENTS.md").read_text(encoding="utf-8")
 
