@@ -354,6 +354,16 @@
           ]
         },
         {
+          "name": "validate_product_faq.py",
+          "smoke": [
+            "scripts/validate_product_faq.py",
+            "--help"
+          ],
+          "expected_exit_codes": [
+            0
+          ]
+        },
+        {
           "name": "sdd.py",
           "smoke": [
             "scripts/sdd.py",

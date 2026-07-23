@@ -1,4 +1,4 @@
-schema_version: "1.0"
+﻿schema_version: "1.0"
 defaults: &defaults
   title: Local deterministic process operation
   visibility: internal
@@ -47,6 +47,7 @@ operations:
   - {<<: *defaults, id: validate-guided-owner-workflow, entrypoint: scripts/validate_guided_owner_workflow.py}
   - {<<: *defaults, id: validate-process-config, entrypoint: scripts/validate_process_config.py}
   - {<<: *defaults, id: validate-traceability, entrypoint: scripts/validate_traceability.py}
+  - {<<: *defaults, id: validate-product-faq, entrypoint: scripts/validate_product_faq.py}
   - {<<: *defaults, id: sdd-dispatcher, entrypoint: scripts/sdd.py, visibility: public, situations: [new-requirement, existing-change, urgent-incident, blocked-operation]}
   - {<<: *defaults, id: validate-operations-catalog, entrypoint: scripts/validate_operations_catalog.py}
 release_entrypoints:
@@ -142,6 +143,9 @@ release_entrypoints:
     expected_exit_codes: [0]
   - entrypoint: scripts/validate_traceability.py
     smoke: [scripts/validate_traceability.py, --help]
+    expected_exit_codes: [0]
+  - entrypoint: scripts/validate_product_faq.py
+    smoke: [scripts/validate_product_faq.py, --help]
     expected_exit_codes: [0]
   - entrypoint: scripts/sdd.py
     smoke: [scripts/sdd.py, --help]
