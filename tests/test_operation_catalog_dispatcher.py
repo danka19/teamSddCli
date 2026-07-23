@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -147,6 +148,37 @@ def test_dispatcher_discovery_and_safe_execution_boundaries(monkeypatch: pytest.
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "operation-class-not-permitted"
     assert sdd_main(["run", "create-change", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
+
+
+@pytest.mark.parametrize(
+    ("args", "expected_route"),
+    [
+        (["guide", "new-requirement", "--role", "Analyst", "--fact", "classification=minor", "--json"], "new-requirement"),
+        (["guide", "existing-change", "--role", "Analyst", "--fact", "change_id=sample-minor-001", "--fact", "lifecycle_state=draft", "--json"], "existing-change"),
+        (["guide", "urgent-incident", "--role", "Tech Lead", "--fact", "incident_ref=evidence/INC-001.md", "--json"], "urgent-incident"),
+        (["guide", "blocked-operation", "--role", "Tech Lead", "--fact", "failed_run_ref=evidence/failed-run-001.json", "--json"], "blocked-operation"),
+    ],
+)
+def test_guide_accepts_role_after_situation_for_each_documented_route(
+    args: list[str], expected_route: str, capsys: pytest.CaptureFixture[str],
+) -> None:
+    from scripts.sdd import main as sdd_main
+
+    assert sdd_main(args) == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "guided"
+    assert payload["route_id"] == expected_route
+
+
+def test_guide_rejects_conflicting_explicit_and_fact_roles(capsys: pytest.CaptureFixture[str]) -> None:
+    from scripts.sdd import main as sdd_main
+
+    assert sdd_main([
+        "guide", "new-requirement", "--role", "Analyst", "--fact", "human_role=Tech Lead", "--fact", "classification=minor", "--json",
+    ]) == 1
+
+    assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "invalid-context"
 
 
 def test_dispatcher_next_and_operation_show_use_role_and_return_evidence(

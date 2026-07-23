@@ -19,7 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sdd")
     sub = parser.add_subparsers(dest="command", required=True)
     def json_flag(p: argparse.ArgumentParser) -> None: p.add_argument("--json", action="store_true")
-    guide_parser = sub.add_parser("guide"); guide_parser.add_argument("situation"); guide_parser.add_argument("--fact", action="append", default=[]); guide_parser.add_argument("--unavailable", action="append", default=[]); json_flag(guide_parser)
+    guide_parser = sub.add_parser("guide"); guide_parser.add_argument("situation"); guide_parser.add_argument("--role"); guide_parser.add_argument("--fact", action="append", default=[]); guide_parser.add_argument("--unavailable", action="append", default=[]); json_flag(guide_parser)
     next_parser = sub.add_parser("next"); next_parser.add_argument("--change", required=True); next_parser.add_argument("--role"); json_flag(next_parser)
     op_parser = sub.add_parser("op"); op_sub = op_parser.add_subparsers(dest="op_command", required=True)
     op_list = op_sub.add_parser("list"); op_list.add_argument("--include-internal", action="store_true"); op_list.add_argument("--role"); json_flag(op_list)
@@ -60,8 +60,15 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
     catalog = load_operations_catalog(catalog_path)
     operation = lambda identifier: operation_by_id(identifier, catalog_path)
     if args.command == "guide":
-        try: result = guide(args.situation, _facts(args.fact), set(args.unavailable))
-        except ValueError: return _blocked("sdd-guide", "invalid-context")
+        try:
+            facts = _facts(args.fact)
+            if args.role:
+                if facts.get("human_role") and facts["human_role"] != args.role:
+                    raise ValueError
+                facts["human_role"] = args.role
+            result = guide(args.situation, facts, set(args.unavailable))
+        except ValueError:
+            return _blocked("sdd-guide", "invalid-context")
         result["operation"] = "sdd-guide"
         if result["status"] == "blocked": return result
         resolved = [operation(item) for item in result["commands"]]
