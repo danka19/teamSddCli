@@ -25,4 +25,4 @@
 - [x] Add failing tests for missing, role/operation/input/revision mismatch, expiry, altered argv, and proof that a valid event never enables `sdd run` or `mutate_external`.
 - [x] Implement deterministic request/event builders and validators; extend `sdd request` to emit only a non-authoritative operation confirmation request.
 - [x] Register assets and synchronize package/read-pack/GigaCode/runbook/phase/audit documentation without claiming execution authority.
-- [ ] Run focused/final relevant tests, OpenSpec/roadmap gates, AI-disabled request walkthrough, and final security review; prepare the exact final human acceptance packet.
+- [x] Run focused/final relevant tests, OpenSpec/roadmap gates, AI-disabled request walkthrough, and final security review; prepare the exact final human acceptance packet.

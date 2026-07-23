@@ -35,6 +35,14 @@ Changes the local process-package catalog, guided workflow code and schemas, int
 
 The owner approved a contract-only extension for future dispatcher mutations. The new operation-confirmation record binds a trusted human role, catalog `operation_id`, canonical `input_digest`, card `revision_digest`, trusted event chain, and expiry. It remains non-authoritative: `sdd run` is unconditionally fail-closed, and `mutate_external` remains permanently forbidden in P3. Actual execution enablement, trusted ingress, and replay protection require a later separately accepted change.
 
+## Final human acceptance packet
+
+After the verification evidence is reviewed, the owner may accept only the following contract-only boundary:
+
+> I accept `harden-role-aware-guided-workflow` in P3 as the role-aware guided workflow and non-authoritative operation-confirmation contract that binds role, operation ID, ordered arguments, revision, trusted event chain, and expiry. `sdd request` is not trusted evidence; every `sdd run` remains fail-closed, and `mutate_external` remains forbidden. This acceptance does not enable execution; a separate future change is required for trusted ingress, replay protection, and execution enablement.
+
+This acceptance changes the lifecycle only to accepted-contract state. It does not replace verification, merge, release, archive, or a separate execution-enablement change.
+
 ## Принятые уточнения 2026-07-21
 
 - Добавить двухшаговую карточку решения `DEC-…`: первое естественное решение человека создаёт только карточку, а второе сообщение `Подтверждаю DEC-…` либо короткое `Подтверждаю` в следующем сообщении подтверждает именно показанную карточку.

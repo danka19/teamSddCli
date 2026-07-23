@@ -12,6 +12,7 @@ Last status reconciliation: 2026-07-22.
 - Focused P3/catalog/package verification passed 49 tests; four situation-first manual walkthroughs returned the expected role, human decision, fallback/evidence route, and `sdd run create-change` returned a structured no-side-effect block. `openspec validate --all --strict` passed 18/18; roadmap/OpenSpec validation reported zero errors and two unrelated historical P2 lifecycle warnings.
 - The owned suite `python -m pytest -q tests` passed 776 tests with 4 skips in 298.78 seconds. This supersedes the 2026-07-22 snapshot that reported 742 passed and 18 failed.
 - Task 4.2 remains open by design: it requires completion and human acceptance of the separate `harden-role-aware-guided-workflow` confirmation contract. Until then, every dispatcher mutation remains fail-closed; this change is not ready for archive or successor acceptance.
+- The contract-only operation-confirmation extension has final local evidence: 54 dispatcher/guided tests, 18 package-schema tests, and 83 release-candidate tests passed with one expected skip; a valid event still leaves `sdd run` blocked and catalog validation rejects `mutate_external`. Human acceptance remains the next explicit lifecycle gate.
 
 ## Project-Wide Implementation And NIS Audit (2026-07-22)
 

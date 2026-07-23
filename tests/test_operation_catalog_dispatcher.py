@@ -298,13 +298,42 @@ def test_operation_confirmation_contract_binds_catalog_role_input_revision_chain
 
 
 def test_valid_operation_event_never_enables_run_or_external_mutation(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
 ) -> None:
+    import copy
+    import yaml
+    from process.errors import OperationError
+    from process.guided_workflow import (
+        build_operation_confirmation_request,
+        confirm_operation_confirmation_request,
+        validate_operation_confirmation_event,
+    )
+    from process.operations_catalog import load_operations_catalog
     from scripts.sdd import main as sdd_main
 
+    request = build_operation_confirmation_request(
+        human_role="Analyst",
+        operation_id="create-change",
+        forwarded_argv=[],
+        source_event={"event_ref": "chat://trusted/source", "actor_type": "human", "sequence": 1, "timestamp": "2026-07-23T10:00:00Z", "message": "Request"},
+        card_event={"event_ref": "chat://trusted/card", "actor_type": "assistant", "sequence": 2, "previous_event_ref": "chat://trusted/source", "timestamp": "2026-07-23T10:01:00Z"},
+        expires_at="2026-07-23T11:00:00Z",
+    )
+    event = confirm_operation_confirmation_request(request, {"event_ref": "chat://trusted/confirmation", "actor_type": "human", "sequence": 3, "previous_event_ref": "chat://trusted/card", "timestamp": "2026-07-23T10:02:00Z", "message": f"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044e {request['card_code']}"})
+    assert event is not None
+    assert validate_operation_confirmation_event(event, forwarded_argv=[], now="2026-07-23T10:03:00Z")
     monkeypatch.setattr("process.operation_dispatcher._run_entrypoint", pytest.fail)
     assert sdd_main(["run", "create-change", "--role", "Analyst", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
+
+    catalog_path = ROOT / "process" / "catalogs" / "operations.yaml"
+    external_catalog = yaml.safe_load(catalog_path.read_text(encoding="utf-8"))
+    external_catalog = copy.deepcopy(external_catalog)
+    external_catalog["operations"][0]["mutation_level"] = "mutate_external"
+    candidate = tmp_path / "operations.yaml"
+    candidate.write_text(yaml.safe_dump(external_catalog, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    with pytest.raises(OperationError, match="external mutation"):
+        load_operations_catalog(candidate)
 
 
 def test_request_blocks_non_mutating_operations_before_side_effect(
