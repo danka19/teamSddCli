@@ -10,6 +10,8 @@ from typing import Any
 
 import yaml
 
+from .guided_workflow import validate_confirmation_event
+
 
 ACCEPTANCE_PATH = Path("decisions/spec-acceptance.yaml")
 REQUIRED_DOCUMENTS = ("proposal.md", "design.md", "tasks.md", "traceability.yaml", "status.md")
@@ -69,7 +71,7 @@ def build_response_summary(
     action = "resolve-blocking-package-discrepancy"
     if report["status"] == "valid":
         action = "monitor-process-status" if human_role == "Tech Lead" else "prepare-role-pr-approval" if human_role == "Analyst" else "await-role-pr-approval"
-    confirmation = _validated_confirmation_summary(confirmation_event)
+    confirmation = _validated_confirmation_summary(package_root, report, confirmation_event)
     return {
         "operation": "guided-process-summary",
         "schema_version": "2.0",
@@ -83,28 +85,33 @@ def build_response_summary(
     }
 
 
-def _validated_confirmation_summary(event: dict[str, Any] | None) -> dict[str, Any]:
+def _validated_confirmation_summary(package_root: Path | None, report: dict[str, Any], event: dict[str, Any] | None) -> dict[str, Any]:
     """Expose only a validated, human-originated decision record; never AI authority."""
     required = (
-        "decision_card_code", "change_id", "decision_type", "revision_digest", "source_message",
-        "confirmation_message", "source_chat_event_ref", "trusted_chat_event_ref", "confirmed_at", "expires_at",
+        "decision_card_code", "change_id", "decision_type", "revision_digest", "source_message", "consequence",
+        "confirmation_message", "source_chat_event_ref", "source_event_actor_type", "source_event_sequence", "source_event_timestamp",
+        "card_chat_event_ref", "card_event_actor_type", "card_event_sequence", "card_previous_event_ref", "issued_at",
+        "trusted_chat_event_ref", "confirmation_event_actor_type", "confirmation_event_sequence", "confirmed_at", "expires_at",
     )
     if not isinstance(event, dict) or event.get("schema_version") != "1.0" or event.get("record_type") != "confirmation_event":
         return {"status": "unconfirmed"}
-    if not all(isinstance(event.get(key), str) and event[key] for key in required):
+    string_fields = set(required) - {"source_event_sequence", "card_event_sequence", "confirmation_event_sequence"}
+    if not all(isinstance(event.get(key), str) and event[key] for key in string_fields):
         return {"status": "unconfirmed"}
-    if not re.fullmatch(r"DEC-[0-9A-F]{12}", event["decision_card_code"]) or not re.fullmatch(r"[0-9a-f]{64}", event["revision_digest"]):
+    if not all(type(event.get(key)) is int and event[key] >= 0 for key in ("source_event_sequence", "card_event_sequence", "confirmation_event_sequence")):
         return {"status": "unconfirmed"}
-    exact = f"Подтверждаю {event['decision_card_code']}"
-    normalized = " ".join(event["confirmation_message"].split())
-    if event["confirmation_message"] != exact and normalized != "Подтверждаю":
+    revision = report.get("spec_revision")
+    if report.get("status") != "valid" or not isinstance(revision, dict) or not re.fullmatch(r"[0-9a-f]{64}", str(revision.get("sha256", ""))):
         return {"status": "unconfirmed"}
-    try:
-        confirmed_at = datetime.fromisoformat(event["confirmed_at"].replace("Z", "+00:00"))
-        expires_at = datetime.fromisoformat(event["expires_at"].replace("Z", "+00:00"))
-    except ValueError:
+    if event["revision_digest"] != revision["sha256"] or not validate_confirmation_event(event):
         return {"status": "unconfirmed"}
-    if confirmed_at > expires_at:
+    if package_root is not None:
+        if not isinstance(revision.get("path"), str):
+            return {"status": "unconfirmed"}
+        path = package_root / revision["path"]
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != revision["sha256"]:
+            return {"status": "unconfirmed"}
+    if event["revision_digest"] != revision["sha256"]:
         return {"status": "unconfirmed"}
     return {
         "status": "confirmed",

@@ -137,16 +137,20 @@ def create_decision_draft(
     revision_digest: str,
     natural_message: str,
     consequence: str,
-    source_chat_event_ref: str,
-    issued_at: str,
+    source_event: dict[str, Any],
+    card_event: dict[str, Any],
     expires_at: str,
 ) -> dict[str, Any]:
     """Prepare a non-authoritative card from one verbatim human decision message."""
-    if not all(isinstance(value, str) and value for value in (change_id, decision_type, natural_message, consequence, source_chat_event_ref)):
+    if not all(isinstance(value, str) and value for value in (change_id, decision_type, natural_message, consequence)):
         raise ValueError("decision draft identity is incomplete")
-    if not SHA256.fullmatch(revision_digest) or not _is_after(expires_at, issued_at):
+    if not SHA256.fullmatch(revision_digest) or not _valid_source_event(source_event, natural_message) or not _valid_card_event(card_event, source_event):
         raise ValueError("decision draft binding is invalid")
-    code_seed = "\x1f".join((change_id, decision_type, revision_digest, natural_message, source_chat_event_ref, issued_at))
+    issued_at = card_event["timestamp"]
+    if not _is_after(expires_at, issued_at):
+        raise ValueError("decision draft expiry is invalid")
+    source_chat_event_ref = source_event["event_ref"]
+    code_seed = "\x1f".join((change_id, decision_type, revision_digest, natural_message, consequence, source_chat_event_ref, issued_at))
     card_code = f"DEC-{hashlib.sha256(code_seed.encode('utf-8')).hexdigest()[:12].upper()}"
     return {
         "schema_version": "1.0",
@@ -157,7 +161,14 @@ def create_decision_draft(
         "revision_digest": revision_digest,
         "source_message": natural_message,
         "source_chat_event_ref": source_chat_event_ref,
+        "source_event_actor_type": source_event["actor_type"],
+        "source_event_sequence": source_event["sequence"],
+        "source_event_timestamp": source_event["timestamp"],
         "consequence": consequence,
+        "card_chat_event_ref": card_event["event_ref"],
+        "card_event_actor_type": card_event["actor_type"],
+        "card_event_sequence": card_event["sequence"],
+        "card_previous_event_ref": card_event["previous_event_ref"],
         "issued_at": issued_at,
         "expires_at": expires_at,
         "authority_recorded": False,
@@ -166,26 +177,10 @@ def create_decision_draft(
 
 def confirm_decision_draft(
     draft: dict[str, Any],
-    confirmation_message: str,
-    *,
-    change_id: str,
-    revision_digest: str,
-    confirmation_chat_event_ref: str,
-    confirmation_at: str,
-    immediately_following: bool,
+    confirmation_event: dict[str, Any],
 ) -> dict[str, Any] | None:
     """Return an immutable-by-contract event only for the active, bound confirmation."""
-    if not _valid_draft(draft) or not immediately_following:
-        return None
-    if change_id != draft["change_id"] or revision_digest != draft["revision_digest"]:
-        return None
-    if not isinstance(confirmation_chat_event_ref, str) or not confirmation_chat_event_ref:
-        return None
-    if not _is_not_after(confirmation_at, draft["expires_at"]):
-        return None
-    exact = f"Подтверждаю {draft['card_code']}"
-    short = " ".join(confirmation_message.split()) if isinstance(confirmation_message, str) else ""
-    if confirmation_message != exact and short != "Подтверждаю":
+    if not _valid_draft(draft) or not _valid_next_confirmation(confirmation_event, draft):
         return None
     return {
         "schema_version": "1.0",
@@ -195,10 +190,21 @@ def confirm_decision_draft(
         "decision_type": draft["decision_type"],
         "revision_digest": draft["revision_digest"],
         "source_message": draft["source_message"],
-        "confirmation_message": confirmation_message,
+        "consequence": draft["consequence"],
+        "confirmation_message": confirmation_event["message"],
         "source_chat_event_ref": draft["source_chat_event_ref"],
-        "trusted_chat_event_ref": confirmation_chat_event_ref,
-        "confirmed_at": confirmation_at,
+        "source_event_actor_type": draft["source_event_actor_type"],
+        "source_event_sequence": draft["source_event_sequence"],
+        "source_event_timestamp": draft["source_event_timestamp"],
+        "card_chat_event_ref": draft["card_chat_event_ref"],
+        "card_event_actor_type": draft["card_event_actor_type"],
+        "card_event_sequence": draft["card_event_sequence"],
+        "card_previous_event_ref": draft["card_previous_event_ref"],
+        "issued_at": draft["issued_at"],
+        "trusted_chat_event_ref": confirmation_event["event_ref"],
+        "confirmation_event_actor_type": confirmation_event["actor_type"],
+        "confirmation_event_sequence": confirmation_event["sequence"],
+        "confirmed_at": confirmation_event["timestamp"],
         "expires_at": draft["expires_at"],
     }
 
@@ -258,24 +264,89 @@ def record_discovery_choice(discovery_map: dict[str, Any], area_id: str, choice:
 def _valid_draft(value: Any) -> bool:
     if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "decision_draft":
         return False
-    required = ("card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "consequence", "issued_at", "expires_at")
+    required = ("card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "source_event_actor_type", "source_event_timestamp", "consequence", "card_chat_event_ref", "card_event_actor_type", "card_previous_event_ref", "issued_at", "expires_at")
     return (
         all(isinstance(value.get(key), str) and value[key] for key in required)
         and isinstance(value.get("authority_recorded"), bool) and value["authority_recorded"] is False
         and bool(SHA256.fullmatch(value["revision_digest"]))
+        and _is_sequence(value.get("source_event_sequence"))
+        and _is_sequence(value.get("card_event_sequence"))
+        and value["card_event_sequence"] == value["source_event_sequence"] + 1
+        and value["source_event_actor_type"] == "human" and value["card_event_actor_type"] == "assistant"
+        and value["card_previous_event_ref"] == value["source_chat_event_ref"]
+        and _is_not_after(value["source_event_timestamp"], value["issued_at"])
+        and value["card_code"] == _decision_card_code(value)
         and _is_after(value["expires_at"], value["issued_at"])
     )
 
 
-def _is_after(later: str, earlier: str) -> bool:
-    try:
-        return datetime.fromisoformat(later.replace("Z", "+00:00")) > datetime.fromisoformat(earlier.replace("Z", "+00:00"))
-    except (AttributeError, ValueError):
+def validate_confirmation_event(value: Any) -> bool:
+    """Validate a persisted confirmation record without trusting caller assertions."""
+    if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "confirmation_event":
         return False
+    draft = {
+        "schema_version": "1.0", "record_type": "decision_draft", "authority_recorded": False,
+        **{key: value.get(key) for key in ("change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "source_event_actor_type", "source_event_sequence", "source_event_timestamp", "consequence", "card_chat_event_ref", "card_event_actor_type", "card_event_sequence", "card_previous_event_ref", "issued_at", "expires_at")},
+        "card_code": value.get("decision_card_code"),
+    }
+    confirmation = {
+        "event_ref": value.get("trusted_chat_event_ref"), "actor_type": value.get("confirmation_event_actor_type"),
+        "sequence": value.get("confirmation_event_sequence"), "previous_event_ref": value.get("card_chat_event_ref"),
+        "timestamp": value.get("confirmed_at"), "message": value.get("confirmation_message"),
+    }
+    return _valid_draft(draft) and _valid_next_confirmation(confirmation, draft)
+
+
+def _valid_source_event(event: Any, message: str) -> bool:
+    return isinstance(event, dict) and event.get("actor_type") == "human" and event.get("message") == message and _valid_event_identity(event)
+
+
+def _valid_card_event(event: Any, source: dict[str, Any]) -> bool:
+    return (
+        isinstance(event, dict) and event.get("actor_type") == "assistant" and _valid_event_identity(event)
+        and event["sequence"] == source["sequence"] + 1 and event.get("previous_event_ref") == source["event_ref"]
+        and _is_not_after(source["timestamp"], event["timestamp"])
+    )
+
+
+def _valid_next_confirmation(event: Any, draft: dict[str, Any]) -> bool:
+    if not isinstance(event, dict) or event.get("actor_type") != "human" or not _valid_event_identity(event):
+        return False
+    if event["sequence"] != draft["card_event_sequence"] + 1 or event.get("previous_event_ref") != draft["card_chat_event_ref"]:
+        return False
+    if not (_is_not_after(draft["issued_at"], event["timestamp"]) and _is_not_after(event["timestamp"], draft["expires_at"])):
+        return False
+    exact = f"Подтверждаю {draft['card_code']}"
+    normalized = " ".join(event.get("message", "").split()) if isinstance(event.get("message"), str) else ""
+    return event.get("message") == exact or normalized == "Подтверждаю"
+
+
+def _valid_event_identity(event: dict[str, Any]) -> bool:
+    return isinstance(event.get("event_ref"), str) and bool(event["event_ref"]) and _is_sequence(event.get("sequence")) and _parse_aware(event.get("timestamp")) is not None
+
+
+def _is_sequence(value: Any) -> bool:
+    return type(value) is int and value >= 0
+
+
+def _decision_card_code(value: dict[str, Any]) -> str:
+    seed = "\x1f".join((value["change_id"], value["decision_type"], value["revision_digest"], value["source_message"], value["consequence"], value["source_chat_event_ref"], value["issued_at"]))
+    return f"DEC-{hashlib.sha256(seed.encode('utf-8')).hexdigest()[:12].upper()}"
+
+
+def _is_after(later: str, earlier: str) -> bool:
+    later_value, earlier_value = _parse_aware(later), _parse_aware(earlier)
+    return later_value is not None and earlier_value is not None and later_value > earlier_value
 
 
 def _is_not_after(value: str, limit: str) -> bool:
+    value_time, limit_time = _parse_aware(value), _parse_aware(limit)
+    return value_time is not None and limit_time is not None and value_time <= limit_time
+
+
+def _parse_aware(value: Any) -> datetime | None:
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")) <= datetime.fromisoformat(limit.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except (AttributeError, ValueError):
-        return False
+        return None
+    return parsed if parsed.tzinfo is not None else None

@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
 
 import process.guided_workflow as guided_workflow
 from process.analytics_artifacts import preview_analytics, validate_analytics_package
 from process.guided_process_integrity import build_response_summary, validate_guided_change_package
-from process.guided_workflow import guide
+from process.guided_workflow import confirm_decision_draft, create_decision_draft, guide
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -109,6 +111,97 @@ def test_trusted_revision_bound_acceptance_exposes_single_safe_cta(tmp_path: Pat
     assert build_response_summary(tmp_path, report, human_role="Tech Lead")["next_permitted_action"] == "monitor-process-status"
 
 
+def _source_event(*, sequence: int = 10, message: str = "Принимаю спецификацию") -> dict[str, object]:
+    return {
+        "event_ref": "chat://trusted/source",
+        "actor_type": "human",
+        "sequence": sequence,
+        "timestamp": "2026-07-23T10:00:00Z",
+        "message": message,
+    }
+
+
+def _card_event(*, sequence: int = 11) -> dict[str, object]:
+    return {
+        "event_ref": "chat://trusted/card",
+        "actor_type": "assistant",
+        "sequence": sequence,
+        "previous_event_ref": "chat://trusted/source",
+        "timestamp": "2026-07-23T10:01:00Z",
+    }
+
+
+def _confirmation_event(*, card_code: str, sequence: int = 12, timestamp: str = "2026-07-23T10:02:00Z") -> dict[str, object]:
+    return {
+        "event_ref": "chat://trusted/confirmation",
+        "actor_type": "human",
+        "sequence": sequence,
+        "previous_event_ref": "chat://trusted/card",
+        "timestamp": timestamp,
+        "message": f"Подтверждаю {card_code}",
+    }
+
+
+def _draft(digest: str = "a" * 64) -> dict[str, object]:
+    return create_decision_draft(
+        change_id="sample",
+        decision_type="spec-acceptance",
+        revision_digest=digest,
+        natural_message="Принимаю спецификацию",
+        consequence="Prepare review only.",
+        source_event=_source_event(),
+        card_event=_card_event(),
+        expires_at="2026-07-23T11:00:00Z",
+    )
+
+
+def test_confirmation_requires_trusted_next_human_event_and_bound_card() -> None:
+    draft = _draft()
+    confirmation = _confirmation_event(card_code=str(draft["card_code"]))
+
+    assert confirm_decision_draft(draft, confirmation) is not None
+    assert confirm_decision_draft(draft, {**confirmation, "previous_event_ref": "chat://trusted/other"}) is None
+    assert confirm_decision_draft(draft, {**confirmation, "actor_type": "assistant"}) is None
+    assert confirm_decision_draft(draft, {**confirmation, "sequence": 13}) is None
+
+
+def test_confirmation_recomputes_card_code_and_rejects_pre_issuance_or_mixed_times() -> None:
+    draft = _draft()
+    confirmation = _confirmation_event(card_code=str(draft["card_code"]))
+
+    forged = {**draft, "consequence": "Forged authority."}
+    assert confirm_decision_draft(forged, confirmation) is None
+    assert confirm_decision_draft(draft, _confirmation_event(card_code=str(draft["card_code"]), timestamp="2026-07-23T10:00:30Z")) is None
+    aware_draft = {**draft, "issued_at": "2026-07-23T10:01:00"}
+    assert confirm_decision_draft(aware_draft, confirmation) is None
+
+
+def test_summary_fails_closed_when_confirmation_revision_is_not_current(tmp_path: Path) -> None:
+    _ready_package(tmp_path)
+    digest = hashlib.sha256((tmp_path / "specs/example/spec.md").read_bytes()).hexdigest()
+    report = {"status": "valid", "diagnostics": [], "spec_revision": {"path": "specs/example/spec.md", "sha256": digest}}
+    draft = _draft(digest)
+    event = confirm_decision_draft(draft, _confirmation_event(card_code=str(draft["card_code"])))
+
+    assert build_response_summary(tmp_path, report, confirmation_event=event)["decision_confirmation"]["status"] == "confirmed"
+    stale = {**event, "revision_digest": "b" * 64}
+    assert build_response_summary(tmp_path, report, confirmation_event=stale)["decision_confirmation"]["status"] == "unconfirmed"
+    forged_provenance = {**event, "confirmation_event_actor_type": "assistant"}
+    assert build_response_summary(tmp_path, report, confirmation_event=forged_provenance)["decision_confirmation"]["status"] == "unconfirmed"
+
+
+def test_confirmation_event_schema_rejects_yes_and_accepts_only_confirmation_forms() -> None:
+    schema = json.loads((ROOT / "process/schemas/confirmation-event.schema.json").read_text(encoding="utf-8"))
+    draft = _draft()
+    event = confirm_decision_draft(draft, _confirmation_event(card_code=str(draft["card_code"])))
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+
+    assert list(validator.iter_errors(event)) == []
+    assert list(validator.iter_errors({**event, "confirmation_message": "Да"}))
+    short = {**event, "confirmation_message": "  Подтверждаю  "}
+    assert list(validator.iter_errors(short)) == []
+
+
 def test_typed_analytics_fixture_validates_and_previews_without_external_actions(tmp_path: Path) -> None:
     _write(tmp_path, "analytics-manifest.yaml", "schema_version: '1.0'\ncapability_id: SAMPLE\nartifacts: [status-model.yaml, channel-support.yaml, data-model.yaml, platform-services.yaml, journey.yaml, screens.yaml, integrations.yaml]\n")
     _write(tmp_path, "status-model.yaml", "schema_version: '1.0'\nstatuses: [{id: DRAFT, transitions: [PUBLISHED]}]\n")
@@ -152,8 +245,14 @@ def _decision_draft() -> dict[str, object]:
         revision_digest="a" * 64,
         natural_message="Принимаю спецификацию",
         consequence="prepare-role-pr-approval",
-        source_chat_event_ref="chat://trusted/100",
-        issued_at="2026-07-23T10:00:00Z",
+        source_event={
+            "event_ref": "chat://trusted/100", "actor_type": "human", "sequence": 100,
+            "timestamp": "2026-07-23T10:00:00Z", "message": "Принимаю спецификацию",
+        },
+        card_event={
+            "event_ref": "chat://trusted/101", "actor_type": "assistant", "sequence": 101,
+            "previous_event_ref": "chat://trusted/100", "timestamp": "2026-07-23T10:00:30Z",
+        },
         expires_at="2026-07-23T10:05:00Z",
     )
 
@@ -175,53 +274,32 @@ def test_only_immediate_exact_or_normalized_short_confirmation_creates_event() -
     draft = _decision_draft()
     exact = guided_workflow.confirm_decision_draft(
         draft,
-        "Подтверждаю " + str(draft["card_code"]),
-        change_id="sample",
-        revision_digest="a" * 64,
-        confirmation_chat_event_ref="chat://trusted/101",
-        confirmation_at="2026-07-23T10:01:00Z",
-        immediately_following=True,
+        {"event_ref": "chat://trusted/102", "actor_type": "human", "sequence": 102, "previous_event_ref": "chat://trusted/101", "timestamp": "2026-07-23T10:01:00Z", "message": "Подтверждаю " + str(draft["card_code"])},
     )
     short = guided_workflow.confirm_decision_draft(
         draft,
-        "  Подтверждаю\n",
-        change_id="sample",
-        revision_digest="a" * 64,
-        confirmation_chat_event_ref="chat://trusted/102",
-        confirmation_at="2026-07-23T10:01:00Z",
-        immediately_following=True,
+        {"event_ref": "chat://trusted/103", "actor_type": "human", "sequence": 102, "previous_event_ref": "chat://trusted/101", "timestamp": "2026-07-23T10:01:00Z", "message": "  Подтверждаю\n"},
     )
 
     assert exact["record_type"] == "confirmation_event"
     assert exact["decision_card_code"] == draft["card_code"]
     assert exact["source_message"] == "Принимаю спецификацию"
     assert exact["confirmation_message"] == "Подтверждаю " + str(draft["card_code"])
-    assert exact["trusted_chat_event_ref"] == "chat://trusted/101"
+    assert exact["trusted_chat_event_ref"] == "chat://trusted/102"
     assert short["confirmation_message"] == "  Подтверждаю\n"
 
 
 def test_ambiguous_stale_or_interleaved_chat_text_cannot_record_authority() -> None:
     draft = _decision_draft()
     attempts = [
-        ("что дальше?", "a" * 64, True, "2026-07-23T10:01:00Z"),
-        ("Да", "a" * 64, True, "2026-07-23T10:01:00Z"),
-        ("продолжай", "a" * 64, True, "2026-07-23T10:01:00Z"),
-        ("Подтверждаю DEC-wrong", "a" * 64, True, "2026-07-23T10:01:00Z"),
-        ("Подтверждаю", "b" * 64, True, "2026-07-23T10:01:00Z"),
-        ("Подтверждаю", "a" * 64, False, "2026-07-23T10:01:00Z"),
-        ("Подтверждаю", "a" * 64, True, "2026-07-23T10:06:00Z"),
+        {"message": "что дальше?"}, {"message": "Да"}, {"message": "продолжай"},
+        {"message": "Подтверждаю DEC-wrong"}, {"sequence": 103},
+        {"previous_event_ref": "chat://trusted/interleaved"}, {"timestamp": "2026-07-23T10:06:00Z"},
     ]
 
-    for index, (message, digest, immediately_following, timestamp) in enumerate(attempts):
-        result = guided_workflow.confirm_decision_draft(
-            draft,
-            message,
-            change_id="sample",
-            revision_digest=digest,
-            confirmation_chat_event_ref=f"chat://trusted/{index + 200}",
-            confirmation_at=timestamp,
-            immediately_following=immediately_following,
-        )
+    for index, change in enumerate(attempts):
+        event = {"event_ref": f"chat://trusted/{index + 200}", "actor_type": "human", "sequence": 102, "previous_event_ref": "chat://trusted/101", "timestamp": "2026-07-23T10:01:00Z", "message": "Подтверждаю"}
+        result = guided_workflow.confirm_decision_draft(draft, {**event, **change})
         assert result is None
 
 
@@ -258,12 +336,7 @@ def test_response_summary_uses_only_validated_confirmation_records() -> None:
     draft = _decision_draft()
     event = guided_workflow.confirm_decision_draft(
         draft,
-        "Подтверждаю",
-        change_id="sample",
-        revision_digest="a" * 64,
-        confirmation_chat_event_ref="chat://trusted/101",
-        confirmation_at="2026-07-23T10:01:00Z",
-        immediately_following=True,
+        {"event_ref": "chat://trusted/102", "actor_type": "human", "sequence": 102, "previous_event_ref": "chat://trusted/101", "timestamp": "2026-07-23T10:01:00Z", "message": "Подтверждаю"},
     )
     report = {"status": "valid", "diagnostics": [], "spec_revision": {"sha256": "a" * 64}}
 
