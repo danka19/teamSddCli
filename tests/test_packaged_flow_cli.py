@@ -53,6 +53,18 @@ def test_bootstrap_create_and_spec_pr_json_entry_points_are_non_interactive(
     assert prepared["merged"] is False
 
 
+def test_bootstrap_accepts_the_declared_operations_catalog(tmp_path: Path, capsys) -> None:
+    """Package validation dispatches the operations catalog to its own loader."""
+    workspace = tmp_path / "workspace"
+
+    assert bootstrap_main([
+        str(workspace), "--package-root", str(PROCESS),
+        "--team-template", str(TEAM_TEMPLATE), "--json",
+    ]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "created"
+    assert (workspace / "process" / "schemas" / "operations-catalog.schema.json").is_file()
+
+
 def test_json_entry_points_return_stable_operator_error_without_traceback(
     tmp_path: Path, capsys,
 ) -> None:

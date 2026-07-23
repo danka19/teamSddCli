@@ -22,6 +22,7 @@ from jsonschema import Draft202012Validator
 
 from .errors import OperationError
 from .guided_workflow import load_catalog
+from .operations_catalog import load_operations_catalog
 
 from .validators.config_discovery import (
     BUNDLED_SCHEMA_ROOT,
@@ -899,15 +900,17 @@ def _copy_versioned_tree(source: Path, destination: Path) -> None:
         if not isinstance(distribution, dict):
             raise OperationError("package-contract-invalid", "distribution manifest is missing")
         destination.mkdir(parents=True)
-        for relative in distribution.get("files", []):
-            source_file = _declared_file(source, relative)
-            shutil.copy2(source_file, destination / relative)
         for relative in distribution.get("roots", []):
             source_root = _declared_directory(source, relative)
             shutil.copytree(
                 source_root, destination / relative,
                 ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"),
             )
+        for relative in distribution.get("files", []):
+            source_file = _declared_file(source, relative)
+            destination_file = destination / relative
+            destination_file.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_file, destination_file)
         return
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store"))
 
@@ -1043,9 +1046,10 @@ def _validate_standalone_package(
     catalogs = package.get("catalogs")
     if not isinstance(catalogs, dict):
         raise OperationError("package-contract-invalid", "catalog declarations are missing")
-    for relative in catalogs.values():
-        catalog_path = _declared_file(root, relative)
-        load_catalog(catalog_path)
+    operations_path = _declared_file(root, catalogs.get("operations"))
+    load_operations_catalog(operations_path)
+    guided_workflow_path = _declared_file(root, catalogs.get("guided_owner_workflow"))
+    load_catalog(guided_workflow_path, operations_path=operations_path)
 
     distribution = package.get("distribution")
     if not isinstance(distribution, dict):
