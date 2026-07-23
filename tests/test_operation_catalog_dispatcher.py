@@ -80,6 +80,31 @@ def test_dispatcher_returns_stable_operational_json_for_catalog_and_spawn_failur
     assert json.loads(capsys.readouterr().out)["status"] == "operational-error"
 
 
+def test_dispatcher_renders_operational_json_when_child_output_decode_fails(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import json
+    from scripts.sdd import main as sdd_main
+
+    monkeypatch.setattr(
+        "process.operation_dispatcher.subprocess.run",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid start byte")
+        ),
+    )
+
+    assert sdd_main(["check", "preview-analytics", "--json"]) == 3
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert [json.loads(line) for line in captured.out.splitlines()] == [
+        {
+            "diagnostics": [{"code": "operation-failed", "message": "A required local operation failed."}],
+            "schema_version": "1.0",
+            "status": "operational-error",
+        }
+    ]
+
+
 def test_dispatcher_discovery_and_safe_execution_boundaries(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     import json
     from process import operation_dispatcher
