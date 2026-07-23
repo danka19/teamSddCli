@@ -31,6 +31,7 @@ PROJECT_ADAPTER = REPO_ROOT / "templates" / "project-adapter" / ".sdd-project.ya
 FIXTURES = REPO_ROOT / "tests" / "fixtures" / "process-package"
 
 SCHEMA_FILES = {
+    "operations_catalog": "operations-catalog.schema.json",
     "package": "process-package.schema.json",
     "workflow": "workflow.schema.json",
     "config": "sdd-config.schema.json",

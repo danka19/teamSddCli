@@ -26,8 +26,9 @@
     "schemas": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "upgrade_evidence", "upgrade_check_result", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result", "corporate_environment_inventory", "corporate_adaptation_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
+      "required": ["operations_catalog", "process_package", "workflow", "sdd_config", "projects", "owners", "project_adapter", "reference", "release_allowlist", "release_manifest", "release_certification_selection", "release_host_evidence", "change_v2", "policy_manifest", "policy_document", "gate_evaluation_input", "tech_lead_review_input", "tech_lead_control_record", "corporate_flow_input", "traceability_v2", "external_mapping", "operation_evidence", "upgrade_evidence", "upgrade_check_result", "read_pack_request", "task_launch", "weak_model_operation_plan", "read_pack", "weak_model_operation_evidence", "parallel_plan", "certification_case", "certification_evidence", "coverage_report", "feedback_policy", "role_output_fixture", "actual_certification_operational_result", "corporate_environment_inventory", "corporate_adaptation_checklist", "corporate_pilot_evidence", "corporate_no_fork_assessment"],
       "properties": {
+        "operations_catalog": {"const": "schemas/operations-catalog.schema.json"},
         "process_package": {"type": "string", "minLength": 1},
         "workflow": {"type": "string", "minLength": 1},
         "sdd_config": {"type": "string", "minLength": 1},
@@ -73,8 +74,8 @@
     "catalogs": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["guided_owner_workflow"],
-      "properties": {"guided_owner_workflow": {"const": "catalogs/guided-owner-workflow.yaml"}}
+      "required": ["operations", "guided_owner_workflow"],
+      "properties": {"operations": {"const": "catalogs/operations.yaml"}, "guided_owner_workflow": {"const": "catalogs/guided-owner-workflow.yaml"}}
     },
     "templates": {
       "type": "object",
