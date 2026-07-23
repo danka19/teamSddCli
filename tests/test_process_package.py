@@ -196,6 +196,15 @@ def test_package_schemas_are_valid_and_use_only_local_references() -> None:
         assert_local_references_resolve(filename, schema)
 
 
+def test_distribution_file_variants_do_not_duplicate_schema_root_assets() -> None:
+    package_schema = load_schema("package")
+    distribution = package_schema["properties"]["distribution"]["properties"]
+
+    for variant in distribution["files"]["oneOf"]:
+        assert all(not path.startswith("schemas/") for path in variant["const"])
+    assert all("schemas" in variant["const"] for variant in distribution["roots"]["oneOf"])
+
+
 def test_fragment_only_reference_resolves_within_current_schema() -> None:
     schema = {"$defs": {"identifier": {"type": "string"}}, "$ref": "#/$defs/identifier"}
     Draft202012Validator.check_schema(schema)

@@ -107,7 +107,6 @@ distribution:
     - operation_cli.py
     - operation_dispatcher.py
     - operations_catalog.py
-    - schemas/operations-catalog.schema.json
     - operation_plan.py
     - package.yaml
     - release-allowlist.yaml
