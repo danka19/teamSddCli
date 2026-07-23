@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import re
 from datetime import datetime
 from pathlib import Path
@@ -323,6 +324,132 @@ def record_discovery_choice(discovery_map: dict[str, Any], area_id: str, choice:
     }[choice]
     updated["intake_sufficient"] = not any(item.get("status") == "blocking" for item in updated["areas"])
     return updated
+
+
+def operation_input_digest(operation_id: str, forwarded_argv: list[str] | tuple[str, ...]) -> str:
+    """Hash the catalog operation and ordered argv, excluding dispatcher JSON output only."""
+    if not isinstance(operation_id, str) or not operation_id or not isinstance(forwarded_argv, (list, tuple)) or not all(isinstance(arg, str) for arg in forwarded_argv):
+        raise ValueError("operation input is invalid")
+    source = json.dumps(
+        {"operation_id": operation_id, "argv": [arg for arg in forwarded_argv if arg != "--json"]},
+        ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+    )
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()
+
+
+def build_operation_confirmation_request(
+    *, human_role: str, operation_id: str, forwarded_argv: list[str] | tuple[str, ...],
+    source_event: dict[str, Any], card_event: dict[str, Any], expires_at: str,
+) -> dict[str, Any]:
+    """Build a non-authoritative operation card bound to one trusted chat chain."""
+    if not isinstance(human_role, str) or not human_role or not _valid_source_event(source_event, source_event.get("message")) or not _valid_card_event(card_event, source_event):
+        raise ValueError("operation confirmation request binding is invalid")
+    issued_at = card_event["timestamp"]
+    if not _is_after(expires_at, issued_at):
+        raise ValueError("operation confirmation request expiry is invalid")
+    input_digest = operation_input_digest(operation_id, forwarded_argv)
+    card_body = {
+        "human_role": human_role, "operation_id": operation_id, "input_digest": input_digest,
+        "source_chat_event_ref": source_event["event_ref"], "source_event_actor_type": source_event["actor_type"],
+        "source_event_sequence": source_event["sequence"], "source_event_timestamp": source_event["timestamp"],
+        "card_chat_event_ref": card_event["event_ref"], "card_event_actor_type": card_event["actor_type"],
+        "card_event_sequence": card_event["sequence"], "card_previous_event_ref": card_event["previous_event_ref"],
+        "issued_at": issued_at, "expires_at": expires_at, "authority_granted": False,
+    }
+    revision_digest = hashlib.sha256(_canonical_operation_request_card_bytes(card_body)).hexdigest()
+    code_seed = "\x1f".join((human_role, operation_id, input_digest, revision_digest, source_event["event_ref"], issued_at))
+    return {
+        "schema_version": "1.0", "record_type": "operation_confirmation_request",
+        "card_code": f"OPR-{hashlib.sha256(code_seed.encode('utf-8')).hexdigest()[:12].upper()}",
+        "revision_digest": revision_digest, **card_body,
+    }
+
+
+def confirm_operation_confirmation_request(
+    request: dict[str, Any], confirmation_event: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Build an immutable non-authoritative event only from the active request card."""
+    if not _valid_operation_confirmation_request(request) or not _valid_operation_confirmation_event_input(confirmation_event, request):
+        return None
+    return {
+        "schema_version": "1.0", "record_type": "operation_confirmation_event",
+        **{key: request[key] for key in _OPERATION_REQUEST_FIELDS},
+        "confirmation_message": confirmation_event["message"], "trusted_chat_event_ref": confirmation_event["event_ref"],
+        "confirmation_event_actor_type": confirmation_event["actor_type"], "confirmation_event_sequence": confirmation_event["sequence"],
+        "confirmed_at": confirmation_event["timestamp"], "authority_granted": False,
+    }
+
+
+_OPERATION_REQUEST_FIELDS = (
+    "card_code", "human_role", "operation_id", "input_digest", "revision_digest", "source_chat_event_ref",
+    "source_event_actor_type", "source_event_sequence", "source_event_timestamp", "card_chat_event_ref",
+    "card_event_actor_type", "card_event_sequence", "card_previous_event_ref", "issued_at", "expires_at",
+)
+
+
+def validate_operation_confirmation_event(
+    value: Any, *, forwarded_argv: list[str] | tuple[str, ...], now: str,
+    operations_path: Path = DEFAULT_OPERATIONS_CATALOG,
+) -> bool:
+    """Fail closed unless an event remains bound to catalog, argv, card and expiry."""
+    if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "operation_confirmation_event" or value.get("authority_granted") is not False:
+        return False
+    request = {"schema_version": "1.0", "record_type": "operation_confirmation_request", "authority_granted": False, **{key: value.get(key) for key in _OPERATION_REQUEST_FIELDS}}
+    if not _valid_operation_confirmation_request(request) or not _valid_operation_confirmation_event_input({
+        "event_ref": value.get("trusted_chat_event_ref"), "actor_type": value.get("confirmation_event_actor_type"),
+        "sequence": value.get("confirmation_event_sequence"), "previous_event_ref": value.get("card_chat_event_ref"),
+        "timestamp": value.get("confirmed_at"), "message": value.get("confirmation_message"),
+    }, request):
+        return False
+    if _parse_aware(now) is None or not _is_after(request["expires_at"], now):
+        return False
+    try:
+        operation = next(item for item in load_operations_catalog(operations_path)["operations"] if item["id"] == request["operation_id"])
+    except (OperationError, StopIteration):
+        return False
+    return (
+        request["human_role"] in operation["allowed_roles"]
+        and operation["mutation_level"].startswith("mutate_")
+        and operation["confirmation_required"] is True
+        and operation_input_digest(request["operation_id"], forwarded_argv) == request["input_digest"]
+    )
+
+
+def _canonical_operation_request_card_bytes(card_body: dict[str, Any]) -> bytes:
+    return json.dumps(card_body, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def _valid_operation_confirmation_request(value: Any) -> bool:
+    if not isinstance(value, dict) or value.get("schema_version") != "1.0" or value.get("record_type") != "operation_confirmation_request" or value.get("authority_granted") is not False:
+        return False
+    required_strings = ("card_code", "human_role", "operation_id", "input_digest", "revision_digest", "source_chat_event_ref", "source_event_actor_type", "source_event_timestamp", "card_chat_event_ref", "card_event_actor_type", "card_previous_event_ref", "issued_at", "expires_at")
+    if not all(isinstance(value.get(key), str) and value[key] for key in required_strings) or not all(_is_sequence(value.get(key)) for key in ("source_event_sequence", "card_event_sequence")):
+        return False
+    card_body = {
+        **{key: value[key] for key in _OPERATION_REQUEST_FIELDS if key != "card_code" and key != "revision_digest"},
+        "authority_granted": False,
+    }
+    code_seed = "\x1f".join((value["human_role"], value["operation_id"], value["input_digest"], value["revision_digest"], value["source_chat_event_ref"], value["issued_at"]))
+    return (
+        bool(SHA256.fullmatch(value["input_digest"])) and bool(SHA256.fullmatch(value["revision_digest"]))
+        and value["revision_digest"] == hashlib.sha256(_canonical_operation_request_card_bytes(card_body)).hexdigest()
+        and value["card_code"] == f"OPR-{hashlib.sha256(code_seed.encode('utf-8')).hexdigest()[:12].upper()}"
+        and value["source_event_actor_type"] == "human" and value["card_event_actor_type"] == "assistant"
+        and value["card_event_sequence"] == value["source_event_sequence"] + 1
+        and value["card_previous_event_ref"] == value["source_chat_event_ref"]
+        and _is_not_after(value["source_event_timestamp"], value["issued_at"])
+        and _is_after(value["expires_at"], value["issued_at"])
+    )
+
+
+def _valid_operation_confirmation_event_input(event: Any, request: dict[str, Any]) -> bool:
+    if not isinstance(event, dict) or event.get("actor_type") != "human" or not _valid_event_identity(event):
+        return False
+    if event["sequence"] != request["card_event_sequence"] + 1 or event.get("previous_event_ref") != request["card_chat_event_ref"]:
+        return False
+    if not (_is_not_after(request["issued_at"], event["timestamp"]) and _is_not_after(event["timestamp"], request["expires_at"])):
+        return False
+    return event.get("message") == f"Подтверждаю {request['card_code']}"
 
 
 def _valid_draft(value: Any) -> bool:

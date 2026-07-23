@@ -230,10 +230,64 @@ def test_request_digest_binds_operation_and_ordered_forwarded_argv(capsys: pytes
     second = json.loads(capsys.readouterr().out)
     assert first["status"] == "confirmation-requested"
     assert first["authority_granted"] is False
-    assert first["input_digest"] != second["input_digest"]
+    assert first["record_type"] == "operation_confirmation_request"
+    assert first["authority_granted"] is False
+    assert first["input_digest"] == second["input_digest"]
     assert sdd_main(["request", "create-change", "--role", "Analyst", "--", "sample", "sample", "--json"]) == 0
     duplicate = json.loads(capsys.readouterr().out)
     assert duplicate["input_digest"] != first["input_digest"]
+
+
+def test_operation_confirmation_contract_binds_catalog_role_input_revision_chain_and_expiry() -> None:
+    from process.guided_workflow import (
+        build_operation_confirmation_request,
+        confirm_operation_confirmation_request,
+        validate_operation_confirmation_event,
+    )
+
+    source = {
+        "event_ref": "chat://trusted/source", "actor_type": "human", "sequence": 20,
+        "timestamp": "2026-07-23T10:00:00Z", "message": "Запросить создание изменения",
+    }
+    card = {
+        "event_ref": "chat://trusted/card", "actor_type": "assistant", "sequence": 21,
+        "previous_event_ref": "chat://trusted/source", "timestamp": "2026-07-23T10:01:00Z",
+    }
+    request = build_operation_confirmation_request(
+        human_role="Analyst", operation_id="create-change", forwarded_argv=["sample", "--json"],
+        source_event=source, card_event=card, expires_at="2026-07-23T11:00:00Z",
+    )
+    event = confirm_operation_confirmation_request(request, {
+        "event_ref": "chat://trusted/confirmation", "actor_type": "human", "sequence": 22,
+        "previous_event_ref": "chat://trusted/card", "timestamp": "2026-07-23T10:02:00Z",
+        "message": f"Подтверждаю {request['card_code']}",
+    })
+
+    assert event is not None
+    from jsonschema import Draft202012Validator, FormatChecker
+    request_schema = json.loads((ROOT / "process" / "schemas" / "operation-confirmation-request.schema.json").read_text(encoding="utf-8"))
+    event_schema = json.loads((ROOT / "process" / "schemas" / "operation-confirmation-event.schema.json").read_text(encoding="utf-8"))
+    assert list(Draft202012Validator(request_schema, format_checker=FormatChecker()).iter_errors(request)) == []
+    assert list(Draft202012Validator(event_schema, format_checker=FormatChecker()).iter_errors(event)) == []
+    assert validate_operation_confirmation_event(event, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert validate_operation_confirmation_event(event, forwarded_argv=["sample", "--json"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({key: value for key, value in event.items() if key != "human_role"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "human_role": "Unknown"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "operation_id": "preview-analytics"}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "input_digest": "f" * 64}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event({**event, "revision_digest": "f" * 64}, forwarded_argv=["sample"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event(event, forwarded_argv=["changed"], now="2026-07-23T10:03:00Z")
+    assert not validate_operation_confirmation_event(event, forwarded_argv=["sample"], now="2026-07-23T11:00:00Z")
+
+
+def test_valid_operation_event_never_enables_run_or_external_mutation(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from scripts.sdd import main as sdd_main
+
+    monkeypatch.setattr("process.operation_dispatcher._run_entrypoint", pytest.fail)
+    assert sdd_main(["run", "create-change", "--role", "Analyst", "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["blockers"][0]["code"] == "confirmation-contract-pending"
 
 
 def test_request_blocks_non_mutating_operations_before_side_effect(

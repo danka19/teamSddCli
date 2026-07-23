@@ -47,6 +47,8 @@ schemas:
   spec_acceptance: schemas/spec-acceptance.schema.json
   decision_draft: schemas/decision-draft.schema.json
   confirmation_event: schemas/confirmation-event.schema.json
+  operation_confirmation_request: schemas/operation-confirmation-request.schema.json
+  operation_confirmation_event: schemas/operation-confirmation-event.schema.json
   corporate_environment_inventory: schemas/corporate-environment-inventory.schema.json
   corporate_adaptation_checklist: schemas/corporate-adaptation-checklist.schema.json
   corporate_pilot_evidence: schemas/corporate-pilot-evidence.schema.json
