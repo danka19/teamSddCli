@@ -43,12 +43,12 @@ Remediation: P3.1 and P3.4 are recorded as `accepted`; their historical intake r
 
 Classification: verified limitation, no documentation defect after remediation.
 
-P3 remains `in_progress`: `add-typed-analytics-artifact-framework` has complete technical tasks but is still an active change awaiting human acceptance, and P3.3 remains `pending_acceptance` for the controlled `0.3.6` transfer evidence. The Roadmap validator reports this as one of its three lifecycle warnings.
+P3 remains `in_progress`: the owner accepted `add-typed-analytics-artifact-framework` and P3.3 under `D-028`, but kept Delta Spec sync and archive as separate unapproved lifecycle actions. The active change therefore remains in place until that decision is made.
 
 ## Residual risks and next action
 
-- The analytics acceptance decision remains human-owned. Nothing in this audit accepts, syncs, or archives that change.
+- The analytics sync/archive decision remains human-owned. `D-028` accepts the implementation and controlled transfer, but does not authorize either operation.
 - P3 `mutate_*` execution stays fail-closed even though the role-aware and dispatcher contracts are accepted; future execution enablement needs a separate accepted change.
 - Two unrelated Phase 2 lifecycle warnings remain: `determinize-weak-model-operational-decisions` is active with complete tasks, and `simplify-weak-model-decision-contract` is blocked with complete tasks.
 
-The recommended next action is human review of `docs/audits/P3_TYPED_ANALYTICS_ACCEPTANCE_PACKET_2026-07-23.md`; that is the remaining decision that can advance P3 without changing the accepted P3.1/P3.4 safety boundary.
+The recommended next action is an explicit human decision whether to sync the accepted Delta Spec and archive the active analytics change; that is the remaining action that can reconcile P3 without changing the accepted P3.1/P3.4 safety boundary.

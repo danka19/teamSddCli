@@ -35,7 +35,7 @@ Affected architecture: local process-package validators/templates/read-only prev
 Data contract impact: trusted acceptance event and seven typed YAML artifact contracts.
 Verification impact: negative authority/evidence/readiness tests plus synthetic local walkthrough.
 Status: in_progress.
-State detail: role-aware and operation-catalog work is accepted, while the active analytics change awaits human acceptance.
+State detail: all P3 work items are accepted; the active analytics change awaits a separate human decision on Delta Spec sync and archive before phase reconciliation can close.
 ```
 
 ## Work Items
@@ -80,7 +80,7 @@ Exit criteria:
 
 ### 3.2 Typed analytics artifact framework
 
-Status: in_progress.
+Status: accepted.
 
 OpenSpec mapping: `add-typed-analytics-artifact-framework`.
 
@@ -111,7 +111,7 @@ Exit criteria:
 
 ### 3.3 Package and sandbox transfer
 
-Status: pending_acceptance.
+Status: accepted.
 
 OpenSpec mapping: the accepted role-aware baseline and the active `add-typed-analytics-artifact-framework` change; this work item packages their validated successor implementation without accepting the active analytics change.
 
@@ -132,7 +132,7 @@ Exit criteria:
 
 - Sandbox package equals the validated source candidate; its existing uncommitted `enforce-guided-process-integrity` deletions remain untouched.
 
-Transfer evidence (2026-07-23): immutable `p3-analytics-v0.3.6-rc2` validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`. Source verification returned `89 passed` for the P3/package/update/catalog suite and `83 passed, 1 skipped` for `tests/test_release_candidate.py`. The controlled sandbox sequence `check -> update -> rollback -> final update` moved `0.3.4 -> 0.3.6`, proved the retained rollback snapshot, and left package/config at `0.3.6`. `git diff --check` passed after the final update. The existing dirty OpenSpec paths were neither changed nor staged. This work item is ready for human review; it does not accept or archive the active analytics change.
+Transfer evidence (2026-07-23): immutable `p3-analytics-v0.3.6-rc2` validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`. Source verification returned `89 passed` for the P3/package/update/catalog suite and `83 passed, 1 skipped` for `tests/test_release_candidate.py`. The controlled sandbox sequence `check -> update -> rollback -> final update` moved `0.3.4 -> 0.3.6`, proved the retained rollback snapshot, and left package/config at `0.3.6`. `git diff --check` passed after the final update. The existing dirty OpenSpec paths were neither changed nor staged. The owner accepted this evidence under `D-028`; Delta Spec sync and archive remain separate decisions.
 
 ### Change Intake — P3.1 pre-transfer boundary (2026-07-23)
 
@@ -210,7 +210,7 @@ State detail: the change was accepted, promoted into `operation-catalog` and `gu
 ```
 ## Phase Gate
 
-- Local deterministic evidence is complete; no MCP/tool invocation, credential, live integration, product payment UI, or corporate adaptation is introduced. The remaining P3 lifecycle decision is human acceptance of the active analytics change and its transfer evidence.
+- Local deterministic evidence is complete; no MCP/tool invocation, credential, live integration, product payment UI, or corporate adaptation is introduced. The remaining P3 lifecycle decision is whether to sync and archive the accepted active analytics change.
 
 ### Change Intake — human-confirmed decisions and proactive discovery (2026-07-21)
 

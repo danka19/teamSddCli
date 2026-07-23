@@ -24,7 +24,9 @@ The reusable package has no typed persistence contracts for analyst-produced art
 
 - Execution phase: P3
 - Related phases: P5
-- Lifecycle status: in_progress
+- Lifecycle status: accepted
+
+The human owner recorded acceptance under `D-028`; Delta Spec sync and archive remain separate unapproved lifecycle actions.
 
 ## Impact
 

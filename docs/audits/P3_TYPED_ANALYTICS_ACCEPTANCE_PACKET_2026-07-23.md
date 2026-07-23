@@ -1,10 +1,10 @@
 # P3 Typed Analytics Acceptance Packet
 
-Status: pending human acceptance.
+Status: accepted by the human owner under `D-028`; sync and archive are not authorized by this decision.
 
 ## Purpose
 
-This packet asks the human owner to review `add-typed-analytics-artifact-framework`. It records completed local implementation and transfer evidence only. It does not accept the change, synchronize Delta Specs, archive OpenSpec artifacts, approve release, or authorize external mutation.
+This packet records the completed local implementation and transfer evidence accepted by the human owner under `D-028`. It does not synchronize Delta Specs, archive OpenSpec artifacts, approve release, or authorize external mutation.
 
 ## Scope reviewed
 
@@ -17,13 +17,13 @@ This packet asks the human owner to review `add-typed-analytics-artifact-framewo
 - Candidate: `p3-analytics-v0.3.6-rc2`.
 - Payload SHA-256: `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.
 - Source tests: `89 passed` for P3/package/update/catalog coverage; `83 passed, 1 skipped` for `tests/test_release_candidate.py`.
-- Governance checks: `openspec validate --all --strict` returned `19 passed`; roadmap/OpenSpec validator returned zero errors and three lifecycle warnings: this active analytics change awaiting human acceptance and two historical lifecycle items.
+- Governance checks before `D-028`: `openspec validate --all --strict` returned `19 passed`; roadmap/OpenSpec validator returned zero errors and three lifecycle warnings: this active analytics change awaiting human acceptance and two historical lifecycle items.
 - Sandbox: `check -> update -> rollback -> final update` proved `0.3.4 -> 0.3.6`, rollback to `0.3.4`, then final `0.3.6`; `git diff --check` passed after the final update.
 - Dirty sandbox OpenSpec paths `team-specs/openspec/changes/operation-history/` and `team-specs/openspec/changes/payments-screen/` were preserved and not staged.
 
-## Human decision requested
+## Recorded human decision
 
-Confirm whether the typed analytics framework meets the P3 acceptance criteria. Acceptance would permit a separate spec-sync and archive decision; declining or deferring acceptance leaves the active change and sandbox evidence intact.
+The human owner accepted the typed analytics framework and its controlled transfer under `D-028`. Delta Spec sync and OpenSpec archive remain separate, unapproved lifecycle actions; declining or deferring those actions leaves the active change and sandbox evidence intact.
 
 ## Known limits
 

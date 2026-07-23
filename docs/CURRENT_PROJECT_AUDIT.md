@@ -2,7 +2,7 @@
 
 Status: in_progress.
 
-Phase 2 is closed. Phase 3 is in progress; its remaining lifecycle gate is human acceptance of the active typed-analytics change and its verified transfer evidence.
+Phase 2 is closed. Phase 3 is in progress; all work-item acceptance is recorded, while the accepted active typed-analytics change awaits a separate sync/archive decision.
 
 Last status reconciliation: 2026-07-23.
 
@@ -11,9 +11,9 @@ Last status reconciliation: 2026-07-23.
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
 - Immutable successor `p3-analytics-v0.3.6-rc2` was built and manifest-validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.
-- Source evidence: `89 passed` for the P3/package/update/catalog suite; `83 passed, 1 skipped` for `tests/test_release_candidate.py`; OpenSpec strict validation passed `19` items; roadmap/OpenSpec linkage had zero errors and three lifecycle warnings: the expected analytics change awaiting human acceptance and two historical lifecycle items.
+- Source evidence: `89 passed` for the P3/package/update/catalog suite; `83 passed, 1 skipped` for `tests/test_release_candidate.py`; OpenSpec strict validation passed `19` items; roadmap/OpenSpec linkage had zero errors and three lifecycle warnings before `D-028` recorded analytics acceptance.
 - The controlled sandbox sequence `check -> update -> rollback -> final update` proved `0.3.4 -> 0.3.6`, rollback to `0.3.4`, and final installed version `0.3.6`. `git diff --check` passed after the final update. Existing dirty OpenSpec paths `operation-history/` and `payments-screen/` were not changed or staged.
-- P3.3 and Task 2.2 are implementation-complete and `pending_acceptance`. `add-typed-analytics-artifact-framework` remains active and is not accepted, synced, or archived; the next lifecycle action is human review of its acceptance packet.
+- P3.3 and Task 2.2 are accepted under `D-028`. `add-typed-analytics-artifact-framework` remains active and is neither synced nor archived; the next lifecycle action is a separate human decision on sync/archive.
 
 ## P3 Operation Catalog And Dispatcher Reconciliation (2026-07-23)
 
@@ -199,7 +199,7 @@ Last updated: 2026-07-21.
 | AUDIT-027 | Rc4 contains the immutable historical `204 covered / 110 gaps / 20 future_work` report; its uniform residual metadata is a mechanical fallback, not an individual risk assessment. Package `0.3.0` binds 68 Phase 2 selectors to exact test evidence, 22 governance rows to primary decisions/audits, 12 Phase 3/4 rows to `future_work`, and the first-MVP boundary to `D-019`. Candidate rc6 certifies `295/7/32` and is accepted under `D-020`. | Phase 2/3/4 | closed |
 | AUDIT-028 | The 13 product gaps were normalized into six intake groups. Delta semantics, archive history, and reviewed upgrade evidence are implemented and certified in package `0.3.0` with six exact tests. Feedback disposition is deferred to P4, CODEOWNERS derivation/validation to P3, and AI traceability suggestions plus legacy baseline onboarding to P4; all seven deferred selectors remain visible gaps. Immutable rc6 passed full verification and independent review and is accepted under `D-020`. | Phase 2/3/4 | mitigated |
 | AUDIT-029 | The 2026-07-21 read-only GigaCode audit found that the documented guided flow is not enforced end to end: unknown role is not a validator stop, human and AI role vocabularies diverge, the implementation next action is role-neutral, acceptance provenance is reducible to an AI-writable YAML constant, spec readiness checks are incomplete, and the response-summary check does not prove what the human saw. `D-024` accepts remediation through a new P3 OpenSpec change; current successor evidence must not be used to claim this observed path is already safe. | Phase 3 | open |
-| AUDIT-030 | `D-025` makes typed analytics persistence and screen/journey/integration source contracts part of pre-corporate framework readiness. The detailed corporate-template analysis and 38 git-ignored source photos are retained, but `process/schemas/` and `process/templates/` still lack status-model, channel-support, data-model, platform-services, journey, screen, and integration-descriptor contracts; `templates/team-specs/analytics/` contains only `.gitkeep`. New OpenSpec design, deterministic validators, fixtures, and one sanitized end-to-end example are required. | Phase 3/4/5 | open |
+| AUDIT-030 | `D-025` makes typed analytics persistence and screen/journey/integration source contracts part of pre-corporate framework readiness. The P3 contracts, schemas, templates, validators, fixtures and sanitized end-to-end example are implemented and accepted under `D-028`; live corporate wiring and generated-view expansion remain Phase 4/P5 work. | Phase 3/4/5 | P3 scope closed; P4/P5 deferred |
 | AUDIT-031 | The exact new-chat transcript, raw GigaCode UI payload, and current change package for the payment-screen requirement were not found in the sandbox root or Git path history. The historical audit proves that an earlier `change-001` package was inspected, but it is not a substitute for the missing source content. Any detailed reconstruction of those payment screens remains `unverified` and must be re-supplied or recovered from an authoritative human/chat export. | Phase 3 | open |
 
 ## Accepted Human Decisions
@@ -290,7 +290,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Primary roadmap phase: P3; related phases: P4, P5.
 - Reason: the current implementation permits a role-neutral implementation action and self-declared acceptance evidence even though prose forbids both. This changes externally visible workflow behavior and cannot be fixed as docs-only guidance.
 - Human decision: `D-024` accepts the remediation direction. The new change must still present the exact role mapping, evidence schema, revision binding, UI contract, and negative scenarios for review before implementation.
-- Status: accepted and archived in `openspec/changes/archive/2026-07-23-harden-role-aware-guided-workflow/` by `2038c93`; the local role/readiness, decision-card and non-authoritative operation-confirmation contract are accepted. Controlled package transfer is evidenced by P3.3; only analytics acceptance remains open.
+- Status: accepted and archived in `openspec/changes/archive/2026-07-23-harden-role-aware-guided-workflow/` by `2038c93`; the local role/readiness, decision-card and non-authoritative operation-confirmation contract are accepted. Controlled package transfer is accepted under `D-028`; only the separate analytics sync/archive decision remains open.
 
 ### Typed analytics, integration, journey and screen framework
 

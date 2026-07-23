@@ -137,8 +137,8 @@ Current work-item map:
 | Work item | Status | OpenSpec change |
 |---|---|---|
 | 3.1 Role-aware acceptance and readiness gate | accepted | `harden-role-aware-guided-workflow`; 17/17 tasks checked, contract-only boundary accepted, and execution remains fail-closed |
-| 3.2 Typed analytics artifact framework | in_progress | `add-typed-analytics-artifact-framework`; implementation and controlled transfer are complete, human acceptance remains required |
-| 3.3 Package and sandbox transfer | pending_acceptance | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are verified; human review is still required before lifecycle acceptance |
+| 3.2 Typed analytics artifact framework | accepted | `add-typed-analytics-artifact-framework`; implementation and controlled transfer are accepted under `D-028`; sync/archive remain separate decisions |
+| 3.3 Package and sandbox transfer | accepted | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are accepted under `D-028`; sync/archive remain separate decisions |
 | 3.4 Operation catalog and thin dispatcher | accepted | Archived `add-operation-catalog-and-dispatcher`; 16/16 tasks are complete, accepted specs are promoted, and every P3 mutation remains fail-closed |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
@@ -230,7 +230,7 @@ Likely scope:
 |---|---|---|---|
 | `allow-certified-baseline-reuse` | P3 | P4 | accepted |
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
-| `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
+| `add-typed-analytics-artifact-framework` | P3 | P5 | accepted |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |
