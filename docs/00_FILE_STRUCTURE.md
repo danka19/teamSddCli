@@ -111,7 +111,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
-| `process/VERSION` | Current working source process-package semantic version (`0.3.4`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
+| `process/VERSION` | Current working source process-package semantic version (`0.3.5`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |
