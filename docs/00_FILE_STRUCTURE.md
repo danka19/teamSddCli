@@ -82,6 +82,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/phases/PHASE_3_GUIDED_ROLE_AND_ANALYTICS_VERTICAL_SLICE.md` | Active P3 plan for role-aware guided operation, trusted human acceptance, typed analytics artifacts, local previews, and successor-package transfer |
 | `docs/phases/PHASE_PLAN_TEMPLATE.md` | Mandatory template for detailed phase plans |
 | `docs/runbooks/PROCESS_PACKAGE_SETUP.md` | Minimal setup and test procedure for the synthetic central topology and versioned process-package contract |
+| `docs/faq/` | Навигационный FAQ: назначение продукта, настройка, ежедневная работа, роли, AI-границы, поддержка и понятный статус развития |
 | `docs/runbooks/CORPORATE_FLOW_CONTROLS.md` | Check-only corporate-flow, release handoff, role/WIP/pilot safety, and immutable failed-run operating contract |
 | `docs/runbooks/CORPORATE_ADAPTATION_AND_PILOT.md` | Phase 3 environment inventory, local configuration, pilot-entry, pilot-evidence, rollback/hold, privacy, and no-fork operating procedure |
 

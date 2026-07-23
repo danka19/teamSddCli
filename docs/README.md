@@ -1,4 +1,8 @@
-﻿# teamSddCli`r`n`r`n## Начать с FAQ`r`n`r`nДля первого знакомства с продуктом, безопасного запуска `sdd` и роли в процессе используйте [человекочитаемый FAQ и role runbooks](faq/index.md). Канонические OpenSpec-спецификации и specialist runbooks остаются источниками правил.
+# teamSddCli
+
+## Начать с FAQ
+
+Для первого знакомства с продуктом, безопасного запуска `sdd` и роли в процессе используйте [человекочитаемый FAQ и role runbooks](faq/index.md). Канонические OpenSpec-спецификации и specialist runbooks остаются источниками правил.
 
 ## Summary
 
@@ -10,19 +14,19 @@ Current checkpoint:
 
 > Phase 1 produced the accepted OpenSpec baseline and Phase 2 is closed under `D-020`: immutable candidate `phase-2-14-rc6` is the external transfer baseline with process package `0.3.0`, payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, and `295 covered / 7 gaps / 32 future_work`. `D-021` adds a new pre-corporate Phase 3: the reusable package must become self-service through a situation-based guided-operation contract for humans and AI assistants before any corporate configuration or pilot. The guided workflow has passed its focused synthetic, AI-disabled, local Qwen/DeepSeek preflight, and negative-path checks; its separately versioned successor candidate is still pending. RC6 remains immutable; Phase 4 performs corporate adaptation and a monitored pilot. Historical rc4 remains unchanged, rc5 is retained as diagnostic rejected history, and macOS is not certified.
 
-РўРµРєСѓС‰РёР№ РїР°РєРµС‚ `0.3.1` СЃРѕРґРµСЂР¶РёС‚ РїСЂРѕРІРµСЂСЏРµРјС‹Р№ `baseline-reuse`: СЃРІРµР¶РёРµ Qwen Рё
-DeepSeek preflight РїСЂРѕС€Р»Рё, Р° РїРѕР»РЅР°СЏ matrix `0.3.0` СЃРІСЏР·Р°РЅР° СЃ РЅРёРјРё С‚РѕС‡РЅС‹РјРё
-hashes. РСЃС‚РѕСЂРёС‡РµСЃРєРёРµ raw-artifact roots РЅР°Р№РґРµРЅС‹ РІ Р»РѕРєР°Р»СЊРЅРѕРј Р°СЂС…РёРІРµ
-`C:\Users\danoc\Documents\certifications`: 48 Р·Р°СЏРІР»РµРЅРЅС‹С… С„Р°Р№Р»РѕРІ СЃРІРµСЂРµРЅС‹ РїРѕ
-SHA-256 Рё СЃРѕР±СЂР°РЅ С‡РёСЃС‚С‹Р№ exact bundle Р±РµР· Р»РёС€РЅРёС… runtime probe. Р”РёР°РіРЅРѕСЃС‚РёС‡РµСЃРєРёР№
-`rc3` Р±С‹Р» РѕС‚РєР»РѕРЅС‘РЅ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РµРіРѕ СѓРїСЂР°РІР»СЏСЋС‰РёР№ CLI Р·Р°РїРёСЃС‹РІР°Р» Python bytecode РІ
-payload; РїСЂРёС‡РёРЅР° СѓСЃС‚СЂР°РЅРµРЅР° РѕС‚РґРµР»СЊРЅС‹Рј СЂРµРіСЂРµСЃСЃРёРѕРЅРЅС‹Рј С‚РµСЃС‚РѕРј. РќРѕРІС‹Р№ immutable
-candidate `guided-owner-v0.3.1-rc4` СЃРѕР±СЂР°РЅ, РµРіРѕ manifest РІР°Р»РёРґРµРЅ РґРѕ Рё РїРѕСЃР»Рµ
-Windows full-clean rehearsal, РєРѕС‚РѕСЂР°СЏ passed. Р’Р»Р°РґРµР»РµС† РїСЂРёРЅСЏР» СЌС‚РѕС‚ РєР°РЅРґРёРґР°С‚ РїРѕ
-`D-023` Рё СЂР°Р·СЂРµС€РёР» РµРіРѕ СЃР»РёСЏРЅРёРµ РІ `main`. РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ `accept` РЅРµ РјРѕР¶РµС‚
-РІРµСЂРЅСѓС‚СЊ `evidence-complete`, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РЅР° РјР°С€РёРЅРµ РЅРµС‚ WSL-РґРёСЃС‚СЂРёР±СѓС‚РёРІР° РґР»СЏ
-Linux/WSL2 portability smoke; СЌС‚Рѕ СЏРІРЅРѕ РїСЂРёРЅСЏС‚РѕРµ РѕСЃС‚Р°С‚РѕС‡РЅРѕРµ РѕРіСЂР°РЅРёС‡РµРЅРёРµ, Р° РЅРµ
-СЃС„Р°Р±СЂРёРєРѕРІР°РЅРЅС‹Р№ passed result. Linux/WSL2 РїСЂРѕРІРµСЂРєР° РѕР±СЏР·Р°С‚РµР»СЊРЅР° РґРѕ Phase 4.
+Текущий пакет `0.3.1` содержит проверяемый `baseline-reuse`: свежие Qwen и
+DeepSeek preflight прошли, а полная matrix `0.3.0` связана с ними точными
+hashes. Исторические raw-artifact roots найдены в локальном архиве
+`C:\Users\danoc\Documents\certifications`: 48 заявленных файлов сверены по
+SHA-256 и собран чистый exact bundle без лишних runtime probe. Диагностический
+`rc3` был отклонён, потому что его управляющий CLI записывал Python bytecode в
+payload; причина устранена отдельным регрессионным тестом. Новый immutable
+candidate `guided-owner-v0.3.1-rc4` собран, его manifest валиден до и после
+Windows full-clean rehearsal, которая passed. Владелец принял этот кандидат по
+`D-023` и разрешил его слияние в `main`. Автоматический `accept` не может
+вернуть `evidence-complete`, потому что на машине нет WSL-дистрибутива для
+Linux/WSL2 portability smoke; это явно принятое остаточное ограничение, а не
+сфабрикованный passed result. Linux/WSL2 проверка обязательна до Phase 4.
 
 ## Scope
 
@@ -154,23 +158,24 @@ Future publication layers should generate audience-oriented views from canonical
 - Detailed phase plans live under `docs/phases/` and must use `docs/phases/PHASE_PLAN_TEMPLATE.md`.
 - New human feedback that affects SDD workflow behavior, automation safety, integration usability, acceptance, or verification must be persisted in the correct durable document.
 - Behavior and acceptance text should not be duplicated across specs, docs, project memory, generated views, or role guides; derived surfaces link to the canonical owner and are fixed or regenerated when they drift.
+
 ## Self-service entrypoint
 
-РћРїРµСЂР°С‚РѕСЂ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р»РѕРєР°Р»СЊРЅС‹Р№ РїР°РєРµС‚ РєРѕРјР°РЅРґРѕР№ `python -m pip install .` Рё
-СЂР°Р±РѕС‚Р°РµС‚ С‡РµСЂРµР· `sdd --version`, `sdd setup`, `sdd start` Рё `sdd next`.
-`sdd setup` С‚СЂРµР±СѓРµС‚ `--confirm` Рё СЃРѕР·РґР°С‘С‚ С‚РѕР»СЊРєРѕ РїСѓСЃС‚РѕР№ local workspace;
-`start` Рё `next` РІРѕР·РІСЂР°С‰Р°СЋС‚ РѕРґРёРЅ structured continuation result СЃ СЂРѕР»СЊСЋ,
-РЅРµРґРѕСЃС‚Р°СЋС‰РёРјРё С„Р°РєС‚Р°РјРё, human boundary, fallback Рё С‚РѕС‡РЅРѕР№ СЃР»РµРґСѓСЋС‰РµР№ РєРѕРјР°РЅРґРѕР№.
-Р’ P3 `sdd run`, release Рё external mutation РѕСЃС‚Р°СЋС‚СЃСЏ fail-closed. РљР°РЅРѕРЅРёС‡РµСЃРєРёРµ
-С‚СЂРµР±РѕРІР°РЅРёСЏ РЅР°С…РѕРґСЏС‚СЃСЏ РІ OpenSpec change `add-self-service-operator-onboarding`;
-РїРѕРґСЂРѕР±РЅС‹Р№ bootstrap вЂ” РІ `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`.
+Оператор устанавливает локальный пакет командой `python -m pip install .` и
+работает через `sdd --version`, `sdd setup`, `sdd start` и `sdd next`.
+`sdd setup` требует `--confirm` и создаёт только пустой local workspace;
+`start` и `next` возвращают один structured continuation result с ролью,
+недостающими фактами, human boundary, fallback и точной следующей командой.
+В P3 `sdd run`, release и external mutation остаются fail-closed. Канонические
+требования находятся в OpenSpec change `add-self-service-operator-onboarding`;
+подробный bootstrap — в `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`.
 
-## РљР°С‚Р°Р»РѕРі Р»РѕРєР°Р»СЊРЅС‹С… СЃРєСЂРёРїС‚РѕРІ
+## Каталог локальных скриптов
 
-### Р”РѕСЃС‚СѓРїРЅС‹Рµ РѕРїРµСЂР°С†РёРё
+### Доступные операции
 
-Р­С‚Рѕ РіРµРЅРµСЂРёСЂСѓРµРјРѕРµ Рё РїСЂРѕРІРµСЂСЏРµРјРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ `process/catalogs/operations.yaml`; РѕРЅРѕ РѕРїРёСЃС‹РІР°РµС‚
-РіСЂР°РЅРёС†С‹ РѕРїРµСЂР°С†РёРё, РЅРѕ РЅРµ Р·Р°РјРµРЅСЏРµС‚ СЂР°Р·СЂРµС€С‘РЅРЅСѓСЋ СЂРѕР»СЊ РёР»Рё СЂРµС€РµРЅРёРµ С‡РµР»РѕРІРµРєР°.
+Это генерируемое и проверяемое представление `process/catalogs/operations.yaml`; оно описывает
+границы операции, но не заменяет разрешённую роль или решение человека.
 
 <!-- operation-table:begin -->
 | Operation | Role | Situation | Boundary | Runbook |
@@ -186,36 +191,37 @@ Future publication layers should generate audience-oriented views from canonical
 | sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
 <!-- operation-table:end -->
 
-РќРёР¶Рµ РїСЂРёРІРµРґРµРЅР° РёСЃС‚РѕСЂРёС‡РµСЃРєР°СЏ РёРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёСЏ 30 Р»РѕРєР°Р»СЊРЅС‹С… CLI РЅР° 2026-07-22. РћРЅР° РЅРµ СЏРІР»СЏРµС‚СЃСЏ РїРѕР»РёС‚РёРєРѕР№ РїРѕР»РЅРѕРјРѕС‡РёР№. РђРєС‚СѓР°Р»СЊРЅРѕРµ РіРµРЅРµСЂРёСЂСѓРµРјРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ public/deprecated РѕРїРµСЂР°С†РёР№ РЅР°С…РѕРґРёС‚СЃСЏ РїРѕСЃР»Рµ РёРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёРё Рё СЃС‚СЂРѕРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РёР· `process/catalogs/operations.yaml`.
+Ниже приведена историческая инвентаризация 30 локальных CLI на 2026-07-22. Она не является политикой полномочий. Актуальное генерируемое представление public/deprecated операций находится после инвентаризации и строится только из `process/catalogs/operations.yaml`.
 
-| РЎРєСЂРёРїС‚ | Р§С‚Рѕ РґРµР»Р°РµС‚ | РљРѕРіРґР° РЅСѓР¶РµРЅ С‡РµР»РѕРІРµРєСѓ |
+| Скрипт | Что делает | Когда нужен человеку |
 |---|---|---|
-| `bootstrap_team_specs.py` | РљРѕРїРёСЂСѓРµС‚ РІРµСЂСЃРёРѕРЅРёСЂСѓРµРјС‹Р№ РїР°РєРµС‚ РїСЂРѕС†РµСЃСЃР° Рё С†РµРЅС‚СЂР°Р»СЊРЅС‹Р№ РєР°СЂРєР°СЃ СЂР°Р±РѕС‡РµРіРѕ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР°. | РџСЂРё СЃРѕР·РґР°РЅРёРё С‡РёСЃС‚РѕРіРѕ СЂР°Р±РѕС‡РµРіРѕ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР°; РЅРµ РїРѕРІРµСЂС… РЅРµРїСЂРѕРІРµСЂРµРЅРЅРѕР№ СѓСЃС‚Р°РЅРѕРІРєРё. |
-| `build_read_pack.py` | РЎРѕР±РёСЂР°РµС‚ РѕРіСЂР°РЅРёС‡РµРЅРЅС‹Р№ РєРѕРЅС‚РµРєСЃС‚ СЃ РјР°СЂРєРёСЂРѕРІР°РЅРЅС‹РјРё РїРѕР»РЅРѕРјРѕС‡РёСЏРјРё РґР»СЏ РѕРґРЅРѕР№ СЂРѕР»Рё AI. | РџРµСЂРµРґ РѕРґРЅРѕР№ Р·Р°РґР°С‡РµР№ СЃР»Р°Р±РѕР№ РјРѕРґРµР»Рё РІ РѕРїСЂРµРґРµР»С‘РЅРЅРѕР№ СЂРѕР»Рё. |
-| `certify_process_release.py` | Р—Р°РїСѓСЃРєР°РµС‚ allowlisted СЃРёРЅС‚РµС‚РёС‡РµСЃРєСѓСЋ СЃРµСЂС‚РёС„РёРєР°С†РёСЋ РїР°РєРµС‚Р° Рё РїРѕРєСЂС‹С‚РёРµ. | РџСЂРё СЃРµСЂС‚РёС„РёРєР°С†РёРё РєР°РЅРґРёРґР°С‚Р°; raw-СЂРµР·СѓР»СЊС‚Р°С‚С‹ С…СЂР°РЅСЏС‚СЃСЏ РІРЅРµ Git. |
-| `check_actual_certification_gate.py` | РџСЂРѕРІРµСЂСЏРµС‚ РёС‚РѕРі РѕРґРЅРѕР№ С„Р°РєС‚РёС‡РµСЃРєРѕР№ model preflight/matrix-РїСЂРѕРІРµСЂРєРё. | РџРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ РєР°Р¶РґРѕР№ С„Р°Р·С‹ СЃРµСЂС‚РёС„РёРєР°С†РёРё РјРѕРґРµР»Рё. |
-| `check_corporate_flow.py` | Р¤РѕСЂРјРёСЂСѓРµС‚ РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅС‹Р№ РѕС‚С‡С‘С‚ В«РјРѕР¶РЅРѕ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ / Р±Р»РѕРєРёСЂРѕРІРєР°В». | РџРµСЂРµРґ РїРµСЂРµС…РѕРґРѕРј РІ СѓРїСЂР°РІР»СЏРµРјРѕРј РєРѕСЂРїРѕСЂР°С‚РёРІРЅРѕРј РїРѕС‚РѕРєРµ. |
-| `check_lifecycle_transition.py` | РџСЂРѕРІРµСЂСЏРµС‚ Р·Р°РїСЂРѕС€РµРЅРЅС‹Р№ lifecycle-РїРµСЂРµС…РѕРґ Р±РµР· РµРіРѕ РёР·РјРµРЅРµРЅРёСЏ. | Р”Рѕ С‚РѕРіРѕ, РєР°Рє С‡РµР»РѕРІРµРє СЂР°СЃСЃРјР°С‚СЂРёРІР°РµС‚ СЌС‚РѕС‚ РїРµСЂРµС…РѕРґ. |
-| `check_parallel_plan.py` | РћС‚РєР»РѕРЅСЏРµС‚ РїРµСЂРµСЃРµРєР°СЋС‰РёРµСЃСЏ РёР»Рё Р·Р°РІРёСЃРёРјС‹Рµ РїР»Р°РЅС‹ РїР°СЂР°Р»Р»РµР»СЊРЅРѕР№ СЂР°Р±РѕС‚С‹ AI. | Р”Рѕ Р·Р°РїСѓСЃРєР° РїР°СЂР°Р»Р»РµР»СЊРЅС‹С… Р·Р°РґР°С‡. |
-| `check_tech_lead_control.py` | РџСЂРѕРІРµСЂСЏРµС‚ Р·Р°РїРёСЃРё С‡РµР»РѕРІРµРєР° Рѕ stop/hold/escalate/resume. | РџСЂРё РїСЂРѕРІРµСЂРєРµ control state РёР»Рё РІРѕР·РѕР±РЅРѕРІР»РµРЅРёСЏ СЂР°Р±РѕС‚С‹. |
-| `check_weak_model_evidence.py` | РћС‚РєР»РѕРЅСЏРµС‚ РЅРµРїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅС‹Рµ Р·Р°СЏРІР»РµРЅРёСЏ AI Рѕ Р·Р°РІРµСЂС€РµРЅРёРё РёР»Рё РїРѕР»РЅРѕРјРѕС‡РёСЏС…. | РџРѕСЃР»Рµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РѕРіСЂР°РЅРёС‡РµРЅРЅРѕР№ Р·Р°РґР°С‡Рё РјРѕРґРµР»Рё. |
-| `classify_change.py` | РћРїСЂРµРґРµР»СЏРµС‚ РєР»Р°СЃСЃ РёР·РјРµРЅРµРЅРёСЏ РїРѕ Р·Р°РєСЂРµРїР»С‘РЅРЅРѕР№ РїРѕР»РёС‚РёРєРµ Рё С„Р°РєС‚Р°Рј. | РќР° intake Рё РїСЂРё СЃСѓС‰РµСЃС‚РІРµРЅРЅРѕРј РёР·РјРµРЅРµРЅРёРё scope/РІР»РёСЏРЅРёСЏ. |
-| `create_change.py` | РЎРѕР·РґР°С‘С‚ С‡РµСЂРЅРѕРІРѕР№ change schema-v2. | РџРѕСЃР»Рµ РѕРїСЂРµРґРµР»РµРЅРёСЏ change ID, workspace Рё РєРѕРЅС„РёРіСѓСЂР°С†РёРё. |
-| `evaluate_change_gates.py` | РџРѕРєР°Р·С‹РІР°РµС‚ class-aware evidence РґР»СЏ DoR/DoD/release/archive, РЅРѕ РЅРµ РѕРґРѕР±СЂСЏРµС‚ РµС‘. | РџРµСЂРµРґ С‡РµР»РѕРІРµС‡РµСЃРєРёРј gate-СЂРµС€РµРЅРёРµРј. |
-| `guided_owner_workflow.py` | Р’С‹РґР°С‘С‚ СЃР»РµРґСѓСЋС‰РёР№ С€Р°Рі, Р±Р»РѕРєРёСЂРѕРІРєСѓ РёР»Рё fallback, РѕР±СЉСЏРІР»РµРЅРЅС‹Рµ РІ РєР°С‚Р°Р»РѕРіРµ РјР°СЂС€СЂСѓС‚РѕРІ. | Р’ РїРµСЂРІРѕР№ СЂР°Р±РѕС‡РµР№ СЃРёС‚СѓР°С†РёРё РёР»Рё РїСЂРё Р±Р»РѕРєРёСЂРѕРІРєРµ. |
-| `launch_role_task.py` | Р’С‹Р±РёСЂР°РµС‚ РёРЅСЃС‚СЂСѓРєС†РёСЋ СЂРѕР»Рё, read-pack, РѕР¶РёРґР°РµРјС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ Рё stop point РІРЅРµ РјРѕРґРµР»Рё. | РќРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РїРµСЂРµРґ РѕРґРЅРѕР№ AI-Р·Р°РґР°С‡РµР№ СЂРѕР»Рё. |
-| `manage_release_candidate.py` | РЎРѕР·РґР°С‘С‚ РёР»Рё РїСЂРѕРІРµСЂСЏРµС‚ РЅРµРёР·РјРµРЅСЏРµРјС‹Р№ transfer candidate. | РўРѕР»СЊРєРѕ РїСЂРё РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјРѕРј freeze/rehearsal. |
-| `manual_fallback.py` | Р¤РѕСЂРјРёСЂСѓРµС‚ AI-disabled РїР»Р°РЅ СЂСѓС‡РЅРѕРіРѕ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ. | Р•СЃР»Рё РјРѕРґРµР»СЊ РёР»Рё РёРЅС‚РµРіСЂР°С†РёСЏ РЅРµРґРѕСЃС‚СѓРїРЅР° Р»РёР±Рѕ Р·Р°РІРµСЂС€РёР»Р°СЃСЊ РѕС€РёР±РєРѕР№. |
-| `migrate_change_classification.py` | РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РїРѕРєР°Р·С‹РІР°РµС‚ РёР»Рё РїСЂРёРјРµРЅСЏРµС‚ СЂР°Р·СЂРµС€С‘РЅРЅСѓСЋ РјРёРіСЂР°С†РёСЋ `thin -> minor`, `full -> major`. | Р”Р»СЏ РїРѕРґС…РѕРґСЏС‰РµР№ РЅРµР°СЂС…РёРІРЅРѕР№ legacy-РјРёРіСЂР°С†РёРё; hotfix РЅРµ РІС‹РІРѕРґРёС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё. |
-| `normalize_actual_certification.py` | РЎРѕР·РґР°С‘С‚ Git-safe РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅРѕРµ evidence РёР· РїРѕР»РЅРѕРіРѕ raw-РёРЅРІРµРЅС‚Р°СЂСЏ. | РџРѕСЃР»Рµ С‡РµСЃС‚РЅРѕРіРѕ С„Р°РєС‚РёС‡РµСЃРєРѕРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р° Р·Р°РїСѓСЃРєР° РјРѕРґРµР»Рё. |
-| `prepare_archive.py` | РЎРѕР±РёСЂР°РµС‚ evidence РіРѕС‚РѕРІРЅРѕСЃС‚Рё Рє Р°СЂС…РёРІРёСЂРѕРІР°РЅРёСЋ. | Р”Рѕ СЂРµС€РµРЅРёСЏ С‡РµР»РѕРІРµРєР° РѕР± archive. |
-| `prepare_spec_pr.py` | РЎРѕР±РёСЂР°РµС‚ РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅРѕРµ evidence РїРѕРґРіРѕС‚РѕРІРєРё Spec PR. | Р”Рѕ С‡РµР»РѕРІРµС‡РµСЃРєРѕРіРѕ review Delta Spec. |
-| `preview_analytics.py` | Р›РѕРєР°Р»СЊРЅРѕ РїСЂРѕРІРµСЂСЏРµС‚ Рё РїРѕРєР°Р·С‹РІР°РµС‚ РїРµСЂРµРґР°РЅРЅС‹Р№ typed analytics package; С‚РѕР»СЊРєРѕ С‡С‚РµРЅРёРµ. | Р”Р»СЏ РїСЂРѕСЃРјРѕС‚СЂР° РѕС‡РёС‰РµРЅРЅС‹С… P3-РґР°РЅРЅС‹С…. |
-| `review_tech_lead.py` | РЎРѕР±РёСЂР°РµС‚ РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅС‹Рµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РґР»СЏ Tech Lead review. | РџСЂРё review РєР»Р°СЃСЃРёС„РёРєР°С†РёРё, readiness, СЂРёСЃРєР° РёР»Рё release-СЂРµРєРѕРјРµРЅРґР°С†РёРё. |
-| `run_actual_certification.py` | Р’С‹РїРѕР»РЅСЏРµС‚ append-only СЃРµСЂС‚РёС„РёРєР°С†РёРѕРЅРЅС‹Р№ СЃСЂРµР· Qwen/DeepSeek. | РџСЂРё Р·Р°РїР»Р°РЅРёСЂРѕРІР°РЅРЅРѕР№ СЃРµСЂС‚РёС„РёРєР°С†РёРё СЃ Р±РµР·РѕРїР°СЃРЅРѕР№ РІРЅРµС€РЅРµР№ raw-РґРёСЂРµРєС‚РѕСЂРёРµР№. |
-| `update_process_package.py` | РџСЂРѕРІРµСЂСЏРµС‚, РѕР±РЅРѕРІР»СЏРµС‚ РёР»Рё РѕС‚РєР°С‚С‹РІР°РµС‚ РїР°РєРµС‚ С‚СЂР°РЅР·Р°РєС†РёРѕРЅРЅРѕ. | РџСЂРё СЃРѕРіР»Р°СЃРѕРІР°РЅРЅРѕРј РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјРѕРј upgrade/rollback. |
-| `validate_change.py` | РџСЂРѕРІРµСЂСЏРµС‚ С‚РѕР»СЊРєРѕ legacy-РїР°РєРµС‚С‹ thin/full. | Р”Р»СЏ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Рё РјРёРіСЂР°С†РёРё, РЅРѕ РЅРµ РґР»СЏ РЅРѕРІРѕР№ schema-v2 СЂР°Р±РѕС‚С‹. |
-| `validate_corporate_adaptation.py` | РџСЂРѕРІРµСЂСЏРµС‚ РґРѕРєСѓРјРµРЅС‚С‹ Рё С€Р°Р±Р»РѕРЅС‹ adaptation/pilot/no-fork. | РџСЂРё РїРѕРґРіРѕС‚РѕРІРєРµ Phase 4; РЅРµ РїРѕСЃС‚Р°РІР»СЏРµС‚ С„Р°РєС‚С‹ Рё РЅРµ РїРѕРґРєР»СЋС‡Р°РµС‚ СЃРёСЃС‚РµРјС‹. |
-| `validate_external_mapping.py` | РџСЂРѕРІРµСЂСЏРµС‚ mapping РјРµР¶РґСѓ РІРЅСѓС‚СЂРµРЅРЅРёРј Рё tracker-СЃРѕСЃС‚РѕСЏРЅРёРµРј. | Р”Рѕ Р±СѓРґСѓС‰РµР№ Р°РІС‚РѕРјР°С‚РёР·Р°С†РёРё РІРЅРµС€РЅРµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ. |
-| `validate_guided_owner_workflow.py` | РџСЂРѕРІРµСЂСЏРµС‚ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЋ checksum guide Рё РєР°С‚Р°Р»РѕРіР° РјР°СЂС€СЂСѓС‚РѕРІ. | РџРѕСЃР»Рµ РёР·РјРµРЅРµРЅРёСЏ guide/catalog Рё РґРѕ transfer. |
-| `validate_process_config.py` | РќР°С…РѕРґРёС‚ Рё РїСЂРѕРІРµСЂСЏРµС‚ РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ, СЂРµРµСЃС‚СЂС‹, pins Рё OpenSpec runtime. | РџРµСЂРµРґ СѓРїСЂР°РІР»СЏРµРјРѕР№ СЂР°Р±РѕС‚РѕР№ РІ РєРѕРЅРєСЂРµС‚РЅРѕРј workspace. |
+| `bootstrap_team_specs.py` | Копирует версионируемый пакет процесса и центральный каркас рабочего пространства. | При создании чистого рабочего пространства; не поверх непроверенной установки. |
+| `build_read_pack.py` | Собирает ограниченный контекст с маркированными полномочиями для одной роли AI. | Перед одной задачей слабой модели в определённой роли. |
+| `certify_process_release.py` | Запускает allowlisted синтетическую сертификацию пакета и покрытие. | При сертификации кандидата; raw-результаты хранятся вне Git. |
+| `check_actual_certification_gate.py` | Проверяет итог одной фактической model preflight/matrix-проверки. | После завершения каждой фазы сертификации модели. |
+| `check_corporate_flow.py` | Формирует детерминированный отчёт «можно продолжать / блокировка». | Перед переходом в управляемом корпоративном потоке. |
+| `check_lifecycle_transition.py` | Проверяет запрошенный lifecycle-переход без его изменения. | До того, как человек рассматривает этот переход. |
+| `check_parallel_plan.py` | Отклоняет пересекающиеся или зависимые планы параллельной работы AI. | До запуска параллельных задач. |
+| `check_tech_lead_control.py` | Проверяет записи человека о stop/hold/escalate/resume. | При проверке control state или возобновления работы. |
+| `check_weak_model_evidence.py` | Отклоняет неподтверждённые заявления AI о завершении или полномочиях. | После результата ограниченной задачи модели. |
+| `classify_change.py` | Определяет класс изменения по закреплённой политике и фактам. | На intake и при существенном изменении scope/влияния. |
+| `create_change.py` | Создаёт черновой change schema-v2. | После определения change ID, workspace и конфигурации. |
+| `evaluate_change_gates.py` | Показывает class-aware evidence для DoR/DoD/release/archive, но не одобряет её. | Перед человеческим gate-решением. |
+| `guided_owner_workflow.py` | Выдаёт следующий шаг, блокировку или fallback, объявленные в каталоге маршрутов. | В первой рабочей ситуации или при блокировке. |
+| `launch_role_task.py` | Выбирает инструкцию роли, read-pack, ожидаемый результат и stop point вне модели. | Непосредственно перед одной AI-задачей роли. |
+| `manage_release_candidate.py` | Создаёт или проверяет неизменяемый transfer candidate. | Только при контролируемом freeze/rehearsal. |
+| `manual_fallback.py` | Формирует AI-disabled план ручного продолжения. | Если модель или интеграция недоступна либо завершилась ошибкой. |
+| `migrate_change_classification.py` | Предварительно показывает или применяет разрешённую миграцию `thin -> minor`, `full -> major`. | Для подходящей неархивной legacy-миграции; hotfix не выводится автоматически. |
+| `normalize_actual_certification.py` | Создаёт Git-safe нормализованное evidence из полного raw-инвентаря. | После честного фактического результата запуска модели. |
+| `prepare_archive.py` | Собирает evidence готовности к архивированию. | До решения человека об archive. |
+| `prepare_spec_pr.py` | Собирает детерминированное evidence подготовки Spec PR. | До человеческого review Delta Spec. |
+| `preview_analytics.py` | Локально проверяет и показывает переданный typed analytics package; только чтение. | Для просмотра очищенных P3-данных. |
+| `review_tech_lead.py` | Собирает детерминированные представления для Tech Lead review. | При review классификации, readiness, риска или release-рекомендации. |
+| `run_actual_certification.py` | Выполняет append-only сертификационный срез Qwen/DeepSeek. | При запланированной сертификации с безопасной внешней raw-директорией. |
+| `update_process_package.py` | Проверяет, обновляет или откатывает пакет транзакционно. | При согласованном контролируемом upgrade/rollback. |
+| `validate_change.py` | Проверяет только legacy-пакеты thin/full. | Для совместимости и миграции, но не для новой schema-v2 работы. |
+| `validate_corporate_adaptation.py` | Проверяет документы и шаблоны adaptation/pilot/no-fork. | При подготовке Phase 4; не поставляет факты и не подключает системы. |
+| `validate_external_mapping.py` | Проверяет mapping между внутренним и tracker-состоянием. | До будущей автоматизации внешнего состояния. |
+| `validate_guided_owner_workflow.py` | Проверяет синхронизацию checksum guide и каталога маршрутов. | После изменения guide/catalog и до transfer. |
+| `validate_process_config.py` | Находит и проверяет конфигурацию, реестры, pins и OpenSpec runtime. | Перед управляемой работой в конкретном workspace. |
+| `validate_traceability.py` | Проверяет связи traceability и выдаёт представление canonical ID. | До review, archive или аудита. |

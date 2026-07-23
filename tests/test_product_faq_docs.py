@@ -2,6 +2,15 @@
 from __future__ import annotations
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_readme_keeps_a_human_readable_utf8_faq_entrypoint() -> None:
+    readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+    assert "## Начать с FAQ" in readme
+    assert "`r`n" not in readme
+    assert "РўРµ" not in readme
+
+
 def test_product_faq_contract_is_valid() -> None:
     from scripts.validate_product_faq import validate_product_faq
     assert validate_product_faq(ROOT) == []

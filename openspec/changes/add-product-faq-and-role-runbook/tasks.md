@@ -20,3 +20,4 @@
 - [x] 4.1 Implement documentation navigation, required-question and canonical-reference validation.
 - [x] 4.2 Add positive and negative tests for broken links, missing FAQ coverage, stale status claims and AI-authority wording.
 - [x] 4.3 Run documentation checks, relevant regression tests, `openspec validate --all --strict`, roadmap/OpenSpec validation and `git diff --check`.
+- [ ] 4.4 Record the user walkthrough of a first-time operator and update the FAQ maintenance ownership/process.
