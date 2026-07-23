@@ -106,7 +106,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = dispatch(args)
     except OperationError as error:
         return execute(lambda: (_ for _ in ()).throw(error), args.json)
-    except (OSError, UnicodeError) as error:
+    except (OSError, UnicodeDecodeError) as error:
         return execute(
             lambda: (_ for _ in ()).throw(OperationError("operation-failed", "local operation failed", exit_code=3)),
             args.json,

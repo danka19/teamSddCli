@@ -105,6 +105,23 @@ def test_dispatcher_renders_operational_json_when_child_output_decode_fails(
     ]
 
 
+def test_dispatcher_does_not_swallow_sibling_unicode_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from process import operation_dispatcher
+
+    monkeypatch.setattr(
+        operation_dispatcher,
+        "dispatch",
+        lambda _args: (_ for _ in ()).throw(
+            UnicodeEncodeError("utf-8", "a", 0, 1, "synthetic encode failure")
+        ),
+    )
+
+    with pytest.raises(UnicodeEncodeError):
+        operation_dispatcher.main(["op", "list", "--json"])
+
+
 def test_dispatcher_discovery_and_safe_execution_boundaries(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     import json
     from process import operation_dispatcher
