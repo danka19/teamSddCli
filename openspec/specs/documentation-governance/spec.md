@@ -8,6 +8,14 @@
 ## Purpose
 Define the accepted documentation governance rules for durable updates, AI verification evidence, scenario-first verification, human feedback memory, canonical language, docs/OpenSpec responsibility, and source ownership.
 ## Requirements
+
+### Requirement: Operation table is a validated derived documentation view
+
+The README operation table SHALL be a committed generated view of the canonical operation catalog, not an independently maintained policy list.
+
+#### Scenario: Catalog change is reflected deterministically
+- **WHEN** public operation metadata changes
+- **THEN** generation updates the table and validation rejects a stale committed view
 ### Requirement: Documentation update discipline
 The SDD process SHALL define when project documentation must be updated for workflow, contract, setup, security, roadmap, or user-visible behavior changes.
 

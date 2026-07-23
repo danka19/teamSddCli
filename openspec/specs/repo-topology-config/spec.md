@@ -8,6 +8,14 @@
 ## Purpose
 Define the accepted first supported repository topology, content split, developer/agent workflow, process configuration, package distribution, OpenSpec version pin/upgrade policy, and owner registry contract.
 ## Requirements
+
+### Requirement: Process package carries operation-dispatch assets
+
+The versioned process package SHALL carry the canonical operation catalog, schema, loader, validator, generated-documentation contract and thin dispatcher as coherent reusable assets.
+
+#### Scenario: Bootstrap carries one coherent operation contract
+- **WHEN** a supported package is bootstrapped
+- **THEN** its catalog, validator and dispatcher reference assets of that package version and require no separately copied registry
 ### Requirement: First supported topology
 The SDD process SHALL define a first supported repository topology before deterministic tools assume package paths, config paths, OpenSpec version pins, or reviewer assignment sources.
 

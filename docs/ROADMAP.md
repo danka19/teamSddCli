@@ -221,6 +221,8 @@ Likely scope:
 | `traceability-contract` | P1 | P2, P3 |
 | `waiver-policy` | P1 | P2, P3 |
 | `role-aware-guided-workflow` | P3 | P4 |
+| `operation-catalog` | P3 | P4, P5 |
+| `guided-operation-dispatcher` | P3 | P4, P5 |
 
 ## Active Change Execution
 
@@ -229,7 +231,7 @@ Likely scope:
 | `allow-certified-baseline-reuse` | P3 | P4 | accepted |
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
-| `add-operation-catalog-and-dispatcher` | P3 | P4, P5 | in_progress |
+| `add-operation-catalog-and-dispatcher` | P3 | P4, P5 | accepted |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |
