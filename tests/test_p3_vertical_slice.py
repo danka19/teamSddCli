@@ -198,8 +198,14 @@ def test_confirmation_event_schema_rejects_yes_and_accepts_only_confirmation_for
 
     assert list(validator.iter_errors(event)) == []
     assert list(validator.iter_errors({**event, "confirmation_message": "Да"}))
-    short = {**event, "confirmation_message": "  Подтверждаю  "}
+    short = {**event, "confirmation_message": " \nПодтверждаю\t \n"}
     assert list(validator.iter_errors(short)) == []
+
+
+def test_generated_decision_draft_is_schema_valid() -> None:
+    schema = json.loads((ROOT / "process/schemas/decision-draft.schema.json").read_text(encoding="utf-8"))
+
+    assert list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(_decision_draft())) == []
 
 
 def test_typed_analytics_fixture_validates_and_previews_without_external_actions(tmp_path: Path) -> None:
@@ -255,6 +261,62 @@ def _decision_draft() -> dict[str, object]:
         },
         expires_at="2026-07-23T10:05:00Z",
     )
+
+
+def _decision_interaction() -> dict[str, object]:
+    return {
+        "decision": {
+            "change_id": "sample",
+            "decision_type": "spec-acceptance",
+            "revision_digest": "a" * 64,
+            "natural_message": "Принимаю спецификацию",
+            "consequence": "prepare-role-pr-approval",
+            "source_event": {
+                "event_ref": "chat://trusted/100", "actor_type": "human", "sequence": 100,
+                "timestamp": "2026-07-23T10:00:00Z", "message": "Принимаю спецификацию",
+            },
+            "card_event": {
+                "event_ref": "chat://trusted/101", "actor_type": "assistant", "sequence": 101,
+                "previous_event_ref": "chat://trusted/100", "timestamp": "2026-07-23T10:00:30Z",
+            },
+            "expires_at": "2026-07-23T10:05:00Z",
+        },
+        "discovery": {
+            "mode": "обычно",
+            "areas": [{"id": "data-retention", "impact": "changes risk and runtime", "material": True}],
+        },
+    }
+
+
+def test_existing_change_guided_route_keeps_natural_text_unconfirmed_until_the_next_trusted_confirmation() -> None:
+    facts = {"change_id": "sample", "lifecycle_state": "spec_review", "human_role": "Analyst"}
+    interaction = _decision_interaction()
+
+    draft_payload = guide("existing-change", facts, set(), interaction=interaction)
+    draft = draft_payload["guided_interaction"]["decision_draft"]
+    assert draft_payload["status"] == "guided"
+    assert draft["authority_recorded"] is False
+    assert "confirmation_event" not in draft_payload["guided_interaction"]
+    assert draft_payload["guided_interaction"]["discovery_map"]["intake_sufficient"] is False
+
+    trusted = {
+        **interaction,
+        "confirmation_event": {
+            "event_ref": "chat://trusted/102", "actor_type": "human", "sequence": 102,
+            "previous_event_ref": "chat://trusted/101", "timestamp": "2026-07-23T10:01:00Z",
+            "message": " \nПодтверждаю\t \n",
+        },
+    }
+    confirmed = guide("existing-change", facts, set(), interaction=trusted)
+    assert confirmed["guided_interaction"]["confirmation_event"]["decision_card_code"] == draft["card_code"]
+
+    unknown = guide(
+        "existing-change", facts, set(),
+        interaction={**trusted, "confirmation_event": {**trusted["confirmation_event"], "message": "Да"}},
+    )
+    silent = guide("existing-change", facts, set(), interaction=interaction)
+    assert "confirmation_event" not in unknown["guided_interaction"]
+    assert silent["guided_interaction"]["discovery_map"]["areas"][0]["status"] == "blocking"
 
 
 def test_natural_language_creates_only_revision_bound_decision_draft() -> None:

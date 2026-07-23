@@ -70,7 +70,14 @@ def load_catalog(path: Path = DEFAULT_CATALOG, *, operations_path: Path = DEFAUL
     return catalog
 
 
-def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catalog_path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
+def guide(
+    situation: str,
+    facts: dict[str, str],
+    unavailable: set[str],
+    *,
+    catalog_path: Path = DEFAULT_CATALOG,
+    interaction: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Return guidance only; callers must invoke each command and gate explicitly."""
     catalog = load_catalog(catalog_path)
     route = next((item for item in catalog["routes"] if item["id"] == situation), None)
@@ -94,7 +101,7 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
         {"surface": item["surface"], "command": item["command"]}
         for item in route["fallbacks"] if item["surface"] in unavailable
     ]
-    return {
+    payload = {
         "operation": "guided-owner-workflow",
         "status": "guided",
         "schema_version": "1.0",
@@ -109,6 +116,12 @@ def guide(situation: str, facts: dict[str, str], unavailable: set[str], *, catal
         "lifecycle_mutated": False,
         "external_state_mutated": False,
     }
+    if interaction is not None:
+        try:
+            payload["guided_interaction"] = _guided_interaction(interaction)
+        except (TypeError, ValueError):
+            return _blocked("invalid-guided-interaction", [])
+    return payload
 
 
 def _cta(route: dict[str, Any], role: str, facts: dict[str, str]) -> str:
@@ -128,6 +141,35 @@ def _blocked(code: str, required_facts: list[str]) -> dict[str, Any]:
         "lifecycle_mutated": False,
         "external_state_mutated": False,
     }
+
+
+def _guided_interaction(interaction: dict[str, Any]) -> dict[str, Any]:
+    """Derive read-only decision and discovery records for an already guided route."""
+    if not isinstance(interaction, dict):
+        raise ValueError("guided interaction is invalid")
+    result: dict[str, Any] = {}
+    decision = interaction.get("decision")
+    if decision is not None:
+        if not isinstance(decision, dict):
+            raise ValueError("decision interaction is invalid")
+        draft = create_decision_draft(**decision)
+        result["decision_draft"] = draft
+        confirmation = interaction.get("confirmation_event")
+        if confirmation is not None:
+            event = confirm_decision_draft(draft, confirmation)
+            if event is not None:
+                result["confirmation_event"] = event
+    elif interaction.get("confirmation_event") is not None:
+        raise ValueError("confirmation requires a decision draft")
+    discovery = interaction.get("discovery")
+    if discovery is not None:
+        if not isinstance(discovery, dict):
+            raise ValueError("discovery interaction is invalid")
+        discovery_map = build_discovery_map(discovery.get("mode"), discovery.get("areas"))
+        if "area_id" in discovery or "choice" in discovery:
+            discovery_map = record_discovery_choice(discovery_map, discovery.get("area_id"), discovery.get("choice"))
+        result["discovery_map"] = discovery_map
+    return result
 
 
 def create_decision_draft(

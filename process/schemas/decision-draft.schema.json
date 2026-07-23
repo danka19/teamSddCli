@@ -3,7 +3,7 @@
   "$id": "decision-draft.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "record_type", "card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "consequence", "issued_at", "expires_at", "authority_recorded"],
+  "required": ["schema_version", "record_type", "card_code", "change_id", "decision_type", "revision_digest", "source_message", "source_chat_event_ref", "source_event_actor_type", "source_event_sequence", "source_event_timestamp", "consequence", "card_chat_event_ref", "card_event_actor_type", "card_event_sequence", "card_previous_event_ref", "issued_at", "expires_at", "authority_recorded"],
   "properties": {
     "schema_version": {"const": "1.0"},
     "record_type": {"const": "decision_draft"},
@@ -13,7 +13,14 @@
     "revision_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "source_message": {"type": "string", "minLength": 1},
     "source_chat_event_ref": {"type": "string", "minLength": 1},
+    "source_event_actor_type": {"const": "human"},
+    "source_event_sequence": {"type": "integer", "minimum": 0},
+    "source_event_timestamp": {"type": "string", "format": "date-time"},
     "consequence": {"type": "string", "minLength": 1},
+    "card_chat_event_ref": {"type": "string", "minLength": 1},
+    "card_event_actor_type": {"const": "assistant"},
+    "card_event_sequence": {"type": "integer", "minimum": 0},
+    "card_previous_event_ref": {"type": "string", "minLength": 1},
     "issued_at": {"type": "string", "format": "date-time"},
     "expires_at": {"type": "string", "format": "date-time"},
     "authority_recorded": {"const": false}

@@ -13,7 +13,7 @@
     "revision_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "source_message": {"type": "string", "minLength": 1},
     "consequence": {"type": "string", "minLength": 1},
-    "confirmation_message": {"type": "string", "pattern": "^(?:Подтверждаю DEC-[0-9A-F]{12}|[ \\t]*Подтверждаю[ \\t]*)$"},
+    "confirmation_message": {"type": "string", "pattern": "^(?:Подтверждаю DEC-[0-9A-F]{12}|\\s*Подтверждаю\\s*)$"},
     "source_chat_event_ref": {"type": "string", "minLength": 1},
     "source_event_actor_type": {"const": "human"},
     "source_event_sequence": {"type": "integer", "minimum": 0},
