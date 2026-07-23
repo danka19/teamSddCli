@@ -34,6 +34,19 @@ def test_release_allowlist_covers_every_catalog_entrypoint() -> None:
     ]
 
 
+def test_release_allowlist_schema_has_the_catalog_derived_exact_contract() -> None:
+    import yaml
+    from process.operations_catalog import load_operations_catalog
+
+    catalog = load_operations_catalog(ROOT / "process" / "catalogs" / "operations.yaml")
+    schema = json.loads((ROOT / "process" / "schemas" / "release-allowlist.schema.json").read_text(encoding="utf-8"))
+
+    assert schema["properties"]["entry_points"]["const"] == [
+        {"name": Path(item["entrypoint"]).name, **{key: value for key, value in item.items() if key != "entrypoint"}}
+        for item in catalog["release_entrypoints"]
+    ]
+
+
 def test_dispatcher_blocks_mutation_before_entrypoint_execution(monkeypatch: pytest.MonkeyPatch) -> None:
     from process.operation_dispatcher import main
 
