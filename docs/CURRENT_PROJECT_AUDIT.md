@@ -6,6 +6,13 @@ Phase 2 is closed and Phase 3 entry is gated by the local owner walkthrough.
 
 Last status reconciliation: 2026-07-22.
 
+## P3 Operation Catalog And Dispatcher Reconciliation (2026-07-23)
+
+- `add-operation-catalog-and-dispatcher` has 15/16 verified tasks: versioned catalog/schema/validator, derived release/guided/read-pack/README views, local `sdd`, direct-script compatibility, four guided walkthroughs, and P3 fail-closed mutation handling.
+- Focused P3/catalog/package verification passed 49 tests; four situation-first manual walkthroughs returned the expected role, human decision, fallback/evidence route, and `sdd run create-change` returned a structured no-side-effect block. `openspec validate --all --strict` passed 18/18; roadmap/OpenSpec validation reported zero errors and two unrelated historical P2 lifecycle warnings.
+- The owned suite `python -m pytest -q tests` passed 776 tests with 4 skips in 298.78 seconds. This supersedes the 2026-07-22 snapshot that reported 742 passed and 18 failed.
+- Task 4.2 remains open by design: it requires completion and human acceptance of the separate `harden-role-aware-guided-workflow` confirmation contract. Until then, every dispatcher mutation remains fail-closed; this change is not ready for archive or successor acceptance.
+
 ## Project-Wide Implementation And NIS Audit (2026-07-22)
 
 - Audit evidence and the full human-facing capability/script inventory are in `docs/audits/PROJECT_WIDE_IMPLEMENTATION_AND_NIS_AUDIT_2026-07-22.md`.

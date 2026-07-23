@@ -99,7 +99,7 @@ Exit criteria:
 
 ### 3.3 Package and sandbox transfer
 
-Status: planned.
+Status: in_progress.
 
 OpenSpec mapping: both active P3 changes; this work item depends on their validated successor implementation.
 
@@ -145,6 +145,8 @@ Verification:
 Exit criteria:
 
 - A person can discover the next permitted action and its human decision boundary without knowing a script filename; no unregistered script or divergent derived list can pass validation.
+
+Implementation evidence (2026-07-23): catalog schema/validator/derived artifacts, the local dispatcher, four guided walkthroughs, and P3 fail-closed mutation boundary are verified. The catalog/dispatcher/package suite passed 138 tests with 1 skip; the owned suite passed 776 tests with 4 skips before the final catalog package integration fixes. The work item remains `in_progress` because `add-operation-catalog-and-dispatcher` Task 4.2 is explicitly gated by completion and human acceptance of `harden-role-aware-guided-workflow`; no mutation enablement is permitted before that dependency.
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
 ```text

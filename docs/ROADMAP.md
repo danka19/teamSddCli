@@ -139,7 +139,7 @@ Current work-item map:
 | 3.1 Role-aware acceptance and readiness gate | in_progress | `harden-role-aware-guided-workflow` |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | in_progress |
 | 3.3 Package and sandbox transfer | planned | Both P3 changes; successor transfer follows their validated implementation |
-| 3.4 Operation catalog and thin dispatcher | planned | `add-operation-catalog-and-dispatcher`; depends on the existing role-aware confirmation event before any mutate enablement |
+| 3.4 Operation catalog and thin dispatcher | in_progress | `add-operation-catalog-and-dispatcher`; 15/16 tasks verified; Task 4.2 remains gated by completion and human acceptance of the role-aware confirmation event before any mutate enablement |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 
