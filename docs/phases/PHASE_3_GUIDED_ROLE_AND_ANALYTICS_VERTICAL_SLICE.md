@@ -206,8 +206,8 @@ Affected specs: new `self-service-operator-onboarding` and `product-faq-and-role
 Affected architecture: installed local CLI wrapper, controlled local bootstrap, canonical FAQ navigation; no external integration boundary change.
 Data contract impact: CLI result contract and documentation navigation metadata may be added; no credentials or external API contract is added.
 Verification impact: clean-sandbox onboarding walkthrough, CLI compatibility tests, navigation/link checks, role/AI FAQ coverage, and regression checks for P3 fail-closed mutations.
-Status: in_progress.
-State detail: `add-self-service-operator-onboarding` has completed its local implementation and deterministic evidence (`70 passed` focused and `115 passed, 1 skipped` package/release regression) but remains pending human review/acceptance, sync, and archive. `add-product-faq-and-role-runbook` owns human documentation and must not silently duplicate OpenSpec requirements.
+Status: partially accepted: self-service onboarding accepted; FAQ/runbook remains planned.
+State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive; `add-product-faq-and-role-runbook` owns human documentation and must not silently duplicate OpenSpec requirements.
 ```
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
