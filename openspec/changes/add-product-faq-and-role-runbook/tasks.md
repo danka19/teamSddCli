@@ -6,14 +6,14 @@
 
 ## 2. Setup and daily workflow guides
 
-- [ ] 2.1 Add focused pages for installation, central `team-specs` topology, project adapters and first-time setup.
+- [ ] 2.1 Add focused pages for installed `sdd`, confirmation-gated `sdd setup`, central `team-specs` topology, project adapters and first-time setup.
 - [ ] 2.2 Add a plain-language lifecycle, minor/major/hotfix, evidence, CI, failure and escalation guide.
 - [ ] 2.3 Add an honest plain-language roadmap with available, planned and intentionally blocked capability states.
 
 ## 3. Role and AI runbooks
 
-- [ ] 3.1 Add role pages for Analyst, Tech Lead, Developer, QA and process owner with first command, expected outcome, evidence, boundaries and fallback.
-- [ ] 3.2 Add the AI collaboration page and permission matrix: permitted command use, guidance-only mode, human confirmations, prohibited actions and uncertainty fallback.
+- [ ] 3.1 Add role pages for Analyst, Tech Lead, Developer, QA and process owner with `sdd start`/`sdd next` first commands, expected outcome, evidence, boundaries and fallback.
+- [ ] 3.2 Add the AI collaboration page and permission matrix: permitted `--json` command use, guidance-only mode, human confirmations including `sdd setup --confirm`, prohibited actions and uncertainty fallback.
 - [ ] 3.3 Add FAQ entries for privacy, release boundary, corporate pilot, process/package update and support/escalation.
 
 ## 4. Verification and maintenance

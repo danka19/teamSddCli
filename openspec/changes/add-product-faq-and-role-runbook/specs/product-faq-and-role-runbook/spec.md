@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Navigable product FAQ
-The product SHALL publish one concise Russian-language FAQ hub that links to focused pages for product purpose, comparison with OpenSpec/OpenSpec DE, NIS foundation, setup, topology, daily workflow, role guides, AI usage, troubleshooting and plain-language roadmap. The hub SHALL NOT require a first-time user to read source code or OpenSpec artifacts to understand where to begin.
+The product SHALL publish one concise Russian-language FAQ hub that links to focused pages for product purpose, comparison with OpenSpec/OpenSpec DE, NIS foundation, accepted `sdd` usage, setup, topology, daily workflow, role guides, AI usage, troubleshooting and plain-language roadmap. The hub SHALL NOT require a first-time user to read source code or OpenSpec artifacts to understand where to begin.
 
 #### Scenario: First-time user finds a starting route
 - **WHEN** a person opens the FAQ hub without prior framework knowledge
@@ -10,6 +10,17 @@ The product SHALL publish one concise Russian-language FAQ hub that links to foc
 #### Scenario: Specialized answer is reachable
 - **WHEN** a person asks about setup, a change class, AI, a failed command or a corporate pilot
 - **THEN** the FAQ hub links to a focused page that answers the question and points to its canonical detailed source
+
+### Requirement: FAQ explains the accepted self-service CLI
+The FAQ SHALL describe `sdd` as the supported operator entrypoint and SHALL explain `sdd setup`, `sdd start`, `sdd next`, `--json`, human-readable output and the `sdd run` fail-closed boundary. It SHALL identify `add-self-service-operator-onboarding` as the canonical source for this command contract and SHALL NOT direct ordinary users to discover `scripts/*.py` paths.
+
+#### Scenario: First-time operator starts without knowing scripts
+- **WHEN** a new operator follows the setup and first-workflow page
+- **THEN** the page gives an explicit `sdd setup <destination> --confirm` or `sdd start` command appropriate to the situation and explains its expected non-external result
+
+#### Scenario: User reaches a blocked operation
+- **WHEN** the FAQ explains a release or external-operation step
+- **THEN** it states that `sdd run` remains fail-closed and routes the user to the required human-owned evidence or future accepted automation change
 
 ### Requirement: Plain-language product and roadmap explanation
 The FAQ SHALL explain the framework's value and its difference from OpenSpec and OpenSpec DE in practical terms. It SHALL include a short status view using `available now`, `planned`, and `intentionally blocked` language instead of internal phase or artifact terminology.
@@ -30,7 +41,7 @@ The FAQ SHALL explain that the target process takes NIS-aligned engineering cont
 - **THEN** completed, planned and unavailable capabilities are distinguishable and each unavailable automation boundary is explicit
 
 ### Requirement: Role-oriented start runbooks
-The documentation SHALL provide separate start pages for Analyst, Tech Lead, Developer, QA and process owner. Each page SHALL state the role's purpose, inputs, first `sdd` command, expected result, human decisions, evidence responsibilities, fallback and escalation route.
+The documentation SHALL provide separate start pages for Analyst, Tech Lead, Developer, QA and process owner. Each page SHALL state the role's purpose, inputs, first `sdd` command, expected result, human decisions, evidence responsibilities, fallback and escalation route. The process-owner page SHALL use confirmation-gated `sdd setup`; work-role pages SHALL use `sdd start` or `sdd next` before lower-level operations.
 
 #### Scenario: Developer starts implementation safely
 - **WHEN** a Developer opens the role runbook for an approved change
@@ -41,7 +52,7 @@ The documentation SHALL provide separate start pages for Analyst, Tech Lead, Dev
 - **THEN** it explains central `team-specs`, project adapters, non-secret configuration, required confirmation and how to perform a first minor-change walkthrough
 
 ### Requirement: AI collaboration rules
-The FAQ SHALL answer whether AI can operate `sdd`, whether AI can guide the process without invoking a command, and which rules constrain both cases. It SHALL state that AI can invoke permitted local commands or explain deterministic output when acting under a human's authorized role, but SHALL NOT create authority, confirm decisions, invent missing facts, bypass a gate, perform forbidden external mutations or claim an unrun validation passed.
+The FAQ SHALL answer whether AI can operate `sdd`, whether AI can guide the process without invoking a command, and which rules constrain both cases. It SHALL state that AI can invoke permitted local commands with `--json` or explain deterministic output when acting under a human's authorized role, but SHALL NOT create authority, supply `--confirm` as a substitute for human confirmation, confirm decisions, invent missing facts, bypass a gate, perform forbidden external mutations or claim an unrun validation passed.
 
 #### Scenario: AI uses a permitted command
 - **WHEN** a human asks an AI assistant to continue an authorized local route
@@ -56,7 +67,7 @@ The FAQ SHALL answer whether AI can operate `sdd`, whether AI can guide the proc
 - **THEN** the documentation directs the user to the deterministic manual fallback and prohibits fabricated completion or silent defaults
 
 ### Requirement: FAQ coverage and navigation validation
-The documentation set SHALL maintain a checked index of required questions and links. Required questions include product purpose, benefits, OpenSpec/OpenSpec DE comparison, NIS foundation and exclusions, installation, topology, setup, roles, lifecycle, change classes, AI permissions, AI prohibitions, evidence, CI, privacy, failures, release boundary, corporate pilot, updates and support/escalation.
+The documentation set SHALL maintain a checked index of required questions and links. Required questions include product purpose, benefits, OpenSpec/OpenSpec DE comparison, NIS foundation and exclusions, installed `sdd`, `setup`, `start`, `next`, JSON/human output, direct-script compatibility, lifecycle, change classes, AI permissions, AI prohibitions, evidence, CI, privacy, failures, release boundary, corporate pilot, updates and support/escalation.
 
 #### Scenario: A required answer is missing
 - **WHEN** documentation validation finds an absent required question, broken internal link or missing canonical reference

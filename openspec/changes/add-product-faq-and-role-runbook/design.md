@@ -15,6 +15,7 @@ The product is currently documented through specialist runbooks, OpenSpec artifa
 - Treat the FAQ as an orientation/operating view. Each policy-sensitive assertion links to the canonical OpenSpec requirement, process catalog or detailed runbook rather than copying it.
 - Include an explicit “available now / planned / intentionally blocked” status table. This prevents the FAQ from overstating automation readiness.
 - Put AI guidance on its own page and distinguish: AI can read context, invoke allowed `sdd` commands and prepare drafts; AI cannot grant authority, infer missing facts, bypass gates, execute forbidden mutations or replace human acceptance.
+- Treat the accepted `add-self-service-operator-onboarding` change as the canonical CLI source: setup pages use `sdd setup`, situation pages use `sdd start`, continuation pages use `sdd next`, and every command example identifies whether it is human-readable or `--json` for an AI caller.
 
 ## Risks / Trade-offs
 
@@ -22,6 +23,7 @@ The product is currently documented through specialist runbooks, OpenSpec artifa
 - [Too much detail recreates the existing docs] → keep the hub and FAQ answer-oriented; link to detailed sources.
 - [Too little detail leaves first-time users blocked] → every role page includes prerequisites, first command, expected result and escalation/fallback.
 - [AI wording implies autonomy] → use an explicit permission matrix with positive and prohibited examples.
+- [Documentation gets ahead of shipped CLI] → cite only the accepted `sdd` command set and label later external/release automation as intentionally blocked.
 
 ## Migration Plan
 

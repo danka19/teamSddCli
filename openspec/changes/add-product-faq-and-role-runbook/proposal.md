@@ -7,6 +7,7 @@
 - Создать навигационный product FAQ с короткой стартовой страницей и отдельными связанными страницами вместо одной длинной инструкции.
 - Объяснить назначение фреймворка, его отличие от OpenSpec и OpenSpec DE, NIS как основу target process, границы пользы, статус простым языком и ближайшие планы без внутреннего жаргона.
 - Добавить полноформатный runbook «Начать работу» для Analyst, Tech Lead, Developer, QA и владельца процесса.
+- Описать уже принятый self-service интерфейс: установленный `sdd`, `sdd setup`, `sdd start`, `sdd next`, JSON/human output и fail-closed execution boundary.
 - Описать совместную работу с AI: AI может пользоваться `sdd` от имени человека в разрешённых границах и может объяснять процесс без CLI, но не заменяет команды, deterministic gates или human authority.
 - Зафиксировать правила пользователя: канонические источники, обязательные решения человека, evidence, запрет на обход подтверждений и порядок действий при недоступном AI/интеграции.
 - Добавить FAQ об установке, `team-specs`, существующем коде, change lifecycle, minor/major/hotfix, CI, privacy, failures, release и corporate pilot.
@@ -29,4 +30,4 @@
 
 ## Impact
 
-Затрагиваются `docs/README.md`, новые страницы в `docs/runbooks/` и/или `docs/faq/`, generated/validated navigation, роль-инструкции и documentation checks. Изменение не включает изменение process policy, внешние интеграции или автоматическое исполнение операций.
+Затрагиваются `docs/README.md`, новые страницы в `docs/runbooks/` и/или `docs/faq/`, generated/validated navigation, роль-инструкции и documentation checks. FAQ ссылается на принятый change `add-self-service-operator-onboarding`, но не изменяет process policy, внешние интеграции или автоматическое исполнение операций.
