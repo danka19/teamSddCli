@@ -2,6 +2,13 @@
 
 <!-- guided-catalog-sha256: b0c39b4161324aa449d6e52809eb4b1e9f52fccf9eee5e1984c64a794d3207fb -->
 
+Установленная команда `sdd` — рекомендуемый public entrypoint: используйте
+`sdd start <situation>` для нового маршрута и `sdd next --change <path>` для
+продолжения существующего change. `sdd guide` и прямые `scripts/*.py` сохранены
+как compatibility surfaces. Каждый public result сообщает недостающие факты,
+роль-владельца, границу человеческого решения, fallback и ровно одну следующую
+команду; он не передаёт полномочия AI и не выполняет mutation.
+
 Этот документ — производное руководство. Канонический маршрут находится в
 `process/catalogs/guided-owner-workflow.yaml`, а операции и их границы — в
 `process/catalogs/operations.yaml`. Никакая команда не заменяет решение человека.

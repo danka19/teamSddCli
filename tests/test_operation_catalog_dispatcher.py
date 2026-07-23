@@ -16,7 +16,7 @@ def test_catalog_covers_each_script_once_and_rejects_external_mutation() -> None
 
     catalog = load_operations_catalog(ROOT / "process" / "catalogs" / "operations.yaml")
     assert {item["entrypoint"] for item in catalog["operations"]} == {
-        path.relative_to(ROOT).as_posix() for path in (ROOT / "scripts").glob("*.py")
+        path.relative_to(ROOT).as_posix() for path in (ROOT / "scripts").glob("*.py") if path.name != "__init__.py"
     }
     assert all(item["mutation_level"] != "mutate_external" for item in catalog["operations"])
 

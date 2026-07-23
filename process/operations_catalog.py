@@ -101,7 +101,11 @@ def validate_operations_catalog(root: Path) -> list[str]:
     except OperationError as error:
         return [error.code]
     errors: list[str] = []
-    scripts = {path.relative_to(root).as_posix() for path in (root / "scripts").glob("*.py")}
+    scripts = {
+        path.relative_to(root).as_posix()
+        for path in (root / "scripts").glob("*.py")
+        if path.name != "__init__.py"
+    }
     records = [item["entrypoint"] for item in catalog["operations"]]
     if len(records) != len(set(records)) or set(records) != scripts:
         errors.append("catalog-script-coverage-invalid")

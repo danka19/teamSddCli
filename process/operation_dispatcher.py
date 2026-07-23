@@ -12,14 +12,21 @@ from .guided_workflow import guide, operation_input_digest, validate_operation_c
 from .errors import OperationError
 from .operation_cli import execute
 from .operations_catalog import DEFAULT_CATALOG, load_operations_catalog, operation_by_id
+from .workflow_operations import bootstrap_team_specs
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
+def _package_identity() -> dict[str, str]:
+    return dict(yaml.safe_load((REPOSITORY_ROOT / "process" / "package.yaml").read_text(encoding="utf-8"))["package"])
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="sdd")
+    package = _package_identity()
+    parser = argparse.ArgumentParser(prog="sdd", description=f"{package['id']} {package['version']}")
     sub = parser.add_subparsers(dest="command", required=True)
     def json_flag(p: argparse.ArgumentParser) -> None: p.add_argument("--json", action="store_true")
     guide_parser = sub.add_parser("guide"); guide_parser.add_argument("situation"); guide_parser.add_argument("--role"); guide_parser.add_argument("--fact", action="append", default=[]); guide_parser.add_argument("--unavailable", action="append", default=[]); json_flag(guide_parser)
+    start_parser = sub.add_parser("start"); start_parser.add_argument("situation", nargs="?"); start_parser.add_argument("--role"); start_parser.add_argument("--fact", action="append", default=[]); start_parser.add_argument("--unavailable", action="append", default=[]); json_flag(start_parser)
+    setup_parser = sub.add_parser("setup"); setup_parser.add_argument("destination", type=Path); setup_parser.add_argument("--package-root", type=Path, default=REPOSITORY_ROOT / "process"); setup_parser.add_argument("--team-template", type=Path, default=REPOSITORY_ROOT / "templates" / "team-specs"); setup_parser.add_argument("--confirm", action="store_true"); json_flag(setup_parser)
     next_parser = sub.add_parser("next"); next_parser.add_argument("--change", required=True); next_parser.add_argument("--role"); json_flag(next_parser)
     op_parser = sub.add_parser("op"); op_sub = op_parser.add_subparsers(dest="op_command", required=True)
     op_list = op_sub.add_parser("list"); op_list.add_argument("--include-internal", action="store_true"); op_list.add_argument("--role"); json_flag(op_list)
@@ -57,6 +64,8 @@ def _card(item: dict[str, Any]) -> dict[str, Any]:
 
 def _run_entrypoint(operation: dict[str, Any], forwarded: Sequence[str]) -> dict[str, Any]:
     args = list(forwarded)
+    if args[:1] == ["--"]:
+        args = args[1:]
     if "--json" in args: args.remove("--json")
     args.append("--json")
     try:
@@ -68,11 +77,68 @@ def _run_entrypoint(operation: dict[str, Any], forwarded: Sequence[str]) -> dict
     except json.JSONDecodeError: return {"status": "operational-error", "child_exit_code": completed.returncode, "diagnostics": [{"code": "child-output-invalid"}]}
     return {"status": "ok" if completed.returncode == 0 else "blocked" if completed.returncode == 1 else "operational-error", "child_exit_code": completed.returncode, "evidence": evidence, "diagnostics": []}
 
+def _continuation(result: dict[str, Any], catalog_path: Path) -> dict[str, Any]:
+    """Render the only public next step from an existing guided route."""
+    role = result.get("known_facts", {}).get("human_role")
+    decision = result.get("human_decision", {})
+    missing = []
+    for blocker in result.get("blockers", []):
+        if blocker.get("code") == "missing-context":
+            missing.extend(blocker.get("required_facts", []))
+    next_command = None
+    if result.get("status") == "guided" and role:
+        for operation_id in result.get("commands", []):
+            item = operation_by_id(operation_id, catalog_path)
+            if item is None or role not in item["allowed_roles"]:
+                continue
+            verb = "request" if item["mutation_level"].startswith("mutate_") else "prepare" if item["mutation_level"] == "prepare" else "check"
+            next_command = f"sdd {verb} {operation_id} --role {role} --json"
+            break
+    return {
+        **result,
+        "missing_facts": missing,
+        "role_owner": decision.get("owner"),
+        "authority_boundary": decision.get("consequence"),
+        "fallback": (result.get("fallbacks") or [None])[0],
+        "next_command": next_command,
+    }
+
+def _render_human(payload: dict[str, Any]) -> str:
+    if "next_command" not in payload:
+        return f"{payload['operation']}: {payload['status']}"
+    lines = [f"{payload['operation']}: {payload['status']}"]
+    if payload.get("missing_facts"):
+        lines.append("Missing facts: " + ", ".join(payload["missing_facts"]))
+    if payload.get("role_owner"):
+        lines.append("Human owner: " + payload["role_owner"])
+    if payload.get("authority_boundary"):
+        lines.append("Boundary: " + payload["authority_boundary"])
+    if payload.get("next_command"):
+        lines.append("Next: " + payload["next_command"])
+    return "\n".join(lines)
+
 def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
     catalog = load_operations_catalog(catalog_path)
     operation = lambda identifier: operation_by_id(identifier, catalog_path)
-    if args.command == "guide":
+    if args.command == "setup":
+        if not args.confirm:
+            return _blocked("sdd-setup", "confirmation-required")
+        if args.destination.exists() and any(args.destination.iterdir()):
+            return _blocked("sdd-setup", "destination-not-empty")
         try:
+            bootstrap_team_specs(args.package_root, args.team_template, args.destination)
+        except OperationError as error:
+            return _blocked("sdd-setup", error.code)
+        return {
+            "operation": "sdd-setup", "schema_version": "1.0", "status": "created",
+            "workspace": str(args.destination), "configuration": str(args.destination / "team-specs" / "sdd.config.yaml"),
+            "next_command": "sdd start new-requirement --role Analyst --json",
+            "lifecycle_mutated": False, "external_state_mutated": False,
+        }
+    if args.command in {"guide", "start"}:
+        try:
+            if args.command == "start" and not args.situation:
+                args.situation = input("Situation (new-requirement, existing-change, urgent-incident, blocked-operation): ").strip()
             facts = _facts(args.fact)
             if args.role:
                 if facts.get("human_role") and facts["human_role"] != args.role:
@@ -80,22 +146,22 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
                 facts["human_role"] = args.role
             result = guide(args.situation, facts, set(args.unavailable))
         except ValueError:
-            return _blocked("sdd-guide", "invalid-context")
-        result["operation"] = "sdd-guide"
-        if result["status"] == "blocked": return result
+            return _blocked(f"sdd-{args.command}", "invalid-context")
+        result["operation"] = f"sdd-{args.command}"
+        if result["status"] == "blocked": return _continuation(result, catalog_path) if args.command == "start" else result
         resolved = [operation(item) for item in result["commands"]]
         if any(item is None for item in resolved): return _blocked("sdd-guide", "catalog-route-unknown-operation")
         permitted = [item for item in resolved if item and result["known_facts"]["human_role"] in item["allowed_roles"]]
         if not permitted: return _blocked("sdd-guide", "role-not-permitted")
         result["commands"] = [item["id"] for item in permitted]
-        return result
+        return _continuation(result, catalog_path) if args.command == "start" else result
     if args.command == "next":
         path = Path(args.change); path = path / "change.yaml" if path.is_dir() else path
         if not path.is_file(): return _blocked("sdd-next", "missing-change")
         try: state = yaml.safe_load(path.read_text(encoding="utf-8")).get("lifecycle_state")
         except (OSError, UnicodeError, yaml.YAMLError, AttributeError): state = None
         if not isinstance(state, str) or not state: return _blocked("sdd-next", "missing-lifecycle-state")
-        result = guide("existing-change", {"human_role": args.role or "", "change_id": path.parent.name, "lifecycle_state": state}, set()); result["operation"] = "sdd-next"; return result
+        result = guide("existing-change", {"human_role": args.role or "", "change_id": path.parent.name, "lifecycle_state": state}, set()); result["operation"] = "sdd-next"; return _continuation(result, catalog_path)
     if args.command == "op":
         if args.op_command == "list":
             visible = {"public"} | ({"internal", "deprecated"} if args.include_internal else set())
@@ -129,6 +195,16 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
 
 def main(argv: Sequence[str] | None = None) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
+    if raw_argv and raw_argv[0] == "--version":
+        package = _package_identity()
+        payload = {
+            "operation": "sdd-version",
+            "package": dict(package),
+            "schema_version": "1.0",
+            "status": "ok",
+        }
+        print(json.dumps(payload, sort_keys=True) if "--json" in raw_argv else f"sdd {package['id']} {package['version']}")
+        return 0
     try:
         args, forwarded = build_parser().parse_known_args(raw_argv)
         if hasattr(args, "operation_id"):
@@ -148,5 +224,5 @@ def main(argv: Sequence[str] | None = None) -> int:
             lambda: (_ for _ in ()).throw(OperationError("operation-failed", "local operation failed", exit_code=3)),
             args.json,
         )
-    print(json.dumps(payload, sort_keys=True) if args.json else f"{payload['operation']}: {payload['status']}")
-    return 0 if payload["status"] in {"ok", "guided", "confirmation-requested"} else 3 if payload["status"] == "operational-error" else 1
+    print(json.dumps(payload, sort_keys=True) if args.json else _render_human(payload))
+    return 0 if payload["status"] in {"ok", "guided", "confirmation-requested", "created"} else 3 if payload["status"] == "operational-error" else 1

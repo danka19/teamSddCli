@@ -10,7 +10,25 @@ Every operation works with AI disabled. Preparation output is evidence only: it 
 
 ## Bootstrap And Create
 
-Create a new empty synthetic workspace:
+Установите versioned launcher в окружение оператора (Windows и POSIX используют
+одинаковую команду), затем проверьте выбранную версию:
+
+```text
+python -m pip install .
+sdd --version --json
+```
+
+Создайте новый пустой synthetic workspace только после явного подтверждения:
+
+```text
+sdd setup C:/work/sample-workspace --confirm --json
+```
+
+`setup` сначала проверяет process package, non-secret configuration, template и
+пустоту destination. Без `--confirm`, при несовместимости или непустом
+destination он возвращает structured block и ничего не создаёт. После успеха
+команда указывает точный следующий `sdd` шаг. Прямой entrypoint ниже сохранён
+только как внутренний compatibility contract:
 
 ```text
 python scripts/bootstrap_team_specs.py C:/work/sample-workspace --json

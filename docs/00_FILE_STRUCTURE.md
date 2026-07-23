@@ -72,6 +72,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/PHASE_2_WORK_ITEM_2_14_RC6_ACCEPTANCE_PACKET_2026-07-20.md` | Accepted human-decision record for exact immutable candidate rc6, including checksums, evidence, limits, and consequences |
 | `docs/audits/P3_TYPED_ANALYTICS_ACCEPTANCE_PACKET_2026-07-23.md` | Human review packet for the active typed analytics framework change and its verified `0.3.6` sandbox transfer; it is not acceptance evidence |
 | `docs/audits/PHASE_3_GUIDED_OWNER_WORKFLOW_IMPLEMENTATION_AUDIT_2026-07-20.md` | Evidence-backed checkpoint for the implemented guided-operation slice, its verification, status reconciliation, and remaining successor-release gates |
+| `docs/audits/SELF_SERVICE_OPERATOR_ONBOARDING_WALKTHROUGH_2026-07-23.md` | Synthetic AI-disabled and human-readable local walkthrough evidence for the proposed installed `sdd` onboarding route |
 | `docs/audits/GIGACODE_ROLE_ACCEPTANCE_AND_FRAMEWORK_READINESS_AUDIT_2026-07-21.md` | Read-only sandbox audit of GigaCode role resolution, role-scoped UI, literal human evidence, premature acceptance paths, validator/template drift, retained analytics inputs, and missing framework-ready schemas/integration/screen contracts |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
@@ -147,6 +148,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/certification/runtime-identities.yaml` | Immutable full-digest extension to the semantic matrix catalog, used by fresh preflight and per-matrix-call runtime probes without duplicating tag/runtime ownership or rewriting historical evidence |
 | `process/operation_plan.py` | Minimal deterministic case evaluator that binds weak-model action, artifact kind, reason codes, verified source inventory, unresolved inputs, and accountable human route before generation |
 | `process/catalogs/guided-owner-workflow.yaml`, `process/guided_workflow.py` | Versioned situation-to-command catalog and read-only deterministic guidance boundary; it never makes a human decision or invokes a mutation |
+| `pyproject.toml`, `process/operation_dispatcher.py` | Portable Python console-script package for the installed public `sdd` entrypoint, including version diagnostics, confirmed local setup, and canonical continuation guidance |
 | `process/read-packs/guided-owner-workflow.yaml` | Bounded AI route instruction: it permits explanation and missing-context checks only, with explicit stop points and no mutation/approval authority |
 | `scripts/guided_owner_workflow.py`, `scripts/validate_guided_owner_workflow.py` | Human/JSON guidance entry point and guide/catalog drift check |
 | `docs/runbooks/GUIDED_OWNER_WORKFLOW.md` | Situation-first onboarding for humans and AI assistants, pinned to the catalog checksum |

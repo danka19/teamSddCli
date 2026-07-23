@@ -26,7 +26,7 @@
 
 - Execution phase: P3
 - Related phases: P4
-- Lifecycle status: planned
+- Lifecycle status: in_progress
 
 ## Impact
 

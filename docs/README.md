@@ -155,6 +155,17 @@ Future publication layers should generate audience-oriented views from canonical
 - New human feedback that affects SDD workflow behavior, automation safety, integration usability, acceptance, or verification must be persisted in the correct durable document.
 - Behavior and acceptance text should not be duplicated across specs, docs, project memory, generated views, or role guides; derived surfaces link to the canonical owner and are fixed or regenerated when they drift.
 
+## Self-service entrypoint
+
+Оператор устанавливает локальный пакет командой `python -m pip install .` и
+работает через `sdd --version`, `sdd setup`, `sdd start` и `sdd next`.
+`sdd setup` требует `--confirm` и создаёт только пустой local workspace;
+`start` и `next` возвращают один structured continuation result с ролью,
+недостающими фактами, human boundary, fallback и точной следующей командой.
+В P3 `sdd run`, release и external mutation остаются fail-closed. Канонические
+требования находятся в OpenSpec change `add-self-service-operator-onboarding`;
+подробный bootstrap — в `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`.
+
 ## Каталог локальных скриптов
 
 ### Доступные операции
