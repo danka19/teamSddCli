@@ -193,6 +193,22 @@ Exit criteria:
 - A person can discover the next permitted action and its human decision boundary without knowing a script filename; no unregistered script or divergent derived list can pass validation.
 
 Implementation and acceptance evidence (2026-07-23): all 16 tasks are complete; catalog schema/validator/derived artifacts, the local dispatcher, four guided walkthroughs, and the P3 fail-closed mutation boundary are verified. The catalog/dispatcher/package suite passed 138 tests with 1 skip; the owned suite passed 776 tests with 4 skips before the final catalog package integration fixes. The role-aware dependency was accepted and archived in `2038c93`; the operation catalog/dispatcher change was accepted, promoted into living specs, and archived in `d070007`. A valid confirmation artifact is validated but still returns `confirmation-contract-pending`; it never enables a mutation.
+
+### Change Intake — self-service CLI and product FAQ (2026-07-23)
+
+```text
+Idea: remove the need for ordinary users to discover Python scripts, provide a self-service `sdd` CLI, and publish a complete navigable product FAQ and role runbook.
+Source: human owner request after reviewing the P3 dispatcher and release-artifact explanation.
+Type: new_feature, architecture_change, verification_change, documentation_change.
+Decision: create_openspec_change.
+Reason: a local dispatcher and specialist runbooks alone do not provide the accepted self-service outcome; the requested entrypoint and the user documentation change public CLI and documentation contracts and need independent acceptance criteria.
+Affected specs: new `self-service-operator-onboarding` and `product-faq-and-role-runbook`; modified `guided-operation-dispatcher`, `repo-topology-config`, and `documentation-governance` as defined by their delta specs.
+Affected architecture: installed local CLI wrapper, controlled local bootstrap, canonical FAQ navigation; no external integration boundary change.
+Data contract impact: CLI result contract and documentation navigation metadata may be added; no credentials or external API contract is added.
+Verification impact: clean-sandbox onboarding walkthrough, CLI compatibility tests, navigation/link checks, role/AI FAQ coverage, and regression checks for P3 fail-closed mutations.
+Status: planned.
+State detail: `add-self-service-operator-onboarding` is the process entrypoint change; `add-product-faq-and-role-runbook` owns human documentation and must not silently duplicate OpenSpec requirements.
+```
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
 ```text

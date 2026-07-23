@@ -1,0 +1,24 @@
+## 1. Information architecture and canonical sources
+
+- [ ] 1.1 Inventory existing user-facing docs, canonical OpenSpec contracts and specialist runbooks; define the FAQ navigation map and source ownership.
+- [ ] 1.2 Define the required-question index, stable page identifiers and deterministic link/reference validation.
+- [ ] 1.3 Add the FAQ hub and concise product, value and OpenSpec/OpenSpec DE comparison pages.
+
+## 2. Setup and daily workflow guides
+
+- [ ] 2.1 Add focused pages for installation, central `team-specs` topology, project adapters and first-time setup.
+- [ ] 2.2 Add a plain-language lifecycle, minor/major/hotfix, evidence, CI, failure and escalation guide.
+- [ ] 2.3 Add an honest plain-language roadmap with available, planned and intentionally blocked capability states.
+
+## 3. Role and AI runbooks
+
+- [ ] 3.1 Add role pages for Analyst, Tech Lead, Developer, QA and process owner with first command, expected outcome, evidence, boundaries and fallback.
+- [ ] 3.2 Add the AI collaboration page and permission matrix: permitted command use, guidance-only mode, human confirmations, prohibited actions and uncertainty fallback.
+- [ ] 3.3 Add FAQ entries for privacy, release boundary, corporate pilot, process/package update and support/escalation.
+
+## 4. Verification and maintenance
+
+- [ ] 4.1 Implement documentation navigation, required-question and canonical-reference validation.
+- [ ] 4.2 Add positive and negative tests for broken links, missing FAQ coverage, stale status claims and AI-authority wording.
+- [ ] 4.3 Run documentation checks, relevant regression tests, `openspec validate --all --strict`, roadmap/OpenSpec validation and `git diff --check`.
+- [ ] 4.4 Record the user walkthrough of a first-time operator and update the FAQ maintenance ownership/process.
