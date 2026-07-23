@@ -9,7 +9,7 @@ Last status reconciliation: 2026-07-22.
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
 - Immutable successor `p3-analytics-v0.3.6-rc2` was built and manifest-validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.
-- Source evidence: `89 passed` for the P3/package/update/catalog suite; `83 passed, 1 skipped` for `tests/test_release_candidate.py`; OpenSpec strict validation passed `19` items; roadmap/OpenSpec linkage had zero errors and two unrelated historical lifecycle warnings.
+- Source evidence: `89 passed` for the P3/package/update/catalog suite; `83 passed, 1 skipped` for `tests/test_release_candidate.py`; OpenSpec strict validation passed `19` items; roadmap/OpenSpec linkage had zero errors and three lifecycle warnings: the expected analytics change awaiting human acceptance and two historical lifecycle items.
 - The controlled sandbox sequence `check -> update -> rollback -> final update` proved `0.3.4 -> 0.3.6`, rollback to `0.3.4`, and final installed version `0.3.6`. `git diff --check` passed after the final update. Existing dirty OpenSpec paths `operation-history/` and `payments-screen/` were not changed or staged.
 - P3.3 and Task 2.2 are implementation-complete and `pending_acceptance`. `add-typed-analytics-artifact-framework` remains active and is not accepted, synced, or archived; the next lifecycle action is human review of its acceptance packet.
 

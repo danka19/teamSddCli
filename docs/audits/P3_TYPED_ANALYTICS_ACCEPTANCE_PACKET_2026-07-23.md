@@ -17,7 +17,7 @@ This packet asks the human owner to review `add-typed-analytics-artifact-framewo
 - Candidate: `p3-analytics-v0.3.6-rc2`.
 - Payload SHA-256: `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.
 - Source tests: `89 passed` for P3/package/update/catalog coverage; `83 passed, 1 skipped` for `tests/test_release_candidate.py`.
-- Governance checks: `openspec validate --all --strict` returned `19 passed`; roadmap/OpenSpec validator returned zero errors and two unrelated historical lifecycle warnings.
+- Governance checks: `openspec validate --all --strict` returned `19 passed`; roadmap/OpenSpec validator returned zero errors and three lifecycle warnings: this active analytics change awaiting human acceptance and two historical lifecycle items.
 - Sandbox: `check -> update -> rollback -> final update` proved `0.3.4 -> 0.3.6`, rollback to `0.3.4`, then final `0.3.6`; `git diff --check` passed after the final update.
 - Dirty sandbox OpenSpec paths `team-specs/openspec/changes/operation-history/` and `team-specs/openspec/changes/payments-screen/` were preserved and not staged.
 
