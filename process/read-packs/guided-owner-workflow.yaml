@@ -1,19 +1,21 @@
-schema_version: "1.0"
+schema_version: '1.0'
 id: guided-owner-workflow
-purpose: Route a human or AI assistant from a declared business situation to catalog-backed read-only guidance.
+purpose: Route a human or AI assistant from a declared business situation to catalog-backed
+  read-only guidance.
 canonical_sources:
-  - catalogs/guided-owner-workflow.yaml
-  - ../../docs/runbooks/GUIDED_OWNER_WORKFLOW.md
+- catalogs/operations.yaml
+- catalogs/guided-owner-workflow.yaml
+- ../../docs/runbooks/GUIDED_OWNER_WORKFLOW.md
 assistant_may:
-  - explain a catalog-declared route
-  - identify missing facts
-  - draft non-canonical artifacts
+- explain a catalog-declared route
+- identify missing facts
+- draft non-canonical artifacts
 assistant_must_not:
-  - select an undocumented route
-  - confirm classification or a gate
-  - approve waiver, resume, release, archive, merge, or deployment
-  - invoke a mutating command
+- select an undocumented route
+- confirm classification or a gate
+- approve waiver, resume, release, archive, merge, or deployment
+- invoke a mutating command
 stop_when:
-  - a required fact is absent
-  - a human decision is named
-  - an unavailable surface requires deterministic fallback
+- a required fact is absent
+- a human decision is named
+- an unavailable surface requires deterministic fallback

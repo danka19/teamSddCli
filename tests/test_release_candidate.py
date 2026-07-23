@@ -32,27 +32,36 @@ from process.workflow_operations import OperationError
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_ENTRY_POINTS = {
     "bootstrap_team_specs.py",
+    "build_read_pack.py",
+    "certify_process_release.py",
+    "check_actual_certification_gate.py",
     "check_corporate_flow.py",
     "check_lifecycle_transition.py",
+    "check_parallel_plan.py",
     "check_tech_lead_control.py",
+    "check_weak_model_evidence.py",
     "classify_change.py",
     "create_change.py",
     "evaluate_change_gates.py",
+    "guided_owner_workflow.py",
+    "launch_role_task.py",
     "manage_release_candidate.py",
     "manual_fallback.py",
-    "guided_owner_workflow.py",
-    "sdd.py",
     "migrate_change_classification.py",
+    "normalize_actual_certification.py",
     "prepare_archive.py",
     "prepare_spec_pr.py",
+    "preview_analytics.py",
     "review_tech_lead.py",
+    "run_actual_certification.py",
     "update_process_package.py",
     "validate_change.py",
     "validate_corporate_adaptation.py",
     "validate_external_mapping.py",
+    "validate_guided_owner_workflow.py",
     "validate_process_config.py",
     "validate_traceability.py",
-    "validate_guided_owner_workflow.py",
+    "sdd.py",
 }
 
 EXPECTED_CERTIFICATIONS = {
@@ -727,7 +736,7 @@ def test_portable_paths_reject_cross_platform_threats(unsafe: str) -> None:
 def test_inventory_rejects_unicode_casefold_collision_and_links(tmp_path: Path) -> None:
     root = tmp_path / "payload"
     root.mkdir()
-    (root / "Г©.txt").write_text("a", encoding="utf-8")
+    (root / "é.txt").write_text("a", encoding="utf-8")
     (root / "e\u0301.txt").write_text("b", encoding="utf-8")
     with pytest.raises(OperationError, match="release.path-collision"):
         payload_inventory(root)

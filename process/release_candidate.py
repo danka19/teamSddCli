@@ -25,6 +25,7 @@ from jsonschema import Draft202012Validator
 
 from .actual_certification import validate_normalized_evidence, validate_phase_gate
 from .errors import OperationError
+from .operations_catalog import load_operations_catalog
 from .validators.config_validation import secret_diagnostics
 from .validators.classification_migration import apply_migration, plan_migration
 from .validators.config_discovery import validate_configuration
@@ -50,30 +51,6 @@ _RUNBOOKS = (
     "WEAK_MODEL_OPERATING_KIT.md",
     "CORPORATE_ADAPTATION_AND_PILOT.md",
     "GUIDED_OWNER_WORKFLOW.md",
-)
-_ENTRY_POINTS = (
-    ("bootstrap_team_specs.py", ("scripts/bootstrap_team_specs.py", "--help"), (0,)),
-    ("check_corporate_flow.py", ("scripts/check_corporate_flow.py", "--help"), (2,)),
-    ("check_lifecycle_transition.py", ("scripts/check_lifecycle_transition.py", "--help"), (0,)),
-    ("check_tech_lead_control.py", ("scripts/check_tech_lead_control.py", "--help"), (2,)),
-    ("classify_change.py", ("scripts/classify_change.py", "--help"), (0,)),
-    ("create_change.py", ("scripts/create_change.py", "--help"), (0,)),
-    ("evaluate_change_gates.py", ("scripts/evaluate_change_gates.py", "--help"), (0,)),
-    ("guided_owner_workflow.py", ("scripts/guided_owner_workflow.py", "--help"), (0,)),
-    ("sdd.py", ("scripts/sdd.py", "--help"), (0,)),
-    ("manage_release_candidate.py", ("scripts/manage_release_candidate.py", "validate", "--help"), (0,)),
-    ("manual_fallback.py", ("scripts/manual_fallback.py", "--help"), (0,)),
-    ("migrate_change_classification.py", ("scripts/migrate_change_classification.py", "--help"), (0,)),
-    ("prepare_archive.py", ("scripts/prepare_archive.py", "--help"), (0,)),
-    ("prepare_spec_pr.py", ("scripts/prepare_spec_pr.py", "--help"), (0,)),
-    ("review_tech_lead.py", ("scripts/review_tech_lead.py", "--help"), (2,)),
-    ("update_process_package.py", ("scripts/update_process_package.py", "--help"), (0,)),
-    ("validate_change.py", ("scripts/validate_change.py", "--help"), (0,)),
-    ("validate_corporate_adaptation.py", ("scripts/validate_corporate_adaptation.py", "--help"), (0,)),
-    ("validate_external_mapping.py", ("scripts/validate_external_mapping.py", "--help"), (0,)),
-    ("validate_guided_owner_workflow.py", ("scripts/validate_guided_owner_workflow.py", "--help"), (0,)),
-    ("validate_process_config.py", ("scripts/validate_process_config.py", "--help"), (0,)),
-    ("validate_traceability.py", ("scripts/validate_traceability.py", "--help"), (0,)),
 )
 _HOST_EVIDENCE = [
     {"platform_id": "windows", "evidence_level": "full-clean-rehearsal"},
@@ -1032,28 +1009,25 @@ def _validate_schema(document: Mapping[str, Any], schema_path: Path, code: str) 
         raise OperationError(code, "document does not satisfy its schema")
 
 
-def _expected_allowlist() -> dict[str, Any]:
-    entry_points = [
-        {"name": name, "smoke": list(smoke), "expected_exit_codes": list(exits)}
-        for name, smoke, exits in _ENTRY_POINTS
-    ]
-    next(item for item in entry_points if item["name"] == "manage_release_candidate.py")["additional_smokes"] = [
-        ["scripts/manage_release_candidate.py", "accept", "--help"],
-        ["scripts/manage_release_candidate.py", "rehearse", "--help"],
-    ]
+def _expected_allowlist(repository_root: Path) -> dict[str, Any]:
+    catalog = load_operations_catalog(repository_root / "process/catalogs/operations.yaml")
+    release_entries = catalog["release_entrypoints"]
     return {
         "schema_version": "1.0",
         "requirements": ["requirements-test.txt"],
         "template_roots": ["templates/team-specs"],
         "runbooks": list(_RUNBOOKS),
-        "entry_points": entry_points,
+        "entry_points": [
+            {"name": Path(item["entrypoint"]).name, **{key: value for key, value in item.items() if key != "entrypoint"}}
+            for item in release_entries
+        ],
     }
 
 
 def _validate_allowlist(allowlist: Mapping[str, Any], schema_path: Path) -> None:
     _validate_schema(allowlist, schema_path, "release.allowlist-invalid")
-    if dict(allowlist) != _expected_allowlist():
-        raise OperationError("release.allowlist-invalid", "allowlist differs from the public release contract")
+    if dict(allowlist) != _expected_allowlist(schema_path.parents[2]):
+        raise OperationError("release.allowlist-invalid", "allowlist differs from the catalog-derived release contract")
 
 
 def _assert_file(path: Path, relative: str) -> None:

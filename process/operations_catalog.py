@@ -53,6 +53,25 @@ def load_operations_catalog(path: Path = DEFAULT_CATALOG) -> dict[str, Any]:
             raise OperationError("operations-catalog-invalid", "external mutation is outside the P3 catalog")
         ids.add(identifier)
         entrypoints.add(entrypoint)
+    release_entries = data.get("release_entrypoints")
+    if not isinstance(release_entries, list):
+        raise OperationError("operations-catalog-invalid", "release entry points are missing")
+    release_paths: set[str] = set()
+    for item in release_entries:
+        if not isinstance(item, dict) or set(item) not in ({"entrypoint", "smoke", "expected_exit_codes"}, {"entrypoint", "smoke", "expected_exit_codes", "additional_smokes"}):
+            raise OperationError("operations-catalog-invalid", "release entry point has an unsupported shape")
+        entrypoint = item.get("entrypoint")
+        if not isinstance(entrypoint, str) or entrypoint in release_paths or item.get("smoke") != [entrypoint, "--help"]:
+            raise OperationError("operations-catalog-invalid", "release entry point is malformed")
+        exits = item.get("expected_exit_codes")
+        if not isinstance(exits, list) or not exits or any(type(code) is not int or code not in {0, 1, 2, 3} for code in exits):
+            raise OperationError("operations-catalog-invalid", "release entry point exit contract is malformed")
+        additional = item.get("additional_smokes", [])
+        if not isinstance(additional, list) or any(not isinstance(command, list) or not command or not all(isinstance(part, str) and part for part in command) for command in additional):
+            raise OperationError("operations-catalog-invalid", "release entry point additional smoke is malformed")
+        release_paths.add(entrypoint)
+    if release_paths != entrypoints:
+        raise OperationError("operations-catalog-invalid", "release entry points do not cover the catalog")
     return data
 
 

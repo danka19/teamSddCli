@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any, Sequence
 import yaml
 from .guided_workflow import guide
+from .errors import OperationError
+from .operation_cli import execute
 from .operations_catalog import DEFAULT_CATALOG, load_operations_catalog, operation_by_id
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -18,10 +20,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     def json_flag(p: argparse.ArgumentParser) -> None: p.add_argument("--json", action="store_true")
     guide_parser = sub.add_parser("guide"); guide_parser.add_argument("situation"); guide_parser.add_argument("--fact", action="append", default=[]); guide_parser.add_argument("--unavailable", action="append", default=[]); json_flag(guide_parser)
-    next_parser = sub.add_parser("next"); next_parser.add_argument("--change", required=True); json_flag(next_parser)
+    next_parser = sub.add_parser("next"); next_parser.add_argument("--change", required=True); next_parser.add_argument("--role"); json_flag(next_parser)
     op_parser = sub.add_parser("op"); op_sub = op_parser.add_subparsers(dest="op_command", required=True)
     op_list = op_sub.add_parser("list"); op_list.add_argument("--include-internal", action="store_true"); op_list.add_argument("--role"); json_flag(op_list)
-    op_show = op_sub.add_parser("show"); op_show.add_argument("operation_id"); json_flag(op_show)
+    op_show = op_sub.add_parser("show"); op_show.add_argument("operation_id"); op_show.add_argument("--role"); json_flag(op_show)
     for command in ("check", "prepare", "request", "run"):
         child = sub.add_parser(command); child.add_argument("operation_id"); child.add_argument("--role"); child.add_argument("forwarded", nargs=argparse.REMAINDER); json_flag(child)
     return parser
@@ -45,7 +47,10 @@ def _run_entrypoint(operation: dict[str, Any], forwarded: Sequence[str]) -> dict
     args = list(forwarded)
     if "--json" in args: args.remove("--json")
     args.append("--json")
-    completed = subprocess.run([sys.executable, str(REPOSITORY_ROOT / operation["entrypoint"]), *args], cwd=REPOSITORY_ROOT, capture_output=True, text=True, check=False, shell=False)
+    try:
+        completed = subprocess.run([sys.executable, str(REPOSITORY_ROOT / operation["entrypoint"]), *args], cwd=REPOSITORY_ROOT, capture_output=True, text=True, check=False, shell=False)
+    except OSError as error:
+        raise OperationError("operation-spawn-failed", "catalog operation could not start", exit_code=3) from error
     if completed.returncode not in {0, 1, 3}: return {"status": "operational-error", "child_exit_code": completed.returncode, "diagnostics": [{"code": "child-operation-failed"}]}
     try: evidence = json.loads(completed.stdout)
     except json.JSONDecodeError: return {"status": "operational-error", "child_exit_code": completed.returncode, "diagnostics": [{"code": "child-output-invalid"}]}
@@ -61,7 +66,9 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
         if result["status"] == "blocked": return result
         resolved = [operation(item) for item in result["commands"]]
         if any(item is None for item in resolved): return _blocked("sdd-guide", "catalog-route-unknown-operation")
-        result["commands"] = [item["id"] for item in resolved if item]
+        permitted = [item for item in resolved if item and result["known_facts"]["human_role"] in item["allowed_roles"]]
+        if not permitted: return _blocked("sdd-guide", "role-not-permitted")
+        result["commands"] = [item["id"] for item in permitted]
         return result
     if args.command == "next":
         path = Path(args.change); path = path / "change.yaml" if path.is_dir() else path
@@ -69,19 +76,22 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
         try: state = yaml.safe_load(path.read_text(encoding="utf-8")).get("lifecycle_state")
         except (OSError, UnicodeError, yaml.YAMLError, AttributeError): state = None
         if not isinstance(state, str) or not state: return _blocked("sdd-next", "missing-lifecycle-state")
-        result = guide("existing-change", {"human_role": "Analyst", "change_id": path.parent.name, "lifecycle_state": state}, set()); result["operation"] = "sdd-next"; return result
+        result = guide("existing-change", {"human_role": args.role or "", "change_id": path.parent.name, "lifecycle_state": state}, set()); result["operation"] = "sdd-next"; return result
     if args.command == "op":
         if args.op_command == "list":
             visible = {"public"} | ({"internal", "deprecated"} if args.include_internal else set())
             return {"operation": "sdd-op-list", "schema_version": "1.0", "status": "ok", "operations": [_card(item) for item in catalog["operations"] if item["visibility"] in visible and (not args.role or args.role in item["allowed_roles"])], "lifecycle_mutated": False, "external_state_mutated": False}
         item = operation(args.operation_id)
         if item is None or item["visibility"] == "forbidden": return _blocked("sdd-op-show", "unknown-operation")
+        if args.role and args.role not in item["allowed_roles"]: return _blocked("sdd-op-show", "role-not-permitted", operation_id=item["id"])
         return {"operation": "sdd-op-show", "schema_version": "1.0", "status": "ok", "operation_id": item["id"], **_card(item), "lifecycle_mutated": False, "external_state_mutated": False}
     item = operation(args.operation_id)
     if item is None: return _blocked(f"sdd-{args.command}", "unknown-operation")
     if args.role and args.role not in item["allowed_roles"]: return _blocked(f"sdd-{args.command}", "role-not-permitted", operation_id=item["id"])
     if item["mutation_level"] == "mutate_external": return _blocked(f"sdd-{args.command}", "p3-external-operation-forbidden", operation_id=item["id"])
     if args.command == "request":
+        if not item["mutation_level"].startswith("mutate_") or not item["confirmation_required"]:
+            return _blocked("sdd-request", "operation-not-requestable", operation_id=item["id"])
         source = json.dumps({"operation_id": item["id"], "argv": list(args.forwarded)}, sort_keys=True, separators=(",", ":"))
         return {"operation": "sdd-request", "schema_version": "1.0", "status": "confirmation-requested", "operation_id": item["id"], "input_digest": hashlib.sha256(source.encode()).hexdigest(), "authority_granted": False, "review_required": True, "lifecycle_mutated": False, "external_state_mutated": False}
     if args.command == "run": return _blocked("sdd-run", "confirmation-contract-pending", operation_id=item["id"])
@@ -92,6 +102,14 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     args.json = args.json or (hasattr(args, "forwarded") and "--json" in args.forwarded)
-    payload = dispatch(args)
+    try:
+        payload = dispatch(args)
+    except OperationError as error:
+        return execute(lambda: (_ for _ in ()).throw(error), args.json)
+    except OSError as error:
+        return execute(
+            lambda: (_ for _ in ()).throw(OperationError("operation-failed", "local operation failed", exit_code=3)),
+            args.json,
+        )
     print(json.dumps(payload, sort_keys=True) if args.json else f"{payload['operation']}: {payload['status']}")
     return 0 if payload["status"] in {"ok", "guided", "confirmation-requested"} else 3 if payload["status"] == "operational-error" else 1

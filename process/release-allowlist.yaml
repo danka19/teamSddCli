@@ -1,87 +1,211 @@
-schema_version: "1.0"
+schema_version: '1.0'
 requirements:
-  - requirements-test.txt
+- requirements-test.txt
 template_roots:
-  - templates/team-specs
+- templates/team-specs
 runbooks:
-  - ARTIFACT_AND_LIFECYCLE_GATES.md
-  - CERTIFICATION_EVIDENCE.md
-  - CLASSIFICATION_AND_MIGRATION.md
-  - CORPORATE_FLOW_CONTROLS.md
-  - PACKAGED_GOVERNED_FLOW.md
-  - PROCESS_PACKAGE_SETUP.md
-  - TECH_LEAD_GOVERNANCE.md
-  - TRANSFER_RELEASE_CANDIDATE.md
-  - WEAK_MODEL_OPERATING_KIT.md
-  - CORPORATE_ADAPTATION_AND_PILOT.md
-  - GUIDED_OWNER_WORKFLOW.md
+- ARTIFACT_AND_LIFECYCLE_GATES.md
+- CERTIFICATION_EVIDENCE.md
+- CLASSIFICATION_AND_MIGRATION.md
+- CORPORATE_FLOW_CONTROLS.md
+- PACKAGED_GOVERNED_FLOW.md
+- PROCESS_PACKAGE_SETUP.md
+- TECH_LEAD_GOVERNANCE.md
+- TRANSFER_RELEASE_CANDIDATE.md
+- WEAK_MODEL_OPERATING_KIT.md
+- CORPORATE_ADAPTATION_AND_PILOT.md
+- GUIDED_OWNER_WORKFLOW.md
 entry_points:
-  - name: bootstrap_team_specs.py
-    smoke: [scripts/bootstrap_team_specs.py, --help]
-    expected_exit_codes: [0]
-  - name: check_corporate_flow.py
-    smoke: [scripts/check_corporate_flow.py, --help]
-    expected_exit_codes: [2]
-  - name: check_lifecycle_transition.py
-    smoke: [scripts/check_lifecycle_transition.py, --help]
-    expected_exit_codes: [0]
-  - name: check_tech_lead_control.py
-    smoke: [scripts/check_tech_lead_control.py, --help]
-    expected_exit_codes: [2]
-  - name: classify_change.py
-    smoke: [scripts/classify_change.py, --help]
-    expected_exit_codes: [0]
-  - name: create_change.py
-    smoke: [scripts/create_change.py, --help]
-    expected_exit_codes: [0]
-  - name: evaluate_change_gates.py
-    smoke: [scripts/evaluate_change_gates.py, --help]
-    expected_exit_codes: [0]
-  - name: guided_owner_workflow.py
-    smoke: [scripts/guided_owner_workflow.py, --help]
-    expected_exit_codes: [0]
-  - name: sdd.py
-    smoke: [scripts/sdd.py, --help]
-    expected_exit_codes: [0]
-  - name: manage_release_candidate.py
-    smoke: [scripts/manage_release_candidate.py, validate, --help]
-    additional_smokes:
-      - [scripts/manage_release_candidate.py, accept, --help]
-      - [scripts/manage_release_candidate.py, rehearse, --help]
-    expected_exit_codes: [0]
-  - name: manual_fallback.py
-    smoke: [scripts/manual_fallback.py, --help]
-    expected_exit_codes: [0]
-  - name: migrate_change_classification.py
-    smoke: [scripts/migrate_change_classification.py, --help]
-    expected_exit_codes: [0]
-  - name: prepare_archive.py
-    smoke: [scripts/prepare_archive.py, --help]
-    expected_exit_codes: [0]
-  - name: prepare_spec_pr.py
-    smoke: [scripts/prepare_spec_pr.py, --help]
-    expected_exit_codes: [0]
-  - name: review_tech_lead.py
-    smoke: [scripts/review_tech_lead.py, --help]
-    expected_exit_codes: [2]
-  - name: update_process_package.py
-    smoke: [scripts/update_process_package.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_change.py
-    smoke: [scripts/validate_change.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_corporate_adaptation.py
-    smoke: [scripts/validate_corporate_adaptation.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_external_mapping.py
-    smoke: [scripts/validate_external_mapping.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_guided_owner_workflow.py
-    smoke: [scripts/validate_guided_owner_workflow.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_process_config.py
-    smoke: [scripts/validate_process_config.py, --help]
-    expected_exit_codes: [0]
-  - name: validate_traceability.py
-    smoke: [scripts/validate_traceability.py, --help]
-    expected_exit_codes: [0]
+- name: bootstrap_team_specs.py
+  smoke:
+  - scripts/bootstrap_team_specs.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: build_read_pack.py
+  smoke:
+  - scripts/build_read_pack.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: certify_process_release.py
+  smoke:
+  - scripts/certify_process_release.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: check_actual_certification_gate.py
+  smoke:
+  - scripts/check_actual_certification_gate.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: check_corporate_flow.py
+  smoke:
+  - scripts/check_corporate_flow.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: check_lifecycle_transition.py
+  smoke:
+  - scripts/check_lifecycle_transition.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: check_parallel_plan.py
+  smoke:
+  - scripts/check_parallel_plan.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: check_tech_lead_control.py
+  smoke:
+  - scripts/check_tech_lead_control.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: check_weak_model_evidence.py
+  smoke:
+  - scripts/check_weak_model_evidence.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: classify_change.py
+  smoke:
+  - scripts/classify_change.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: create_change.py
+  smoke:
+  - scripts/create_change.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: evaluate_change_gates.py
+  smoke:
+  - scripts/evaluate_change_gates.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: guided_owner_workflow.py
+  smoke:
+  - scripts/guided_owner_workflow.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: launch_role_task.py
+  smoke:
+  - scripts/launch_role_task.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: manage_release_candidate.py
+  smoke:
+  - scripts/manage_release_candidate.py
+  - --help
+  expected_exit_codes:
+  - 0
+  additional_smokes:
+  - - scripts/manage_release_candidate.py
+    - accept
+    - --help
+  - - scripts/manage_release_candidate.py
+    - rehearse
+    - --help
+- name: manual_fallback.py
+  smoke:
+  - scripts/manual_fallback.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: migrate_change_classification.py
+  smoke:
+  - scripts/migrate_change_classification.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: normalize_actual_certification.py
+  smoke:
+  - scripts/normalize_actual_certification.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: prepare_archive.py
+  smoke:
+  - scripts/prepare_archive.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: prepare_spec_pr.py
+  smoke:
+  - scripts/prepare_spec_pr.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: preview_analytics.py
+  smoke:
+  - scripts/preview_analytics.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: review_tech_lead.py
+  smoke:
+  - scripts/review_tech_lead.py
+  - --help
+  expected_exit_codes:
+  - 2
+- name: run_actual_certification.py
+  smoke:
+  - scripts/run_actual_certification.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: update_process_package.py
+  smoke:
+  - scripts/update_process_package.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_change.py
+  smoke:
+  - scripts/validate_change.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_corporate_adaptation.py
+  smoke:
+  - scripts/validate_corporate_adaptation.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_external_mapping.py
+  smoke:
+  - scripts/validate_external_mapping.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_guided_owner_workflow.py
+  smoke:
+  - scripts/validate_guided_owner_workflow.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_process_config.py
+  smoke:
+  - scripts/validate_process_config.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: validate_traceability.py
+  smoke:
+  - scripts/validate_traceability.py
+  - --help
+  expected_exit_codes:
+  - 0
+- name: sdd.py
+  smoke:
+  - scripts/sdd.py
+  - --help
+  expected_exit_codes:
+  - 0
