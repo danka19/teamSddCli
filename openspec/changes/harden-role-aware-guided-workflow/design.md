@@ -38,3 +38,25 @@ asset `process/gigacode/`, а не локальной копией sandbox. Boot
 `обычно` — proactive discovery mode, а не разрешение завершать intake по собственному усмотрению. Агент строит change-specific карту релевантных областей и для каждого существенного неизвестного указывает `confirmed`, `proposed_default`, `deferred` или `blocking`. Перед созданием spec draft он обязан показать ранжированные возможности углубления и дождаться явного выбора `углубиться`, `принять defaults` или `подготовить draft с открытыми решениями`. Отсутствие ответа не меняет статус и не принимает default.
 
 Локальная форма/команда в будущем создаёт тот же confirmation-event record. Она не создаёт альтернативный workflow и не является P3 dependency.
+
+## Operation-confirmation extension (2026-07-23)
+
+The existing v1 decision confirmation remains intact and can never be used as
+operation authority. P3 adds a separate `operation_confirmation_request` and
+`operation_confirmation_event` contract. Both bind `human_role`, catalog
+`operation_id`, `input_digest`, `revision_digest`, `issued_at`, `expires_at`,
+and the existing trusted human/assistant/human event chain.
+
+`input_digest` is SHA-256 of canonical JSON containing the operation ID and the
+ordered forwarded argv after removing only dispatcher `--json`; argument order,
+duplication, and values otherwise remain significant. `revision_digest` is
+SHA-256 of the exact canonical request-card bytes shown to the human. A changed
+request therefore invalidates the event. Validation checks the catalog role,
+all bindings, timestamp awareness, and expiry against injected current time.
+
+The extension is contract-only. `sdd request` may emit a request with
+`authority_granted: false`; every `sdd run` remains
+`confirmation-contract-pending` before entrypoint spawn. `mutate_external`
+remains rejected at catalog load and dispatch. Trusted ingress and replay-safe
+one-time consumption are intentionally deferred to a later human-accepted
+execution-enablement change.

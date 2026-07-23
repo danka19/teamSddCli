@@ -8,6 +8,7 @@ P3 guided workflow currently allows role-sensitive routes without a known human 
 - Add trusted, revision-bound human acceptance evidence and a deterministic readiness gate that cannot bypass DoR.
 - Remove the P3 MCP fallback from guided catalog, runbook, and read-pack while retaining historical and P4 corporate MCP contracts.
 - Provide a read-only response summary that binds the shown revision, gate result, and next permitted action.
+- Add a non-authoritative operation-confirmation request/event contract binding trusted human role, operation ID, canonical input digest, card revision digest, and expiry; it prepares future dispatcher review but does not enable `sdd run`.
 
 ## Capabilities
 
@@ -29,6 +30,10 @@ P3 guided workflow currently allows role-sensitive routes without a known human 
 ## Impact
 
 Changes the local process-package catalog, guided workflow code and schemas, integrity validator, templates, role/read-pack instructions, runbook, package registry, and focused tests. It adds no network, MCP, credentials, or external mutation.
+
+## Accepted scope extension — operation confirmation (2026-07-23)
+
+The owner approved a contract-only extension for future dispatcher mutations. The new operation-confirmation record binds a trusted human role, catalog `operation_id`, canonical `input_digest`, card `revision_digest`, trusted event chain, and expiry. It remains non-authoritative: `sdd run` is unconditionally fail-closed, and `mutate_external` remains permanently forbidden in P3. Actual execution enablement, trusted ingress, and replay protection require a later separately accepted change.
 
 ## Принятые уточнения 2026-07-21
 

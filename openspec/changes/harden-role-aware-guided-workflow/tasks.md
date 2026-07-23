@@ -18,3 +18,11 @@
 - [x] Add discovery-map contract and tests for `обычно`: relevant material unknowns trigger proactive depth recommendation, explicit default/defer choices are recorded, and silence remains unresolved.
 - [x] Synchronize schemas, templates, validator, package manifest, root/GigaCode instructions, read-packs, runbook, phase plan and sandbox transfer guidance.
 - [x] Run focused/final relevant tests, OpenSpec/roadmap gates, one AI-disabled transcript walkthrough, and package update pre-transfer check; perform the real update and separate sandbox commit only in P3.3 after both P3 changes are human accepted.
+
+## 4. Operation-confirmation contract extension
+
+- [ ] Define the operation-confirmation request/event schemas and canonical role/operation/input/revision/expiry binding semantics without changing v1 decision evidence.
+- [ ] Add failing tests for missing, role/operation/input/revision mismatch, expiry, altered argv, and proof that a valid event never enables `sdd run` or `mutate_external`.
+- [ ] Implement deterministic request/event builders and validators; extend `sdd request` to emit only a non-authoritative operation confirmation request.
+- [ ] Register assets and synchronize package/read-pack/GigaCode/runbook/phase/audit documentation without claiming execution authority.
+- [ ] Run focused/final relevant tests, OpenSpec/roadmap gates, AI-disabled request walkthrough, and final security review; prepare the exact final human acceptance packet.

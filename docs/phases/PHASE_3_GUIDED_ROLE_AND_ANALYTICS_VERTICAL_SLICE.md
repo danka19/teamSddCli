@@ -144,6 +144,21 @@ Verification impact: P3.1 performs a deterministic pre-transfer check and record
 Status: active.
 ```
 
+### Change Intake — operation-confirmation binding (2026-07-23)
+
+```text
+Idea: extend the role-aware confirmation contract with trusted role, operation ID, input digest, revision digest, and expiry for future dispatcher mutations.
+Source: explicit owner decision after reviewing the implemented P3 decision-card contract.
+Type: architecture_change, data_contract_change, verification_change, documentation_change.
+Decision: adopt_now.
+Reason: the existing decision card is not sufficient to authorize a specific operation and input; leaving that gap would make a future mutation gate ambiguous.
+Affected specs: role-aware-guided-workflow; related dispatcher dependency only.
+Affected architecture: typed non-authoritative request/event and validator; no execution enablement.
+Data contract impact: role, operation ID, canonical input digest, card revision digest, trusted event chain, and expiry.
+Verification impact: missing/mismatch/expiry/argv negatives; valid artifact still blocked at `sdd run`; external mutation permanently forbidden.
+Status: active in `harden-role-aware-guided-workflow`; final human acceptance follows implementation and review.
+```
+
 ### 3.4 Operation catalog and thin dispatcher
 
 Status: planned.

@@ -61,3 +61,18 @@ In `обычно` mode P3 guided workflow SHALL proactively surface material unr
 #### Scenario: Silence is not default acceptance
 - **WHEN** the human does not explicitly choose a proposed default or deferral
 - **THEN** the workflow SHALL retain the area as unresolved and SHALL not report intake or spec readiness as sufficient
+
+### Requirement: Non-authoritative operation confirmation binding
+P3 SHALL represent a requested local operation by a typed operation-confirmation request and event that bind the trusted human role, catalog `operation_id`, canonical `input_digest`, card `revision_digest`, trusted event chain, and expiry. The record SHALL not grant lifecycle, DoR, acceptance, release, or execution authority.
+
+#### Scenario: Missing, mismatched, or expired operation evidence is blocked
+- **WHEN** an operation-confirmation event lacks a binding field, has a role or operation not allowed by the catalog, has a changed input or card digest, or is expired at validation time
+- **THEN** validation SHALL reject it before any entrypoint can start
+
+#### Scenario: Operation confirmation never enables P3 execution
+- **WHEN** a valid operation-confirmation event is supplied to `sdd run`
+- **THEN** the dispatcher SHALL return `confirmation-contract-pending` without spawning an entrypoint
+
+#### Scenario: External mutation remains forbidden
+- **WHEN** a caller requests or runs an operation classified as `mutate_external`
+- **THEN** P3 SHALL reject it irrespective of any confirmation artifact
