@@ -135,5 +135,7 @@ sdd start new-requirement --role Analyst --fact classification=minor --json
 
 ## Следующий шаг
 
-Пройдите [первый synthetic change](first-change.md) либо откройте
+Пройдите [первый synthetic change](first-change.md): сначала
+[вместе с AI](first-change-with-ai.md), затем
+[без AI](first-change-without-ai.md). Либо откройте
 [runbook владельца процесса](roles/process-owner.md).

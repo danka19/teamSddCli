@@ -32,6 +32,8 @@ REQUIRED_PAGES = {
     "ai-collaboration.md",
     "daily-workflow.md",
     "first-change.md",
+    "first-change-with-ai.md",
+    "first-change-without-ai.md",
     "glossary.md",
     "index.md",
     "installation.md",
@@ -53,6 +55,71 @@ ROLE_SECTIONS = {
     "## Сбои, fallback и эскалация",
     "## Работа с AI",
     "## Чек-лист завершения",
+}
+WALKTHROUGH_SECTIONS = {
+    "first-change-with-ai.md": {
+        "## Учебная задача и точный scope",
+        "## Перед началом: staged permissions",
+        "## Стартовый prompt",
+        "## Шаг 1. AI собирает evidence из repository",
+        "## Шаг 2. AI предлагает `minor`, не подтверждая его",
+        "## Шаг 3. AI запускает guided start",
+        "## Шаг 4. AI создаёт только неавторитетный request",
+        "## Шаг 5. Человек создаёт change package",
+        "## Шаг 6. AI готовит classification evidence",
+        "## Шаг 7. Tech Lead подтверждает class",
+        "## Шаг 8. Developer выполняет один exact edit",
+        "## Шаг 9. AI продолжает change и передаёт QA",
+        "## Шаг 10. AI подготавливает review, но не публикует",
+        "## Что именно подтверждает человек",
+        "## Если AI или инструмент недоступен",
+    },
+    "first-change-without-ai.md": {
+        "## Учебная задача и точный scope",
+        "## Шаг 1. Проверить source и baseline",
+        "## Шаг 2. Собрать признаки candidate `minor`",
+        "## Шаг 3. Подготовить workspace",
+        "## Шаг 4. Analyst запускает guided route",
+        "## Шаг 5. Analyst создаёт неавторитетный request",
+        "## Шаг 6. Человек создаёт change package",
+        "## Шаг 7. Заполнить и проверить classification evidence",
+        "## Шаг 8. Developer выполняет один exact edit",
+        "## Шаг 9. Developer и QA получают continuation",
+        "## Шаг 10. Подготовить review без публикации",
+        "## Где текущая автоматизация останавливается",
+        "## Что считать успешным walkthrough",
+    },
+}
+PAIRED_WALKTHROUGH_TOKENS = {
+    "process/operation_dispatcher.py",
+    "_render_human",
+    "lines",
+    "output_lines",
+    "test_start_human_renderer_uses_the_same_next_command",
+    '--title "Rename internal renderer list variable"',
+    "sdd start new-requirement --role Analyst --fact classification=minor --json",
+    "sdd request create-change --role Analyst --json",
+    'sdd check classify-change --role "Tech Lead"',
+    "--role Developer --json",
+    "--role QA --json",
+    "sdd prepare prepare-spec-pr --role Developer",
+    "evidence/baseline-test.txt",
+    "decisions/impact-review.md",
+    "spec_change.required: false",
+    "decisions/classification.md",
+    "Классификатор не доказывает",
+}
+WALKTHROUGH_INSTANCE_TOKENS = {
+    "first-change-with-ai.md": {
+        "C:/work/teamSddCli-ai",
+        "C:/work/faq-walkthrough-ai",
+        "sample-minor-ai-001",
+    },
+    "first-change-without-ai.md": {
+        "C:/work/teamSddCli-manual",
+        "C:/work/faq-walkthrough-manual",
+        "sample-minor-manual-001",
+    },
 }
 LINK = re.compile(r"\[[^]]+\]\(([^)#]+\.md)(?:#[^)]+)?\)")
 UNSAFE_AI_AUTHORITY_PATTERNS = (
@@ -115,6 +182,29 @@ def validate_product_faq(root: Path) -> list[str]:
                         "role runbook section is missing: "
                         f"{page.relative_to(root)} -> {section}"
                     )
+        if page.name in WALKTHROUGH_SECTIONS:
+            for section in sorted(WALKTHROUGH_SECTIONS[page.name]):
+                if section not in text:
+                    errors.append(
+                        "first-change section is missing: "
+                        f"{page.relative_to(root)} -> {section}"
+                    )
+            for token in sorted(PAIRED_WALKTHROUGH_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "paired first-change token is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
+            for token in sorted(WALKTHROUGH_INSTANCE_TOKENS[page.name]):
+                if token not in text:
+                    errors.append(
+                        "first-change practice instance is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
+            if "--json?" in text:
+                errors.append(
+                    f"copy-paste command contains punctuation: {page.relative_to(root)}"
+                )
 
     if any(pattern.search(content) for pattern in UNSAFE_AI_AUTHORITY_PATTERNS):
         errors.append("unsafe AI authority wording")

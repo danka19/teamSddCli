@@ -33,6 +33,20 @@ SHALL показывать полученную topology `process/` и `team-spe
 First-change page SHALL для каждого шага называть actor, command, expected
 result, evidence, handoff и текущий stop point.
 
+First-change entry page SHALL показывать один и тот же безопасный synthetic
+`minor` route в двух связанных walkthrough: сначала работа человека в паре с
+AI, затем повтор без AI. AI-first walkthrough SHALL давать готовый bounded
+prompt, позволять AI собрать evidence и предложить candidate class, показывать
+и запускать только отдельно разрешённые локальные команды, возвращать raw JSON
+и останавливаться перед каждым human confirmation. Manual walkthrough SHALL
+использовать ту же задачу, команды, evidence, роли и authority boundaries, чтобы
+читатель мог сравнить маршруты шаг за шагом. Два последовательных прохода SHALL
+использовать отдельные clean checkout/workspace одного исходного revision,
+чтобы первый edit и change package не делали второй walkthrough
+невоспроизводимым. Classification evidence SHALL ссылаться на фактически
+заполненные proposal/design/task/test/human-decision artifacts, а не на
+generated sample placeholders.
+
 #### Scenario: Новый владелец процесса готовит рабочее пространство
 
 - **WHEN** человек начинает с доверенного локального package source
@@ -42,6 +56,16 @@ result, evidence, handoff и текущий stop point.
 
 - **WHEN** first-change tutorial доходит до создания change, lifecycle transition, release или external action
 - **THEN** tutorial явно останавливается на human-owned/specialist route, не утверждает несуществующую автоматизацию и сохраняет `sdd run` fail-closed
+
+#### Scenario: Первый minor change выполняется в паре с AI
+
+- **WHEN** новый пользователь открывает first-change entry page
+- **THEN** он сначала получает AI-first walkthrough, где AI проверяет все minor conditions, предлагает `minor` только как candidate, показывает exact command, ждёт отдельное разрешение на каждый вызов, объясняет raw JSON и запрашивает решение Tech Lead вместо самостоятельного подтверждения
+
+#### Scenario: Тот же change повторяется без AI
+
+- **WHEN** пользователь завершает или прерывает AI-first walkthrough
+- **THEN** связанный manual walkthrough позволяет пройти ту же synthetic-задачу в отдельной clean practice-копии того же revision с теми же deterministic commands, evidence, human gates и честной mutation boundary без AI
 
 ### Requirement: Plain-language product and roadmap explanation
 The FAQ SHALL explain the framework's value and its difference from OpenSpec and OpenSpec DE in practical terms. It SHALL include a short status view using `available now`, `planned`, and `intentionally blocked` language instead of internal phase or artifact terminology.

@@ -25,6 +25,13 @@ The product is currently documented through specialist runbooks, OpenSpec artifa
   `check`, `prepare` и `request` направляют или подготавливают локальную работу,
   а `sdd run` остаётся fail-closed. Tutorial останавливается для accountable
   human или specialist runbook и не изображает mutation выполненной.
+- Первый tutorial использует парное сравнение одного безопасного non-behavior
+  `minor` refactor: сначала AI-first route с candidate classification, raw JSON,
+  exact commands и отдельным human confirmation перед каждым действием, затем
+  тот же deterministic route без AI в отдельной clean practice-копии того же
+  revision. Factual proposal/design/task/test/decision evidence заменяет
+  generated placeholders до classification check. AI формулирует stop/decision
+  question, но не подтверждает classification и не подставляет `--confirm`.
 - Все role runbooks используют одну структуру: цель, prerequisites/inputs,
   пошаговый маршрут, ожидаемый результат, evidence, human decisions и authority
   limits, handoff, failures/fallback/escalation, AI и completion checklist.

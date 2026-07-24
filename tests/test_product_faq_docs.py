@@ -54,6 +54,8 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
         "installation.md",
         "setup-and-topology.md",
         "first-change.md",
+        "first-change-with-ai.md",
+        "first-change-without-ai.md",
         "glossary.md",
     ):
         assert f"]({name})" in index
@@ -68,17 +70,76 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
         assert token in installation
 
     first_change = (faq / "first-change.md").read_text(encoding="utf-8")
+    with_ai = (faq / "first-change-with-ai.md").read_text(encoding="utf-8")
+    without_ai = (faq / "first-change-without-ai.md").read_text(encoding="utf-8")
+    assert "## Проход 1 — вместе с AI" in first_change
+    assert "## Проход 2 — без AI" in first_change
+    assert first_change.index("first-change-with-ai.md") < first_change.index(
+        "first-change-without-ai.md"
+    )
+    assert index.index("first-change-with-ai.md") < index.index(
+        "first-change-without-ai.md"
+    )
+
+    paired_tokens = (
+        "process/operation_dispatcher.py",
+        "_render_human",
+        "lines",
+        "output_lines",
+        "test_start_human_renderer_uses_the_same_next_command",
+        '--title "Rename internal renderer list variable"',
+        "sdd start new-requirement --role Analyst --fact classification=minor --json",
+        "sdd request create-change --role Analyst --json",
+        'sdd check classify-change --role "Tech Lead"',
+        "--role Developer --json",
+        "--role QA --json",
+        "sdd prepare prepare-spec-pr --role Developer",
+        "python -m pytest tests/test_self_service_onboarding.py::test_start_human_renderer_uses_the_same_next_command -q",
+        "evidence/baseline-test.txt",
+        "decisions/impact-review.md",
+        "spec_change.required: false",
+        "decisions/classification.md",
+        "Классификатор не доказывает",
+    )
+    for token in paired_tokens:
+        assert token in with_ai
+        assert token in without_ai
+
     for token in (
-        "sdd start new-requirement",
-        "sdd request create-change",
-        "sdd next --change",
-        "Analyst",
-        "Tech Lead",
-        "Developer",
-        "QA",
-        "## Где текущая автоматизация останавливается",
+        "C:/work/teamSddCli-ai",
+        "C:/work/faq-walkthrough-ai",
+        "sample-minor-ai-001",
     ):
-        assert token in first_change
+        assert token in with_ai
+        assert token not in without_ai
+    for token in (
+        "C:/work/teamSddCli-manual",
+        "C:/work/faq-walkthrough-manual",
+        "sample-minor-manual-001",
+    ):
+        assert token in without_ai
+        assert token not in with_ai
+
+    for token in (
+        "## Стартовый prompt",
+        "## Шаг 1. AI собирает evidence из repository",
+        "Сопоставь все 17 minor-condition IDs",
+        "Выполняй только эту команду",
+        "classification.human-confirmation-required",
+        "Разрешаю только показанный rename внутри _render_human",
+        "## Что именно подтверждает человек",
+        "Ответ `Выполняй` относится только к показанной команде",
+        "[тому же маршруту без AI](first-change-without-ai.md)",
+    ):
+        assert token in with_ai
+
+    assert "## Где текущая автоматизация останавливается" in without_ai
+    assert "--json?" not in with_ai
+    assert "--json?" not in without_ai
+    assert "behavior_change" not in with_ai
+    assert "behavior_change" not in without_ai
+    assert "--type refactor" in with_ai
+    assert "--type refactor" in without_ai
 
 
 def test_every_role_page_is_a_complete_start_runbook() -> None:
@@ -176,6 +237,27 @@ def test_validator_reports_required_page_not_linked_from_hub(tmp_path: Path) -> 
 
     errors = validate_product_faq(tmp_path)
     assert any("hub link is missing: installation.md" in error for error in errors)
+
+
+def test_validator_requires_complete_paired_first_change_sections(
+    tmp_path: Path,
+) -> None:
+    from scripts.validate_product_faq import validate_product_faq
+
+    faq = tmp_path / "docs" / "faq"
+    faq.mkdir(parents=True)
+    (faq / "first-change-with-ai.md").write_text(
+        "# AI route\nКанонический источник: x\n",
+        encoding="utf-8",
+    )
+    (faq / "first-change-without-ai.md").write_text(
+        "# Manual route\nКанонический источник: x\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_product_faq(tmp_path)
+    assert any("first-change section is missing" in error for error in errors)
+    assert any("paired first-change token is missing" in error for error in errors)
 
 
 def test_validator_rejects_stale_or_unsafe_ai_claims(tmp_path: Path) -> None:

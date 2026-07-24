@@ -137,6 +137,51 @@ python scripts/sdd.py next --change <fresh-temp>/changes/sample-minor-001 --role
 теперь требует использовать только `status`, запрещает ручное добавление
 `lifecycle_state` и сохраняет все human authority/mutation warnings.
 
+### FAQ-ACC-005 — не было сквозного первого change в паре с AI
+
+Классификация: подтверждённый content gap, исправлен в документации и
+regression checks; human walkthrough остаётся отдельным acceptance gate.
+
+Затронутое поведение: `first-change.md` показывал только ручную
+последовательность, а `ai-collaboration.md` — отдельные prompts и единичные
+команды. Новый пользователь не видел, как AI на одном change собирает признаки,
+предлагает `minor`, вызывает команды, объясняет raw JSON и останавливается для
+подтверждения. Порядок «сначала с AI, затем без AI» не был выражен в навигации.
+
+Дополнительный риск исходного примера: пользовательская подсказка могла
+считаться `user-scenario-change` и требовать `major`. Для tutorial выбран
+bounded non-behavior refactor: переименование локального списка `lines` в
+`output_lines` только внутри `process/operation_dispatcher.py::_render_human`,
+без runtime/output/public-contract impact, с existing focused regression test и
+revert rollback.
+
+Исправление:
+
+- `first-change.md` стал короткой точкой входа и показывает порядок двух
+  проходов;
+- `first-change-with-ai.md` содержит copy-paste prompt, проверку всех minor
+  conditions, candidate classification, exact отдельно разрешённые команды,
+  raw JSON, human confirmation stops, factual proposal/design/task/test/decision
+  artifacts, read-only classifier и честный specialist/mutation stop;
+- `first-change-without-ai.md` проводит ту же задачу по тем же deterministic
+  commands и human gates в отдельной clean practice-копии того же revision;
+- FAQ hub, AI/setup pages, OpenSpec proposal/design/spec/tasks, validator и
+  regression test фиксируют порядок, ссылки и authority boundary.
+
+Focused evidence после исправления:
+
+| Проверка | Результат | Классификация |
+| --- | --- | --- |
+| `python scripts/validate_product_faq.py --json` | `status: valid`, no errors | pass |
+| `python -m pytest tests/test_product_faq_docs.py -q` | `17 passed` | pass |
+| FAQ/onboarding/dispatcher/classification/packaged CLI suite | `74 passed` | pass |
+| `openspec validate --all --strict` | `22 passed, 0 failed` | pass |
+| Roadmap/OpenSpec validator | `0 errors`, 3 unrelated lifecycle warnings | pass with known warnings |
+| `git diff --check` | passed; repository line-ending notices only | pass |
+
+Task 5.5 фиксирует completed remediation. Task 4.4 остаётся unchecked: автор
+или synthetic test не заменяет первый проход документации новым человеком.
+
 ## Residual risk and next action
 
 Расширенная документация и real-package continuation готовы к содержательному

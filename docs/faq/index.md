@@ -23,7 +23,9 @@ Bitbucket и Jenkins не изменяются командами `sdd`.
 1. Прочитайте [что это, кому подходит и чем отличается от OpenSpec](product-and-foundation.md).
 2. Проверьте [требования и установите `sdd`](installation.md).
 3. Если вы готовите команду, создайте [центральное рабочее пространство](setup-and-topology.md).
-4. Пройдите [первый synthetic `minor` change](first-change.md).
+4. Пройдите [первый synthetic `minor` change](first-change.md):
+   сначала [в паре с AI](first-change-with-ai.md), затем
+   [тот же маршрут без AI](first-change-without-ai.md).
 
 ### Команда уже настроена, мне нужно начать работу
 
@@ -42,10 +44,10 @@ blocker и используйте specialist runbook.
 
 ### Я хочу работать через AI
 
-Начните со страницы [«Работа с AI»](ai-collaboration.md). Выберите один из двух
-режимов: AI только объясняет маршрут либо запускает явно разрешённую локальную
-команду с `--json`. В обоих случаях человек задаёт роль, проверяет факты и
-принимает решения.
+Для первого раза откройте [сквозной change вместе с AI](first-change-with-ai.md):
+AI сам предложит candidate class по фактам, покажет и вызовет разрешённые
+команды и запросит человеческие подтверждения. Общие правила, permissions и
+готовые prompts находятся на странице [«Работа с AI»](ai-collaboration.md).
 
 ## Быстрые ответы
 
@@ -83,7 +85,9 @@ preparation operations.
 - [НИС как основа корпоративного процесса](nis-foundation.md)
 - [Установка и проверка `sdd`](installation.md)
 - [Setup, `team-specs` и подключение проекта](setup-and-topology.md)
-- [Первый change от требования до безопасной остановки](first-change.md)
+- [Первый change: порядок двух проходов](first-change.md)
+  - [сначала в паре с AI](first-change-with-ai.md)
+  - [затем тот же change без AI](first-change-without-ai.md)
 - [Ежедневный lifecycle, классы и evidence](daily-workflow.md)
 - [Начать по своей роли](roles/index.md)
 - [Практическая работа с AI](ai-collaboration.md)

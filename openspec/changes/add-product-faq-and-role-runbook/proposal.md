@@ -9,6 +9,7 @@
 - Добавить полноформатный runbook «Начать работу» для Analyst, Tech Lead, Developer, QA и владельца процесса.
 - Описать уже принятый self-service интерфейс: установленный `sdd`, `sdd setup`, `sdd start`, `sdd next`, JSON/human output и fail-closed execution boundary.
 - Описать совместную работу с AI: AI может пользоваться `sdd` от имени человека в разрешённых границах и может объяснять процесс без CLI, но не заменяет команды, deterministic gates или human authority.
+- Дать один сквозной synthetic `minor` пример в двух проходах: сначала AI сам собирает evidence, предлагает candidate class, вызывает отдельно разрешённые команды и запрашивает подтверждения человека; затем тот же change выполняется без AI.
 - Зафиксировать правила пользователя: канонические источники, обязательные решения человека, evidence, запрет на обход подтверждений и порядок действий при недоступном AI/интеграции.
 - Добавить FAQ об установке, `team-specs`, существующем коде, change lifecycle, minor/major/hotfix, CI, privacy, failures, release и corporate pilot.
 

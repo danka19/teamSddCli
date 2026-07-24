@@ -8,6 +8,24 @@ Last status reconciliation: 2026-07-23.
 
 - P3 lifecycle source reconciliation, findings, and remediation evidence are recorded in `docs/audits/P3_STATUS_RECONCILIATION_AUDIT_2026-07-23.md`.
 
+## Product FAQ paired first-minor walkthrough (2026-07-24)
+
+- Human feedback identified that the existing first-change page was manual-only
+  and the generic AI page did not show one real change from candidate
+  classification through command invocation, confirmation stops and fallback.
+- The FAQ now presents one bounded non-behavior refactor twice: AI-first, then
+  without AI in a separate clean checkout/workspace of the same revision. Both
+  routes use the same command pattern, factual artifacts, roles and current
+  fail-closed mutation boundary.
+- AI is allowed to evaluate all minor conditions, propose `minor`, invoke
+  separately authorized local commands and explain raw JSON. Tech Lead still
+  owns classification; the human still owns `--confirm`, command authorization,
+  DoR/DoD, risk, lifecycle, release and archive decisions.
+- The first-time human walkthrough remains unrecorded. OpenSpec task 4.4 stays
+  open; this documentation remediation does not claim final acceptance.
+- Durable evidence and the remaining gate are recorded in
+  `docs/audits/PRODUCT_FAQ_AND_ROLE_RUNBOOK_ACCEPTANCE_AUDIT_2026-07-24.md`.
+
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
 - Immutable successor `p3-analytics-v0.3.6-rc2` was built and manifest-validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.

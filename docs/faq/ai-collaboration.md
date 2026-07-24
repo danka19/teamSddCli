@@ -9,6 +9,10 @@ AI здесь — интерфейс к контексту и локальным
 процесса. Сначала человек задаёт роль, задачу, sources, разрешённые действия и
 stop point. Затем выбирает один из двух режимов.
 
+Если нужен не отдельный prompt, а полный реальный пример, начните со
+[сквозного первого `minor` change вместе с AI](first-change-with-ai.md), а
+после него повторите [тот же маршрут без AI](first-change-without-ai.md).
+
 <!-- faq-question: ai-permissions -->
 
 ## Перед началом сессии
@@ -196,4 +200,5 @@ source conflict/отсутствие инструмента, не выбират
 5. Передайте результат human owner.
 
 Отключение AI не отменяет ни один gate. Детали сбоев находятся в
-[troubleshooting](troubleshooting-and-boundaries.md).
+[troubleshooting](troubleshooting-and-boundaries.md). Для прямого сравнения
+пройдите [manual-версию первого change](first-change-without-ai.md).
