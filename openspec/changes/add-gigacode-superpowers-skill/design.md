@@ -70,6 +70,8 @@ payload получает `0.3.8`. Исторические release/certification
 - [Bootstrap забудет новый файл] → проверять exact inventory из manifest.
 - [Локальная настройка будет перезаписана] → сохранять fail-closed managed-file
   conflict без перезаписи.
+- [Вложенный symlink/junction перенаправит write/delete наружу] → проверять
+  каждый существующий ancestor declared target до подготовки mutations.
 
 ## Migration Plan
 
@@ -79,8 +81,9 @@ payload получает `0.3.8`. Исторические release/certification
 4. При rollback удалять исчезнувший из target manifest managed-файл только
    после byte-for-byte проверки против текущего package; локальное изменение
    блокирует операцию до любых mutations.
-5. Повысить package version и обновить setup docs.
-6. Проверить bootstrap, update/rollback conflict, package regressions и OpenSpec.
+5. Блокировать nested symlink/reparse ancestry для каждого managed target.
+6. Повысить package version и обновить setup docs.
+7. Проверить bootstrap, update/rollback conflict, package regressions и OpenSpec.
 
 Rollback восстанавливает target package contract: неизменённый managed-файл,
 которого нет в старом manifest, удаляется; локально изменённый файл не

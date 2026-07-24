@@ -16,6 +16,9 @@
 - [x] 2.4 При rollback удалять новый managed-файл только при совпадении с
   current package bytes; блокировать локальное изменение и сохранять
   undeclared пользовательские `.gigacode`-файлы.
+- [x] 2.5 Блокировать nested symlink/reparse ancestry для managed GigaCode
+  target до write/delete и package/config mutations; сохранить внешний sentinel
+  в adversarial regression test.
 
 ## 3. Документация и evidence
 

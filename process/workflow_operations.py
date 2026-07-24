@@ -942,10 +942,7 @@ def _prepare_gigacode_update(
         source = candidate_files.get(relative)
         previous = previous_files.get(relative)
         target = managed_root / relative
-        try:
-            target.relative_to(managed_root)
-        except ValueError as error:
-            raise OperationError("gigacode-target-unsafe", "managed GigaCode file escapes .gigacode") from error
+        _assert_managed_target_safe(managed_root, target)
         if target.exists():
             if not target.is_file() or _is_link_or_reparse(target):
                 raise OperationError("gigacode-managed-file-conflict", target.as_posix())
@@ -958,6 +955,30 @@ def _prepare_gigacode_update(
         elif source is not None:
             changes.append((source, target, None))
     return changes
+
+
+def _assert_managed_target_safe(managed_root: Path, target: Path) -> None:
+    """Reject lexical escapes and redirected/non-directory target ancestry."""
+    try:
+        relative = target.relative_to(managed_root)
+    except ValueError as error:
+        raise OperationError(
+            "gigacode-target-unsafe",
+            "managed GigaCode file escapes .gigacode",
+        ) from error
+    current = managed_root
+    for part in relative.parts[:-1]:
+        current /= part
+        if _is_link_or_reparse(current):
+            raise OperationError(
+                "gigacode-target-unsafe",
+                "managed GigaCode target ancestry contains a link or reparse point",
+            )
+        if current.exists() and not current.is_dir():
+            raise OperationError(
+                "gigacode-target-unsafe",
+                "managed GigaCode target ancestry must contain only directories",
+            )
 
 
 def _gigacode_template_files(package_root: Path | None) -> dict[str, Path]:

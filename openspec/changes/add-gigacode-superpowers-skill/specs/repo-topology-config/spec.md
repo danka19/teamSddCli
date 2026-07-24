@@ -10,7 +10,10 @@ files точный GigaCode-набор: `.gigacode/AGENTS.md`,
 перезаписывать остальные пользовательские `.gigacode`-файлы. Rollback SHALL
 удалять managed-файл, отсутствующий в target manifest, только если его bytes
 совпадают с текущей установленной package-версией; иначе rollback SHALL fail
-closed до package/config mutations.
+closed до package/config mutations. Bootstrap, update и rollback SHALL также
+fail closed, если существующий ancestor declared target под `.gigacode`
+является symlink/reparse point или не-directory, и SHALL NOT читать, писать или
+удалять данные через такой redirected path.
 
 #### Scenario: Fresh bootstrap устанавливает оба skill
 
@@ -26,3 +29,8 @@ closed до package/config mutations.
 
 - **WHEN** rollback возвращает package к версии, где `skills/superpowers.md` ещё не объявлен
 - **THEN** неизменённый package-файл удаляется, произвольные пользовательские `.gigacode`-файлы сохраняются, а локально изменённый Superpowers вместо удаления блокирует rollback с `gigacode-managed-file-conflict`
+
+#### Scenario: Вложенный junction не перенаправляет managed operation
+
+- **WHEN** `.gigacode/skills` является symlink или Windows reparse point во внешний каталог
+- **THEN** bootstrap, update или rollback блокируется с filesystem-safe diagnostic до package/config и внешних file mutations

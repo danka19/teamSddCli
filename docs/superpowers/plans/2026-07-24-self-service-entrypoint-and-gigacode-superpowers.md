@@ -2,6 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Integration note (2026-07-24):** шаги ниже фиксируют первоначальное
+> выполнение относительно base `59bdb60`, где feature готовила `0.3.7`.
+> После независимого появления AI Analyst package `0.3.7` в `main` итоговый
+> combined payload получил `0.3.8` в merge-коммите `e18bb56`. Упоминания
+> `0.3.7` внутри выполненных шагов являются историческим RED/GREEN evidence и
+> не задают текущую package identity.
+
 **Goal:** Вынести public `sdd` self-service entrypoint в отдельную FAQ-страницу, точно объяснить состав полного управляемого цикла и поставить обязательный общий Superpowers skill во все bootstrap GigaCode workspace.
 
 **Architecture:** `docs/README.md` остаётся кратким архитектурным обзором и сразу ведёт на одну пользовательскую self-service страницу; FAQ показывает public, specialist/manual и external слои без дублирования нормативной policy. GigaCode получает отдельный общий workflow skill, который активируется до SDD companion и поставляется как versioned managed file через существующий package manifest/bootstrap/update механизм.
@@ -16,7 +23,7 @@
 - Classification, acceptance, DoR/DoD, risk, waiver, merge, release и archive остаются human-owned.
 - Новый `process/gigacode/skills/superpowers.md` является GigaCode-readable tool-agnostic workflow skill, а не копией runtime-specific глобального Codex plugin.
 - Активация GigaCode skills имеет порядок `superpowers -> sdd-process-companion` для SDD-задач.
-- Process package patch version меняется ровно с `0.3.6` на `0.3.7`; immutable release/certification evidence со старыми версиями не переписывается.
+- Current combined process package identity — `0.3.8`; immutable release/certification evidence со старыми версиями не переписывается.
 - OpenSpec backfill выполняется после рабочей реализации согласно явному разрешению владельца, но до итоговой acceptance verification.
 - Не выполнять push, merge, release candidate build, external mutation или archive без отдельного запроса владельца.
 
