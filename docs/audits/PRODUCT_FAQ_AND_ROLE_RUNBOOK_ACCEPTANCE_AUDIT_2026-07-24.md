@@ -68,11 +68,85 @@ following the documentation.
 Remediation decision: restore task 4.4 as unchecked. Do not set the proposal
 or roadmap status to `accepted` until a human records the walkthrough outcome.
 
+### FAQ-ACC-003 — исходный FAQ прошёл structural checks, но не прошёл content acceptance
+
+Классификация: подтверждённый дефект документации, высокая критичность для
+onboarding.
+
+Затронутое поведение: исходный FAQ из 13 страниц содержал около 1 230
+разделённых пробелами слов, а каждая ролевая страница — только 48-62. Страницы
+называли темы и первую команду, но не давали исполнимый installation route,
+first-change tutorial, role prerequisites/inputs, ожидаемые результаты, полные
+evidence/handoff/fallback инструкции, практическую AI-настройку и конкретное
+сравнение продукта. Human owner 2026-07-24 явно отклонил результат как
+существенно не соответствующий исходному запросу на полный FAQ и
+полноформатные role runbooks.
+
+Подтверждённая причина: `validate_product_faq.py` проверял наличие
+question-markers, links, canonical-source labels и двух safety strings, но не
+task-oriented content. Поэтому `valid` и пять documentation tests доказывали
+целостность навигации, а не возможность выполнить пользовательскую задачу.
+
+Исправление: направить feedback как `adopt_now` в active change; расширить FAQ
+до 16 связанных страниц и примерно 8 951 разделённого пробелами слова; дать
+каждой role page одинаковую рабочую структуру из десяти разделов; добавить
+installation, setup/topology, first-change и glossary; расширить product
+comparison, AI, roadmap и troubleshooting; заставить validator отклонять
+отсутствующие обязательные страницы или role sections.
+
+Доказательства исправления:
+
+| Проверка | Результат | Классификация |
+| --- | --- | --- |
+| `python -m pytest -q -o addopts='' --basetemp <fresh-temp> tests/test_product_faq_docs.py tests/test_self_service_onboarding.py tests/test_operation_catalog_dispatcher.py` | `47 passed` | pass |
+| `python scripts/validate_product_faq.py --json` | `status: valid`, no errors | pass |
+| Clean venv `pip install --no-deps .` plus `sdd --version/setup/start/request` walkthrough | package `0.3.6`; setup blocked without confirmation, created with confirmation; request non-authoritative | pass, synthetic only |
+| `openspec validate --all --strict` | `21 passed, 0 failed` | pass |
+| Roadmap/OpenSpec validator | `0 errors`, 2 unrelated historical lifecycle warnings | pass with known warnings |
+
+Остаточная неопределённость: проверки доказывают внутреннюю согласованность
+расширенного content и документированных local commands. Они не доказывают,
+что first-time human пройдёт страницы без помощи. Task 4.4 остаётся
+неотмеченной, а change — `in_progress`.
+
+### FAQ-ACC-004 — `sdd next` не читает lifecycle state реального schema-v2 package
+
+Классификация: подтверждённый product/documentation blocker, высокая
+критичность для first-change и role onboarding.
+
+Затронутое поведение: documented Developer/QA continuation использует
+`sdd next --change <path> --role <role>`. Реальный change, созданный штатным
+schema-v2 `create_change`, содержит `status: draft`. Dispatcher читает только
+`lifecycle_state`, поэтому возвращает safe blocker `missing-lifecycle-state`
+до формирования role route.
+
+Подтверждённая причина: `process/templates/change/change.yaml` владеет полем
+`status`, а `process/operation_dispatcher.py` ищет `lifecycle_state`.
+Существующий onboarding test создаёт handcrafted `change.yaml` только с
+`lifecycle_state: approved` и тем самым не проверяет real-package contract.
+
+Воспроизводимое evidence:
+
+1. `sdd setup <fresh-workspace> --confirm --json` — `status: created`.
+2. `create_change ... --classification minor ...` — real schema-v2 package,
+   `status: draft`.
+3. `sdd next --change <real-change> --role Developer --json` —
+   `status: blocked`, blocker `missing-lifecycle-state`, no lifecycle/external
+   mutation.
+
+Routing decision: не исправлять accepted CLI behavior внутри docs-only
+remediation. FAQ теперь явно показывает blocker и запрещает вручную добавлять
+второе lifecycle field. Отдельный OpenSpec change должен выбрать canonical
+field/compatibility behavior и добавить real-package e2e test. FAQ task 5.4
+возвращена в unchecked.
+
 ## Residual risk and next action
 
-The documentation and deterministic checks are ready. Acceptance is deliberately
-paused rather than inferred from synthetic tests: a new operator must follow
-`docs/faq/index.md`, run the safe local route appropriate to their role, and
-record whether the instructions were sufficient and which command or question
-was unclear. That single record completes task 4.4 and permits a separate human
-acceptance decision; sync/archive remain separate actions.
+Расширенная документация готова к содержательному review, но не к финальному
+first-time walkthrough: сначала требуется устранить `FAQ-ACC-004` через
+отдельный принятый CLI contract и доказать `sdd next` на real package.
+После этого новый operator должен пройти `docs/faq/index.md`, выполнить
+безопасный локальный маршрут своей роли и записать, хватило ли инструкции и
+какая команда или формулировка осталась непонятной. Только эта запись завершает
+task 4.4 и позволяет принять отдельное human acceptance decision; sync/archive
+остаются отдельными действиями.

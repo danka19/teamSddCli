@@ -1,6 +1,6 @@
 # Implementation Strategy: SDD Automation Without a Custom `sdd` CLI
 
-Status: accepted by the human owner on 2026-07-03; target classification and corporate governance refined by `D-013` on 2026-07-13; automation horizon refined by `D-014` on 2026-07-14.
+Status: accepted by the human owner on 2026-07-03; target classification and corporate governance refined by `D-013` on 2026-07-13; automation horizon refined by `D-014` on 2026-07-14. Обоснованный `T6` и `D-021` bounded self-service launcher реализован без изменения решения не строить монолитную CLI-платформу.
 
 This document resolves open decision 5.2 from `docs/audits/ARCHITECTURE_CRITIQUE_2026-07-03.md`. The historical architecture draft that originally motivated the project was removed on 2026-07-06 after current decisions moved into `docs/` and `openspec/`; this strategy defines how the process is delivered first.
 
@@ -18,7 +18,13 @@ Hard rule: no gated action may depend on the AI layer. Every gate must be execut
 
 This hard rule defines the reliability floor, not the final automation ceiling. The first release proves that the process survives AI failure or absence. After the process and pilot are stable, AI is expected to automate more bounded process work while deterministic validation checks its outputs and non-delegable human decisions remain explicit.
 
-A custom `sdd` CLI is built only when the trigger criteria in section 6 fire, and then incrementally, targeting the specific proven friction (most likely `change new/validate` ergonomics first), never as an upfront platform.
+Custom `sdd` CLI строится только после срабатывания criteria из раздела 6 и
+только инкрементально для доказанной проблемы, а не как upfront platform.
+`D-021` зафиксировал провал scenario-based onboarding и тем самым активировал
+`T6`. Текущий установленный `sdd` — тонкий public launcher поверх существующих
+deterministic modules: он даёт setup, situation-first guidance, continuation,
+catalog, check, prepare и request routes. Это не централизованная автономная
+платформа, а mutation execution остаётся fail-closed.
 
 ## 2. OpenSpec Reference
 

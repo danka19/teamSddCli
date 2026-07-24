@@ -21,3 +21,10 @@
 - [x] 4.2 Add positive and negative tests for broken links, missing FAQ coverage, stale status claims and AI-authority wording.
 - [x] 4.3 Run documentation checks, relevant regression tests, `openspec validate --all --strict`, roadmap/OpenSpec validation and `git diff --check`.
 - [ ] 4.4 Record the user walkthrough of a first-time operator and update the FAQ maintenance ownership/process.
+
+## 5. Content acceptance remediation
+
+- [x] 5.1 Заменить summary-only onboarding связанными страницами installation, setup/topology, first-change и glossary с командами, ожидаемыми результатами, handoff и честными stop points.
+- [x] 5.2 Расширить страницы Analyst, Tech Lead, Developer, QA и process owner через единый полный runbook: prerequisites, inputs, нумерованный маршрут, evidence, authority limits, handoff, failure handling, AI и completion checklist.
+- [x] 5.3 Расширить product comparison, практическую пользу, AI cookbook, troubleshooting и plain-language roadmap без дублирования нормативной OpenSpec policy.
+- [ ] 5.4 Усилить deterministic FAQ validation и tests, чтобы наличие markers/links не заменяло обязательные task-oriented sections и smoke documented commands; real-package `sdd next` smoke остаётся blocked до согласования `status`/`lifecycle_state`.

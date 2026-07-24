@@ -207,7 +207,37 @@ Affected architecture: installed local CLI wrapper, controlled local bootstrap, 
 Data contract impact: CLI result contract and documentation navigation metadata may be added; no credentials or external API contract is added.
 Verification impact: clean-sandbox onboarding walkthrough, CLI compatibility tests, navigation/link checks, role/AI FAQ coverage, and regression checks for P3 fail-closed mutations.
 Status: partially accepted: self-service onboarding accepted; FAQ/runbook remains planned.
-State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive; `add-product-faq-and-role-runbook` owns human documentation and must not silently duplicate OpenSpec requirements.
+State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive; `add-product-faq-and-role-runbook` owns human documentation, is now `in_progress` after the 2026-07-24 content-acceptance rejection, and must not silently duplicate OpenSpec requirements.
+```
+
+### Change Intake — полнота FAQ и role runbooks (2026-07-24)
+
+```text
+Idea: заменить краткие карточки FAQ полноценным многостраничным onboarding, first-change tutorial и исполнимыми role runbooks.
+Source: человеческая проверка FAQ 2026-07-24; владелец прямо отклонил текущую глубину как не соответствующую исходному запросу.
+Type: scope_refinement, documentation_change, verification_change.
+Decision: adopt_now.
+Reason: исходный proposal уже обещает полноценный FAQ и полноформатный runbook; принятие summary-only страниц сделало бы текущий change неверным, поэтому это уточнение acceptance, а не новая capability.
+Affected specs: active product-faq-and-role-runbook and documentation-governance deltas.
+Affected architecture: только user-facing documentation view и её deterministic validation; CLI, lifecycle, authority, data contracts and integrations не меняются.
+Data contract impact: none.
+Verification impact: required task-oriented sections, documented command smoke checks and mandatory first-time human walkthrough.
+Status: in_progress.
+```
+
+### Change Intake — schema-v2 continuation через `sdd next` (2026-07-24)
+
+```text
+Idea: согласовать `sdd next` с каноническим lifecycle field реального schema-v2 change package.
+Source: independent FAQ review и воспроизводимый walkthrough 2026-07-24.
+Type: bug_fix, cli_or_workflow_behavior_rule, verification_change, documentation_change.
+Decision: create_openspec_change.
+Reason: реальный `create_change` записывает `status: draft`, а dispatcher читает только `lifecycle_state`; существующий synthetic test использует неканонический handcrafted input и не доказывает continuation. Исправление меняет accepted public CLI behavior и не должно маскироваться docs-only patch.
+Affected specs: self-service-operator-onboarding, guided-operation-dispatcher; product FAQ остаётся derived view.
+Affected architecture: thin dispatcher parsing/compatibility boundary only; no mutation or external integration enablement.
+Data contract impact: решение должно выбрать canonical `status` либо formal migration/compatibility rule; ручное добавление второго field запрещено до принятого contract.
+Verification impact: real package `create -> sdd next` positive test, legacy/invalid field negatives, role continuation and no-mutation assertions.
+Status: pending human authorization; FAQ task 5.4 and first-time walkthrough remain blocked.
 ```
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
