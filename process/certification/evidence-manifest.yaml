@@ -1,24 +1,24 @@
 schema_version: '1.0'
 coverage:
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Fail-closed role-aware guidance
   scenario: Unknown role is blocked
   evidence:
   - pytest:tests/test_p3_vertical_slice.py::test_unknown_role_blocks_role_sensitive_guidance
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Fail-closed role-aware guidance
   scenario: Analyst cannot receive implementation CTA
   evidence:
   - pytest:tests/test_p3_vertical_slice.py::test_analyst_never_receives_implementation_cta
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Trusted revision-bound human acceptance
   scenario: UI confirmation is rejected
   evidence:
   - pytest:tests/test_p3_vertical_slice.py::test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Trusted revision-bound human acceptance
   scenario: Accepted revision differs from current spec
@@ -28,13 +28,13 @@ coverage:
     reason: No stale revision regression exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-acceptance-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Readiness preserves DoR
   scenario: Incomplete package remains blocked
   evidence:
   - pytest:tests/test_p3_vertical_slice.py::test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: MCP-free P3 guidance
   scenario: Existing-change route has no MCP fallback
@@ -44,7 +44,7 @@ coverage:
     reason: No MCP route regression exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-route-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Human-confirmed decision card
   scenario: Natural-language decision prepares but does not record
@@ -54,7 +54,7 @@ coverage:
     reason: No decision draft test exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-decision-card-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Human-confirmed decision card
   scenario: Card confirmation records only the active decision
@@ -64,7 +64,7 @@ coverage:
     reason: No active card test exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-decision-card-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Human-confirmed decision card
   scenario: Ambiguous chat text cannot record a decision
@@ -74,7 +74,7 @@ coverage:
     reason: No ambiguous text test exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-decision-card-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Proactive discovery completeness
   scenario: Material unknowns receive an explicit choice
@@ -84,7 +84,7 @@ coverage:
     reason: No discovery prompt test exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-discovery-coverage
-- source_kind: delta
+- source_kind: accepted
   capability: role-aware-guided-workflow
   requirement: Proactive discovery completeness
   scenario: Silence is not default acceptance
@@ -94,6 +94,42 @@ coverage:
     reason: No silence regression exists.
     compensation: Keep boundary visible.
     follow_up: openspec-change:p3-discovery-coverage
+- source_kind: accepted
+  capability: role-aware-guided-workflow
+  requirement: Non-authoritative operation confirmation binding
+  scenario: Missing, mismatched, future, expired, or extra operation evidence is blocked
+  evidence:
+  - pytest:tests/test_operation_catalog_dispatcher.py::test_operation_confirmation_contract_binds_catalog_role_input_revision_chain_and_expiry
+- source_kind: accepted
+  capability: role-aware-guided-workflow
+  requirement: Non-authoritative operation confirmation binding
+  scenario: Local request does not invent trusted ingress
+  evidence:
+  - pytest:tests/test_operation_catalog_dispatcher.py::test_request_never_fabricates_trusted_ingress_evidence
+- source_kind: accepted
+  capability: role-aware-guided-workflow
+  requirement: Non-authoritative operation confirmation binding
+  scenario: Operation confirmation never enables P3 execution
+  evidence:
+  - pytest:tests/test_operation_catalog_dispatcher.py::test_valid_operation_event_never_enables_run_or_external_mutation
+- source_kind: accepted
+  capability: role-aware-guided-workflow
+  requirement: Non-authoritative operation confirmation binding
+  scenario: External mutation remains forbidden
+  evidence:
+  - pytest:tests/test_operation_catalog_dispatcher.py::test_valid_operation_event_never_enables_run_or_external_mutation
+- source_kind: accepted
+  capability: documentation-governance
+  requirement: Operation table is a validated derived documentation view
+  scenario: Catalog change is reflected deterministically
+  evidence:
+  - pytest:tests/test_operation_catalog_dispatcher.py::test_catalog_validator_checks_derived_contracts_and_generated_readme
+- source_kind: accepted
+  capability: repo-topology-config
+  requirement: Process package carries operation-dispatch assets
+  scenario: Bootstrap carries one coherent operation contract
+  evidence:
+  - pytest:tests/test_packaged_flow_cli.py::test_bootstrap_accepts_the_declared_operations_catalog
 - source_kind: delta
   capability: typed-analytics-artifact-framework
   requirement: Typed analytics package

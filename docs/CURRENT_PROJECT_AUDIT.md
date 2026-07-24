@@ -396,6 +396,11 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
   `docs/faq/setup-and-topology.md`,
   `docs/faq/ai-collaboration.md` и
   `docs/faq/troubleshooting-and-boundaries.md`.
+- Предпубликационная сверка 2026-07-24 исправила три stale package references:
+  certification coverage и P3 read pack теперь используют принятый living spec
+  `openspec/specs/role-aware-guided-workflow/spec.md`; guided-owner marker
+  соответствует текущим route/operation catalogs; release-candidate exact
+  inventory учитывает allowlisted `validate_product_faq.py`.
 
 ## P3 Chat Decision and Discovery Intake (2026-07-21)
 
