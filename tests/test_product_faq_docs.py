@@ -165,6 +165,14 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
 
     ai = (faq / "ai-collaboration.md").read_text(encoding="utf-8")
     for token in (
+        "## Режим `analyst-discovery`: от сырой идеи к черновику",
+        "Помоги разобраться и оформить новую идею",
+        "сначала покажет темы интервью",
+        "по одному вопросу",
+        "`confirmed`",
+        "`proposed`",
+        "`unknown`",
+        "`conflict`",
         "## Режим 1: AI только объясняет",
         "## Режим 2: AI запускает разрешённую команду",
         "```text",
@@ -184,6 +192,23 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
 
     troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(encoding="utf-8")
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
+
+
+def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
+    page = (ROOT / "docs" / "faq" / "first-change-with-ai.md").read_text(
+        encoding="utf-8"
+    )
+    plain = "Помоги оформить небольшое изменение. Сначала помоги разобраться"
+    assert plain in page
+    assert page.index(plain) < page.index("## Стартовый prompt")
+    for token in (
+        "план тем",
+        "Можно пройти по этим темам?",
+        "по одному вопросу",
+        "итоговая сводка",
+        "показать первую команду",
+    ):
+        assert token in page
 
 
 def test_validator_reports_broken_link(tmp_path: Path) -> None:

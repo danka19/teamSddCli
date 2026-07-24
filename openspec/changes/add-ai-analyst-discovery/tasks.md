@@ -12,9 +12,9 @@
 
 ## 3. FAQ
 
-- [ ] 3.1 Добавить RED tests для человекочитаемого discovery route.
-- [ ] 3.2 Дополнить AI, Analyst и first-change pages.
-- [ ] 3.3 Усилить FAQ validator и подтвердить навигацию.
+- [x] 3.1 Добавить RED tests для человекочитаемого discovery route.
+- [x] 3.2 Дополнить AI, Analyst и first-change pages.
+- [x] 3.3 Усилить FAQ validator и подтвердить навигацию.
 
 ## 4. Пакет и документация
 
