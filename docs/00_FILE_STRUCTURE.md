@@ -36,7 +36,6 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/superpowers/specs/` | Approved design documents that precede implementation planning; OpenSpec remains the canonical proposed behavior contract |
 | `docs/superpowers/plans/` | Detailed reviewed implementation plans; they guide execution but do not replace OpenSpec requirements |
-| `docs/superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md` | Согласованный дизайн permission-bound аналитического интервью и перехода к guided change |
 | `docs/superpowers/plans/2026-07-24-ai-analyst-companion.md` | Пошаговый TDD/OpenSpec-план реализации packaged AI companion |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
 | `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, failed-run retention, migration, and Phase 2/3 sequencing |

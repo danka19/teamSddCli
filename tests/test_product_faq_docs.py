@@ -206,6 +206,7 @@ def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
         "Можно пройти по этим темам?",
         "по одному вопросу",
         "итоговая сводка",
+        "по одному файлу за отдельное разрешение",
         "показать первую команду",
     ):
         assert token in page

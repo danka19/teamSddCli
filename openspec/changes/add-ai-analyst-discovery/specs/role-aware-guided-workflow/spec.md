@@ -30,13 +30,20 @@ Companion SHALL разделять `confirmed`, `proposed`, `unknown` и `confli
 
 ### Requirement: Permission-bound draft creation
 
-Companion SHALL создавать proposal, Delta Spec, optional design и preliminary
-tasks только после подтверждения итоговой сводки.
+Companion SHALL предлагать applicable proposal, Delta Spec, optional design или
+preliminary tasks только после подтверждения итоговой сводки и SHALL готовить
+за одно действие только один черновик, разрешённый текущим stage.
 
 #### Scenario: Сводка ещё не подтверждена
 
 - **WHEN** интервью завершено, но человек не подтвердил понимание
 - **THEN** AI не создаёт и не редактирует файлы
+
+#### Scenario: Список документов не обходит stage boundary
+
+- **WHEN** итоговая сводка подтверждена и доступно несколько будущих документов
+- **THEN** AI предлагает только следующий применимый stage
+- **AND** не создаёт весь пакет одним действием
 
 ### Requirement: Explicit guided-change handoff
 

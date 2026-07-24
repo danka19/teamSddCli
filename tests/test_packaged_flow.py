@@ -189,6 +189,11 @@ def test_companion_keeps_discovery_and_action_permissions_separate() -> None:
     assert "после явного разрешения" in discovery
     assert "только после подтверждения итоговой сводки" in discovery
     assert "не создавай и не редактируй файлы" in discovery
+    assert "только один разрешённый текущим этапом черновик" in discovery
+    assert "прекращает вопросы" in discovery
+    assert "Ответ «не знаю» не заменяй догадкой" in discovery
+    assert "объясни влияние пробела" in discovery
+    assert "назначь вопрос владельцу решения" in discovery
 
 
 def test_update_rejects_modified_managed_gigacode_file_without_mutation(

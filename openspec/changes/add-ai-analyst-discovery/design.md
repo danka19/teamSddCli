@@ -30,6 +30,10 @@ GigaCode и устанавливается вместе с process package. Со
 AI не создаёт trusted evidence из обычного ответа чата и не принимает решения
 за Analyst, Tech Lead, Developer, QA либо владельца release/archive.
 
+Список возможных документов не отменяет stage boundary. За одно действие AI
+готовит только один разрешённый текущим этапом черновик; intake не получает
+spec/design/tasks раньше существующего process route.
+
 ## Достоверность
 
 Во время discovery companion поддерживает четыре класса утверждений:

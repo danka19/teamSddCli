@@ -26,11 +26,27 @@
 
 - [x] 5.1 Выполнить focused tests, FAQ validation, full pytest и strict
   OpenSpec validation.
-  Evidence (2026-07-24): fresh focused set `24 passed`; FAQ validator `valid`;
-  OpenSpec strict `24/24`; full pytest `801 passed, 11 skipped, 20 failed`.
+  Evidence (2026-07-24): первоначальный planned focused set — `22 passed`;
+  отдельный FAQ suite — `18 passed`, FAQ validator — `valid`; свежий
+  post-merge combined focused set (companion contract, FAQ, P3 authority,
+  package-version и launcher metadata) — `24 passed`; OpenSpec strict —
+  `24/24`; full pytest — `801 passed, 11 skipped, 20 failed`.
   Representative certification/guide/allowlist failures воспроизводятся на
   `main`; release rehearsal проходит из короткого `main` path, а deep worktree
   вызывает Windows path-length failures. Полный suite не объявляется зелёным.
-- [ ] 5.2 Провести независимое review ветки и устранить findings.
+- [x] 5.2 Провести независимое review ветки и устранить findings.
+  Evidence (2026-07-24): final independent re-review — specification compliance
+  `PASS`, code quality `PASS`, actionable findings отсутствуют.
 - [ ] 5.3 Провести реальный first-time human walkthrough; до него change не
   считать human-accepted.
+
+## 6. Трассировка сценариев
+
+| Delta Spec scenario | Автоматическая проверка | FAQ evidence | Ручная проверка |
+|---|---|---|---|
+| Человек разрешает углубление | `test_companion_keeps_discovery_and_action_permissions_separate` | `docs/faq/ai-collaboration.md`, `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
+| Человек запрещает дальнейшие вопросы | `test_companion_keeps_discovery_and_action_permissions_separate` | `docs/faq/ai-collaboration.md`, `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
+| Ответ неизвестен или противоречив | `test_companion_keeps_discovery_and_action_permissions_separate` | `docs/faq/ai-collaboration.md`, `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
+| Сводка ещё не подтверждена | `test_companion_keeps_discovery_and_action_permissions_separate` | `docs/faq/ai-collaboration.md`, `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
+| Список документов не обходит stage boundary | `test_companion_keeps_discovery_and_action_permissions_separate` | `docs/faq/ai-collaboration.md`, `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
+| Переход к действию | `test_companion_keeps_discovery_and_action_permissions_separate`, `test_ai_walkthrough_starts_with_plain_language_discovery` | `docs/faq/first-change-with-ai.md` | pending: task 5.3 |
