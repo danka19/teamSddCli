@@ -396,6 +396,9 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
   `docs/faq/setup-and-topology.md`,
   `docs/faq/ai-collaboration.md` и
   `docs/faq/troubleshooting-and-boundaries.md`.
+- Корневой `README.md` добавлен как GitHub/repository entrypoint с разрешимыми
+  ссылками `docs/faq/...`; `docs/README.md` сохраняет подробное описание
+  проекта и свои относительные `faq/...` ссылки.
 - Предпубликационная сверка 2026-07-24 исправила три stale package references:
   certification coverage и P3 read pack теперь используют принятый living spec
   `openspec/specs/role-aware-guided-workflow/spec.md`; guided-owner marker

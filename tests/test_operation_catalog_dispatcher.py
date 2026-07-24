@@ -361,7 +361,10 @@ def test_catalog_validator_checks_derived_contracts_and_generated_readme(tmp_pat
 
     errors = validate_operations_catalog(ROOT)
     assert errors == []
-    assert "| Operation | Role | Situation | Boundary | Runbook |" in generate_operation_table(ROOT)
+    table = generate_operation_table(ROOT)
+    assert "| Operation | Role | Situation | Boundary | Runbook |" in table
+    assert "[docs/README.md](README.md)" in table
+    assert "[docs/README.md](docs/README.md)" not in table
 
 
 def test_execution_requires_an_explicit_permitted_role(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:

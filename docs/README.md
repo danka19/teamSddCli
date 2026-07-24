@@ -178,15 +178,15 @@ specialist/manual и external/corporate слоям без дублировани
 <!-- operation-table:begin -->
 | Operation | Role | Situation | Boundary | Runbook |
 | --- | --- | --- | --- | --- |
-| classify-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
-| create-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | mutate_local/medium | [docs/README.md](docs/README.md) |
-| evaluate-change-gates | Analyst, Tech Lead, Developer, QA | existing-change, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
-| guided-owner-workflow | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
-| manual-fallback | Analyst, Tech Lead, Developer, QA | blocked-operation | prepare/low | [docs/README.md](docs/README.md) |
-| prepare-archive | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
-| prepare-spec-pr | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
-| preview-analytics | Analyst, Tech Lead, Developer, QA | on demand | read_only/low | [docs/README.md](docs/README.md) |
-| sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
+| classify-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | read_only/low | [docs/README.md](README.md) |
+| create-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | mutate_local/medium | [docs/README.md](README.md) |
+| evaluate-change-gates | Analyst, Tech Lead, Developer, QA | existing-change, urgent-incident | read_only/low | [docs/README.md](README.md) |
+| guided-owner-workflow | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](README.md) |
+| manual-fallback | Analyst, Tech Lead, Developer, QA | blocked-operation | prepare/low | [docs/README.md](README.md) |
+| prepare-archive | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](README.md) |
+| prepare-spec-pr | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](README.md) |
+| preview-analytics | Analyst, Tech Lead, Developer, QA | on demand | read_only/low | [docs/README.md](README.md) |
+| sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](README.md) |
 <!-- operation-table:end -->
 
 Ниже приведена историческая инвентаризация 30 локальных CLI на 2026-07-22. Она не является политикой полномочий. Актуальное генерируемое представление public/deprecated операций находится после инвентаризации и строится только из `process/catalogs/operations.yaml`.

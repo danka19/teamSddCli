@@ -22,11 +22,23 @@ ROLE_SECTIONS = (
 
 
 def test_readme_keeps_a_human_readable_utf8_faq_entrypoint() -> None:
-    readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
-    assert "## Начать с FAQ" in readme
-    assert readme.index("faq/self-service-entrypoint.md") < readme.index("## Summary")
-    assert "`r`n" not in readme
-    assert "РўРµ" not in readme
+    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    docs_readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+
+    for target in (
+        "docs/faq/self-service-entrypoint.md",
+        "docs/faq/index.md",
+        "docs/faq/first-change.md",
+    ):
+        assert target in root_readme
+        assert (ROOT / target).is_file()
+
+    assert "## Начать с FAQ" in docs_readme
+    assert docs_readme.index("faq/self-service-entrypoint.md") < docs_readme.index(
+        "## Summary"
+    )
+    assert "`r`n" not in root_readme + docs_readme
+    assert "РўРµ" not in root_readme + docs_readme
 
 
 def test_self_service_entrypoint_explains_the_whole_governed_route() -> None:

@@ -229,6 +229,14 @@ def validate_product_faq(root: Path) -> list[str]:
         f"required page is missing: {name}"
         for name in sorted(REQUIRED_PAGES - found_pages)
     ]
+    root_readme = root / "README.md"
+    if (
+        not root_readme.is_file()
+        or "docs/faq/self-service-entrypoint.md"
+        not in root_readme.read_text(encoding="utf-8")
+    ):
+        errors.append("root README self-service entrypoint link is missing")
+
     readme = root / "docs" / "README.md"
     if (
         not readme.is_file()
