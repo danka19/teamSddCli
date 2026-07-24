@@ -67,6 +67,27 @@ analytics preview не является полной аналитической 
 доступны. AI не получает authority: не подтверждает классификацию, риск,
 waiver, merge, release или archive и не подставляет `--confirm` вместо человека.
 
+### AI Analyst Discovery
+
+**Что это.** Установленный companion принимает обычную фразу аналитика,
+показывает план тем, после разрешения задаёт по одному вопросу и разделяет
+`confirmed`, `proposed`, `unknown` и `conflict`. После подтверждённой сводки он
+предлагает только один разрешённый текущим stage черновик и отдельно спрашивает
+о переходе к командам.
+
+**Для чего.** Аналитик может превратить сырую идею в проверяемый draft без
+копирования длинного технического prompt и без выдачи догадки AI за требование.
+
+**Статус и граница.** Реализация уже входит в process package `0.3.7`;
+OpenSpec change `add-ai-analyst-discovery` выполнен на `12/13`. Capability
+работает сейчас, но остаётся `pending_acceptance`: first-time human walkthrough
+ещё не записан. AI не создаёт весь пакет одним действием и не принимает
+classification, approval, merge, release или archive за человека.
+
+- [Первый minor change вместе с AI](first-change-with-ai.md)
+- [Правила работы с AI](ai-collaboration.md)
+- [OpenSpec change](../../openspec/changes/add-ai-analyst-discovery/proposal.md)
+
 ## Следующее
 
 ### Проверка FAQ человеком, который впервые видит продукт
@@ -81,6 +102,20 @@ real-package route, объяснить границы полномочий и у
 **Статус и граница.** Это незакрытая задача 4.4 change
 `add-product-faq-and-role-runbook`. До человеческого walkthrough FAQ не получает
 финальную content acceptance.
+
+### Проверка AI-интервью аналитиком
+
+**Что это.** Человек, который впервые использует companion, должен начать
+простой фразой и проверить план тем, вопросы по одному, обработку «не знаю»,
+подтверждение сводки, один разрешённый draft и остановку перед первой командой.
+
+**Для чего.** Контрактные тесты подтверждают инструкции и границы полномочий,
+но не доказывают, что живой диалог удобен аналитику без знания внутренних
+команд.
+
+**Статус и граница.** Это открытая task 5.3 change
+`add-ai-analyst-discovery`. Она блокирует human acceptance и archive, но не
+отменяет факт, что capability уже установлена и работает в package `0.3.7`.
 
 ### Portability перед корпоративной адаптацией
 
@@ -142,18 +177,6 @@ space/parent mappings, macros и adapter требуют corporate capability pro
 - [Implementation tasks](../../openspec/changes/define-fp-analytics-publication-model/tasks.md)
 - [Аудит исходного корпоративного шаблона](../audits/ANALYTIC_TEMPLATE_AND_CONFLUENCE_PUBLICATION_GAP_AUDIT_2026-07-24.md)
 - [Дизайн AI Analyst Discovery](../superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md)
-
-### AI Analyst Discovery Skill
-
-**Что это.** Ролевой AI-сценарий проведёт интервью с аналитиком, соберёт
-источники и вопросы, разделит подтверждённые факты, предложения, неизвестное и
-конфликты, затем подготовит проверяемый draft.
-
-**Для чего.** Аналитик быстрее превратит разрозненные знания в структурированный
-материал, не выдавая догадку модели за требование или доставленный факт.
-
-**Статус и граница.** Согласован design, но OpenSpec change и реализация ещё не
-созданы. Текущий источник — [дизайн AI Analyst Discovery](../superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md).
 
 ### Контролируемая публикация в Confluence
 

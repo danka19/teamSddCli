@@ -21,6 +21,7 @@ REQUIRED_QUESTIONS = {
     "change-classes",
     "evidence-ci",
     "ai-permissions",
+    "ai-analyst-discovery",
     "ai-prohibitions",
     "privacy",
     "failure-escalation",
@@ -59,6 +60,7 @@ ROLE_SECTIONS = {
 }
 WALKTHROUGH_SECTIONS = {
     "first-change-with-ai.md": {
+        "## Сначала простая фраза: аналитическое интервью",
         "## Учебная задача и точный scope",
         "## Перед началом: staged permissions",
         "## Стартовый prompt",
@@ -90,6 +92,15 @@ WALKTHROUGH_SECTIONS = {
         "## Где текущая автоматизация останавливается",
         "## Что считать успешным walkthrough",
     },
+}
+DISCOVERY_TOKENS = {
+    "Помоги разобраться и оформить новую идею",
+    "по одному вопросу",
+    "`confirmed`",
+    "`proposed`",
+    "`unknown`",
+    "`conflict`",
+    "показать первую команду",
 }
 PAIRED_WALKTHROUGH_TOKENS = {
     "process/operation_dispatcher.py",
@@ -135,6 +146,9 @@ REQUIRED_ROADMAP_TOKENS = frozenset(
         "одна полная актуальная страница",
         "отдельная страница каждого релизного инкремента",
         "AI Analyst Discovery",
+        "add-ai-analyst-discovery",
+        "12/13",
+        "process package `0.3.7`",
         "proposal.md",
         "design.md",
         "spec.md",
@@ -225,6 +239,13 @@ def validate_product_faq(root: Path) -> list[str]:
                 errors.append(
                     f"copy-paste command contains punctuation: {page.relative_to(root)}"
                 )
+        if page.name in {"ai-collaboration.md", "first-change-with-ai.md"}:
+            for token in sorted(DISCOVERY_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "AI discovery token is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
         if page.name == "roadmap.md":
             for token in sorted(REQUIRED_ROADMAP_TOKENS):
                 if token not in text:
