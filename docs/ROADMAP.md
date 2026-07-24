@@ -237,6 +237,7 @@ Likely scope:
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |
 | `define-transfer-ready-process-package` | P2 | P4 | in_progress |
+| `fix-sdd-next-canonical-status` | P3 | P4 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P4 | blocked |
 
 ## Phase Planning Rule
