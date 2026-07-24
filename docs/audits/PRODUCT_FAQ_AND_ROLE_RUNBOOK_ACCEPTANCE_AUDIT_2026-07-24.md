@@ -207,9 +207,17 @@ Evidence после исправления:
 | `openspec validate --all --strict` | `23 passed, 0 failed` | pass |
 | Roadmap/OpenSpec validator | `0 errors`, 3 unrelated lifecycle warnings | pass with known warnings |
 | `git diff --check` | passed | pass |
-| `openspec list` | FAQ `18/19`; publication model `0/70` | verified lifecycle boundary |
+| `openspec list` | FAQ `21/21`; publication model `0/70` | выполнение FAQ task подтверждено после acceptance владельца |
 
-## Residual risk and next action
+## Historical residual risk before final acceptance
+
+## Финальное human acceptance
+
+2026-07-24 владелец процесса принял текущее содержание FAQ и явно разрешил
+закрыть task 4.4 в проектной беседе. Дополнительные содержательные правки или
+изменения процесса сопровождения FAQ не запрошены. Закрыт только gate первого
+human walkthrough/content acceptance; OpenSpec sync и archive остаются
+отдельными человеческими lifecycle-решениями.
 
 Расширенная документация и real-package continuation готовы к содержательному
 review, но не к финальному first-time walkthrough. Новый operator должен пройти

@@ -21,7 +21,12 @@
 - [x] 4.1 Implement documentation navigation, required-question and canonical-reference validation.
 - [x] 4.2 Add positive and negative tests for broken links, missing FAQ coverage, stale status claims and AI-authority wording.
 - [x] 4.3 Run documentation checks, relevant regression tests, `openspec validate --all --strict`, roadmap/OpenSpec validation and `git diff --check`.
-- [ ] 4.4 Record the user walkthrough of a first-time operator and update the FAQ maintenance ownership/process.
+- [x] 4.4 Record the user walkthrough of a first-time operator and update the FAQ maintenance ownership/process.
+  Evidence (2026-07-24): владелец процесса принял текущее содержание FAQ и
+  явно разрешил закрыть этот gate в проектной беседе. Дополнительные правки или
+  изменения процесса сопровождения не запрошены; действующие FAQ-инструкции по
+  поддержке и эскалации остаются каноническими. Sync и archive остаются
+  отдельными lifecycle-решениями.
 
 ## 5. Content acceptance remediation
 
@@ -37,8 +42,9 @@
 - [x] 5.7 Перестроить FAQ-roadmap вокруг status legend и человекочитаемых capability-карточек; подробно описать `define-fp-analytics-publication-model`, связь с AI Analyst Discovery и отличия planned design от работающей функции; закрепить карточку validator/tests.
   Evidence (2026-07-24): roadmap capability-card contract, exact
   `define-fp-analytics-publication-model` links, FAQ validator/tests, strict
-  OpenSpec and roadmap/OpenSpec validation passed; task 4.4 remains the
-  independent first-time human walkthrough gate.
+  OpenSpec и roadmap/OpenSpec validation прошли. Позже владелец процесса принял
+  FAQ и явно закрыл независимый first-time human walkthrough gate 4.4
+  2026-07-24.
 - [x] 5.8 Объяснить package-managed GigaCode workflow: какие три файла
   устанавливает package `0.3.8`, почему Superpowers применяется до SDD
   companion и как update/rollback защищают локальные и пользовательские файлы.

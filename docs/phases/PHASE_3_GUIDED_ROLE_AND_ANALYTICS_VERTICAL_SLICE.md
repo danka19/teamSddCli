@@ -206,8 +206,9 @@ Affected specs: new `self-service-operator-onboarding` and `product-faq-and-role
 Affected architecture: installed local CLI wrapper, controlled local bootstrap, canonical FAQ navigation; no external integration boundary change.
 Data contract impact: CLI result contract and documentation navigation metadata may be added; no credentials or external API contract is added.
 Verification impact: clean-sandbox onboarding walkthrough, CLI compatibility tests, navigation/link checks, role/AI FAQ coverage, and regression checks for P3 fail-closed mutations.
-Status: partially accepted: self-service onboarding accepted; FAQ/runbook remains planned.
-State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive; `add-product-faq-and-role-runbook` owns human documentation, is now `in_progress` after the 2026-07-24 content-acceptance rejection, and must not silently duplicate OpenSpec requirements.
+Status: accepted: self-service onboarding и FAQ/runbook приняты; решения об
+их OpenSpec sync/archive остаются отдельными.
+State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive. `add-product-faq-and-role-runbook` owns human documentation, was accepted by the human owner on 2026-07-24 after the first-time walkthrough gate was explicitly closed, and must not silently duplicate OpenSpec requirements. Its sync and archive remain separate lifecycle decisions.
 ```
 
 ### Change Intake — полнота FAQ и role runbooks (2026-07-24)
@@ -237,7 +238,7 @@ Affected specs: self-service-operator-onboarding, guided-operation-dispatcher; p
 Affected architecture: thin dispatcher parsing/compatibility boundary only; no mutation or external integration enablement.
 Data contract impact: решение должно выбрать canonical `status` либо formal migration/compatibility rule; ручное добавление второго field запрещено до принятого contract.
 Verification impact: real package `create -> sdd next` positive test, legacy/invalid field negatives, role continuation and no-mutation assertions.
-Status: in_progress under separate change `fix-sdd-next-canonical-status`; FAQ task 5.4 completed after the separate change implementation and verified real-package smoke, while first-time human walkthrough task 4.4 remains open.
+Status: in_progress under separate change `fix-sdd-next-canonical-status`; FAQ task 5.4 completed after the separate change implementation and verified real-package smoke. Позже владелец процесса принял FAQ и закрыл его независимую first-time human walkthrough task 4.4 2026-07-24.
 State detail: the human owner explicitly authorized the separate change and accepted strict canonical `status` parsing without a `lifecycle_state` fallback on 2026-07-24. The change lifecycle remains `in_progress` pending human acceptance; this authorization does not pre-accept the implementation or archive outcome.
 ```
 

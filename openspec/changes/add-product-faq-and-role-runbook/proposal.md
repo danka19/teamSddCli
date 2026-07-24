@@ -27,7 +27,7 @@
 
 - Execution phase: P3
 - Related phases: P4
-- Lifecycle status: in_progress
+- Lifecycle status: accepted
 
 ## Impact
 
@@ -45,5 +45,6 @@ Affected specs: product-faq-and-role-runbook; references define-fp-analytics-pub
 Affected architecture: No product architecture change; FAQ becomes a checked human-readable view over roadmap/OpenSpec.
 Data contract impact: None.
 Verification impact: Required roadmap question, exact tokens/links and positive/negative documentation tests.
-Status: Queued as task 5.6; task 4.4 remains the only final human walkthrough gate.
+Status: выполнено как task 5.6. Владелец процесса принял FAQ и явно закрыл
+task 4.4 2026-07-24; sync и archive остаются отдельными lifecycle-решениями.
 ```
