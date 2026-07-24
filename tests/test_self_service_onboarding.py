@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -52,6 +53,9 @@ def test_start_and_next_render_one_canonical_continuation_result(tmp_path: Path,
         change_type="config_ops",
     )
     change = changes / "sample-minor-001"
+    persisted_change = yaml.safe_load((change / "change.yaml").read_text(encoding="utf-8"))
+    assert persisted_change["status"] == "draft"
+    assert "lifecycle_state" not in persisted_change
     assert main(["next", "--change", str(change), "--role", "Developer", "--json"]) == 0
     continued = json.loads(capsys.readouterr().out)
     assert continued["status"] == "guided"

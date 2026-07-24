@@ -237,8 +237,8 @@ Affected specs: self-service-operator-onboarding, guided-operation-dispatcher; p
 Affected architecture: thin dispatcher parsing/compatibility boundary only; no mutation or external integration enablement.
 Data contract impact: решение должно выбрать canonical `status` либо formal migration/compatibility rule; ручное добавление второго field запрещено до принятого contract.
 Verification impact: real package `create -> sdd next` positive test, legacy/invalid field negatives, role continuation and no-mutation assertions.
-Status: in_progress under separate change `fix-sdd-next-canonical-status`; FAQ task 5.4 and first-time walkthrough remain blocked until the change is applied and verified.
-State detail: the human owner explicitly authorized the separate change and accepted strict canonical `status` parsing without a `lifecycle_state` fallback on 2026-07-24. This authorization does not pre-accept the implementation or archive outcome.
+Status: in_progress under separate change `fix-sdd-next-canonical-status`; FAQ task 5.4 completed after the separate change implementation and verified real-package smoke, while first-time human walkthrough task 4.4 remains open.
+State detail: the human owner explicitly authorized the separate change and accepted strict canonical `status` parsing without a `lifecycle_state` fallback on 2026-07-24. The change lifecycle remains `in_progress` pending human acceptance; this authorization does not pre-accept the implementation or archive outcome.
 ```
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
