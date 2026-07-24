@@ -1,6 +1,6 @@
 # Corporate Analytics Template: Structure Analysis And SDD Migration Plan
 
-Status: planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Updated with 2026-07-09 human decisions: the existing Confluence analytics corpus is a read-only archive for the first pilot, accepted diagrams/assets use Git-managed source or source+export with stable IDs, and approval readiness stays minimal/validator-backed until a later full-package contract. Updated on 2026-07-14 with the deferred upstream business-analysis-to-system-analysis flow described in section 8. Not an accepted OpenSpec contract yet. Feeds the Phase 1 topology/artifact proposals and the future analyst style guide.
+Status: historical planning input from the 2026-07-06 review of the corporate "unified solution document" template (V.4). Updated with 2026-07-09 human decisions: the existing Confluence analytics corpus is a read-only archive for the first pilot, accepted diagrams/assets use Git-managed source or source+export with stable IDs, and approval readiness stays minimal/validator-backed until a later full-package contract. Updated on 2026-07-14 with the deferred upstream business-analysis-to-system-analysis flow described in section 8. The 2026-07-24 decision `D-029` supersedes this document's earlier capability/change-view assembly: the target is one full current analytics page per FP plus one page per release increment, with no mandatory generated change page. Normative proposed behavior and the complete updated design live in `openspec/changes/define-fp-analytics-publication-model/`.
 
 Source: the human owner photographed the corporate Confluence template and two example pages into the local-only folder `arch-screenshots/analytic-template/` (moved from the earlier local `analytic-template/` location; photos reviewed in full). That folder contains corporate URLs, internal system names, and employee names, so it is git-ignored and must never be committed; this document deliberately abstracts all corporate identifiers.
 
@@ -87,8 +87,8 @@ Thin changes never touch most of this: the matrix stays risk-oriented, and the t
 
 1. **Now (Phase 1, no new scope):** this analysis feeds `define-repo-topology-config` and the Confluence feedback/publication proposal. Gate 1.5 approved central `team-specs`; the diagram/asset-storage decision is Git-managed source or source+export with stable IDs. No template/validator changes yet.
 2. **Phase 1 proposal work (after gate 1.5):** extend `define-change-artifact-contracts` (or a dedicated follow-up proposal) with the conditional typed artifacts — status model, channel support, platform services, data model — as full-package sections with YAML schemas and validator expectations. Russian-prose examples per the language decision.
-3. **Analyst pilot preparation (Phase 3/4):** author the analyst style guide + one worked example converting a real (sanitized) unified document into a change package; the approval-requirements input the owner is gathering decides which sections corporate approvers must still see, i.e. which generated views the publication layer must produce first.
-4. **Publication layer (Phase 4, after gate 1.7):** generated Confluence views render the YAML records back into the approver-familiar nested-table layout with source metadata.
+3. **Analyst source preparation (P3/P4):** retain the accepted local typed-analytics foundation, prepare one sanitized full-FP example, and collect real corporate renderer constraints without treating the existing compact P3 schemas as the final publication contract.
+4. **Publication layer (P5 under `D-029`):** implement the proposed `define-fp-analytics-publication-model` after human acceptance and the corporate capability probe. Generated Confluence views render one current page per FP and one page per release increment.
 
 ## 6. Worked Example: Analytics Package Layout In Git
 
@@ -211,8 +211,8 @@ screens:
 
 Deterministic assembly uses only fixed names and the ID grammar — no AI in the pipeline:
 
-1. **Capability page** (future generated Confluence): reads `specs/<capability>/spec.md` for requirements/scenarios, renders `status-model.yaml` as the familiar nested transition table plus a generated Mermaid state diagram, renders `channel-support.yaml` as the channel matrix, renders `platform-services.yaml` as the outer/inner service tables, and builds the screen gallery from `screens.yaml`. Every page carries source commit, change ID, generated timestamp, and a source warning.
-2. **Change page**: reads the change package folder — `proposal.md` (why), spec deltas (what changes), `traceability.yaml` + PR/CI links (evidence), waivers.
+1. **Current FP analytics page** (accepted direction `D-029`): composes all capabilities owned by one FP, renders the typed models and assets, shows delivered state in the main body, lists active/approved-not-delivered changes separately, and links release history. It carries source commit, profile/renderer versions, generated timestamp, digest and a source warning.
+2. **Release increment page**: reads a frozen release manifest plus included change packages, spec deltas, traceability, PR/CI evidence and waivers. It may aggregate changes from several FP without copying normative requirements or moving ownership. A separate generated page for every change is not required.
 3. **Cross-references resolve by grammar**: `[SCR-TRANSFERS-002]` in prose links to the catalog entry; `REQ-`/`SCEN-` IDs anchor traceability rows, test cases, and generated-view anchors. A link checker can verify every bracket reference against the catalogs.
 4. **Bitbucket remains readable without any tooling**: markdown renders, SVG exports render, YAML diffs review cleanly — an analyst or reviewer can always "пойти и разобраться" from the raw repository, which was the reason for the Russian-canon decision.
 
@@ -226,6 +226,13 @@ Deterministic assembly uses only fixed names and the ID grammar — no AI in the
 ## 8. Deferred Upstream Business-To-System Analysis Flow
 
 Human direction on 2026-07-14 clarifies the future process before a specification becomes ready for implementation planning. This section is planning input only: it does not change the active Phase 2 scope, current validators, active OpenSpec changes, or the first transfer-ready release candidate. Phase 3 may observe and document the real corporate handoffs during the monitored pilot; if this flow is promoted into normative behavior or automation, its primary roadmap owner should be Phase 4 and it requires a dedicated reviewed OpenSpec change.
+
+Update 2026-07-24: the agreed interaction design for the upstream AI-assisted
+part is `docs/superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md`.
+The publication proposal `define-fp-analytics-publication-model` consumes only
+its human-confirmed/reviewed canonical output. Interview summaries and
+`proposed | unknown | conflict` assertions do not become delivered analytics
+without the normal change, review and release path.
 
 The intended end-to-end sequence is:
 
