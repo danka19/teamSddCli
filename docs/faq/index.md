@@ -94,7 +94,7 @@ preparation operations.
 - [Начать по своей роли](roles/index.md)
 - [Практическая работа с AI](ai-collaboration.md)
 - [Сбои, приватность, релиз и поддержка](troubleshooting-and-boundaries.md)
-- [Что доступно и что запланировано](roadmap.md)
+- [Понятный roadmap: что работает, что запланировано и где открытые спеки](roadmap.md)
 - [Словарь терминов](glossary.md)
 
 ## Главное правило безопасности
