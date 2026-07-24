@@ -23,6 +23,11 @@ Last status reconciliation: 2026-07-23.
   DoR/DoD, risk, lifecycle, release and archive decisions.
 - The first-time human walkthrough remains unrecorded. OpenSpec task 4.4 stays
   open; this documentation remediation does not claim final acceptance.
+- FAQ roadmap теперь объясняет planned capabilities через человеческий
+  результат и exact OpenSpec links. Publication model явно называется
+  `define-fp-analytics-publication-model`, остаётся `planned` с `0/70` tasks и
+  не изображается работающей. FAQ task 5.6 закрыта; task 4.4 остаётся открытым
+  first-time human walkthrough gate.
 - Durable evidence and the remaining gate are recorded in
   `docs/audits/PRODUCT_FAQ_AND_ROLE_RUNBOOK_ACCEPTANCE_AUDIT_2026-07-24.md`.
 
