@@ -32,3 +32,18 @@
 ## Impact
 
 Затрагиваются `docs/README.md`, новые страницы в `docs/runbooks/` и/или `docs/faq/`, generated/validated navigation, роль-инструкции и documentation checks. FAQ ссылается на принятый change `add-self-service-operator-onboarding`, но не изменяет process policy, внешние интеграции или автоматическое исполнение операций.
+
+## Change Intake — human-readable roadmap capability cards
+
+```text
+Idea: Сделать FAQ-roadmap понятным людям и подробно назвать открытый contract будущей аналитики ФП/release increments.
+Source: Human feedback 2026-07-24 after acceptance of D-029.
+Type: scope_refinement, documentation_change, verification_change
+Decision: adopt_now
+Reason: Existing roadmap lists future layers in one technical bullet and does not explain the user outcome or exact active OpenSpec source.
+Affected specs: product-faq-and-role-runbook; references define-fp-analytics-publication-model without duplicating its normative behavior.
+Affected architecture: No product architecture change; FAQ becomes a checked human-readable view over roadmap/OpenSpec.
+Data contract impact: None.
+Verification impact: Required roadmap question, exact tokens/links and positive/negative documentation tests.
+Status: Queued as task 5.6; task 4.4 remains the only final human walkthrough gate.
+```

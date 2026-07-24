@@ -14,6 +14,10 @@ The product is currently documented through specialist runbooks, OpenSpec artifa
 - Write the FAQ in plain Russian. Keep command tokens, IDs and file paths in English where they are executable or stable.
 - Treat the FAQ as an orientation/operating view. Each policy-sensitive assertion links to the canonical OpenSpec requirement, process catalog or detailed runbook rather than copying it.
 - Include an explicit “available now / planned / intentionally blocked” status table. This prevents the FAQ from overstating automation readiness.
+- Plain-language roadmap использует одну страницу и capability-карточки. Каждая
+  planned карточка отвечает «что это / зачем / что получит человек / что уже
+  готово / что ещё не работает», называет exact OpenSpec change и даёт прямые
+  ссылки. Наличие открытой спеки не изображается как доступная функция.
 - Put AI guidance on its own page and distinguish: AI can read context, invoke allowed `sdd` commands and prepare drafts; AI cannot grant authority, infer missing facts, bypass gates, execute forbidden mutations or replace human acceptance.
 - Treat the accepted `add-self-service-operator-onboarding` change as the canonical CLI source: setup pages use `sdd setup`, situation pages use `sdd start`, continuation pages use `sdd next`, and every command example identifies whether it is human-readable or `--json` for an AI caller.
 - Границей content acceptance является возможность выполнить пользовательскую
