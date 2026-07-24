@@ -97,6 +97,7 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The bullets below remain
 - 2026-07-13: Adopt NIS v1.6 as primary corporate-process input and the flat target classification `minor | major | hotfix`. Migrate legacy `thin -> minor` and `full -> major`, never infer hotfix, and add class-aware DoR/DoD, separate release/archive/delivered states, Tech Lead decision support, regression/scope/stop/escalation/release controls, role verification, pilot safety, and failed-run retention. Exclude process-effectiveness evaluation and correct unsafe AI-only/zero-risk assumptions; do not inherit PPRB organization or NIS project structure. See `D-013` and active change `adopt-nis-corporate-process-governance`.
 - 2026-07-14: Adopt the two-horizon automation strategy in `D-014`: AI-disabled deterministic operation is the first delivery requirement and permanent fallback, while later accepted changes should progressively automate bounded process execution with AI. Human authority and deterministic verification remain explicit boundaries rather than accidental limitations of the first release.
 - 2026-07-14: Adopt `D-016`: improve reliability through broader risk-oriented testing and end-to-end traceability, and improve speed through AI-assisted parallel execution of independent tasks with explicit ownership, separate evidence, and deterministic integration checks.
+- 2026-07-24, `D-029`: future analytics publication uses one full current generated page per independent FP and a separate frozen-by-default page for every release increment. Current pages distinguish delivered behavior from active/approved-not-delivered changes; release pages may combine changes from several FP without moving ownership or copying normative requirements. A separate generated Confluence page per change is not required. The detailed proposed contract is `define-fp-analytics-publication-model`; implementation and external publication are not yet authorized.
 
 ## Architecture Sources
 
@@ -148,7 +149,7 @@ After the deterministic flow and monitored pilot are accepted, later phases may 
 
 Confluence publication, Jira task creation, QA/AT proposal generation, and role inboxes remain important, but they are not required for the first MVP unless the human owner explicitly re-scopes the pilot.
 
-Future publication layers should generate audience-oriented views from canonical OpenSpec sources, including change pages, capability pages, customer journey pages, release/change summaries, technical appendices, and screen galleries where useful. Those generated views must preserve traceability back to requirements, scenarios, source commits, and verification evidence.
+Future publication follows `D-029`: one full current analytics page per independent FP and one separate page per release increment. Journeys, screens, status/data/API models, technical appendices, active changes and evidence appear as sections or linked canonical sources inside those two primary views rather than creating an uncontrolled page type for every artifact. Generated views preserve traceability to requirements, scenarios, source commits and verification evidence.
 
 ## Documentation Rules
 

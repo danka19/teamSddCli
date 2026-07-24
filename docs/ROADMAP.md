@@ -196,8 +196,8 @@ Likely scope:
 - Broader project memory, project map drift checks, repeated-error memory, and deterministic sync/upgrade maintenance beyond the minimum Phase 2 operating kit.
 - Legacy baseline workflow for existing product areas when the pilot expands beyond the first bounded change.
 - Confluence preview/final publication after the feedback loop contract is specified.
-- Generated publication model implementation after feedback-loop, source-warning, localization, and generated-view contracts are accepted.
-- Customer journey and screen/gallery generated views after journey/screen metadata contracts are proven.
+- Implement `D-029` through `define-fp-analytics-publication-model`: one full current analytics page per FP plus one page per release increment, including cross-FP composition, delivered/current reconciliation, typed nested renderers and source-linked navigation.
+- Add customer journey, screen/gallery, status, data, API and platform-service sections inside those two primary page types after their typed metadata contracts are proven; do not create an uncontrolled standalone page type for every artifact.
 - Expanded analyst/developer/QA onboarding after the pilot validates the first role instructions.
 - Jira task planning/creation after the class-aware archive and external-delivery mapping works.
 - Role inbox hardening after task/status sources are stable.
@@ -239,6 +239,7 @@ Likely scope:
 | `define-transfer-ready-process-package` | P2 | P4 | in_progress |
 | `fix-sdd-next-canonical-status` | P3 | P4 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P4 | blocked |
+| `define-fp-analytics-publication-model` | P5 | P3, P4 | planned |
 
 ## Phase Planning Rule
 

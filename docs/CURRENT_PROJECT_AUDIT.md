@@ -26,6 +26,36 @@ Last status reconciliation: 2026-07-23.
 - Durable evidence and the remaining gate are recorded in
   `docs/audits/PRODUCT_FAQ_AND_ROLE_RUNBOOK_ACCEPTANCE_AUDIT_2026-07-24.md`.
 
+## FP Analytics Publication Model Intake (2026-07-24)
+
+- Повторно проверены все 38 изображений `arch-screenshots/analytic-template`;
+  подтверждённые gaps ATC-001..010 записаны в
+  `docs/audits/ANALYTIC_TEMPLATE_AND_CONFLUENCE_PUBLICATION_GAP_AUDIT_2026-07-24.md`.
+- Владелец принял `D-029`: одна полная current analytics page на каждую
+  самостоятельную ФП и отдельная page на каждый release increment. Отдельная
+  обязательная generated change page не входит в модель.
+- Main current-page body показывает delivered state; active и
+  approved-not-delivered changes отображаются отдельно. Cross-FP release
+  агрегирует ссылки, но не переносит ownership и не копирует requirements.
+- Новый P5 change `define-fp-analytics-publication-model` содержит proposal,
+  подробный design, четыре delta specs и implementation tasks. Это apply-ready
+  planning package, а не реализованный publisher или разрешение на
+  корпоративную публикацию.
+- Согласованный дизайн
+  `docs/superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md`
+  включён как upstream authoring dependency: interview и truth evidence
+  создают только human-confirmed summary/drafts; current/release publication
+  меняется только через reviewed canonical artifacts и delivered evidence.
+  Interaction discovery map и assertion statuses
+  `confirmed | proposed | unknown | conflict` остаются разными контрактами.
+- Реальные Confluence mappings, macros, adapter, permissions и size limits
+  остаются обязательным corporate capability-probe input.
+- Phase-status/doc-sync evidence: P0-P2 remain `closed`, P3 remains
+  `in_progress`, P4-P5 remain `planned`; this intake changes no phase status.
+  The new P5 change is `planned`, its four planning artifacts are complete and
+  all implementation tasks remain unchecked. No detailed P5 phase plan exists,
+  matching the Roadmap statement that it has not yet been accepted.
+
 ## P3.3 Typed Analytics Package Transfer Reconciliation (2026-07-23)
 
 - Immutable successor `p3-analytics-v0.3.6-rc2` was built and manifest-validated with payload SHA-256 `b4b9f97be4eada905a65acffa3d24f1a98c2cdfe8fa38bd90d2a2296c282db57`.
@@ -197,7 +227,7 @@ Last updated: 2026-07-21.
 | AUDIT-007 | Corporate environment specifics are unverified: available Qwen/DeepSeek/GigaCode model and adapter capabilities, MCP policy, Bitbucket/Jenkins/Jira/Confluence versions, secrets handling, and network/artifact restrictions. Phase 2 must prepare the inventory and compatibility checks; Phase 3 must execute them before the real pilot. | Phase 2/3 | open |
 | AUDIT-008 | Automated local MCP server provisioning for employees is an untested experiment; manual setup remains the documented fallback until proven. | Later phase | open |
 | AUDIT-009 | `pre-commit` is not installed on the current machine, so the hook config cannot yet be executed end-to-end locally. | Phase 1/local environment | open |
-| AUDIT-010 | The generated Confluence publication model is planned, and the 2026-07-09 decisions accept analyst/change-owner triage, blocker/non-blocker comment handling, explicit dispositions, editable/disableable triage SLA defaults (1 working day for blockers, 3 working days for non-blockers), generated source warnings, and evidence-backed status display. Publication automation still remains outside the first MVP; the first generated view set is intentionally decided later inside the corporate environment using real templates, approval practices, and tooling constraints. | Phase 1/4 | open |
+| AUDIT-010 | The generated Confluence publication model is planned. `D-029` now fixes the semantic view set as one full current analytics page per FP plus separate release-increment pages; exact corporate mappings, macros, adapter, permissions and size limits still require the real-environment capability probe. Existing analyst/change-owner triage, explicit dispositions, configurable SLA, generated source warnings and evidence-backed status rules remain applicable. Implementation is owned by P5 change `define-fp-analytics-publication-model`. | Phase 4/5 | open |
 | AUDIT-011 | Journey and screen artifacts are now planned future contracts, but `journey.yaml`, `screens.yaml`, screen asset storage, and generated gallery views are not implemented or validated. | Phase 1/4 | open |
 | AUDIT-012 | Legacy baseline mode is planned for already-written code, but no accepted workflow or template exists yet for baseline changes, observed behavior, known gaps, or legacy coverage risk reporting. | Phase 1/4 | open |
 | AUDIT-013 | `D-022` makes Russian the language for new project documentation and OpenSpec prose while preserving stable English technical tokens; historical immutable evidence is not bulk-translated. A future glossary or translation-review process is optional usability work, not a blocker for the canonical language rule. | Phase 3/5 | mitigated |
