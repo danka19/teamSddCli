@@ -27,6 +27,7 @@ REQUIRED_QUESTIONS = {
     "release-boundary",
     "corporate-pilot",
     "updates-support",
+    "analytics-publication-roadmap",
 }
 REQUIRED_PAGES = {
     "ai-collaboration.md",
@@ -121,6 +122,25 @@ WALKTHROUGH_INSTANCE_TOKENS = {
         "sample-minor-manual-001",
     },
 }
+REQUIRED_ROADMAP_TOKENS = frozenset(
+    {
+        "## Как читать roadmap",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
+        "### Полная аналитика ФП и страницы релизных инкрементов",
+        "define-fp-analytics-publication-model",
+        "0/70",
+        "одна полная актуальная страница",
+        "отдельная страница каждого релизного инкремента",
+        "AI Analyst Discovery",
+        "proposal.md",
+        "design.md",
+        "spec.md",
+        "tasks.md",
+    }
+)
 LINK = re.compile(r"\[[^]]+\]\(([^)#]+\.md)(?:#[^)]+)?\)")
 UNSAFE_AI_AUTHORITY_PATTERNS = (
     re.compile(
@@ -205,6 +225,13 @@ def validate_product_faq(root: Path) -> list[str]:
                 errors.append(
                     f"copy-paste command contains punctuation: {page.relative_to(root)}"
                 )
+        if page.name == "roadmap.md":
+            for token in sorted(REQUIRED_ROADMAP_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "roadmap capability detail is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
 
     if any(pattern.search(content) for pattern in UNSAFE_AI_AUTHORITY_PATTERNS):
         errors.append("unsafe AI authority wording")

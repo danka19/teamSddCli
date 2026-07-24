@@ -175,12 +175,30 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
 
     roadmap = (faq / "roadmap.md").read_text(encoding="utf-8")
     for section in (
-        "## Что уже можно сделать",
-        "## Что появится следующим",
-        "## Что планируется позже",
-        "## Что намеренно не автоматизировано",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
     ):
         assert section in roadmap
+    for token in (
+        "## Как читать roadmap",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
+        "### Полная аналитика ФП и страницы релизных инкрементов",
+        "`define-fp-analytics-publication-model`",
+        "0/70",
+        "одна полная актуальная страница",
+        "отдельная страница каждого релизного инкремента",
+        "AI Analyst Discovery",
+        "proposal.md",
+        "design.md",
+        "spec.md",
+        "tasks.md",
+    ):
+        assert token in roadmap
 
     troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(encoding="utf-8")
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
@@ -205,6 +223,26 @@ def test_validator_reports_missing_required_question(tmp_path: Path) -> None:
     faq.mkdir(parents=True)
     (faq / "index.md").write_text("# FAQ\n", encoding="utf-8")
     assert any("required question" in error for error in validate_product_faq(tmp_path))
+
+
+def test_validator_requires_detailed_analytics_roadmap_card(tmp_path: Path) -> None:
+    from scripts.validate_product_faq import validate_product_faq
+
+    faq = tmp_path / "docs" / "faq"
+    faq.mkdir(parents=True)
+    (faq / "roadmap.md").write_text(
+        "# Roadmap\nКанонический источник: x\n"
+        "<!-- faq-question: analytics-publication-roadmap -->\n"
+        "Запланирована аналитика.\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_product_faq(tmp_path)
+    assert any(
+        "roadmap capability detail is missing" in error
+        and "define-fp-analytics-publication-model" in error
+        for error in errors
+    )
 
 
 def test_validator_reports_missing_required_page_and_role_section(tmp_path: Path) -> None:
