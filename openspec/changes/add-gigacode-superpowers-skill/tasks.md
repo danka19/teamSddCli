@@ -10,7 +10,8 @@
 
 - [x] 2.1 Добавить новый skill в package manifest и schema exact inventory.
 - [x] 2.2 Проверить fresh bootstrap, порядок активации и managed-file conflict.
-- [x] 2.3 Повысить working process package до `0.3.7` без изменения immutable
+- [x] 2.3 После merge с независимо выпущенным в `main` package `0.3.7`
+  присвоить объединённому payload `0.3.8` без изменения immutable
   release/certification evidence.
 - [x] 2.4 При rollback удалять новый managed-файл только при совпадении с
   current package bytes; блокировать локальное изменение и сохранять

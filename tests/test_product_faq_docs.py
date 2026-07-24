@@ -151,7 +151,7 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
     for token in (
         "## Стартовый prompt",
         "## Шаг 1. AI собирает evidence из repository",
-        "Сопоставь все 17 minor-condition IDs",
+        "Я аналитик. Помоги провести первый minor change.",
         "Выполняй только эту команду",
         "classification.human-confirmation-required",
         "Разрешаю только показанный rename внутри _render_human",
@@ -193,6 +193,14 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
 
     ai = (faq / "ai-collaboration.md").read_text(encoding="utf-8")
     for token in (
+        "## Режим `analyst-discovery`: от сырой идеи к черновику",
+        "Помоги разобраться и оформить новую идею",
+        "сначала покажет темы интервью",
+        "по одному вопросу",
+        "`confirmed`",
+        "`proposed`",
+        "`unknown`",
+        "`conflict`",
         "## Режим 1: AI только объясняет",
         "## Режим 2: AI запускает разрешённую команду",
         "```text",
@@ -203,15 +211,62 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
 
     roadmap = (faq / "roadmap.md").read_text(encoding="utf-8")
     for section in (
-        "## Что уже можно сделать",
-        "## Что появится следующим",
-        "## Что планируется позже",
-        "## Что намеренно не автоматизировано",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
     ):
         assert section in roadmap
+    for token in (
+        "## Как читать roadmap",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
+        "### Полная аналитика ФП и страницы релизных инкрементов",
+        "`define-fp-analytics-publication-model`",
+        "0/70",
+        "одна полная актуальная страница",
+        "отдельная страница каждого релизного инкремента",
+        "AI Analyst Discovery",
+        "proposal.md",
+        "design.md",
+        "spec.md",
+        "tasks.md",
+    ):
+        assert token in roadmap
+    discovery = roadmap.index("### AI Analyst Discovery")
+    assert roadmap.index("## Работает сейчас") < discovery < roadmap.index("## Следующее")
+    for token in (
+        "`add-ai-analyst-discovery`",
+        "12/13",
+        "process package `0.3.8`",
+        "first-time human walkthrough",
+    ):
+        assert token in roadmap[discovery : roadmap.index("## Следующее")]
 
     troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(encoding="utf-8")
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
+
+
+def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
+    page = (ROOT / "docs" / "faq" / "first-change-with-ai.md").read_text(
+        encoding="utf-8"
+    )
+    plain = "Помоги оформить небольшое изменение. Сначала помоги разобраться"
+    assert plain in page
+    assert page.index(plain) < page.index("## Стартовый prompt")
+    assert "Я аналитик. Помоги провести первый minor change." in page
+    assert "Сопоставь все 17 minor-condition IDs" not in page
+    for token in (
+        "план тем",
+        "Можно пройти по этим темам?",
+        "по одному вопросу",
+        "итоговая сводка",
+        "по одному файлу за отдельное разрешение",
+        "показать первую команду",
+    ):
+        assert token in page
 
 
 def test_validator_reports_broken_link(tmp_path: Path) -> None:
@@ -247,6 +302,26 @@ def test_validator_requires_self_service_entrypoint_page(tmp_path: Path) -> None
 
     errors = validate_product_faq(tmp_path)
     assert "required page is missing: self-service-entrypoint.md" in errors
+
+
+def test_validator_requires_detailed_analytics_roadmap_card(tmp_path: Path) -> None:
+    from scripts.validate_product_faq import validate_product_faq
+
+    faq = tmp_path / "docs" / "faq"
+    faq.mkdir(parents=True)
+    (faq / "roadmap.md").write_text(
+        "# Roadmap\nКанонический источник: x\n"
+        "<!-- faq-question: analytics-publication-roadmap -->\n"
+        "Запланирована аналитика.\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_product_faq(tmp_path)
+    assert any(
+        "roadmap capability detail is missing" in error
+        and "define-fp-analytics-publication-model" in error
+        for error in errors
+    )
 
 
 def test_validator_reports_missing_required_page_and_role_section(tmp_path: Path) -> None:

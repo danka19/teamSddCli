@@ -21,12 +21,14 @@ REQUIRED_QUESTIONS = {
     "change-classes",
     "evidence-ci",
     "ai-permissions",
+    "ai-analyst-discovery",
     "ai-prohibitions",
     "privacy",
     "failure-escalation",
     "release-boundary",
     "corporate-pilot",
     "updates-support",
+    "analytics-publication-roadmap",
 }
 REQUIRED_PAGES = {
     "ai-collaboration.md",
@@ -59,6 +61,7 @@ ROLE_SECTIONS = {
 }
 WALKTHROUGH_SECTIONS = {
     "first-change-with-ai.md": {
+        "## Сначала простая фраза: аналитическое интервью",
         "## Учебная задача и точный scope",
         "## Перед началом: staged permissions",
         "## Стартовый prompt",
@@ -90,6 +93,15 @@ WALKTHROUGH_SECTIONS = {
         "## Где текущая автоматизация останавливается",
         "## Что считать успешным walkthrough",
     },
+}
+DISCOVERY_TOKENS = {
+    "Помоги разобраться и оформить новую идею",
+    "по одному вопросу",
+    "`confirmed`",
+    "`proposed`",
+    "`unknown`",
+    "`conflict`",
+    "показать первую команду",
 }
 PAIRED_WALKTHROUGH_TOKENS = {
     "process/operation_dispatcher.py",
@@ -154,6 +166,28 @@ SELF_SERVICE_ENTRYPOINT_TARGETS = {
     "ai-collaboration.md",
     "troubleshooting-and-boundaries.md",
 }
+REQUIRED_ROADMAP_TOKENS = frozenset(
+    {
+        "## Как читать roadmap",
+        "## Работает сейчас",
+        "## Следующее",
+        "## Запланировано",
+        "## Намеренно недоступно",
+        "### Полная аналитика ФП и страницы релизных инкрементов",
+        "define-fp-analytics-publication-model",
+        "0/70",
+        "одна полная актуальная страница",
+        "отдельная страница каждого релизного инкремента",
+        "AI Analyst Discovery",
+        "add-ai-analyst-discovery",
+        "12/13",
+        "process package `0.3.8`",
+        "proposal.md",
+        "design.md",
+        "spec.md",
+        "tasks.md",
+    }
+)
 LINK = re.compile(r"\[[^]]+\]\(([^)#]+\.md)(?:#[^)]+)?\)")
 UNSAFE_AI_AUTHORITY_PATTERNS = (
     re.compile(
@@ -264,6 +298,20 @@ def validate_product_faq(root: Path) -> list[str]:
                     "self-service entrypoint link is missing: "
                     f"{page.relative_to(root)} -> {target}"
                 )
+        if page.name in {"ai-collaboration.md", "first-change-with-ai.md"}:
+            for token in sorted(DISCOVERY_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "AI discovery token is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
+        if page.name == "roadmap.md":
+            for token in sorted(REQUIRED_ROADMAP_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "roadmap capability detail is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
 
     if any(pattern.search(content) for pattern in UNSAFE_AI_AUTHORITY_PATTERNS):
         errors.append("unsafe AI authority wording")

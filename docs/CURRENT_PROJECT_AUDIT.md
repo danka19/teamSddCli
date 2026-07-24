@@ -4,9 +4,28 @@ Status: in_progress.
 
 Phase 2 is closed. Phase 3 is in progress; all work-item acceptance is recorded, while the accepted active typed-analytics change awaits a separate sync/archive decision.
 
-Last status reconciliation: 2026-07-23.
+Last status reconciliation: 2026-07-24.
 
 - P3 lifecycle source reconciliation, findings, and remediation evidence are recorded in `docs/audits/P3_STATUS_RECONCILIATION_AUDIT_2026-07-23.md`.
+
+## AI Analyst Discovery implementation reconciliation (2026-07-24)
+
+- Текущий combined package `0.3.8` включает `sdd-process-companion`, который реализует
+  `analyst-discovery` и `guided-change`: обычная фраза запускает план тем,
+  permission-bound вопросы по одному, evidence-сводку
+  `confirmed | proposed | unknown | conflict` и отдельный handoff к действиям.
+- AI готовит только один разрешённый текущим stage черновик за одно действие.
+  Разрешение на интервью, сводку, файл, показ команды и выполнение команды не
+  подразумевают друг друга; human authority boundaries не изменены.
+- FAQ-roadmap перенёс capability из planned в «Работает сейчас», а
+  `first-change-with-ai.md` больше не требует длинный технический prompt:
+  основной вход — простая фраза и установленный companion.
+- OpenSpec change `add-ai-analyst-discovery` выполнен на 12/13 и имеет статус
+  `pending_acceptance`. Реализация и independent review завершены; first-time
+  human walkthrough остаётся открытым и не позволяет объявить change
+  human-accepted или archived.
+- Feature-ветка синхронизирована с актуальным `main`; FAQ-validator сохраняет
+  одновременно discovery-contract и human-readable roadmap checks.
 
 ## Product FAQ paired first-minor walkthrough (2026-07-24)
 
@@ -23,6 +42,11 @@ Last status reconciliation: 2026-07-23.
   DoR/DoD, risk, lifecycle, release and archive decisions.
 - The first-time human walkthrough remains unrecorded. OpenSpec task 4.4 stays
   open; this documentation remediation does not claim final acceptance.
+- FAQ roadmap теперь объясняет planned capabilities через человеческий
+  результат и exact OpenSpec links. Publication model явно называется
+  `define-fp-analytics-publication-model`, остаётся `planned` с `0/70` tasks и
+  не изображается работающей. FAQ task 5.6 закрыта; task 4.4 остаётся открытым
+  first-time human walkthrough gate.
 - Durable evidence and the remaining gate are recorded in
   `docs/audits/PRODUCT_FAQ_AND_ROLE_RUNBOOK_ACCEPTANCE_AUDIT_2026-07-24.md`.
 

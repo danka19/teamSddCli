@@ -103,7 +103,9 @@ Skill должен требовать:
 - bootstrap/update managed-file contract;
 - package setup runbook.
 
-Версия process package изменится с `0.3.6` на `0.3.7`. Все связанные version
+Изначально feature повышала package с `0.3.6` до `0.3.7`. После того как
+актуальный `main` независимо занял `0.3.7` для AI Analyst companion,
+объединённый payload получает `0.3.8`. Все связанные version
 pins и тестовые ожидания будут обновлены одним изменением.
 
 Fresh-bootstrap тест должен доказать, что установленный `.gigacode` inventory

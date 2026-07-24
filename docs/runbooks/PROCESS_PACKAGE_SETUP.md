@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: Phase 2 work items 2.1-2.13 and gates 2.14.1-2.14.4 are closed; `D-020` accepts immutable rc6 package `0.3.0` as the external transfer baseline. The current source package is `0.3.7` for in-progress P3 work and is not thereby a newly accepted transfer candidate. Rc4 is historical and rc5 is diagnostic rejected history.
+Status: Phase 2 work items 2.1-2.13 and gates 2.14.1-2.14.4 are closed; `D-020` accepts immutable rc6 package `0.3.0` as the external transfer baseline. The current source package is `0.3.8` for in-progress P3 work and is not thereby a newly accepted transfer candidate. Rc4 is historical and rc5 is diagnostic rejected history.
 
 ## Contract Sources
 
@@ -142,7 +142,7 @@ or create an internal process fork.
 
 ## Управляемые GigaCode-шаблоны
 
-Package версии `0.3.7` содержит три канонических managed-файла:
+Package версии `0.3.8` содержит три канонических managed-файла:
 `.gigacode/AGENTS.md`, `.gigacode/skills/superpowers.md` и
 `.gigacode/skills/sdd-process-companion.md`. Общий Superpowers workflow
 применяется первым, а SDD companion добавляет role/authority rules. Bootstrap

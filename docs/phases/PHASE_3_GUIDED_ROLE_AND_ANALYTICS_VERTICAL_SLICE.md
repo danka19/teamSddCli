@@ -251,7 +251,7 @@ Decision: create_openspec_change.
 Reason: role-aware companion сохраняет SDD authority, но не покрывает общий repository workflow; изменение состава package и обязательного поведения требует самостоятельных acceptance scenarios.
 Affected specs: role-aware-guided-workflow и repo-topology-config; FAQ остаётся производным пользовательским объяснением.
 Affected architecture: только GigaCode managed skill composition и manifest-driven bootstrap; operation catalog, lifecycle и integrations не меняются.
-Data contract impact: declared GigaCode inventory расширяется до AGENTS плюс двух skill-файлов; package working version становится 0.3.7.
+Data contract impact: declared GigaCode inventory расширяется до AGENTS плюс двух skill-файлов; после объединения с AI Analyst companion package working version становится 0.3.8.
 Verification impact: RED/GREEN/REFACTOR pressure-аудит, exact bootstrap inventory, activation order, conflict protection и package regressions.
 Status: in_progress under separate change `add-gigacode-superpowers-skill`; implementation evidence собрано, human acceptance, sync и archive остаются отдельными решениями.
 ```

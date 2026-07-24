@@ -182,6 +182,33 @@ Focused evidence после исправления:
 Task 5.5 фиксирует completed remediation. Task 4.4 остаётся unchecked: автор
 или synthetic test не заменяет первый проход документации новым человеком.
 
+### FAQ-ACC-006 — roadmap называл слои, но не объяснял будущий результат
+
+Классификация: подтверждённый content gap, исправлен в FAQ и deterministic
+checks.
+
+Затронутое поведение: прежняя roadmap-страница перечисляла controlled
+publication и другие later layers одной строкой. Человек не мог понять, что
+такое будущая аналитика ФП, зачем нужны две страницы, как работает cross-FP
+release и как называется открытая спека.
+
+Исправление: roadmap перестроен через status legend и capability-карточки.
+Карточка `define-fp-analytics-publication-model` объясняет current FP page,
+release increment page, delivered/WIP separation, typed nested rendering,
+cross-FP ownership, AI Analyst Discovery boundary, progress `0/70` и прямые
+canonical links. Validator и tests требуют эти элементы.
+
+Evidence после исправления:
+
+| Проверка | Результат | Классификация |
+| --- | --- | --- |
+| `python scripts/validate_product_faq.py --json` | `status: valid`, no errors | pass |
+| `python -m pytest tests/test_product_faq_docs.py -q` | `18 passed` | pass |
+| `openspec validate --all --strict` | `23 passed, 0 failed` | pass |
+| Roadmap/OpenSpec validator | `0 errors`, 3 unrelated lifecycle warnings | pass with known warnings |
+| `git diff --check` | passed | pass |
+| `openspec list` | FAQ `18/19`; publication model `0/70` | verified lifecycle boundary |
+
 ## Residual risk and next action
 
 Расширенная документация и real-package continuation готовы к содержательному

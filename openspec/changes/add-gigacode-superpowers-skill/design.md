@@ -55,9 +55,11 @@ update использует существующий conflict check.
 
 ### 4. Patch-версия package
 
-Состав распространяемого process package изменён, поэтому working source
-повышается с `0.3.6` до `0.3.7`. Исторические release/certification evidence не
-переписываются и не становятся свидетельством принятия `0.3.7`.
+Состав распространяемого process package изменён. Feature изначально повышала
+working source с `0.3.6` до `0.3.7`, но актуальный `main` независимо занял
+`0.3.7` для AI Analyst companion. После содержательного merge объединённый
+payload получает `0.3.8`. Исторические release/certification evidence не
+переписываются и не становятся свидетельством принятия `0.3.8`.
 
 ## Risks / Trade-offs
 

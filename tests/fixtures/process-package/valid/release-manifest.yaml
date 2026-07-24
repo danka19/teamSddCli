@@ -1,5 +1,5 @@
 schema_version: "2.0"
-release_id: sample-release-0.3.7
+release_id: sample-release-0.3.8
 payload_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 allowlist_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 inventory:
@@ -8,7 +8,7 @@ inventory:
     sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 process_package:
   id: sdd-process
-  version: 0.3.7
+  version: 0.3.8
 config_schema_version: "1.1"
 openspec:
   cli_version: 1.4.1

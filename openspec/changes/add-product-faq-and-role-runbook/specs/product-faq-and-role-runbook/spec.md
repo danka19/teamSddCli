@@ -79,6 +79,11 @@ The FAQ SHALL explain the framework's value and its difference from OpenSpec and
 - **WHEN** a user reads the comparison page
 - **THEN** it explains that OpenSpec records specification changes, while this framework adds governed role workflow, deterministic checks, evidence, topology and safe AI assistance without claiming to replace OpenSpec
 
+#### Scenario: Planned capability объяснена и связана с открытой спекой
+
+- **WHEN** roadmap FAQ описывает будущую аналитику ФП и релизных инкрементов
+- **THEN** карточка простыми словами объясняет, что это, зачем нужно, что получит пользователь, что уже подготовлено и что ещё не реализовано, называет exact change `define-fp-analytics-publication-model`, показывает честный progress и ведёт на proposal, design, requirements и tasks
+
 ### Requirement: NIS foundation is explained without importing an organization model
 The FAQ SHALL explain that the target process takes NIS-aligned engineering controls as its foundation: flat `minor`/`major`/`hotfix` classification, class-aware DoR/DoD, explicit Tech Lead governance, regression/scope/stop/escalation/release controls, role-understanding evidence and failed-run retention. It SHALL also state that the framework does not copy PPRB or other NIS organizational structure as a target architecture.
 
