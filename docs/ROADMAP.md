@@ -140,6 +140,7 @@ Current work-item map:
 | 3.2 Typed analytics artifact framework | accepted | `add-typed-analytics-artifact-framework`; implementation and controlled transfer are accepted under `D-028`; sync/archive remain separate decisions |
 | 3.3 Package and sandbox transfer | accepted | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are accepted under `D-028`; sync/archive remain separate decisions |
 | 3.4 Operation catalog and thin dispatcher | accepted | Archived `add-operation-catalog-and-dispatcher`; 16/16 tasks are complete, accepted specs are promoted, and every P3 mutation remains fail-closed |
+| 3.5 Аналитическое интервью с AI | in_progress | `add-ai-analyst-discovery`: packaged companion принимает простую фразу, по разрешению задаёт вопросы по одному, готовит проверяемую сводку и останавливается перед файлами и командами; human walkthrough ещё не проведён |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 

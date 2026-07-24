@@ -36,6 +36,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/planning/` | Cross-phase planning notes and decision drafts |
 | `docs/superpowers/specs/` | Approved design documents that precede implementation planning; OpenSpec remains the canonical proposed behavior contract |
 | `docs/superpowers/plans/` | Detailed reviewed implementation plans; they guide execution but do not replace OpenSpec requirements |
+| `docs/superpowers/specs/2026-07-24-ai-analyst-discovery-skill-design.md` | Согласованный дизайн permission-bound аналитического интервью и перехода к guided change |
+| `docs/superpowers/plans/2026-07-24-ai-analyst-companion.md` | Пошаговый TDD/OpenSpec-план реализации packaged AI companion |
 | `docs/planning/PROJECT_MEMORY_AND_WEAK_MODEL_GUARDRAILS.md` | Planning input for project memory, Graphify-like navigation, documentation quality, weak-model guardrails, repeated-error memory, spec-questioning, and analyst/QA usability |
 | `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` | Accepted source-to-target adoption plan for NIS minor/major/hotfix classification, DoR/DoD, Tech Lead automation, corporate flow controls, failed-run retention, migration, and Phase 2/3 sequencing |
 | `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md` | Consolidated target-architecture picture and staged execution plan draft from the 2026-07-06 documentation review |
@@ -116,7 +118,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `templates/change/waivers.yaml` | Example structured waiver registry showing the deterministic waiver shape for optional artifact exceptions |
 | `scripts/validate_change.py` | Dependency-free Python validator for SDD change package structure, metadata, OpenSpec scenarios, and basic traceability |
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
-| `process/VERSION` | Current working source process-package semantic version (`0.3.6`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
+| `process/VERSION` | Current working source process-package semantic version (`0.3.7`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |

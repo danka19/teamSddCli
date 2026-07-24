@@ -24,7 +24,7 @@ def test_installed_launcher_metadata_and_version_diagnostics(capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload == {
         "operation": "sdd-version",
-        "package": {"id": "sdd-process", "version": "0.3.6"},
+        "package": {"id": "sdd-process", "version": "0.3.7"},
         "schema_version": "1.0",
         "status": "ok",
     }
@@ -149,10 +149,10 @@ def test_installed_windows_or_posix_console_script_delegates_to_the_dispatcher(t
     launcher = environment / ("Scripts/sdd.exe" if sys.platform == "win32" else "bin/sdd")
     invoked = subprocess.run([str(launcher), "--version", "--json"], capture_output=True, text=True, check=False)
     assert invoked.returncode == 0, invoked.stderr
-    assert json.loads(invoked.stdout)["package"] == {"id": "sdd-process", "version": "0.3.6"}
+    assert json.loads(invoked.stdout)["package"] == {"id": "sdd-process", "version": "0.3.7"}
     help_output = subprocess.run([str(launcher), "--help"], capture_output=True, text=True, check=False)
     assert help_output.returncode == 0, help_output.stderr
-    assert all(token in help_output.stdout for token in ("setup", "start", "next", "0.3.6"))
+    assert all(token in help_output.stdout for token in ("setup", "start", "next", "0.3.7"))
     workspace = tmp_path / "installed-workspace"
     setup = subprocess.run(
         [str(launcher), "setup", str(workspace), "--confirm", "--json"],

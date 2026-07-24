@@ -18,8 +18,8 @@
 
 ## 4. Пакет и документация
 
-- [ ] 4.1 Синхронизировать process package version и mutable pins.
-- [ ] 4.2 Обновить roadmap, file map и статусы без изменения исторических
+- [x] 4.1 Синхронизировать process package version и mutable pins.
+- [x] 4.2 Обновить roadmap, file map и статусы без изменения исторических
   evidence.
 
 ## 5. Проверка
