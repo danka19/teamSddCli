@@ -84,6 +84,7 @@ gigacode:
   target: .gigacode
   files:
     - AGENTS.md
+    - skills/superpowers.md
     - skills/sdd-process-companion.md
 adapters:
   qwen_class: adapters/qwen-class.yaml

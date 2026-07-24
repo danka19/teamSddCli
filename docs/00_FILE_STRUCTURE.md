@@ -76,6 +76,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `docs/audits/SELF_SERVICE_OPERATOR_ONBOARDING_WALKTHROUGH_2026-07-23.md` | Synthetic AI-disabled and human-readable local walkthrough evidence for the proposed installed `sdd` onboarding route |
 | `docs/audits/GIGACODE_ROLE_ACCEPTANCE_AND_FRAMEWORK_READINESS_AUDIT_2026-07-21.md` | Read-only sandbox audit of GigaCode role resolution, role-scoped UI, literal human evidence, premature acceptance paths, validator/template drift, retained analytics inputs, and missing framework-ready schemas/integration/screen contracts |
 | `docs/audits/ANALYTIC_TEMPLATE_AND_CONFLUENCE_PUBLICATION_GAP_AUDIT_2026-07-24.md` | Повторная проверка всех 38 снимков корпоративного шаблона: границы ФП/change/release, полнота typed analytics, вложенные таблицы, человекочитаемая навигация и пробелы будущей Confluence publication model |
+| `docs/audits/GIGACODE_SUPERPOWERS_SKILL_PRESSURE_TEST_2026-07-24.md` | RED→GREEN→REFACTOR pressure-test evidence для отдельного общего GigaCode workflow skill и сохранения SDD role/authority boundaries |
 | `docs/phases/` | Detailed phase plans and templates |
 | `docs/phases/PHASE_0_PROJECT_FOUNDATION.md` | Completed Phase 0 foundation plan and evidence |
 | `docs/phases/PHASE_1_DISCOVERY_AND_REQUIREMENTS.md` | Phase 1 plan for requirements and deterministic SDD artifact contracts |
@@ -131,6 +132,7 @@ This document is the repository map for agents and humans. Keep it current whene
 | `process/validators/owners.py`, `process/validators/tech_lead.py` | Versioned owner/delegate/zone authority resolution plus immutable-snapshot, check-only Tech Lead views and control-state evaluation |
 | `process/roles/*.md` | Bounded analyst, developer, QA, and Tech Lead one-stage instructions with canonical references, negative examples, self-review, and human stop points |
 | `process/adapters/*.yaml` | Thin Qwen/DeepSeek/GigaCode-class packaging templates with no policy, transition, canonical-write, or human authority |
+| `process/gigacode/` | Управляемые GigaCode instructions: общий `superpowers.md` workflow применяется перед role-aware `sdd-process-companion.md` и устанавливается через package manifest |
 | `process/weak_model_kit.py` | Pure authority-labelled read-pack, deterministic launch, operation-evidence, and safe-parallel contract logic |
 | `process/certification.py` | Pure deterministic fixture runner, allowlisted validator dispatch, normalized/raw evidence boundary, and exact OpenSpec coverage inventory |
 | `process/model_adapter.py` | Generated closed role-specific response schemas, reasoning/final separation, exact parsing, structural retry classification, and mechanical normalization |

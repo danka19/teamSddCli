@@ -1,5 +1,9 @@
 # SDD Process Companion
 
+До этого skill примените `.gigacode/skills/superpowers.md`. Этот companion
+добавляет SDD role/authority rules и не заменяет общий workflow сборки,
+изменения и проверки проекта.
+
 Используйте этот skill в главном чате при новом требовании, работе с change package,
 смене роли, учебном режиме или проверке перехода между этапами.
 

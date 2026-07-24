@@ -153,15 +153,52 @@ def test_bootstrap_reuses_one_versioned_package_without_policy_fork(
     assert list(target.rglob("package.yaml")) == [target / "process" / "package.yaml"]
 
 
-def test_bootstrap_installs_managed_gigacode_role_gate(tmp_path: Path) -> None:
+def test_bootstrap_installs_declared_gigacode_workflow_skills(tmp_path: Path) -> None:
     target = tmp_path / "workspace"
 
     bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, target)
 
-    source = PROCESS / "gigacode" / "skills" / "sdd-process-companion.md"
-    installed = target / ".gigacode" / "skills" / "sdd-process-companion.md"
-    assert installed.read_bytes() == source.read_bytes()
-    assert "Какова ваша роль в этом чате" in installed.read_text(encoding="utf-8")
+    manifest = _yaml(PROCESS / "package.yaml")
+    declared = set(manifest["gigacode"]["files"])
+    installed_root = target / ".gigacode"
+    installed = {
+        path.relative_to(installed_root).as_posix()
+        for path in installed_root.rglob("*")
+        if path.is_file()
+    }
+
+    assert manifest["gigacode"]["files"] == [
+        "AGENTS.md",
+        "skills/superpowers.md",
+        "skills/sdd-process-companion.md",
+    ]
+    assert installed == declared
+    for relative_path in declared:
+        source = PROCESS / "gigacode" / relative_path
+        assert (installed_root / relative_path).read_bytes() == source.read_bytes()
+
+
+def test_gigacode_activates_superpowers_before_sdd_companion() -> None:
+    agents = (PROCESS / "gigacode" / "AGENTS.md").read_text(encoding="utf-8")
+    companion = (
+        PROCESS / "gigacode" / "skills" / "sdd-process-companion.md"
+    ).read_text(encoding="utf-8")
+    superpowers = (
+        PROCESS / "gigacode" / "skills" / "superpowers.md"
+    ).read_text(encoding="utf-8")
+
+    assert agents.index("skills/superpowers.md") < agents.index(
+        "skills/sdd-process-companion.md"
+    )
+    assert "skills/superpowers.md" in companion
+    for token in (
+        "применимые skills",
+        "факты",
+        "предположения",
+        "провер",
+        "решение человека",
+    ):
+        assert token in superpowers
 
 
 def test_update_rejects_modified_managed_gigacode_file_without_mutation(
@@ -178,7 +215,7 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
     (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
-    managed = workspace / ".gigacode" / "AGENTS.md"
+    managed = workspace / ".gigacode" / "skills" / "superpowers.md"
     managed.write_text("local override\n", encoding="utf-8")
     process_before = (installed / "VERSION").read_bytes()
     config_path = workspace / "team-specs" / "sdd.config.yaml"

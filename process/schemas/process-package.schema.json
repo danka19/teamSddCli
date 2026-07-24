@@ -133,7 +133,7 @@
       "required": ["target", "files"],
       "properties": {
         "target": {"const": ".gigacode"},
-        "files": {"const": ["AGENTS.md", "skills/sdd-process-companion.md"]}
+        "files": {"const": ["AGENTS.md", "skills/superpowers.md", "skills/sdd-process-companion.md"]}
       }
     },    "adapters": {
       "type": "object",
