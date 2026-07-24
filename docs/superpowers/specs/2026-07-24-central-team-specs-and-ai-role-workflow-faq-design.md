@@ -1,7 +1,7 @@
 # Design: central `team-specs` and AI-assisted role workflow in the FAQ
 
 Date: 2026-07-24
-Status: proposed for written human review
+Status: approved by the human owner and reality-checked
 Source: owner feedback and explicit permission decision from 2026-07-24
 
 ## 1. Problem
@@ -480,3 +480,25 @@ After written human review, the detailed plan will contain:
 6. Expand AI prompts and permissions.
 7. Reconcile audit evidence, run FAQ/OpenSpec/governance checks, commit and
    push to `main` after successful verification.
+
+## 17. Reality-check corrections
+
+The dated audit
+`docs/audits/CENTRAL_TEAM_SPECS_AI_ROLE_WORKFLOW_REALITY_AUDIT_2026-07-24.md`
+verified the design against package `0.3.7`, current schemas, public `sdd`,
+operation catalogue, focused tests and active OpenSpec changes.
+
+The implementation plan must preserve these corrections:
+
+- “one repository = one technical project ID” is the supported default, not a
+  validator-enforced uniqueness invariant across all project rows;
+- sibling/path/registry discovery and specialist config validation work now;
+- bounded read-pack construction works now but is specialist-only;
+- no public `sdd context`, automatic clone/pull or multi-repository
+  orchestration exists;
+- `add-ai-analyst-discovery` is implemented at `12/13`, with only its
+  first-time human walkthrough pending;
+- FP catalogue, FP namespaces, many-to-many storage and release publication
+  remain planned under `define-fp-analytics-publication-model` at `0/70`;
+- focused config/read-pack/FAQ verification passed `118` tests, but the full
+  repository suite must not be described as green.
