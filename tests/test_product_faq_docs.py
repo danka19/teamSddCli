@@ -40,6 +40,10 @@ def test_nis_foundation_page_explains_positive_adoption_route() -> None:
     assert "## Как это адаптировано в teamSddCli" in page
     assert "## Что планируется перенести дальше" in page
     assert "## Что не взято" not in page
+    assert (
+        "Переносимые process controls и роли не привязывают целевую архитектуру "
+        "к PPRB или другой организационной модели НИС."
+    ) in page
     assert "nis-foundation.md" in (faq / "index.md").read_text(encoding="utf-8")
 
 
