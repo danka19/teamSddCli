@@ -161,6 +161,48 @@ def test_recursive_link_is_rejected_before_copy_or_destination_mutation(
     assert not backups.exists()
 
 
+def test_gigacode_nested_link_is_rejected_before_external_write_or_package_mutation(
+    tmp_path: Path,
+) -> None:
+    installed, candidate, config, backups = _update_fixture(tmp_path)
+    managed_root = tmp_path / ".gigacode"
+    managed_root.mkdir()
+    outside = tmp_path / "outside-gigacode"
+    outside.mkdir()
+    sentinel = outside / "sentinel.txt"
+    sentinel.write_text("human data\n", encoding="utf-8")
+    link = managed_root / "skills"
+    try:
+        os.symlink(outside, link, target_is_directory=True)
+    except OSError:
+        result = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(link), str(outside)],
+            capture_output=True, text=True, check=False,
+        )
+        if result.returncode != 0:
+            pytest.skip("symlink and junction creation are unavailable")
+
+    installed_before = (installed / "VERSION").read_bytes()
+    config_before = config.read_bytes()
+    with pytest.raises(
+        OperationError,
+        match="gigacode-target-unsafe|filesystem-link-forbidden",
+    ):
+        update_process_package(
+            installed,
+            candidate,
+            config,
+            backups,
+            upgrade_evidence=_upgrade_evidence(tmp_path / "nested-link-review"),
+        )
+
+    assert sentinel.read_text(encoding="utf-8") == "human data\n"
+    assert not (outside / "superpowers.md").exists()
+    assert (installed / "VERSION").read_bytes() == installed_before
+    assert config.read_bytes() == config_before
+    assert not backups.exists()
+
+
 def test_update_failure_restores_package_and_pin_and_removes_partial_backup(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:

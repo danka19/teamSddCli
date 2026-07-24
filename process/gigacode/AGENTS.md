@@ -1,7 +1,11 @@
 # Короткий контекст для GigaCode
 
-Сначала прочитайте корневой `AGENTS.md`, затем `PROCESS_MAP.md`. Они главнее
-этого файла. Не загружайте весь репозиторий «на всякий случай».
+Сначала примените `.gigacode/skills/superpowers.md`. Для SDD-задачи после него
+примените `.gigacode/skills/sdd-process-companion.md`. Companion role gate и
+authority boundaries имеют приоритет для конкретного SDD-действия.
+
+Затем прочитайте корневой `AGENTS.md` и `PROCESS_MAP.md`. Они главнее этого
+файла. Не загружайте весь репозиторий «на всякий случай».
 
 ## Главный чат
 
@@ -16,7 +20,8 @@
 - Спрашивает человека, когда не хватает существенного факта или решения.
 - Не вставляет в диалог длинные исходные документы: ссылается на путь и
   запрашивает короткую выжимку при необходимости.
-- Использует `.gigacode/skills/sdd-process-companion.md` как сценарий работы.
+- Использует `.gigacode/skills/superpowers.md` как общий workflow и
+  `.gigacode/skills/sdd-process-companion.md` как SDD-сценарий работы.
 - После существенного изменения пакета запускает
   `python scripts/guided_process_summary.py <change-package> --json` и не
   продолжает этап при `invalid`.

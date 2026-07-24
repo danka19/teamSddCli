@@ -36,12 +36,34 @@ def _yaml(path: Path) -> dict:
     return value
 
 
-def _upgrade_evidence(root: Path, to_version: str = "0.4.0") -> Path:
+def _downgrade_to_pre_superpowers_package(package_root: Path) -> dict:
+    manifest = _yaml(package_root / "package.yaml")
+    manifest["package"]["version"] = "0.3.6"
+    manifest["gigacode"]["files"].remove("skills/superpowers.md")
+    (package_root / "package.yaml").write_text(
+        yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8"
+    )
+    (package_root / "VERSION").write_text("0.3.6\n", encoding="utf-8")
+    (package_root / "gigacode" / "skills" / "superpowers.md").unlink()
+    schema_path = package_root / "schemas" / "process-package.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    schema["properties"]["gigacode"]["properties"]["files"]["const"] = manifest[
+        "gigacode"
+    ]["files"]
+    schema_path.write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
+    return manifest
+
+
+def _upgrade_evidence(
+    root: Path,
+    to_version: str = "0.4.0",
+    from_version: str = PROCESS_VERSION,
+) -> Path:
     document = {
         "schema_version": "1.0",
         "change_id": "synthetic-process-upgrade",
         "review": {"owner_type": "human", "state": "approved", "decision_ref": "decisions/process-upgrade.yaml"},
-        "from": {"package_version": PROCESS_VERSION, "openspec_version": "1.4.1"},
+        "from": {"package_version": from_version, "openspec_version": "1.4.1"},
         "to": {"package_version": to_version, "openspec_version": "1.4.1"},
         "checks": {
             "compatibility_evidence_refs": ["evidence/package-compatibility.json"],
@@ -153,16 +175,34 @@ def test_bootstrap_reuses_one_versioned_package_without_policy_fork(
     assert list(target.rglob("package.yaml")) == [target / "process" / "package.yaml"]
 
 
-def test_bootstrap_installs_managed_gigacode_role_gate(tmp_path: Path) -> None:
+def test_bootstrap_installs_declared_gigacode_workflow_skills(tmp_path: Path) -> None:
     target = tmp_path / "workspace"
 
     bootstrap_team_specs(PROCESS, TEAM_TEMPLATE, target)
 
-    source = PROCESS / "gigacode" / "skills" / "sdd-process-companion.md"
-    installed = target / ".gigacode" / "skills" / "sdd-process-companion.md"
-    assert installed.read_bytes() == source.read_bytes()
-    assert "Какова ваша роль в этом чате" in installed.read_text(encoding="utf-8")
-    companion = installed.read_text(encoding="utf-8")
+    manifest = _yaml(PROCESS / "package.yaml")
+    declared = set(manifest["gigacode"]["files"])
+    installed_root = target / ".gigacode"
+    installed = {
+        path.relative_to(installed_root).as_posix()
+        for path in installed_root.rglob("*")
+        if path.is_file()
+    }
+
+    assert manifest["gigacode"]["files"] == [
+        "AGENTS.md",
+        "skills/superpowers.md",
+        "skills/sdd-process-companion.md",
+    ]
+    assert installed == declared
+    for relative_path in declared:
+        source = PROCESS / "gigacode" / relative_path
+        assert (installed_root / relative_path).read_bytes() == source.read_bytes()
+
+    companion = (
+        installed_root / "skills" / "sdd-process-companion.md"
+    ).read_text(encoding="utf-8")
+    assert "Какова ваша роль в этом чате" in companion
     for token in (
         "## Режим `analyst-discovery`",
         "## Режим `guided-change`",
@@ -176,6 +216,29 @@ def test_bootstrap_installs_managed_gigacode_role_gate(tmp_path: Path) -> None:
         "показать первую команду",
     ):
         assert token in companion
+
+
+def test_gigacode_activates_superpowers_before_sdd_companion() -> None:
+    agents = (PROCESS / "gigacode" / "AGENTS.md").read_text(encoding="utf-8")
+    companion = (
+        PROCESS / "gigacode" / "skills" / "sdd-process-companion.md"
+    ).read_text(encoding="utf-8")
+    superpowers = (
+        PROCESS / "gigacode" / "skills" / "superpowers.md"
+    ).read_text(encoding="utf-8")
+
+    assert agents.index("skills/superpowers.md") < agents.index(
+        "skills/sdd-process-companion.md"
+    )
+    assert "skills/superpowers.md" in companion
+    for token in (
+        "применимые skills",
+        "факты",
+        "предположения",
+        "провер",
+        "решение человека",
+    ):
+        assert token in superpowers
 
 
 def test_companion_keeps_discovery_and_action_permissions_separate() -> None:
@@ -210,7 +273,7 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
         yaml.safe_dump(candidate_manifest, sort_keys=False), encoding="utf-8"
     )
     (candidate / "VERSION").write_text("0.4.0\n", encoding="utf-8")
-    managed = workspace / ".gigacode" / "AGENTS.md"
+    managed = workspace / ".gigacode" / "skills" / "superpowers.md"
     managed.write_text("local override\n", encoding="utf-8")
     process_before = (installed / "VERSION").read_bytes()
     config_path = workspace / "team-specs" / "sdd.config.yaml"
@@ -228,6 +291,106 @@ def test_update_rejects_modified_managed_gigacode_file_without_mutation(
     assert (installed / "VERSION").read_bytes() == process_before
     assert config_path.read_bytes() == config_before
     assert managed.read_text(encoding="utf-8") == "local override\n"
+
+
+def test_rollback_removes_new_managed_file_and_preserves_user_gigacode_file(
+    tmp_path: Path,
+) -> None:
+    workspace = tmp_path / "workspace"
+    installed = workspace / "process"
+    shutil.copytree(PROCESS, installed, ignore=shutil.ignore_patterns("release"))
+    installed_manifest = _downgrade_to_pre_superpowers_package(installed)
+
+    managed_root = workspace / ".gigacode"
+    for relative in installed_manifest["gigacode"]["files"]:
+        source = installed / "gigacode" / relative
+        target = managed_root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+    user_file = managed_root / "preferences.md"
+    user_file.write_text("human setting\n", encoding="utf-8")
+
+    candidate = tmp_path / "candidate"
+    shutil.copytree(PROCESS, candidate, ignore=shutil.ignore_patterns("release"))
+    central = workspace / "team-specs"
+    shutil.copytree(TEAM_TEMPLATE, central)
+    config_path = central / "sdd.config.yaml"
+    config = _yaml(config_path)
+    config["process_package"]["version"] = "0.3.6"
+    config["process_package"]["location"] = "../process"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    backups = tmp_path / "rollbacks"
+
+    update_process_package(
+        installed,
+        candidate,
+        config_path,
+        backups,
+        upgrade_evidence=_upgrade_evidence(
+            tmp_path / "upgrade-review",
+            PROCESS_VERSION,
+            from_version="0.3.6",
+        ),
+    )
+
+    managed_superpowers = managed_root / "skills" / "superpowers.md"
+    assert managed_superpowers.read_bytes() == (
+        candidate / "gigacode" / "skills" / "superpowers.md"
+    ).read_bytes()
+
+    rollback_process_package(installed, backups / "0.3.6", config_path)
+
+    assert not managed_superpowers.exists()
+    assert user_file.read_text(encoding="utf-8") == "human setting\n"
+    assert _yaml(config_path)["process_package"]["version"] == "0.3.6"
+
+
+def test_rollback_rejects_locally_modified_file_removed_from_old_manifest(
+    tmp_path: Path,
+) -> None:
+    workspace = tmp_path / "workspace"
+    installed = workspace / "process"
+    shutil.copytree(PROCESS, installed, ignore=shutil.ignore_patterns("release"))
+    installed_manifest = _downgrade_to_pre_superpowers_package(installed)
+
+    managed_root = workspace / ".gigacode"
+    for relative in installed_manifest["gigacode"]["files"]:
+        source = installed / "gigacode" / relative
+        target = managed_root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+
+    candidate = tmp_path / "candidate"
+    shutil.copytree(PROCESS, candidate, ignore=shutil.ignore_patterns("release"))
+    central = workspace / "team-specs"
+    shutil.copytree(TEAM_TEMPLATE, central)
+    config_path = central / "sdd.config.yaml"
+    config = _yaml(config_path)
+    config["process_package"]["version"] = "0.3.6"
+    config["process_package"]["location"] = "../process"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    backups = tmp_path / "rollbacks"
+    update_process_package(
+        installed,
+        candidate,
+        config_path,
+        backups,
+        upgrade_evidence=_upgrade_evidence(
+            tmp_path / "upgrade-review",
+            PROCESS_VERSION,
+            from_version="0.3.6",
+        ),
+    )
+    managed_superpowers = managed_root / "skills" / "superpowers.md"
+    managed_superpowers.write_text("local override\n", encoding="utf-8")
+
+    with pytest.raises(OperationError, match="gigacode-managed-file-conflict"):
+        rollback_process_package(installed, backups / "0.3.6", config_path)
+
+    assert managed_superpowers.read_text(encoding="utf-8") == "local override\n"
+    assert (installed / "VERSION").read_text(encoding="utf-8").strip() == PROCESS_VERSION
+    assert _yaml(config_path)["process_package"]["version"] == PROCESS_VERSION
+
 
 def test_update_migrates_only_known_legacy_config_defaults(tmp_path: Path) -> None:
     workspace = tmp_path / "workspace"

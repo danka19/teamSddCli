@@ -1,7 +1,7 @@
 schema_version: "1.1"
 package:
   id: sdd-process
-  version: 0.3.7
+  version: 0.3.8
 openspec:
   cli_version: 1.4.1
 workflow: workflow.yaml
@@ -84,6 +84,7 @@ gigacode:
   target: .gigacode
   files:
     - AGENTS.md
+    - skills/superpowers.md
     - skills/sdd-process-companion.md
 adapters:
   qwen_class: adapters/qwen-class.yaml

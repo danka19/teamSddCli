@@ -1,6 +1,6 @@
 # Руководство: начать с рабочей ситуации
 
-<!-- guided-catalog-sha256: b0c39b4161324aa449d6e52809eb4b1e9f52fccf9eee5e1984c64a794d3207fb -->
+<!-- guided-catalog-sha256: b606bcec414844f3b35789ebf86770371d24907450e8fec008726e5c2e17dc0c -->
 
 Установленная команда `sdd` — рекомендуемый public entrypoint: используйте
 `sdd start <situation>` для нового маршрута и `sdd next --change <path>` для

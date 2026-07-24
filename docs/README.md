@@ -1,32 +1,34 @@
 # teamSddCli
 
+> **Начать работу:** [self-service маршрут через `sdd`](faq/self-service-entrypoint.md) ·
+> [полный FAQ](faq/index.md) · [первый `minor` change](faq/first-change.md)
+
 ## Начать с FAQ
 
-Для первого знакомства с продуктом, безопасного запуска `sdd` и роли в процессе используйте [человекочитаемый FAQ и role runbooks](faq/index.md). Канонические OpenSpec-спецификации и specialist runbooks остаются источниками правил.
+Для первого знакомства с продуктом, безопасного запуска `sdd` и выбора роли
+используйте [человекочитаемый FAQ и role runbooks](faq/index.md).
+Канонические OpenSpec-спецификации и specialist runbooks остаются источниками
+правил.
 
 ## Summary
 
-teamSddCli is a local SDD process-automation project for a team workflow based on OpenSpec/Markdown, Git, deterministic validation scripts, Bitbucket, Jenkins, Confluence, Jira or another task tracker, and local AI tools.
+`teamSddCli` — локальный набор OpenSpec/Markdown-first шаблонов, проверок,
+role instructions и команд для управляемой работы над командными изменениями.
+Git/OpenSpec хранит канонический смысл; deterministic checks контролируют
+evidence и переходы; AI помогает готовить и объяснять работу, но не получает
+человеческие полномочия.
 
-The project goal is to automate the end-to-end transition from analysis to development tasks, QA test cases, automated-test skeletons, verification, and archived living specs without introducing one centralized autonomous agent. The delivery strategy is deliberately two-stage: first make the complete governed process reliable without AI, then progressively automate bounded process work with AI over the deterministic control plane. Reliability grows through broader risk-oriented test coverage and end-to-end evidence traceability; delivery speed grows through safe parallel AI work on explicitly independent tasks.
+Текущий практический результат — установленный public `sdd` для package
+identity, setup, situation-first guidance, continuation, каталога, checks,
+preparation и requests. Полный управляемый маршрут возможен, но public CLI не
+исполняет его автоматически end-to-end: specialist/manual шаги, решения людей
+и external/corporate mutations остаются отдельными слоями, а `sdd run`
+fail-closed.
 
-Current checkpoint:
-
-> Phase 1 produced the accepted OpenSpec baseline and Phase 2 is closed under `D-020`: immutable candidate `phase-2-14-rc6` is the external transfer baseline with process package `0.3.0`, payload SHA-256 `172707ba159e1e060561d6d02ad67dcaf2fa4ce64a58c23bd9c55613713fd951`, manifest SHA-256 `0c7670637f1f59f82a6cae3bea48c53edfa3453d5fcf0c599bf013bd301c3146`, and `295 covered / 7 gaps / 32 future_work`. `D-021` adds a new pre-corporate Phase 3: the reusable package must become self-service through a situation-based guided-operation contract for humans and AI assistants before any corporate configuration or pilot. The guided workflow has passed its focused synthetic, AI-disabled, local Qwen/DeepSeek preflight, and negative-path checks; its separately versioned successor candidate is still pending. RC6 remains immutable; Phase 4 performs corporate adaptation and a monitored pilot. Historical rc4 remains unchanged, rc5 is retained as diagnostic rejected history, and macOS is not certified.
-
-Текущий пакет `0.3.1` содержит проверяемый `baseline-reuse`: свежие Qwen и
-DeepSeek preflight прошли, а полная matrix `0.3.0` связана с ними точными
-hashes. Исторические raw-artifact roots найдены в локальном архиве
-`C:\Users\danoc\Documents\certifications`: 48 заявленных файлов сверены по
-SHA-256 и собран чистый exact bundle без лишних runtime probe. Диагностический
-`rc3` был отклонён, потому что его управляющий CLI записывал Python bytecode в
-payload; причина устранена отдельным регрессионным тестом. Новый immutable
-candidate `guided-owner-v0.3.1-rc4` собран, его manifest валиден до и после
-Windows full-clean rehearsal, которая passed. Владелец принял этот кандидат по
-`D-023` и разрешил его слияние в `main`. Автоматический `accept` не может
-вернуть `evidence-complete`, потому что на машине нет WSL-дистрибутива для
-Linux/WSL2 portability smoke; это явно принятое остаточное ограничение, а не
-сфабрикованный passed result. Linux/WSL2 проверка обязательна до Phase 4.
+Точное состояние реализации и принятых release evidence смотрите в
+[roadmap](ROADMAP.md) и [текущем аудите](CURRENT_PROJECT_AUDIT.md). Immutable
+Phase 2/3 candidates, их версии и hashes не заменяются версией текущего source
+package.
 
 ## Scope
 
@@ -162,14 +164,9 @@ Future publication follows `D-029`: one full current analytics page per independ
 
 ## Self-service entrypoint
 
-Оператор устанавливает локальный пакет командой `python -m pip install .` и
-работает через `sdd --version`, `sdd setup`, `sdd start` и `sdd next`.
-`sdd setup` требует `--confirm` и создаёт только пустой local workspace;
-`start` и `next` возвращают один structured continuation result с ролью,
-недостающими фактами, human boundary, fallback и точной следующей командой.
-В P3 `sdd run`, release и external mutation остаются fail-closed. Канонические
-требования находятся в OpenSpec change `add-self-service-operator-onboarding`;
-подробный bootstrap — в `docs/runbooks/PACKAGED_GOVERNED_FLOW.md`.
+Начните с отдельной [self-service инструкции](faq/self-service-entrypoint.md):
+она показывает public команды, полный управляемый маршрут и переходы к
+specialist/manual и external/corporate слоям без дублирования OpenSpec policy.
 
 ## Каталог локальных скриптов
 
@@ -181,15 +178,15 @@ Future publication follows `D-029`: one full current analytics page per independ
 <!-- operation-table:begin -->
 | Operation | Role | Situation | Boundary | Runbook |
 | --- | --- | --- | --- | --- |
-| classify-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
-| create-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | mutate_local/medium | [docs/README.md](docs/README.md) |
-| evaluate-change-gates | Analyst, Tech Lead, Developer, QA | existing-change, urgent-incident | read_only/low | [docs/README.md](docs/README.md) |
-| guided-owner-workflow | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
-| manual-fallback | Analyst, Tech Lead, Developer, QA | blocked-operation | prepare/low | [docs/README.md](docs/README.md) |
-| prepare-archive | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
-| prepare-spec-pr | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](docs/README.md) |
-| preview-analytics | Analyst, Tech Lead, Developer, QA | on demand | read_only/low | [docs/README.md](docs/README.md) |
-| sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](docs/README.md) |
+| classify-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | read_only/low | [docs/README.md](README.md) |
+| create-change | Analyst, Tech Lead, Developer, QA | new-requirement, urgent-incident | mutate_local/medium | [docs/README.md](README.md) |
+| evaluate-change-gates | Analyst, Tech Lead, Developer, QA | existing-change, urgent-incident | read_only/low | [docs/README.md](README.md) |
+| guided-owner-workflow | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](README.md) |
+| manual-fallback | Analyst, Tech Lead, Developer, QA | blocked-operation | prepare/low | [docs/README.md](README.md) |
+| prepare-archive | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](README.md) |
+| prepare-spec-pr | Analyst, Tech Lead, Developer, QA | existing-change | prepare/low | [docs/README.md](README.md) |
+| preview-analytics | Analyst, Tech Lead, Developer, QA | on demand | read_only/low | [docs/README.md](README.md) |
+| sdd-dispatcher | Analyst, Tech Lead, Developer, QA | new-requirement, existing-change, urgent-incident, blocked-operation | read_only/low | [docs/README.md](README.md) |
 <!-- operation-table:end -->
 
 Ниже приведена историческая инвентаризация 30 локальных CLI на 2026-07-22. Она не является политикой полномочий. Актуальное генерируемое представление public/deprecated операций находится после инвентаризации и строится только из `process/catalogs/operations.yaml`.

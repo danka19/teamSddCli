@@ -4,6 +4,9 @@
 [process package setup](../runbooks/PROCESS_PACKAGE_SETUP.md) и
 [self-service onboarding](../../openspec/changes/add-self-service-operator-onboarding/specs/self-service-operator-onboarding/spec.md).
 
+Перед setup проверьте общий
+[self-service маршрут и границы public `sdd`](self-service-entrypoint.md).
+
 <!-- faq-question: setup --><!-- faq-question: topology -->
 
 ## Что создаёт setup
@@ -30,6 +33,33 @@
 `process/` — versioned deterministic package. `team-specs/` — центральная
 рабочая область команды для changes, Master Specs, configuration, evidence и
 traceability. Это не папка для secrets.
+
+<!-- faq-question: gigacode-managed-workflow -->
+
+## Что устанавливается для GigaCode
+
+Текущий process package `0.3.8` устанавливает в подготовленный workspace один
+согласованный набор инструкций:
+
+```text
+.gigacode/
+├── AGENTS.md
+└── skills/
+    ├── superpowers.md
+    └── sdd-process-companion.md
+```
+
+- `.gigacode/AGENTS.md` задаёт порядок `Superpowers → SDD companion`;
+- `.gigacode/skills/superpowers.md` включает общие правила безопасной работы:
+  проверить ветку и scope, отделить факты от предположений, не затронуть чужие
+  изменения и показать свежую проверку;
+- `.gigacode/skills/sdd-process-companion.md` добавляет роль, текущий SDD-этап,
+  допустимый следующий шаг и человеческие границы решений.
+
+Человеку не нужно копировать эти файлы вручную или вставлять длинный стартовый
+prompt. Package управляет точным содержимым набора, а GigaCode применяет общий
+workflow до специализированных SDD-инструкций. Это не даёт AI права
+подтверждать classification, DoR/DoD, риск, merge, release или archive.
 
 ## Что нужно до начала
 

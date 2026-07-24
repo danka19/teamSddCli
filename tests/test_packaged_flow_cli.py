@@ -65,6 +65,18 @@ def test_bootstrap_accepts_the_declared_operations_catalog(tmp_path: Path, capsy
     assert (workspace / "process" / "schemas" / "operations-catalog.schema.json").is_file()
 
 
+SCENARIO_COVERAGE = {
+    "test_bootstrap_accepts_the_declared_operations_catalog": [
+        {
+            "source_kind": "accepted",
+            "capability": "repo-topology-config",
+            "requirement": "Process package carries operation-dispatch assets",
+            "scenario": "Bootstrap carries one coherent operation contract",
+        },
+    ],
+}
+
+
 def test_json_entry_points_return_stable_operator_error_without_traceback(
     tmp_path: Path, capsys,
 ) -> None:

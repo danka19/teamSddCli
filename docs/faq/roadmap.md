@@ -78,7 +78,7 @@ waiver, merge, release или archive и не подставляет `--confirm`
 **Для чего.** Аналитик может превратить сырую идею в проверяемый draft без
 копирования длинного технического prompt и без выдачи догадки AI за требование.
 
-**Статус и граница.** Реализация уже входит в process package `0.3.7`;
+**Статус и граница.** Реализация уже входит в текущий process package `0.3.8`;
 OpenSpec change `add-ai-analyst-discovery` выполнен на `12/13`. Capability
 работает сейчас, но остаётся `pending_acceptance`: first-time human walkthrough
 ещё не записан. AI не создаёт весь пакет одним действием и не принимает
@@ -115,7 +115,7 @@ real-package route, объяснить границы полномочий и у
 
 **Статус и граница.** Это открытая task 5.3 change
 `add-ai-analyst-discovery`. Она блокирует human acceptance и archive, но не
-отменяет факт, что capability уже установлена и работает в package `0.3.7`.
+отменяет факт, что capability уже установлена и работает в package `0.3.8`.
 
 ### Portability перед корпоративной адаптацией
 

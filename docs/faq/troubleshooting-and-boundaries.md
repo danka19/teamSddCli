@@ -4,6 +4,9 @@
 [process setup](../runbooks/PROCESS_PACKAGE_SETUP.md) и
 [implementation strategy](../IMPLEMENTATION_STRATEGY.md).
 
+Общая карта public, specialist/manual и external/corporate слоёв находится в
+[self-service entrypoint](self-service-entrypoint.md).
+
 <!-- faq-question: failure-escalation -->
 
 ## Быстрый troubleshooting
@@ -23,6 +26,8 @@
 | Test/validator failed | Реальный failed-run | Сохранить input/output, исправить в scope, повтор записать отдельно |
 | AI/model недоступен | Convenience layer отсутствует | Использовать тот же deterministic/manual route |
 | Integration недоступна | External state нельзя подтвердить | Оставить external state unknown, записать unavailable surface |
+| `gigacode-managed-file-conflict` | Локально изменённый managed-файл расходится с установленной package-версией | Не перезаписывать и не удалять файл; сохранить diagnostic и решить, нужно ли перенести локальную правку в канонический package |
+| GigaCode setup/update сообщает о небезопасном пути | Один из каталогов `.gigacode` оказался symlink/junction, reparse point или не-directory | Остановиться, проверить реальный target с владельцем workspace и не разрешать write/delete через перенаправленный путь |
 
 ## Как сохранить и эскалировать failure
 
@@ -103,6 +108,21 @@ update обязан проверить from/to version, compatibility evidence, 
 rollback proof. Используйте
 [packaged governed flow](../runbooks/PACKAGED_GOVERNED_FLOW.md) и
 [transfer runbook](../runbooks/TRANSFER_RELEASE_CANDIDATE.md).
+
+Для package-managed GigaCode-набора действуют дополнительные гарантии:
+
+- update блокируется, если локально изменённый managed-файл нельзя безопасно
+  сопоставить с установленной версией;
+- rollback удаляет новый managed-файл только при точном совпадении его
+  содержимого с текущим package;
+- произвольные пользовательские файлы внутри `.gigacode` сохраняются;
+- bootstrap, update и rollback не читают, не записывают и не удаляют данные
+  через symlink/junction или другой redirected ancestor.
+
+При блокировке не удаляйте `.gigacode` целиком. Сохраните exact path и
+diagnostic, сравните локальную правку с каноническим package и выберите
+осознанно: перенести правку в package, вернуть managed-файл к package-версии
+или оставить workspace на текущей версии.
 
 ## Что приложить к запросу поддержки
 

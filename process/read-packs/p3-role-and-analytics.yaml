@@ -2,7 +2,7 @@ schema_version: '1.0'
 id: p3-role-and-analytics
 canonical_sources:
 - ../../process/catalogs/operations.yaml
-- ../../openspec/changes/harden-role-aware-guided-workflow/specs/role-aware-guided-workflow/spec.md
+- ../../openspec/specs/role-aware-guided-workflow/spec.md
 - ../../openspec/changes/add-typed-analytics-artifact-framework/specs/typed-analytics-artifact-framework/spec.md
 assistant_must_not:
 - infer a human role

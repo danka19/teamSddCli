@@ -22,10 +22,49 @@ ROLE_SECTIONS = (
 
 
 def test_readme_keeps_a_human_readable_utf8_faq_entrypoint() -> None:
-    readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
-    assert "## Начать с FAQ" in readme
-    assert "`r`n" not in readme
-    assert "РўРµ" not in readme
+    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    docs_readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+
+    for target in (
+        "docs/faq/self-service-entrypoint.md",
+        "docs/faq/index.md",
+        "docs/faq/first-change.md",
+    ):
+        assert target in root_readme
+        assert (ROOT / target).is_file()
+
+    assert "## Начать с FAQ" in docs_readme
+    assert docs_readme.index("faq/self-service-entrypoint.md") < docs_readme.index(
+        "## Summary"
+    )
+    assert "`r`n" not in root_readme + docs_readme
+    assert "РўРµ" not in root_readme + docs_readme
+
+
+def test_self_service_entrypoint_explains_the_whole_governed_route() -> None:
+    faq = ROOT / "docs" / "faq"
+    page = (faq / "self-service-entrypoint.md").read_text(encoding="utf-8")
+    index = (faq / "index.md").read_text(encoding="utf-8")
+
+    assert "](self-service-entrypoint.md)" in index
+    for token in (
+        "python -m pip install",
+        "sdd --version --json",
+        "sdd setup",
+        "sdd start",
+        "sdd next",
+        "sdd check",
+        "sdd prepare",
+        "sdd request",
+        "## Что public `sdd` делает сам",
+        "## Из каких частей состоит полный цикл",
+        "Public `sdd`",
+        "Specialist/manual",
+        "External/corporate",
+        "`sdd run` остаётся fail-closed",
+        "Полный управляемый маршрут пройти можно",
+    ):
+        assert token in page
 
 
 def test_product_faq_contract_is_valid() -> None:
@@ -51,6 +90,7 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
     faq = ROOT / "docs" / "faq"
     index = (faq / "index.md").read_text(encoding="utf-8")
     for name in (
+        "self-service-entrypoint.md",
         "installation.md",
         "setup-and-topology.md",
         "first-change.md",
@@ -212,13 +252,48 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
     for token in (
         "`add-ai-analyst-discovery`",
         "12/13",
-        "process package `0.3.7`",
+        "process package `0.3.8`",
         "first-time human walkthrough",
     ):
         assert token in roadmap[discovery : roadmap.index("## Следующее")]
 
     troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(encoding="utf-8")
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
+
+
+def test_faq_explains_the_managed_gigacode_workflow_and_safe_updates() -> None:
+    faq = ROOT / "docs" / "faq"
+    setup = (faq / "setup-and-topology.md").read_text(encoding="utf-8")
+    ai = (faq / "ai-collaboration.md").read_text(encoding="utf-8")
+    troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(
+        encoding="utf-8"
+    )
+
+    for token in (
+        ".gigacode/AGENTS.md",
+        ".gigacode/skills/superpowers.md",
+        ".gigacode/skills/sdd-process-companion.md",
+        "Superpowers → SDD companion",
+        "process package `0.3.8`",
+    ):
+        assert token in setup
+
+    for token in (
+        "GigaCode",
+        "Superpowers",
+        "общие правила безопасной работы",
+        "роль и текущий SDD-этап",
+    ):
+        assert token in ai
+
+    for token in (
+        "`gigacode-managed-file-conflict`",
+        "локально изменённый managed-файл",
+        "symlink/junction",
+        "пользовательские файлы",
+        "rollback",
+    ):
+        assert token in troubleshooting
 
 
 def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
@@ -260,6 +335,20 @@ def test_validator_reports_missing_required_question(tmp_path: Path) -> None:
     faq.mkdir(parents=True)
     (faq / "index.md").write_text("# FAQ\n", encoding="utf-8")
     assert any("required question" in error for error in validate_product_faq(tmp_path))
+
+
+def test_validator_requires_self_service_entrypoint_page(tmp_path: Path) -> None:
+    from scripts.validate_product_faq import validate_product_faq
+
+    faq = tmp_path / "docs" / "faq"
+    faq.mkdir(parents=True)
+    (faq / "index.md").write_text(
+        "# FAQ\nКанонический источник: x\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_product_faq(tmp_path)
+    assert "required page is missing: self-service-entrypoint.md" in errors
 
 
 def test_validator_requires_detailed_analytics_roadmap_card(tmp_path: Path) -> None:

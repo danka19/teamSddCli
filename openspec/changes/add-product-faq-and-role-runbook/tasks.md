@@ -30,8 +30,17 @@
 - [x] 5.3 Расширить product comparison, практическую пользу, AI cookbook, troubleshooting и plain-language roadmap без дублирования нормативной OpenSpec policy.
 - [x] 5.4 Усилить deterministic FAQ validation и tests, чтобы наличие markers/links не заменяло обязательные task-oriented sections и smoke documented commands; real-package `sdd next` smoke подтвердил canonical `status` continuation без lifecycle/external mutation.
 - [x] 5.5 Добавить парный walkthrough одного synthetic `minor`: сначала AI-first маршрут с candidate classification, exact разрешёнными командами, raw JSON и human confirmations, затем тот же маршрут без AI в отдельной clean practice-копии того же revision; заменить generated placeholders фактическими proposal/design/task/test/decision evidence, сохранить fail-closed mutation boundary и regression coverage структуры/навигации/порядка.
-- [x] 5.6 Перестроить FAQ-roadmap вокруг status legend и человекочитаемых capability-карточек; подробно описать `define-fp-analytics-publication-model`, связь с AI Analyst Discovery и отличия planned design от работающей функции; закрепить карточку validator/tests.
+- [x] 5.6 Вынести self-service entrypoint в отдельную FAQ-страницу, связать её
+  с самым верхом корневого `README.md`, `docs/README.md` и FAQ hub и объяснить
+  полный маршрут через public `sdd`, specialist/manual и external/corporate
+  слои без утверждения, что пройти полный управляемый цикл невозможно.
+- [x] 5.7 Перестроить FAQ-roadmap вокруг status legend и человекочитаемых capability-карточек; подробно описать `define-fp-analytics-publication-model`, связь с AI Analyst Discovery и отличия planned design от работающей функции; закрепить карточку validator/tests.
   Evidence (2026-07-24): roadmap capability-card contract, exact
   `define-fp-analytics-publication-model` links, FAQ validator/tests, strict
   OpenSpec and roadmap/OpenSpec validation passed; task 4.4 remains the
   independent first-time human walkthrough gate.
+- [x] 5.8 Объяснить package-managed GigaCode workflow: какие три файла
+  устанавливает package `0.3.8`, почему Superpowers применяется до SDD
+  companion и как update/rollback защищают локальные и пользовательские файлы.
+  Evidence (2026-07-24): FAQ contract test и validator требуют inventory,
+  activation order, conflict, rollback и symlink/junction coverage.

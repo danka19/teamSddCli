@@ -86,10 +86,18 @@ def generate_operation_table(root: Path) -> str:
     for item in catalog["operations"]:
         if item["visibility"] not in {"public", "deprecated"}:
             continue
-        rows.append("| {id} | {roles} | {situations} | {mutation}/{risk} | [{runbook}]({runbook}) |".format(
+        runbook = item["runbook"]
+        runbook_path = Path(runbook)
+        target = (
+            runbook_path.relative_to("docs").as_posix()
+            if runbook_path.parts and runbook_path.parts[0] == "docs"
+            else f"../{runbook_path.as_posix()}"
+        )
+        rows.append("| {id} | {roles} | {situations} | {mutation}/{risk} | [{runbook}]({target}) |".format(
             id=item["id"], roles=", ".join(item["allowed_roles"]),
             situations=", ".join(item["situations"]) or "on demand",
-            mutation=item["mutation_level"], risk=item["risk_level"], runbook=item["runbook"],
+            mutation=item["mutation_level"], risk=item["risk_level"],
+            runbook=runbook, target=target,
         ))
     return "\n".join(rows) + "\n"
 

@@ -22,6 +22,7 @@ REQUIRED_QUESTIONS = {
     "evidence-ci",
     "ai-permissions",
     "ai-analyst-discovery",
+    "gigacode-managed-workflow",
     "ai-prohibitions",
     "privacy",
     "failure-escalation",
@@ -42,6 +43,7 @@ REQUIRED_PAGES = {
     "nis-foundation.md",
     "product-and-foundation.md",
     "roadmap.md",
+    "self-service-entrypoint.md",
     "setup-and-topology.md",
     "troubleshooting-and-boundaries.md",
 }
@@ -133,6 +135,45 @@ WALKTHROUGH_INSTANCE_TOKENS = {
         "sample-minor-manual-001",
     },
 }
+SELF_SERVICE_ENTRYPOINT_SECTIONS = {
+    "## Что такое public `sdd`",
+    "## Быстрый старт",
+    "## Что public `sdd` делает сам",
+    "## Из каких частей состоит полный цикл",
+    "## Почему `sdd run` закрыт",
+    "## Куда перейти дальше",
+}
+SELF_SERVICE_ENTRYPOINT_TOKENS = {
+    "python -m pip install",
+    "sdd --version --json",
+    "sdd setup",
+    "sdd start",
+    "sdd next",
+    "sdd check",
+    "sdd prepare",
+    "sdd request",
+    "sdd run",
+    "--confirm",
+    "fail-closed",
+    "Public `sdd`",
+    "Specialist/manual",
+    "External/corporate",
+}
+SELF_SERVICE_ENTRYPOINT_TARGETS = {
+    "installation.md",
+    "setup-and-topology.md",
+    "first-change.md",
+    "roles/index.md",
+    "ai-collaboration.md",
+    "troubleshooting-and-boundaries.md",
+}
+GIGACODE_FAQ_TOKENS = {
+    ".gigacode/AGENTS.md",
+    ".gigacode/skills/superpowers.md",
+    ".gigacode/skills/sdd-process-companion.md",
+    "Superpowers → SDD companion",
+    "process package `0.3.8`",
+}
 REQUIRED_ROADMAP_TOKENS = frozenset(
     {
         "## Как читать roadmap",
@@ -148,7 +189,7 @@ REQUIRED_ROADMAP_TOKENS = frozenset(
         "AI Analyst Discovery",
         "add-ai-analyst-discovery",
         "12/13",
-        "process package `0.3.7`",
+        "process package `0.3.8`",
         "proposal.md",
         "design.md",
         "spec.md",
@@ -188,6 +229,21 @@ def validate_product_faq(root: Path) -> list[str]:
         f"required page is missing: {name}"
         for name in sorted(REQUIRED_PAGES - found_pages)
     ]
+    root_readme = root / "README.md"
+    if (
+        not root_readme.is_file()
+        or "docs/faq/self-service-entrypoint.md"
+        not in root_readme.read_text(encoding="utf-8")
+    ):
+        errors.append("root README self-service entrypoint link is missing")
+
+    readme = root / "docs" / "README.md"
+    if (
+        not readme.is_file()
+        or "faq/self-service-entrypoint.md"
+        not in readme.read_text(encoding="utf-8")
+    ):
+        errors.append("README self-service entrypoint link is missing")
 
     index = faq / "index.md"
     if index.is_file():
@@ -239,6 +295,32 @@ def validate_product_faq(root: Path) -> list[str]:
                 errors.append(
                     f"copy-paste command contains punctuation: {page.relative_to(root)}"
                 )
+        if page.name == "self-service-entrypoint.md":
+            for section in sorted(SELF_SERVICE_ENTRYPOINT_SECTIONS):
+                if section not in text:
+                    errors.append(
+                        "self-service entrypoint section is missing: "
+                        f"{page.relative_to(root)} -> {section}"
+                    )
+            for token in sorted(SELF_SERVICE_ENTRYPOINT_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "self-service entrypoint token is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
+            targets = set(LINK.findall(text))
+            for target in sorted(SELF_SERVICE_ENTRYPOINT_TARGETS - targets):
+                errors.append(
+                    "self-service entrypoint link is missing: "
+                    f"{page.relative_to(root)} -> {target}"
+                )
+        if page.name == "setup-and-topology.md":
+            for token in sorted(GIGACODE_FAQ_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "GigaCode FAQ detail is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
         if page.name in {"ai-collaboration.md", "first-change-with-ai.md"}:
             for token in sorted(DISCOVERY_TOKENS):
                 if token not in text:

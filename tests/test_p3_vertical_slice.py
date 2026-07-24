@@ -465,30 +465,14 @@ def test_response_summary_uses_only_validated_confirmation_records() -> None:
 
 SCENARIO_COVERAGE = {
     "test_unknown_role_blocks_role_sensitive_guidance": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Unknown role is blocked"},
+        {"source_kind": "accepted", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Unknown role is blocked"},
     ],
     "test_analyst_never_receives_implementation_cta": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Analyst cannot receive implementation CTA"},
-    ],
-    "test_natural_language_creates_only_revision_bound_decision_draft": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Natural-language decision prepares but does not record"},
-    ],
-    "test_only_immediate_exact_or_normalized_short_confirmation_creates_event": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Card confirmation records only the active decision"},
-    ],
-    "test_ambiguous_stale_or_interleaved_chat_text_cannot_record_authority": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Ambiguous chat text cannot record a decision"},
-    ],
-    "test_normal_mode_surfaces_material_unknowns_and_requires_explicit_choice": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Proactive discovery completeness", "scenario": "Material unknowns receive an explicit choice"},
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Proactive discovery completeness", "scenario": "Silence is not default acceptance"},
-    ],
-    "test_response_summary_uses_only_validated_confirmation_records": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Human-confirmed decision card", "scenario": "Card confirmation records only the active decision"},
+        {"source_kind": "accepted", "capability": "role-aware-guided-workflow", "requirement": "Fail-closed role-aware guidance", "scenario": "Analyst cannot receive implementation CTA"},
     ],
     "test_ui_yes_is_not_trusted_acceptance_and_dor_cannot_be_skipped": [
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Trusted revision-bound human acceptance", "scenario": "UI confirmation is rejected"},
-        {"source_kind": "delta", "capability": "role-aware-guided-workflow", "requirement": "Readiness preserves DoR", "scenario": "Incomplete package remains blocked"},
+        {"source_kind": "accepted", "capability": "role-aware-guided-workflow", "requirement": "Trusted revision-bound human acceptance", "scenario": "UI confirmation is rejected"},
+        {"source_kind": "accepted", "capability": "role-aware-guided-workflow", "requirement": "Readiness preserves DoR", "scenario": "Incomplete package remains blocked"},
     ],
     "test_typed_analytics_fixture_validates_and_previews_without_external_actions": [
         {"source_kind": "delta", "capability": "typed-analytics-artifact-framework", "requirement": "Typed analytics package", "scenario": "Complete typed package validates"},

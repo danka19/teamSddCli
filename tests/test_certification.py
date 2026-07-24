@@ -284,8 +284,8 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
     }
     assert report["summary"]["future_work"] == 32
     assert report["summary"] == {
-        "effective_scenarios": 351,
-        "covered": 300,
+        "effective_scenarios": 357,
+        "covered": 306,
         "gaps": 19,
         "future_work": 32,
     }
@@ -320,10 +320,18 @@ def test_residual_gap_review_routes_later_phases_and_governance_exactly() -> Non
             }
         )
     ]
-    assert len(governance_rows) == 23
+    assert len(governance_rows) == 24
     assert all(
         (row.get("evidence") and all(reference.startswith("manual:") for reference in row["evidence"]) and "gap" not in row)
         or (row["requirement"] == "Canonical language and localized generated views" and "gap" in row)
+        or (
+            row["requirement"] == "Operation table is a validated derived documentation view"
+            and row["scenario"] == "Catalog change is reflected deterministically"
+            and row.get("evidence") == [
+                "pytest:tests/test_operation_catalog_dispatcher.py::"
+                "test_catalog_validator_checks_derived_contracts_and_generated_readme"
+            ]
+        )
         for row in governance_rows
     )
 

@@ -361,7 +361,10 @@ def test_catalog_validator_checks_derived_contracts_and_generated_readme(tmp_pat
 
     errors = validate_operations_catalog(ROOT)
     assert errors == []
-    assert "| Operation | Role | Situation | Boundary | Runbook |" in generate_operation_table(ROOT)
+    table = generate_operation_table(ROOT)
+    assert "| Operation | Role | Situation | Boundary | Runbook |" in table
+    assert "[docs/README.md](README.md)" in table
+    assert "[docs/README.md](docs/README.md)" not in table
 
 
 def test_execution_requires_an_explicit_permitted_role(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
@@ -378,3 +381,45 @@ def test_dispatcher_parser_errors_are_structured_json(capsys: pytest.CaptureFixt
 
     assert sdd_main(["check", "--json"]) == 1
     assert json.loads(capsys.readouterr().out)["diagnostics"][0]["code"] == "invalid-command"
+
+
+SCENARIO_COVERAGE = {
+    "test_catalog_validator_checks_derived_contracts_and_generated_readme": [
+        {
+            "source_kind": "accepted",
+            "capability": "documentation-governance",
+            "requirement": "Operation table is a validated derived documentation view",
+            "scenario": "Catalog change is reflected deterministically",
+        },
+    ],
+    "test_operation_confirmation_contract_binds_catalog_role_input_revision_chain_and_expiry": [
+        {
+            "source_kind": "accepted",
+            "capability": "role-aware-guided-workflow",
+            "requirement": "Non-authoritative operation confirmation binding",
+            "scenario": "Missing, mismatched, future, expired, or extra operation evidence is blocked",
+        },
+    ],
+    "test_request_never_fabricates_trusted_ingress_evidence": [
+        {
+            "source_kind": "accepted",
+            "capability": "role-aware-guided-workflow",
+            "requirement": "Non-authoritative operation confirmation binding",
+            "scenario": "Local request does not invent trusted ingress",
+        },
+    ],
+    "test_valid_operation_event_never_enables_run_or_external_mutation": [
+        {
+            "source_kind": "accepted",
+            "capability": "role-aware-guided-workflow",
+            "requirement": "Non-authoritative operation confirmation binding",
+            "scenario": "Operation confirmation never enables P3 execution",
+        },
+        {
+            "source_kind": "accepted",
+            "capability": "role-aware-guided-workflow",
+            "requirement": "Non-authoritative operation confirmation binding",
+            "scenario": "External mutation remains forbidden",
+        },
+    ],
+}

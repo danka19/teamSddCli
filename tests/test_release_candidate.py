@@ -63,6 +63,7 @@ EXPECTED_ENTRY_POINTS = {
     "validate_traceability.py",
     "sdd.py",
     "validate_operations_catalog.py",
+    "validate_product_faq.py",
 }
 
 EXPECTED_CERTIFICATIONS = {

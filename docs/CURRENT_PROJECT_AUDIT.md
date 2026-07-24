@@ -10,7 +10,7 @@ Last status reconciliation: 2026-07-24.
 
 ## AI Analyst Discovery implementation reconciliation (2026-07-24)
 
-- Packaged `sdd-process-companion` версии `0.3.7` реализует
+- Текущий combined package `0.3.8` включает `sdd-process-companion`, который реализует
   `analyst-discovery` и `guided-change`: обычная фраза запускает план тем,
   permission-bound вопросы по одному, evidence-сводку
   `confirmed | proposed | unknown | conflict` и отдельный handoff к действиям.
@@ -385,6 +385,25 @@ Canonical decision IDs now live in `docs/DECISIONS.md`. The table below remains 
 - Тип: `scope_refinement`, `documentation_change`, `verification_change`.
 - Решение: `adopt_now` в `harden-role-aware-guided-workflow` / P3.
 - Результат: `process/gigacode/` — канонический источник; bootstrap устанавливает два declared-файла, а update fail-closed блокирует конфликтующий локальный managed-файл, не затрагивая другое содержимое `.gigacode`.
+- Актуальное состояние 2026-07-24: combined package `0.3.8` устанавливает
+  `.gigacode/AGENTS.md`, `skills/superpowers.md` и
+  `skills/sdd-process-companion.md` в порядке Superpowers → SDD companion.
+  Rollback удаляет отсутствующий в target manifest managed-файл только при
+  byte-for-byte совпадении с текущим package; локальная правка блокирует
+  операцию, пользовательские undeclared-файлы сохраняются, а symlink/reparse
+  ancestry блокируется до package/config и внешних file mutations.
+- Пользовательское объяснение и поддерживаемый FAQ-контракт находятся в
+  `docs/faq/setup-and-topology.md`,
+  `docs/faq/ai-collaboration.md` и
+  `docs/faq/troubleshooting-and-boundaries.md`.
+- Корневой `README.md` добавлен как GitHub/repository entrypoint с разрешимыми
+  ссылками `docs/faq/...`; `docs/README.md` сохраняет подробное описание
+  проекта и свои относительные `faq/...` ссылки.
+- Предпубликационная сверка 2026-07-24 исправила три stale package references:
+  certification coverage и P3 read pack теперь используют принятый living spec
+  `openspec/specs/role-aware-guided-workflow/spec.md`; guided-owner marker
+  соответствует текущим route/operation catalogs; release-candidate exact
+  inventory учитывает allowlisted `validate_product_faq.py`.
 
 ## P3 Chat Decision and Discovery Intake (2026-07-21)
 
