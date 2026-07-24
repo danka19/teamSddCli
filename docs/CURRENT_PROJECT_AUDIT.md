@@ -183,7 +183,7 @@ Last status reconciliation: 2026-07-24.
 - Active OpenSpec changes: `define-transfer-ready-process-package` is apply-ready with 20/33 tasks complete and 13 remaining; `adopt-nis-corporate-process-governance` has 38/43 tasks complete and 5 remaining. Transfer tasks 4.4-4.5 and NIS tasks 8.2-8.3 are execution-complete. Task 7.5 and NIS task 8.8 remain Phase 3 work. Both changes remain `in_progress`.
 - This historical 2026-07-15 snapshot predates adapter `2.2` and `D-018`. Its earlier fallback-only and adapter `2.1` blockers are superseded; the current accepted contour is Windows plus Linux/WSL2 with macOS explicitly not certified, and work item 2.12 is closed.
 
-Last updated: 2026-07-21.
+Last updated: 2026-07-24.
 
 ## Repository Baseline
 
@@ -191,13 +191,14 @@ Last updated: 2026-07-21.
 |---|---|
 | Repository root | `<repository-root>` |
 | Git repository | Initialized locally on 2026-07-03 |
-| Current branch | `codex/close-release-integrity-gaps` |
+| Current branch | `phase-3/repo-local-offline-skills` |
 | Remote | `origin` is configured; inspect locally with `git remote -v` |
 | Transfer-readiness audit commit | `96b3614 docs: audit transfer readiness` |
 | Repository rename | The remote repository capitalization was corrected; the local folder path retains its historical capitalization |
 | Architecture source of truth | Current decisions live in `docs/` and `openspec/`; stale historical architecture draft removed on 2026-07-06 |
 | Implementation source code | No monolithic custom `sdd` CLI exists. Deterministic entry points include the Phase 1 compatibility validator, process/config validation, classification/migration, work item 2.5 gate/lifecycle reports, and work item 2.6 check-only Tech Lead review/control reports backed by `process/validators/`. |
 | OpenSpec project artifacts | Present; 8 accepted specs cover the deterministic artifact gate plus Phase 1 lifecycle, artifact, traceability, waiver, documentation-governance, repo-topology/config/version, and Confluence feedback/publication contracts; active changes propose transfer-readiness/weak-model guardrails and NIS-aligned corporate-process governance |
+| Repo-local workflow skills | Canonical `teamssd-*` instructions are versioned under `process/agent-skills/` and projected to `.agents/skills/` for Codex discovery. They are designed for local repository work and stop before external actions. Automated and behavioral skill tests are intentionally absent by owner decision, so interpretation remains a manual residual risk. |
 
 ## Useful Starting Points
 
@@ -210,7 +211,7 @@ Last updated: 2026-07-21.
 - The accepted NIS adoption direction and complete implementation plan are in `docs/planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md` and `openspec/changes/adopt-nis-corporate-process-governance/`.
 - The reproducible pre-plan evidence is `docs/audits/TRANSFER_READINESS_STATUS_2026-07-13.md`.
 - The 2026-07-06 documentation/architecture review with current findings and the open decision batch is `docs/audits/FABLE5_DOCUMENTATION_ARCHITECTURE_REVIEW_2026-07-06.md`; its staged-plan companion is `docs/planning/FABLE5_FINAL_ARCHITECTURE_AND_PLAN_DRAFT_2026-07-06.md`.
-- Workflow skills are global (`~/.codex/skills`); this repository intentionally has no `.codex/skills/` directory.
+- Repository workflow skills use the versioned `teamssd-*` package under `process/agent-skills/` and the tracked `.agents/skills/` Codex projection; personal global skills are not a project dependency.
 - Current architecture and implementation planning are in `docs/`, `openspec/`, and accepted human decisions.
 
 ## Verified Environment Evidence
@@ -234,7 +235,7 @@ Last updated: 2026-07-21.
 | NIS governance OpenSpec proposal validation | Strict validation passes; 42/43 tasks are implemented and only Phase 3 task 8.8 remains unchecked. This proves implementation and planning-contract validity, not accepted-spec promotion. |
 | Pre-commit installed | Not available on PATH during Phase 1 artifact work; config is present but end-to-end hook execution still needs tool installation |
 | Local app/server available | No local app/server found; this work item is script/template based |
-| Documentation bootstrap | `project-starter-kit` created the repository operating/docs structure; repository-local `.codex/skills/` is intentionally absent because workflow skills are global |
+| Documentation bootstrap | `project-starter-kit` created the repository operating/docs structure; the later `add-repo-local-offline-skills` change adds canonical `teamssd-*` skills and a tracked `.agents/skills/` projection without restoring legacy `.codex/skills/` copies |
 | Starter structure check | `python "$env:USERPROFILE/.codex/skills/project-starter-kit/scripts/bootstrap_project.py" --target . --check` passed |
 | Markdown/code whitespace check | `rg -n "[ \t]+$" AGENTS.md docs openspec templates scripts tests .pre-commit-config.yaml pytest.ini .gitignore` returned no matches |
 

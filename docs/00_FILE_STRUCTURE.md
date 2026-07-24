@@ -128,6 +128,8 @@ This document is the repository map for agents and humans. Keep it current whene
 | `tests/test_validate_change.py` | Focused validator tests covering thin/full artifact rules, canonical statuses, waiver validation, traceability gaps, staged discovery, and placeholder mode |
 | `process/VERSION` | Current working source process-package semantic version (`0.3.7`); immutable externally accepted Phase 2 candidate rc6 remains package `0.3.0` under `D-020` |
 | `process/package.yaml` | Process-package metadata, OpenSpec and policy-set pins, workflow/policy manifest references, local schema inventory, and canonical source references |
+| `process/agent-skills/` | Канонический самодостаточный набор `teamssd-*` workflow-skills и короткое руководство по offline-границе и runtime-проекциям |
+| `.agents/skills/` | Отслеживаемая Codex discovery-проекция канонических `teamssd-*` skills; напрямую не редактируется |
 | `process/workflow.yaml` | Minimal reusable artifact dependency contract for the accepted central topology |
 | `process/policies/` | Manifest-driven `sdd-core` policy set with nine versioned static catalogs, including immutable Tech Lead views/actions/authority boundaries |
 | `process/schemas/` | Local Draft 2020-12 schemas for package/workflow metadata, schema-v2 changes, gate, Tech Lead, and corporate-flow inputs, policy documents/manifest, central registries/config, optional project adapter, and release manifest |
@@ -211,4 +213,7 @@ The reusable package, templates, schemas, fixtures, release candidate, and corpo
 
 ## Skills
 
-Workflow skills are global (`~/.codex/skills`): architecture-planner, phase-planner, phase-step-runner, phase-full-runner, phase-change-intake, openspec-*, handoff-to-claude, session-report, doc-sync-audit. This repository intentionally has no `.codex/skills/` directory.
+Project workflow skills are canonical under `process/agent-skills/` and exposed
+to Codex through `.agents/skills/`. Use the `teamssd-*` variants for repository
+work. Other runtimes create separate reviewed projections such as
+`.gigacode/skills/`; personal global skills are not a project dependency.

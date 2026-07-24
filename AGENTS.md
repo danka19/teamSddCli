@@ -62,9 +62,14 @@ Agents may analyze, recommend, draft, summarize, prepare evidence, and explain t
 - Always include a `Next step` section in substantive final reports. For quick no-change answers, include at least a concise next-step sentence.
 - If the human asked for a recommendation or "what is better", the answer must compare the practical options, give the recommended path, explain tradeoffs and risks, and clearly separate advice from any actions taken.
 
-## Global Skills
+## Repo-Local Skills
 
-Workflow skills are global (`~/.codex/skills`); this repository has no `.codex/skills/`.
+Project workflow skills are versioned under `process/agent-skills/` and exposed
+to Codex through the tracked `.agents/skills/` projection. Use the `teamssd-*`
+variants for repository work; personal global skills may exist but are not a
+project dependency. Edit only the canonical package, keep the projection
+identical, and follow `process/agent-skills/README.md` when adding another
+runtime projection such as `.gigacode/skills/`.
 
 - For architecture planning, use `architecture-planner`.
 - For new ideas, fixes, scope changes, architecture notes, artifact/process contract changes, integration changes, or verification requests that appear during an active phase, use `phase-change-intake` before changing the plan.

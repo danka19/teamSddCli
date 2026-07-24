@@ -120,6 +120,7 @@ distribution:
     - workflow.yaml
     - workflow_operations.py
   roots:
+    - agent-skills
     - adapters
     - catalogs
     - certification

@@ -28,6 +28,18 @@ Windows full-clean rehearsal, которая passed. Владелец приня
 Linux/WSL2 portability smoke; это явно принятое остаточное ограничение, а не
 сфабрикованный passed result. Linux/WSL2 проверка обязательна до Phase 4.
 
+## Repo-local skills
+
+Канонические проектные workflow-skills находятся в
+`process/agent-skills/`, а Codex обнаруживает их через отслеживаемую проекцию
+`.agents/skills/`. Используйте варианты `teamssd-*`: они не зависят от личного
+`~/.codex/skills` и останавливаются перед сетевыми и другими внешними
+действиями. Правила сопровождения и добавления отдельной runtime-проекции,
+например `.gigacode/skills/`, описаны в `process/agent-skills/README.md`.
+
+Автоматические и поведенческие тесты первого набора skills не создавались по
+прямому решению владельца; это сохраняется как остаточный риск.
+
 ## Scope
 
 In scope:
