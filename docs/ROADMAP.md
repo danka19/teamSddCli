@@ -243,6 +243,7 @@ Likely scope:
 | `fix-sdd-next-canonical-status` | P3 | P4 | in_progress |
 | `simplify-weak-model-decision-contract` | P2 | P4 | blocked |
 | `define-fp-analytics-publication-model` | P5 | P3, P4 | planned |
+| `add-repo-local-offline-skills` | P3 | P4 | pending_acceptance |
 
 ## Phase Planning Rule
 
