@@ -1,6 +1,6 @@
 # Process Package And Synthetic Topology Setup
 
-Status: Phase 2 work items 2.1-2.13 and gates 2.14.1-2.14.4 are closed; `D-020` accepts immutable rc6 package `0.3.0` as the external transfer baseline. The current source package is `0.3.4` for in-progress P3 work and is not thereby a newly accepted transfer candidate. Rc4 is historical and rc5 is diagnostic rejected history.
+Status: Phase 2 work items 2.1-2.13 and gates 2.14.1-2.14.4 are closed; `D-020` accepts immutable rc6 package `0.3.0` as the external transfer baseline. The current source package is `0.3.7` for in-progress P3 work and is not thereby a newly accepted transfer candidate. Rc4 is historical and rc5 is diagnostic rejected history.
 
 ## Contract Sources
 
@@ -142,8 +142,14 @@ or create an internal process fork.
 
 ## Управляемые GigaCode-шаблоны
 
-Package версии `0.3.4` содержит канонические шаблоны `.gigacode/AGENTS.md` и
-`.gigacode/skills/sdd-process-companion.md`; bootstrap устанавливает их в новый workspace.
-Перед update детерминированная проверка сравнивает только эти declared files: локальное отличие
-блокирует update с `gigacode-managed-file-conflict` и точным путём, а остальные `.gigacode`-файлы
-не затрагиваются. Это сохраняет единый reusable source без перезаписи локальной работы.
+Package версии `0.3.7` содержит три канонических managed-файла:
+`.gigacode/AGENTS.md`, `.gigacode/skills/superpowers.md` и
+`.gigacode/skills/sdd-process-companion.md`. Общий Superpowers workflow
+применяется первым, а SDD companion добавляет role/authority rules. Bootstrap
+устанавливает все три файла в новый workspace.
+
+Перед update детерминированная проверка сравнивает только declared files:
+локальное отличие любого из них блокирует update с
+`gigacode-managed-file-conflict` и точным путём. Остальные `.gigacode`-файлы
+не затрагиваются. Это сохраняет единый reusable source без перезаписи локальной
+работы.
