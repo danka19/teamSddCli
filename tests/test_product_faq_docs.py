@@ -123,7 +123,7 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
     for token in (
         "## Стартовый prompt",
         "## Шаг 1. AI собирает evidence из repository",
-        "Сопоставь все 17 minor-condition IDs",
+        "Я аналитик. Помоги провести первый minor change.",
         "Выполняй только эту команду",
         "classification.human-confirmation-required",
         "Разрешаю только показанный rename внутри _render_human",
@@ -207,6 +207,15 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
         "tasks.md",
     ):
         assert token in roadmap
+    discovery = roadmap.index("### AI Analyst Discovery")
+    assert roadmap.index("## Работает сейчас") < discovery < roadmap.index("## Следующее")
+    for token in (
+        "`add-ai-analyst-discovery`",
+        "12/13",
+        "process package `0.3.7`",
+        "first-time human walkthrough",
+    ):
+        assert token in roadmap[discovery : roadmap.index("## Следующее")]
 
     troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(encoding="utf-8")
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
@@ -219,6 +228,8 @@ def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
     plain = "Помоги оформить небольшое изменение. Сначала помоги разобраться"
     assert plain in page
     assert page.index(plain) < page.index("## Стартовый prompt")
+    assert "Я аналитик. Помоги провести первый minor change." in page
+    assert "Сопоставь все 17 minor-condition IDs" not in page
     for token in (
         "план тем",
         "Можно пройти по этим темам?",

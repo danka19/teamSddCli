@@ -140,7 +140,7 @@ Current work-item map:
 | 3.2 Typed analytics artifact framework | accepted | `add-typed-analytics-artifact-framework`; implementation and controlled transfer are accepted under `D-028`; sync/archive remain separate decisions |
 | 3.3 Package and sandbox transfer | accepted | Controlled `0.3.4 -> 0.3.6` transfer, rollback rehearsal, and final sandbox update are accepted under `D-028`; sync/archive remain separate decisions |
 | 3.4 Operation catalog and thin dispatcher | accepted | Archived `add-operation-catalog-and-dispatcher`; 16/16 tasks are complete, accepted specs are promoted, and every P3 mutation remains fail-closed |
-| 3.5 Аналитическое интервью с AI | in_progress | `add-ai-analyst-discovery`: packaged companion принимает простую фразу, по разрешению задаёт вопросы по одному, готовит проверяемую сводку и останавливается перед файлами и командами; human walkthrough ещё не проведён |
+| 3.5 Аналитическое интервью с AI | pending_acceptance | `add-ai-analyst-discovery`: реализация входит в package `0.3.7`, принимает простую фразу, по разрешению задаёт вопросы по одному, готовит проверяемую сводку и разделяет разрешения на файл и команду; 12/13 tasks выполнены, human walkthrough ещё не проведён |
 
 Additional completion conditions from the 2026-07-21 owner walkthrough:
 
@@ -234,7 +234,7 @@ Likely scope:
 | `add-typed-analytics-artifact-framework` | P3 | P5 | accepted |
 | `add-self-service-operator-onboarding` | P3 | P4 | accepted |
 | `add-product-faq-and-role-runbook` | P3 | P4 | in_progress |
-| `add-ai-analyst-discovery` | P3 | P4 | in_progress |
+| `add-ai-analyst-discovery` | P3 | P4 | pending_acceptance |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

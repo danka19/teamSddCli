@@ -27,10 +27,12 @@
 - [x] 5.1 Выполнить focused tests, FAQ validation, full pytest и strict
   OpenSpec validation.
   Evidence (2026-07-24): первоначальный planned focused set — `22 passed`;
-  отдельный FAQ suite — `18 passed`, FAQ validator — `valid`; свежий
-  post-merge combined focused set (companion contract, FAQ, P3 authority,
-  package-version и launcher metadata) — `24 passed`; OpenSpec strict —
-  `24/24`; full pytest — `801 passed, 11 skipped, 20 failed`.
+  до синхронизации с `main` FAQ suite — `18 passed`, combined focused set —
+  `24 passed`; после синхронизации и roadmap/FAQ reconciliation FAQ suite —
+  `19 passed`, свежий combined focused set (companion contract, FAQ, P3
+  authority, package-version и launcher metadata) — `25 passed`; FAQ
+  validator — `valid`; OpenSpec strict — `24/24`; full pytest —
+  `801 passed, 11 skipped, 20 failed`.
   Representative certification/guide/allowlist failures воспроизводятся на
   `main`; release rehearsal проходит из короткого `main` path, а deep worktree
   вызывает Windows path-length failures. Полный suite не объявляется зелёным.

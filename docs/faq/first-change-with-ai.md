@@ -114,40 +114,24 @@ change package?
 
 ## Стартовый prompt
 
-Ниже находится прозрачный fallback для AI-клиента без установленного packaged
-companion. Замените `<repo>` на checkout `teamSddCli`, затем скопируйте:
+Основной маршрут не требует специального prompt: его правила уже находятся в
+установленном `sdd-process-companion`. Для нового диалога достаточно:
 
 ```text
-Мы проводим первый synthetic minor-change walkthrough.
-
-Роль человека в начале: Analyst.
-Requested change: в <repo>/process/operation_dispatcher.py, только внутри
-_render_human, переименовать локальный список lines в output_lines без изменения
-runtime и текста вывода.
-
-Сначала собери evidence сам. Прочитай только:
-- <repo>/process/operation_dispatcher.py
-- <repo>/tests/test_self_service_onboarding.py
-- <repo>/process/policies/classification.yaml
-- <repo>/docs/runbooks/CLASSIFICATION_AND_MIGRATION.md
-- <repo>/docs/runbooks/GUIDED_OWNER_WORKFLOW.md
-
-Найди exact symbol и focused regression test. Выполни baseline test только
-после моего отдельного «выполняй». Сопоставь все 17 minor-condition IDs с
-конкретным source path и фактом. То, что source не доказывает, пометь unknown и
-запроси у Tech Lead; не превращай assumption в true.
-
-Сам предложи candidate class и покажи основания, unknown facts и major/hotfix
-triggers. Это не human confirmation.
-
-Перед каждой командой или edit покажи exact action, ожидаемый результат,
-что изменится и что не изменится; дождись отдельного «выполняй». После команды
-верни exit/result и raw output, затем объясни его отдельно.
-
-Не выполняй next_command автоматически. Не подставляй --confirm. Не подтверждай
-classification, DoR/DoD, risk, release или archive. Не выдумывай facts,
-approvals и test results. Не выполняй Git publish/merge или external mutation.
+Я аналитик. Помоги провести первый minor change.
+Сначала помоги разобраться, а затем веди меня по шагам.
 ```
+
+Companion сам включает `analyst-discovery`, показывает темы и спрашивает
+разрешение на вопросы. После подтверждения сводки он предлагает перейти в
+`guided-change`; это не разрешение автоматически читать repository, запускать
+команды или редактировать файлы.
+
+Если AI сразу выдаёт команды, просит вставить длинный технический prompt или не
+знает режим `analyst-discovery`, packaged companion не подхватился. Не
+компенсируйте это постоянным shell-доступом. Продолжите по
+[маршруту без AI](first-change-without-ai.md) либо переустановите versioned
+process package и начните новый диалог.
 
 ## Шаг 1. AI собирает evidence из repository
 
