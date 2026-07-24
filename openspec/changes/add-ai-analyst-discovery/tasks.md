@@ -5,10 +5,10 @@
 
 ## 2. Packaged companion
 
-- [ ] 2.1 Добавить RED tests для режима discovery и границы перед действиями.
-- [ ] 2.2 Добавить `analyst-discovery` и `guided-change` в существующий
+- [x] 2.1 Добавить RED tests для режима discovery и границы перед действиями.
+- [x] 2.2 Добавить `analyst-discovery` и `guided-change` в существующий
   `sdd-process-companion`.
-- [ ] 2.3 Подтвердить focused tests установки и human-authority boundaries.
+- [x] 2.3 Подтвердить focused tests установки и human-authority boundaries.
 
 ## 3. FAQ
 

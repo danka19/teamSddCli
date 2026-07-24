@@ -245,6 +245,18 @@ def test_gigacode_start_prompt_uses_only_project_interactive_roles() -> None:
     assert "Change Owner" not in prompt
     assert "Release Owner" not in prompt
 
+
+def test_gigacode_companion_discovery_does_not_claim_human_authority() -> None:
+    companion = (
+        ROOT / "process" / "gigacode" / "skills" / "sdd-process-companion.md"
+    ).read_text(encoding="utf-8")
+
+    assert "не подтверждай classification" in companion
+    assert "не подставляй `--confirm`" in companion
+    assert "не выполняй `next_command`" in companion
+    assert "AI подтверждает classification" not in companion
+
+
 def test_catalog_never_grants_implementation_entry_to_tech_lead() -> None:
     payload = guide(
         "existing-change",
