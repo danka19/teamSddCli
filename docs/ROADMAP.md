@@ -233,6 +233,7 @@ Likely scope:
 | `add-typed-analytics-artifact-framework` | P3 | P5 | accepted |
 | `add-self-service-operator-onboarding` | P3 | P4 | accepted |
 | `add-product-faq-and-role-runbook` | P3 | P4 | in_progress |
+| `add-gigacode-superpowers-skill` | P3 | P4 | in_progress |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |
 | `close-release-integrity-gaps` | P2 | P4 | accepted |
 | `determinize-weak-model-operational-decisions` | P2 | P4 | in_progress |

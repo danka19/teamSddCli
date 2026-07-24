@@ -240,6 +240,21 @@ Verification impact: real package `create -> sdd next` positive test, legacy/inv
 Status: in_progress under separate change `fix-sdd-next-canonical-status`; FAQ task 5.4 completed after the separate change implementation and verified real-package smoke, while first-time human walkthrough task 4.4 remains open.
 State detail: the human owner explicitly authorized the separate change and accepted strict canonical `status` parsing without a `lifecycle_state` fallback on 2026-07-24. The change lifecycle remains `in_progress` pending human acceptance; this authorization does not pre-accept the implementation or archive outcome.
 ```
+
+### Change Intake — обязательный Superpowers workflow для GigaCode (2026-07-24)
+
+```text
+Idea: поставлять общий безопасный GigaCode workflow отдельно от SDD companion и обязательно устанавливать оба skill при bootstrap.
+Source: запрос владельца 2026-07-24 и pressure-аудит старого companion-only набора.
+Type: scope_refinement, new_feature, verification_change, documentation_change.
+Decision: create_openspec_change.
+Reason: role-aware companion сохраняет SDD authority, но не покрывает общий repository workflow; изменение состава package и обязательного поведения требует самостоятельных acceptance scenarios.
+Affected specs: role-aware-guided-workflow и repo-topology-config; FAQ остаётся производным пользовательским объяснением.
+Affected architecture: только GigaCode managed skill composition и manifest-driven bootstrap; operation catalog, lifecycle и integrations не меняются.
+Data contract impact: declared GigaCode inventory расширяется до AGENTS плюс двух skill-файлов; package working version становится 0.3.7.
+Verification impact: RED/GREEN/REFACTOR pressure-аудит, exact bootstrap inventory, activation order, conflict protection и package regressions.
+Status: in_progress under separate change `add-gigacode-superpowers-skill`; implementation evidence собрано, human acceptance, sync и archive остаются отдельными решениями.
+```
 ### Change Intake — единый operation catalog и dispatcher (2026-07-22)
 
 ```text

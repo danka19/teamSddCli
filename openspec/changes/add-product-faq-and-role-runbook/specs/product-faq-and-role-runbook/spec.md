@@ -12,7 +12,7 @@ The product SHALL publish one concise Russian-language FAQ hub that links to foc
 - **THEN** the FAQ hub links to a focused page that answers the question and points to its canonical detailed source
 
 ### Requirement: FAQ explains the accepted self-service CLI
-The FAQ SHALL describe `sdd` as the supported operator entrypoint and SHALL explain `sdd setup`, `sdd start`, `sdd next`, `--json`, human-readable output and the `sdd run` fail-closed boundary. It SHALL identify `add-self-service-operator-onboarding` as the canonical source for this command contract and SHALL NOT direct ordinary users to discover `scripts/*.py` paths.
+The FAQ SHALL describe `sdd` as the supported operator entrypoint and SHALL explain `sdd setup`, `sdd start`, `sdd next`, `--json`, human-readable output and the `sdd run` fail-closed boundary. It SHALL publish a focused self-service entry page linked before the README summary and from the FAQ hub. The page SHALL distinguish the public `sdd` layer, specialist/manual operations and external/corporate delivery instead of claiming that the governed full route is impossible. It SHALL identify `add-self-service-operator-onboarding` as the canonical source for this command contract and SHALL NOT direct ordinary users to discover `scripts/*.py` paths.
 
 #### Scenario: First-time operator starts without knowing scripts
 - **WHEN** a new operator follows the setup and first-workflow page
@@ -21,6 +21,11 @@ The FAQ SHALL describe `sdd` as the supported operator entrypoint and SHALL expl
 #### Scenario: User reaches a blocked operation
 - **WHEN** the FAQ explains a release or external-operation step
 - **THEN** it states that `sdd run` remains fail-closed and routes the user to the required human-owned evidence or future accepted automation change
+
+#### Scenario: README ведёт к честной карте self-service
+
+- **WHEN** новый пользователь открывает `docs/README.md`
+- **THEN** до общего summary он видит ссылку на focused self-service page, где полный маршрут разложен на public `sdd`, specialist/manual и external/corporate слои с точными текущими границами
 
 ### Requirement: Исполнимый маршрут первого запуска
 
