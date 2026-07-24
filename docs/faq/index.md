@@ -20,10 +20,11 @@ Bitbucket и Jenkins не изменяются командами `sdd`.
 
 ### Я впервые вижу продукт
 
-1. Прочитайте [что это, кому подходит и чем отличается от OpenSpec](product-and-foundation.md).
-2. Проверьте [требования и установите `sdd`](installation.md).
-3. Если вы готовите команду, создайте [центральное рабочее пространство](setup-and-topology.md).
-4. Пройдите [первый synthetic `minor` change](first-change.md):
+1. Откройте [self-service маршрут через public `sdd`](self-service-entrypoint.md).
+2. Прочитайте [что это, кому подходит и чем отличается от OpenSpec](product-and-foundation.md).
+3. Проверьте [требования и установите `sdd`](installation.md).
+4. Если вы готовите команду, создайте [центральное рабочее пространство](setup-and-topology.md).
+5. Пройдите [первый synthetic `minor` change](first-change.md):
    сначала [в паре с AI](first-change-with-ai.md), затем
    [тот же маршрут без AI](first-change-without-ai.md).
 
@@ -81,6 +82,7 @@ preparation operations.
 
 ## Карта документации
 
+- [Self-service: начать работу через public `sdd`](self-service-entrypoint.md)
 - [Что это, польза, OpenSpec, OpenSpec DE и NIS](product-and-foundation.md)
 - [НИС как основа корпоративного процесса](nis-foundation.md)
 - [Установка и проверка `sdd`](installation.md)

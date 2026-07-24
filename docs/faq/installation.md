@@ -4,6 +4,9 @@
 [`pyproject.toml`](../../pyproject.toml) и
 [process package](../../process/package.yaml).
 
+Общий порядок от установки до первого рабочего шага:
+[self-service маршрут](self-service-entrypoint.md).
+
 <!-- faq-question: installed-sdd -->
 
 ## Что требуется

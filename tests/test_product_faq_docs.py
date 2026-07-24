@@ -24,8 +24,35 @@ ROLE_SECTIONS = (
 def test_readme_keeps_a_human_readable_utf8_faq_entrypoint() -> None:
     readme = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
     assert "## Начать с FAQ" in readme
+    assert readme.index("faq/self-service-entrypoint.md") < readme.index("## Summary")
     assert "`r`n" not in readme
     assert "РўРµ" not in readme
+
+
+def test_self_service_entrypoint_explains_the_whole_governed_route() -> None:
+    faq = ROOT / "docs" / "faq"
+    page = (faq / "self-service-entrypoint.md").read_text(encoding="utf-8")
+    index = (faq / "index.md").read_text(encoding="utf-8")
+
+    assert "](self-service-entrypoint.md)" in index
+    for token in (
+        "python -m pip install",
+        "sdd --version --json",
+        "sdd setup",
+        "sdd start",
+        "sdd next",
+        "sdd check",
+        "sdd prepare",
+        "sdd request",
+        "## Что public `sdd` делает сам",
+        "## Из каких частей состоит полный цикл",
+        "Public `sdd`",
+        "Specialist/manual",
+        "External/corporate",
+        "`sdd run` остаётся fail-closed",
+        "Полный управляемый маршрут пройти можно",
+    ):
+        assert token in page
 
 
 def test_product_faq_contract_is_valid() -> None:
@@ -51,6 +78,7 @@ def test_getting_started_pages_are_executable_and_linked() -> None:
     faq = ROOT / "docs" / "faq"
     index = (faq / "index.md").read_text(encoding="utf-8")
     for name in (
+        "self-service-entrypoint.md",
         "installation.md",
         "setup-and-topology.md",
         "first-change.md",
@@ -205,6 +233,20 @@ def test_validator_reports_missing_required_question(tmp_path: Path) -> None:
     faq.mkdir(parents=True)
     (faq / "index.md").write_text("# FAQ\n", encoding="utf-8")
     assert any("required question" in error for error in validate_product_faq(tmp_path))
+
+
+def test_validator_requires_self_service_entrypoint_page(tmp_path: Path) -> None:
+    from scripts.validate_product_faq import validate_product_faq
+
+    faq = tmp_path / "docs" / "faq"
+    faq.mkdir(parents=True)
+    (faq / "index.md").write_text(
+        "# FAQ\nКанонический источник: x\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_product_faq(tmp_path)
+    assert "required page is missing: self-service-entrypoint.md" in errors
 
 
 def test_validator_reports_missing_required_page_and_role_section(tmp_path: Path) -> None:

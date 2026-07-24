@@ -6,6 +6,9 @@
 [AI authority contract](../../openspec/specs/role-aware-guided-workflow/spec.md)
 и [accepted dispatcher contract](../../openspec/specs/guided-operation-dispatcher/spec.md).
 
+Если вы ещё не устанавливали CLI и не создавали workspace, сначала откройте
+[self-service entrypoint](self-service-entrypoint.md).
+
 Здесь один и тот же synthetic change пройден двумя способами. Сначала человек
 работает в паре с AI: AI собирает признаки, предлагает candidate class,
 показывает и запускает разрешённые команды, объясняет JSON и останавливается за

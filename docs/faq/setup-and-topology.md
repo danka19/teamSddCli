@@ -4,6 +4,9 @@
 [process package setup](../runbooks/PROCESS_PACKAGE_SETUP.md) и
 [self-service onboarding](../../openspec/changes/add-self-service-operator-onboarding/specs/self-service-operator-onboarding/spec.md).
 
+Перед setup проверьте общий
+[self-service маршрут и границы public `sdd`](self-service-entrypoint.md).
+
 <!-- faq-question: setup --><!-- faq-question: topology -->
 
 ## Что создаёт setup

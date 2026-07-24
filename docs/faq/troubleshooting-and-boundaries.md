@@ -4,6 +4,9 @@
 [process setup](../runbooks/PROCESS_PACKAGE_SETUP.md) и
 [implementation strategy](../IMPLEMENTATION_STRATEGY.md).
 
+Общая карта public, specialist/manual и external/corporate слоёв находится в
+[self-service entrypoint](self-service-entrypoint.md).
+
 <!-- faq-question: failure-escalation -->
 
 ## Быстрый troubleshooting
