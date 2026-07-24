@@ -2,7 +2,7 @@
 
 Канонический источник: [план адаптации корпоративного процесса](../planning/NIS_CORPORATE_PROCESS_ADOPTION_PLAN_2026-07-13.md),
 [предлагаемые NIS-aligned требования](../../openspec/changes/adopt-nis-corporate-process-governance/proposal.md)
-и [контракт FAQ](../../openspec/changes/add-product-faq-and-role-runbook/specs/product-faq-and-role-runbook/spec.md).
+и [контракт FAQ](../../openspec/specs/product-faq-and-role-runbook/spec.md).
 
 НИС задаёт практические инженерные controls для целевого процесса. В
 `teamSddCli` они сохраняются как проверяемые правила и evidence, а не как

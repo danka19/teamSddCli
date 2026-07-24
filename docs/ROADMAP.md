@@ -224,6 +224,7 @@ Likely scope:
 | `role-aware-guided-workflow` | P3 | P4 |
 | `operation-catalog` | P3 | P4, P5 |
 | `guided-operation-dispatcher` | P3 | P4, P5 |
+| `product-faq-and-role-runbook` | P3 | P4 |
 
 ## Active Change Execution
 
@@ -233,7 +234,6 @@ Likely scope:
 | `add-guided-owner-workflow` | P3 | P4, P5 | accepted |
 | `add-typed-analytics-artifact-framework` | P3 | P5 | accepted |
 | `add-self-service-operator-onboarding` | P3 | P4 | accepted |
-| `add-product-faq-and-role-runbook` | P3 | P4 | accepted |
 | `add-gigacode-superpowers-skill` | P3 | P4 | in_progress |
 | `add-ai-analyst-discovery` | P3 | P4 | pending_acceptance |
 | `adopt-nis-corporate-process-governance` | P2 | P4 | in_progress |

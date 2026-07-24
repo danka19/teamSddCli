@@ -8,7 +8,6 @@
 ## Purpose
 Define the accepted documentation governance rules for durable updates, AI verification evidence, scenario-first verification, human feedback memory, canonical language, docs/OpenSpec responsibility, and source ownership.
 ## Requirements
-
 ### Requirement: Operation table is a validated derived documentation view
 
 The README operation table SHALL be a committed generated view of the canonical operation catalog, not an independently maintained policy list.
@@ -16,6 +15,7 @@ The README operation table SHALL be a committed generated view of the canonical 
 #### Scenario: Catalog change is reflected deterministically
 - **WHEN** public operation metadata changes
 - **THEN** generation updates the table and validation rejects a stale committed view
+
 ### Requirement: Documentation update discipline
 The SDD process SHALL define when project documentation must be updated for workflow, contract, setup, security, roadmap, or user-visible behavior changes.
 
@@ -132,3 +132,10 @@ The SDD process SHALL prevent OpenSpec, docs, role guides, generated views, and 
 #### Scenario: Documentation drift checks are planned
 - **WHEN** documentation governance checks are implemented
 - **THEN** they include checks for normative language outside canonical files, duplicate requirement IDs with divergent text, missing source links, hand-edited generated blocks, stale memory entries, and orphan maintained documents where practical
+
+### Requirement: User-facing documentation is a governed view
+The project SHALL maintain product FAQ and role runbooks as user-facing views that link to canonical OpenSpec requirements, operation catalog records and detailed runbooks for policy-sensitive claims. They SHALL identify their generated or maintained status and SHALL NOT independently redefine lifecycle, authority, validation or integration rules.
+
+#### Scenario: FAQ references a governed policy
+- **WHEN** a FAQ page describes a mandatory gate, role boundary or unavailable integration
+- **THEN** it links to the applicable canonical contract or runbook and does not contain a conflicting duplicate rule

@@ -206,9 +206,10 @@ Affected specs: new `self-service-operator-onboarding` and `product-faq-and-role
 Affected architecture: installed local CLI wrapper, controlled local bootstrap, canonical FAQ navigation; no external integration boundary change.
 Data contract impact: CLI result contract and documentation navigation metadata may be added; no credentials or external API contract is added.
 Verification impact: clean-sandbox onboarding walkthrough, CLI compatibility tests, navigation/link checks, role/AI FAQ coverage, and regression checks for P3 fail-closed mutations.
-Status: accepted: self-service onboarding и FAQ/runbook приняты; решения об
-их OpenSpec sync/archive остаются отдельными.
-State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive. `add-product-faq-and-role-runbook` owns human documentation, was accepted by the human owner on 2026-07-24 after the first-time walkthrough gate was explicitly closed, and must not silently duplicate OpenSpec requirements. Its sync and archive remain separate lifecycle decisions.
+Status: accepted: self-service onboarding и FAQ/runbook приняты. FAQ Delta Specs
+синхронизированы и change архивирован 2026-07-24; для self-service onboarding
+решения об OpenSpec sync/archive остаются отдельными.
+State detail: the human owner accepted `add-self-service-operator-onboarding` on 2026-07-23 after independent verification: `32 passed` focused launcher/dispatcher tests and `166 passed, 1 skipped` package/release regressions. The change remains pending sync and archive. `add-product-faq-and-role-runbook` owns human documentation, was accepted by the human owner on 2026-07-24 after the first-time walkthrough gate was explicitly closed, its Delta Specs were promoted into living specs, and it was archived as `2026-07-24-add-product-faq-and-role-runbook`. It must not silently duplicate OpenSpec requirements.
 ```
 
 ### Change Intake — полнота FAQ и role runbooks (2026-07-24)

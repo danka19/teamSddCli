@@ -11,7 +11,7 @@
 Bitbucket и Jenkins не изменяются командами `sdd`.
 
 Канонический источник: [описание проекта](../README.md),
-[контракт FAQ](../../openspec/changes/add-product-faq-and-role-runbook/specs/product-faq-and-role-runbook/spec.md)
+[контракт FAQ](../../openspec/specs/product-faq-and-role-runbook/spec.md)
 и [контракт self-service CLI](../../openspec/changes/add-self-service-operator-onboarding/specs/self-service-operator-onboarding/spec.md).
 
 <!-- faq-question: product-purpose --><!-- faq-question: benefits -->

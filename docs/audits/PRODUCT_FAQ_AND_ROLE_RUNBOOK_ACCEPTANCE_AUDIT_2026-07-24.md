@@ -219,6 +219,9 @@ Evidence после исправления:
 human walkthrough/content acceptance; OpenSpec sync и archive остаются
 отдельными человеческими lifecycle-решениями.
 
+Обновление статуса: после этого решения Delta Specs были синхронизированы в
+living specs, а change архивирован как `2026-07-24-add-product-faq-and-role-runbook`.
+
 Расширенная документация и real-package continuation готовы к содержательному
 review, но не к финальному first-time walkthrough. Новый operator должен пройти
 `docs/faq/index.md`, выполнить
