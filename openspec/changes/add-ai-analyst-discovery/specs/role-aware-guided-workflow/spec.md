@@ -1,0 +1,50 @@
+## ADDED Requirements
+
+### Requirement: Analyst discovery interview
+
+При сыром новом требовании companion SHALL сначала показать короткий план тем и
+запросить разрешение на интервью.
+
+#### Scenario: Человек разрешает углубление
+
+- **WHEN** Analyst просит помочь оформить общую идею
+- **THEN** AI показывает темы интервью до первого подробного вопроса
+- **AND** после разрешения задаёт только один вопрос за раз
+- **AND** после каждого смыслового блока сверяет понимание
+
+#### Scenario: Человек запрещает дальнейшие вопросы
+
+- **WHEN** человек не разрешает или прекращает интервью
+- **THEN** AI прекращает задавать вопросы
+- **AND** предлагает частичный черновик, сводку либо завершение без файлов
+
+### Requirement: Discovery evidence summary
+
+Companion SHALL разделять `confirmed`, `proposed`, `unknown` и `conflict`.
+
+#### Scenario: Ответ неизвестен или противоречив
+
+- **WHEN** человек отвечает «не знаю» либо sources конфликтуют
+- **THEN** AI не превращает пробел в факт
+- **AND** объясняет влияние и назначает вопрос владельцу решения
+
+### Requirement: Permission-bound draft creation
+
+Companion SHALL создавать proposal, Delta Spec, optional design и preliminary
+tasks только после подтверждения итоговой сводки.
+
+#### Scenario: Сводка ещё не подтверждена
+
+- **WHEN** интервью завершено, но человек не подтвердил понимание
+- **THEN** AI не создаёт и не редактирует файлы
+
+### Requirement: Explicit guided-change handoff
+
+Companion SHALL отдельно предлагать переход из `analyst-discovery` в
+`guided-change`.
+
+#### Scenario: Переход к действию
+
+- **WHEN** человек подтвердил сводку и черновики
+- **THEN** AI спрашивает, показать ли первую команду
+- **AND** не выполняет команду, `next_command` или `--confirm` автоматически
