@@ -249,6 +249,41 @@ def test_product_ai_roadmap_and_troubleshooting_are_practical() -> None:
     assert "| Симптом | Что это обычно означает | Что делать |" in troubleshooting
 
 
+def test_faq_explains_the_managed_gigacode_workflow_and_safe_updates() -> None:
+    faq = ROOT / "docs" / "faq"
+    setup = (faq / "setup-and-topology.md").read_text(encoding="utf-8")
+    ai = (faq / "ai-collaboration.md").read_text(encoding="utf-8")
+    troubleshooting = (faq / "troubleshooting-and-boundaries.md").read_text(
+        encoding="utf-8"
+    )
+
+    for token in (
+        ".gigacode/AGENTS.md",
+        ".gigacode/skills/superpowers.md",
+        ".gigacode/skills/sdd-process-companion.md",
+        "Superpowers → SDD companion",
+        "process package `0.3.8`",
+    ):
+        assert token in setup
+
+    for token in (
+        "GigaCode",
+        "Superpowers",
+        "общие правила безопасной работы",
+        "роль и текущий SDD-этап",
+    ):
+        assert token in ai
+
+    for token in (
+        "`gigacode-managed-file-conflict`",
+        "локально изменённый managed-файл",
+        "symlink/junction",
+        "пользовательские файлы",
+        "rollback",
+    ):
+        assert token in troubleshooting
+
+
 def test_ai_walkthrough_starts_with_plain_language_discovery() -> None:
     page = (ROOT / "docs" / "faq" / "first-change-with-ai.md").read_text(
         encoding="utf-8"

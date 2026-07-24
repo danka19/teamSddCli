@@ -25,6 +25,9 @@
 - [x] 3.1 Обновить setup runbook и карту файлов.
 - [x] 3.2 Записать RED/GREEN/REFACTOR pressure-аудит с остаточными границами.
 - [x] 3.3 Запустить focused package, bootstrap, update и validator regressions.
+- [x] 3.4 Актуализировать FAQ: объяснить устанавливаемый GigaCode-набор,
+  порядок Superpowers → SDD companion, managed-file conflict, безопасный
+  rollback и защиту от symlink/junction.
 
 ## 4. Acceptance
 

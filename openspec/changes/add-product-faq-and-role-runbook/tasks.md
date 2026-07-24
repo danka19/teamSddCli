@@ -36,3 +36,8 @@
   `define-fp-analytics-publication-model` links, FAQ validator/tests, strict
   OpenSpec and roadmap/OpenSpec validation passed; task 4.4 remains the
   independent first-time human walkthrough gate.
+- [x] 5.8 Объяснить package-managed GigaCode workflow: какие три файла
+  устанавливает package `0.3.8`, почему Superpowers применяется до SDD
+  companion и как update/rollback защищают локальные и пользовательские файлы.
+  Evidence (2026-07-24): FAQ contract test и validator требуют inventory,
+  activation order, conflict, rollback и symlink/junction coverage.

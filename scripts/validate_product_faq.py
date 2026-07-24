@@ -22,6 +22,7 @@ REQUIRED_QUESTIONS = {
     "evidence-ci",
     "ai-permissions",
     "ai-analyst-discovery",
+    "gigacode-managed-workflow",
     "ai-prohibitions",
     "privacy",
     "failure-escalation",
@@ -166,6 +167,13 @@ SELF_SERVICE_ENTRYPOINT_TARGETS = {
     "ai-collaboration.md",
     "troubleshooting-and-boundaries.md",
 }
+GIGACODE_FAQ_TOKENS = {
+    ".gigacode/AGENTS.md",
+    ".gigacode/skills/superpowers.md",
+    ".gigacode/skills/sdd-process-companion.md",
+    "Superpowers → SDD companion",
+    "process package `0.3.8`",
+}
 REQUIRED_ROADMAP_TOKENS = frozenset(
     {
         "## Как читать roadmap",
@@ -298,6 +306,13 @@ def validate_product_faq(root: Path) -> list[str]:
                     "self-service entrypoint link is missing: "
                     f"{page.relative_to(root)} -> {target}"
                 )
+        if page.name == "setup-and-topology.md":
+            for token in sorted(GIGACODE_FAQ_TOKENS):
+                if token not in text:
+                    errors.append(
+                        "GigaCode FAQ detail is missing: "
+                        f"{page.relative_to(root)} -> {token}"
+                    )
         if page.name in {"ai-collaboration.md", "first-change-with-ai.md"}:
             for token in sorted(DISCOVERY_TOKENS):
                 if token not in text:
