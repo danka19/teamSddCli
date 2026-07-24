@@ -29,7 +29,7 @@
 | Fail-closed | При неизвестном факте или неподтверждённом праве операция блокируется, а не угадывает продолжение |
 | `--json` | Машиночитаемый один-result режим для evidence и разрешённого AI caller |
 | `sdd start` | Выбрать маршрут по новой ситуации |
-| `sdd next` | Получить применимое продолжение по существующему change state; в текущем package real schema-v2 route блокируется известным mismatch `status`/`lifecycle_state` |
+| `sdd next` | Получить применимое продолжение по existing change state; lifecycle schema-v2 читается только из top-level `status`, без второго persisted-поля `lifecycle_state` |
 | `sdd request` | Подготовить неавторитетный intent/request; не предоставить authority |
 | `sdd prepare` | Подготовить локальный артефакт/результат без external mutation и без принятия решения |
 | `sdd run` | Mutation boundary; в текущей версии намеренно остаётся заблокированной |

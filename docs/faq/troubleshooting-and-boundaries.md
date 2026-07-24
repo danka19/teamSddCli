@@ -17,7 +17,7 @@
 | `missing-context` | Route не имеет обязательного факта | Найти fact у accountable owner либо оставить blocked |
 | `invalid-role` / `unknown-role` | Роль не указана или не поддерживается | Проверить human role/registry; не выбирать другую роль ради CTA |
 | `sdd next` не находит change | Неверный path либо отсутствует `change.yaml`/state | Получить exact change path у владельца процесса |
-| `missing-lifecycle-state` на real schema-v2 change | Известный mismatch: template использует `status`, dispatcher читает `lifecycle_state` | Не добавлять поле вручную; сохранить failed-run, использовать specialist lifecycle runbook и ждать отдельного product fix |
+| `missing-change-status` на real schema-v2 change | Отсутствует, пусто или некорректно прочитано обязательное top-level поле `status` | Не добавлять `lifecycle_state` вручную; сохранить failed-run и восстановить/эскалировать канонический status по specialist lifecycle runbook |
 | Candidate `minor` блокируется | Не доказано low impact либо есть material/unknown trigger | Передать classification evidence Tech Lead; не ослаблять criteria |
 | `confirmation-contract-pending` | Mutation намеренно не включена в текущую версию | Использовать documented specialist/manual route либо остановиться |
 | Test/validator failed | Реальный failed-run | Сохранить input/output, исправить в scope, повтор записать отдельно |

@@ -158,9 +158,9 @@ def dispatch(args: argparse.Namespace, *, catalog_path: Path = DEFAULT_CATALOG) 
     if args.command == "next":
         path = Path(args.change); path = path / "change.yaml" if path.is_dir() else path
         if not path.is_file(): return _blocked("sdd-next", "missing-change")
-        try: state = yaml.safe_load(path.read_text(encoding="utf-8")).get("lifecycle_state")
+        try: state = yaml.safe_load(path.read_text(encoding="utf-8")).get("status")
         except (OSError, UnicodeError, yaml.YAMLError, AttributeError): state = None
-        if not isinstance(state, str) or not state: return _blocked("sdd-next", "missing-lifecycle-state")
+        if not isinstance(state, str) or not state: return _blocked("sdd-next", "missing-change-status")
         result = guide("existing-change", {"human_role": args.role or "", "change_id": path.parent.name, "lifecycle_state": state}, set()); result["operation"] = "sdd-next"; return _continuation(result, catalog_path)
     if args.command == "op":
         if args.op_command == "list":

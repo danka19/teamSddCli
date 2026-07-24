@@ -35,11 +35,10 @@ Bitbucket и Jenkins не изменяются командами `sdd`.
    `expected_evidence` и `authority_boundary` в ответе.
 5. Остановитесь, если требуется решение другой роли или отсутствует факт.
 
-Известное ограничение текущей версии: schema-v2 change хранит lifecycle в
-поле `status`, а `sdd next` пока ищет `lifecycle_state`. На реально созданном
-change команда возвращает `missing-lifecycle-state`. Не добавляйте поле вручную:
-сохраните blocker и используйте specialist runbook до отдельного исправления
-dispatcher.
+Schema-v2 change хранит lifecycle в top-level поле `status`, и `sdd next`
+читает это каноническое поле. Не добавляйте вручную второе persisted-поле
+`lifecycle_state`; если `status` отсутствует или не поддерживается, сохраните
+blocker и используйте specialist runbook.
 
 ### Я хочу работать через AI
 

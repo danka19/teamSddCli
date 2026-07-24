@@ -30,9 +30,10 @@ recommendation. Tech Lead получает deterministic decision support, но 
    sdd next --change <path-to-change> --role "Tech Lead" --json
    ```
 
-   На real schema-v2 change текущая версия может вернуть известный
-   `missing-lifecycle-state`. Не добавляйте compatibility field вручную;
-   сохраните failed-run и используйте specialist governance/lifecycle runbooks.
+   На real schema-v2 change `sdd next` читает канонический top-level `status`.
+   Не добавляйте compatibility field `lifecycle_state` вручную и не меняйте
+   lifecycle: missing или unsupported status остаётся fail-closed blocker для
+   specialist governance/lifecycle runbooks.
 2. Сверьте class с canonical classification report. Не сохраняйте policy
    thresholds в этой странице как самостоятельное правило.
 3. Проверьте scope, architecture disposition, dependencies, owner coverage,

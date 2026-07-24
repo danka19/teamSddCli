@@ -30,10 +30,11 @@ quality findings видимыми, но не присваивает change relea
    sdd next --change <path-to-change> --role QA --json
    ```
 
-   На real schema-v2 change текущая версия возвращает известный
-   `missing-lifecycle-state`. Не меняйте metadata вручную; сохраните blocker и
-   следуйте specialist QA/lifecycle runbooks до product fix.
-2. После исправления проверьте returned evidence/decision boundary; не считайте route QA approval.
+   На real schema-v2 change `sdd next` читает канонический top-level `status`.
+   Не меняйте metadata вручную и не добавляйте `lifecycle_state`; missing или
+   unsupported status нужно сохранить как blocker и обработать по specialist
+   QA/lifecycle runbooks.
+2. Проверьте returned evidence/decision boundary; не считайте route QA approval.
 3. Свяжите positive, negative и regression cases со stable scenario IDs.
 4. Проверьте class-specific risk areas и обязательные evidence types по
    canonical matrix.

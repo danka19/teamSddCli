@@ -202,7 +202,7 @@ def test_dispatcher_next_and_operation_show_use_role_and_return_evidence(
     from scripts.sdd import main as sdd_main
 
     change = tmp_path / "change.yaml"
-    change.write_text("lifecycle_state: approved\n", encoding="utf-8")
+    change.write_text("status: approved\n", encoding="utf-8")
     assert sdd_main(["next", "--change", str(change), "--role", "Tech Lead", "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["cta"] == "monitor-process-status"
     assert sdd_main(["next", "--change", str(change), "--json"]) == 1

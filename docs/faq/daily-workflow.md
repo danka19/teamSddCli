@@ -12,11 +12,10 @@
 sdd next --change <path-to-change> --role <role> --json
 ```
 
-Известное ограничение: текущий schema-v2 package использует `status`, а
-dispatcher `sdd next` пока читает `lifecycle_state`. Если реальный change
-возвращает `missing-lifecycle-state`, не редактируйте metadata вручную.
-Сохраните blocker и продолжайте по specialist lifecycle runbook до отдельного
-product fix.
+Schema-v2 package хранит lifecycle только в `status`, и `sdd next` читает это
+каноническое поле. Не добавляйте второе persisted-поле `lifecycle_state` и не
+редактируйте metadata ради другого route: при missing или unsupported `status`
+сохраните blocker и следуйте specialist lifecycle runbook.
 
 Проверьте exact change, lifecycle state, missing facts, expected evidence,
 human decision и stop point. Затем выполните только разрешённый stage.

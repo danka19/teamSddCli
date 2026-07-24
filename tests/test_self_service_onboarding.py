@@ -31,6 +31,7 @@ def test_installed_launcher_metadata_and_version_diagnostics(capsys) -> None:
 
 def test_start_and_next_render_one_canonical_continuation_result(tmp_path: Path, capsys) -> None:
     from scripts.sdd import main
+    from process.workflow_operations import create_change
 
     assert main(["start", "new-requirement", "--role", "Analyst", "--fact", "classification=minor", "--json"]) == 0
     started = json.loads(capsys.readouterr().out)
@@ -41,15 +42,40 @@ def test_start_and_next_render_one_canonical_continuation_result(tmp_path: Path,
     assert started["next_command"] == "sdd request create-change --role Analyst --json"
     assert started["lifecycle_mutated"] is False
 
-    change = tmp_path / "sample-minor-001"
-    change.mkdir()
-    (change / "change.yaml").write_text("lifecycle_state: approved\n", encoding="utf-8")
+    changes = tmp_path / "changes"
+    create_change(
+        ROOT / "process",
+        changes,
+        change_id="sample-minor-001",
+        title="Sample minor change",
+        classification="minor",
+        change_type="config_ops",
+    )
+    change = changes / "sample-minor-001"
     assert main(["next", "--change", str(change), "--role", "Developer", "--json"]) == 0
     continued = json.loads(capsys.readouterr().out)
     assert continued["status"] == "guided"
     assert continued["missing_facts"] == []
     assert continued["role_owner"] == "Analyst"
     assert continued["next_command"] == "sdd prepare prepare-spec-pr --role Developer --json"
+    assert continued["lifecycle_mutated"] is False
+    assert continued["external_state_mutated"] is False
+
+
+def test_next_rejects_noncanonical_or_unsupported_persisted_status(tmp_path: Path, capsys) -> None:
+    from scripts.sdd import main
+
+    noncanonical = tmp_path / "noncanonical.yaml"
+    noncanonical.write_text("lifecycle_state: approved\n", encoding="utf-8")
+    assert main(["next", "--change", str(noncanonical), "--role", "Developer", "--json"]) == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["blockers"][0]["code"] == "missing-change-status"
+
+    invalid = tmp_path / "invalid.yaml"
+    invalid.write_text("status: impossible\n", encoding="utf-8")
+    assert main(["next", "--change", str(invalid), "--role", "Developer", "--json"]) == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["blockers"][0]["code"] == "invalid-context"
 
 
 def test_start_reports_missing_fact_without_guessing(capsys) -> None:

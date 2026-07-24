@@ -21,15 +21,14 @@
 - write scope не пересекается с чужой активной задачей;
 - secrets/private data не входят в read/write pack.
 
-Строка `lifecycle_state: approved` сама по себе не доказывает весь DoR.
+Строка `status: approved` сама по себе не доказывает весь DoR.
 
 ## Пошаговый маршрут
 
-1. Проверьте известную compatibility boundary. На real schema-v2 change
-   текущий `sdd next` возвращает `missing-lifecycle-state`, потому что template
-   хранит канонический `status`. Не добавляйте поле вручную; сохраните blocker и
-   используйте specialist artifact/lifecycle runbook до product fix.
-2. После исправления dispatcher получите каноническое продолжение:
+1. Убедитесь, что real schema-v2 change содержит канонический top-level `status`.
+   `sdd next` читает только это поле. Не добавляйте вручную второе persisted-поле
+   `lifecycle_state` и не меняйте status ради другого route.
+2. Получите каноническое continuation:
 
    ```text
    sdd next --change <path-to-change> --role Developer --json

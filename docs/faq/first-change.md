@@ -6,9 +6,8 @@
 
 Этот tutorial показывает, что увидит команда на безопасном synthetic-примере.
 Он не выдаёт tutorial за human acceptance, release или external operation.
-Текущая исполнимая часть заканчивается после human-owned создания change:
-реальный schema-v2 package выявил compatibility blocker в `sdd next`, подробно
-описанный в шаге 6.
+Текущая исполнимая часть заканчивается перед human-owned решениями, mutation,
+release и external operation; `sdd next` даёт только read-only continuation.
 
 ## Сценарий
 
@@ -96,7 +95,7 @@ C:/work/faq-walkthrough/team-specs/openspec/changes/sample-minor-001/
 
 До появления реального change path переходить к `sdd next` нельзя.
 
-## Шаг 6. Developer проверяет continuation blocker
+## Шаг 6. Developer получает canonical continuation
 
 Когда `change.yaml` существует и содержит реальный lifecycle state:
 
@@ -104,26 +103,26 @@ C:/work/faq-walkthrough/team-specs/openspec/changes/sample-minor-001/
 sdd next --change C:/work/faq-walkthrough/team-specs/openspec/changes/sample-minor-001 --role Developer --json
 ```
 
-В package `0.3.6` schema-v2 template хранит state в поле `status`, но текущий
-dispatcher читает `lifecycle_state`. Поэтому на реально созданном package
-ожидается безопасный blocker:
+Schema-v2 template хранит lifecycle только в top-level поле `status`, и
+`sdd next` читает именно его. На реально созданном package ожидается guided
+continuation без lifecycle или external mutation:
 
 ```json
 {
   "operation": "sdd-next",
-  "status": "blocked",
-  "blockers": [{"code": "missing-lifecycle-state"}]
+  "status": "guided",
+  "lifecycle_mutated": false,
+  "external_state_mutated": false
 }
 ```
 
-Не добавляйте `lifecycle_state` вручную и не меняйте schema ради обхода.
-Сохраните failed-run и продолжайте только по
-[artifact/lifecycle](../runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md) и
-[packaged flow](../runbooks/PACKAGED_GOVERNED_FLOW.md). Отдельное product
-изменение должно согласовать dispatcher с каноническим `status` и добавить
-real-package e2e test.
+Не добавляйте второе persisted-поле `lifecycle_state` и не меняйте schema ради
+обхода. `next_command` — рекомендация для human review, а не approval, DoR/DoD
+или разрешение выполнить mutation. При missing или unsupported `status`
+сохраните blocker и используйте [artifact/lifecycle](../runbooks/ARTIFACT_AND_LIFECYCLE_GATES.md)
+и [packaged flow](../runbooks/PACKAGED_GOVERNED_FLOW.md).
 
-После этого исправления Developer сможет проверять returned route и DoR.
+Developer проверяет returned route и DoR; route сам по себе не доказывает готовность.
 `next_command` останется рекомендацией, а не доказательством готовности.
 Реализация допускается только в bounded scope, после scenario mapping и с
 фактическими test results.
@@ -165,9 +164,9 @@ release/archive decision.
 
 ## Где текущая автоматизация останавливается
 
-В текущей версии команда дополнительно останавливается на
-`missing-lifecycle-state` для real schema-v2 change, перед mutation через
-`sdd run`, перед external system action и перед каждым human-owned decision.
+В текущей версии команда останавливается перед mutation через `sdd run`, перед
+external system action и перед каждым human-owned decision. Она не меняет
+lifecycle и не заменяет обязательные gates.
 Полный путь от первого `sdd start` до автоматически созданного и архивированного
 change через один public CLI пока недоступен.
 

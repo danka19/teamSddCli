@@ -94,10 +94,10 @@ missing_facts, next_command, expected_evidence и authority_boundary.
 Не выполняй next_command. Не меняй lifecycle и не заявляй approval.
 ```
 
-Если этот вызов на real schema-v2 change возвращает
-`missing-lifecycle-state`, AI обязан сохранить blocker и сослаться на
-specialist lifecycle runbook. Ему запрещено самостоятельно добавлять
-`lifecycle_state` рядом с каноническим `status`.
+Schema-v2 хранит lifecycle в top-level `status`; `sdd next` читает именно это
+поле и передаёт значение во внутренний guided fact. AI не должен добавлять
+второе persisted-поле `lifecycle_state`, менять `status`, выполнять
+`next_command` или заявлять approval.
 
 Для нового requirement:
 
