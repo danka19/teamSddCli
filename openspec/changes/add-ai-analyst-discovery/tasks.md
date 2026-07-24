@@ -24,8 +24,13 @@
 
 ## 5. Проверка
 
-- [ ] 5.1 Выполнить focused tests, FAQ validation, full pytest и strict
+- [x] 5.1 Выполнить focused tests, FAQ validation, full pytest и strict
   OpenSpec validation.
+  Evidence (2026-07-24): fresh focused set `24 passed`; FAQ validator `valid`;
+  OpenSpec strict `24/24`; full pytest `801 passed, 11 skipped, 20 failed`.
+  Representative certification/guide/allowlist failures воспроизводятся на
+  `main`; release rehearsal проходит из короткого `main` path, а deep worktree
+  вызывает Windows path-length failures. Полный suite не объявляется зелёным.
 - [ ] 5.2 Провести независимое review ветки и устранить findings.
 - [ ] 5.3 Провести реальный first-time human walkthrough; до него change не
   считать human-accepted.
