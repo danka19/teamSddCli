@@ -74,11 +74,15 @@ update использует существующий conflict check.
 1. Добавить failing tests точного inventory, порядка активации и нового файла.
 2. Добавить skill и manifest declaration.
 3. Провести pressure-test, уточнить двусмысленные разрешения.
-4. Повысить package version до `0.3.7` и обновить setup docs.
-5. Проверить bootstrap, update conflict, package regressions и OpenSpec.
+4. При rollback удалять исчезнувший из target manifest managed-файл только
+   после byte-for-byte проверки против текущего package; локальное изменение
+   блокирует операцию до любых mutations.
+5. Повысить package version и обновить setup docs.
+6. Проверить bootstrap, update/rollback conflict, package regressions и OpenSpec.
 
-Rollback выполняется revert'ом package change; уже локально изменённые managed
-файлы не удаляются и не перезаписываются автоматически.
+Rollback восстанавливает target package contract: неизменённый managed-файл,
+которого нет в старом manifest, удаляется; локально изменённый файл не
+удаляется и блокирует операцию до package/config mutations.
 
 ## Open Questions
 

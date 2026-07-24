@@ -13,6 +13,9 @@
   SDD-задач.
 - Включить оба skill-файла и `.gigacode/AGENTS.md` в declared managed inventory
   process package.
+- При rollback удалять файл, которого нет в target manifest, только если его
+  bytes всё ещё совпадают с текущей package-версией; локальное изменение
+  блокирует rollback.
 - Сохранить human authority: skill не подтверждает classification, DoR/DoD,
   risk, release, archive, merge и внешние mutations.
 - Проверять точный bootstrap inventory, порядок активации и конфликт локально
@@ -39,7 +42,7 @@ None.
 
 ## Impact
 
-Изменение затрагивает `process/gigacode/`, package manifest/schema, bootstrap и
-update regression tests, setup-документацию и patch-версию process package.
+Изменение затрагивает `process/gigacode/`, package manifest/schema, bootstrap,
+update/rollback regression tests, setup-документацию и patch-версию process package.
 Оно не включает внешние интеграции, credentials, автономные решения,
 автоматический merge/release или новую mutation authority.

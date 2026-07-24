@@ -12,6 +12,9 @@
 - [x] 2.2 Проверить fresh bootstrap, порядок активации и managed-file conflict.
 - [x] 2.3 Повысить working process package до `0.3.7` без изменения immutable
   release/certification evidence.
+- [x] 2.4 При rollback удалять новый managed-файл только при совпадении с
+  current package bytes; блокировать локальное изменение и сохранять
+  undeclared пользовательские `.gigacode`-файлы.
 
 ## 3. Документация и evidence
 

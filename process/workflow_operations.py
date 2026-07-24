@@ -927,18 +927,20 @@ def _install_gigacode_templates(package_root: Path, workspace_root: Path) -> Non
 
 def _prepare_gigacode_update(
     installed_root: Path | None, candidate_root: Path, workspace_root: Path
-) -> list[tuple[Path, Path, bytes | None]]:
-    """Return only safe managed-file writes; fail before mutating local overrides."""
+) -> list[tuple[Path | None, Path, bytes | None]]:
+    """Return safe managed-file writes/deletes; fail before mutating local overrides."""
     candidate_files = _gigacode_template_files(candidate_root)
-    if not candidate_files:
-        return []
     previous_files = _gigacode_template_files(installed_root) if installed_root is not None else {}
+    if not candidate_files and not previous_files:
+        return []
     workspace = _absolute(workspace_root)
     managed_root = workspace / ".gigacode"
     if managed_root.exists() and (not managed_root.is_dir() or _is_link_or_reparse(managed_root)):
         raise OperationError("gigacode-target-unsafe", "managed .gigacode target must be a regular directory")
-    changes: list[tuple[Path, Path, bytes | None]] = []
-    for relative, source in candidate_files.items():
+    changes: list[tuple[Path | None, Path, bytes | None]] = []
+    for relative in sorted(candidate_files.keys() | previous_files.keys()):
+        source = candidate_files.get(relative)
+        previous = previous_files.get(relative)
         target = managed_root / relative
         try:
             target.relative_to(managed_root)
@@ -948,13 +950,12 @@ def _prepare_gigacode_update(
             if not target.is_file() or _is_link_or_reparse(target):
                 raise OperationError("gigacode-managed-file-conflict", target.as_posix())
             current = target.read_bytes()
-            if current == source.read_bytes():
+            if source is not None and current == source.read_bytes():
                 continue
-            previous = previous_files.get(relative)
             if previous is None or current != previous.read_bytes():
                 raise OperationError("gigacode-managed-file-conflict", target.as_posix())
             changes.append((source, target, current))
-        else:
+        elif source is not None:
             changes.append((source, target, None))
     return changes
 
@@ -980,13 +981,20 @@ def _gigacode_template_files(package_root: Path | None) -> dict[str, Path]:
     return result
 
 
-def _apply_gigacode_updates(changes: list[tuple[Path, Path, bytes | None]]) -> None:
+def _apply_gigacode_updates(
+    changes: list[tuple[Path | None, Path, bytes | None]],
+) -> None:
     for source, target, _ in changes:
+        if source is None:
+            target.unlink()
+            continue
         target.parent.mkdir(parents=True, exist_ok=True)
         _write_bytes_atomic(target, source.read_bytes())
 
 
-def _restore_gigacode_updates(changes: list[tuple[Path, Path, bytes | None]]) -> None:
+def _restore_gigacode_updates(
+    changes: list[tuple[Path | None, Path, bytes | None]],
+) -> None:
     for _, target, original in reversed(changes):
         if original is None:
             if target.exists():

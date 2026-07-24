@@ -1,7 +1,7 @@
 # Self-service entrypoint и обязательный GigaCode Superpowers skill
 
-Дата: 2026-07-24  
-Статус: согласовано владельцем продукта  
+Дата: 2026-07-24
+Статус: согласовано владельцем продукта
 Ветка: `feature/self-service-gigacode-superpowers`
 
 ## Задача
