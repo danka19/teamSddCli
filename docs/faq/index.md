@@ -81,6 +81,7 @@ preparation operations.
 ## Карта документации
 
 - [Что это, польза, OpenSpec, OpenSpec DE и NIS](product-and-foundation.md)
+- [НИС как основа корпоративного процесса](nis-foundation.md)
 - [Установка и проверка `sdd`](installation.md)
 - [Setup, `team-specs` и подключение проекта](setup-and-topology.md)
 - [Первый change от требования до безопасной остановки](first-change.md)

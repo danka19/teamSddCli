@@ -35,6 +35,7 @@ REQUIRED_PAGES = {
     "glossary.md",
     "index.md",
     "installation.md",
+    "nis-foundation.md",
     "product-and-foundation.md",
     "roadmap.md",
     "setup-and-topology.md",

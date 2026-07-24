@@ -33,6 +33,16 @@ def test_product_faq_contract_is_valid() -> None:
     assert validate_product_faq(ROOT) == []
 
 
+def test_nis_foundation_page_explains_positive_adoption_route() -> None:
+    faq = ROOT / "docs" / "faq"
+    page = (faq / "nis-foundation.md").read_text(encoding="utf-8")
+    assert "## Что уже взято из НИС" in page
+    assert "## Как это адаптировано в teamSddCli" in page
+    assert "## Что планируется перенести дальше" in page
+    assert "## Что не взято" not in page
+    assert "nis-foundation.md" in (faq / "index.md").read_text(encoding="utf-8")
+
+
 def test_getting_started_pages_are_executable_and_linked() -> None:
     faq = ROOT / "docs" / "faq"
     index = (faq / "index.md").read_text(encoding="utf-8")

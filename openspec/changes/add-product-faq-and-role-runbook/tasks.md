@@ -2,6 +2,7 @@
 - [x] 1.1 Inventory existing user-facing docs, canonical OpenSpec contracts and specialist runbooks; define the FAQ navigation map and source ownership.
 - [x] 1.2 Define the required-question index, stable page identifiers and deterministic link/reference validation.
 - [x] 1.3 Add the FAQ hub and concise product, value, OpenSpec/OpenSpec DE comparison and NIS foundation pages.
+  Evidence (2026-07-24): `nis-foundation.md` page contract, full FAQ pytest suite and JSON validator passed; the page is a required hub target.
 
 ## 2. Setup and daily workflow guides
 
